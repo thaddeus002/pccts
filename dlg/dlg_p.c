@@ -31,7 +31,7 @@
 ANTLR_INFO
 
 
-/* MR20 G. Hobbelt 
+/* MR20 G. Hobbelt
 Fix for Borland C++ 4.x & 5.x compiling with ALL warnings enabled
 */
 
@@ -51,14 +51,9 @@ int	flag_paren = FALSE;
 int	flag_brace = FALSE;
 int	mode_counter = 0;  /* keep track of number of %%names */
 
-  
 
-void
-#ifdef __USE_PROTOS
-grammar(void)
-#else
-grammar()
-#endif
+
+void grammar()
 {
   zzRULE;
   zzBLOCK(zztasp1);
@@ -133,12 +128,7 @@ fail:
   }
 }
 
-void
-#ifdef __USE_PROTOS
-start_states(void)
-#else
-start_states()
-#endif
+void start_states()
 {
   zzRULE;
   zzBLOCK(zztasp1);
@@ -184,12 +174,7 @@ fail:
   }
 }
 
-void
-#ifdef __USE_PROTOS
-do_conversion(void)
-#else
-do_conversion()
-#endif
+void do_conversion()
 {
   zzRULE;
   zzBLOCK(zztasp1);
@@ -197,7 +182,7 @@ do_conversion()
   {
   new_automaton_mode(); func_action = TRUE;
   rule_list();
-  
+
   dfa_class_nop[mode_counter] =
   relabel(zzaArg(zztasp1,1 ).l,comp_level);
   if (comp_level)
@@ -219,12 +204,7 @@ fail:
   }
 }
 
-void
-#ifdef __USE_PROTOS
-rule_list(void)
-#else
-rule_list()
-#endif
+void rule_list()
 {
   zzRULE;
   zzBLOCK(zztasp1);
@@ -268,12 +248,7 @@ fail:
   }
 }
 
-void
-#ifdef __USE_PROTOS
-rule(void)
-#else
-rule()
-#endif
+void rule()
 {
   zzRULE;
   zzBLOCK(zztasp1);
@@ -307,12 +282,7 @@ fail:
   }
 }
 
-void
-#ifdef __USE_PROTOS
-reg_expr(void)
-#else
-reg_expr()
-#endif
+void reg_expr()
 {
   zzRULE;
   zzBLOCK(zztasp1);
@@ -351,19 +321,14 @@ fail:
   }
 }
 
-void
-#ifdef __USE_PROTOS
-and_expr(void)
-#else
-and_expr()
-#endif
+void and_expr()
 {
   zzRULE;
   zzBLOCK(zztasp1);
   zzMake0;
   {
   repeat_expr();
-  
+
   zzaRet.l=zzaArg(zztasp1,1 ).l; zzaRet.r=zzaArg(zztasp1,1 ).r;
   {
     zzBLOCK(zztasp2);
@@ -389,12 +354,7 @@ fail:
   }
 }
 
-void
-#ifdef __USE_PROTOS
-repeat_expr(void)
-#else
-repeat_expr()
-#endif
+void repeat_expr()
 {
   zzRULE;
   zzBLOCK(zztasp1);
@@ -463,12 +423,7 @@ fail:
   }
 }
 
-void
-#ifdef __USE_PROTOS
-expr(void)
-#else
-expr()
-#endif
+void expr()
 {
   zzRULE;
   zzBLOCK(zztasp1);
@@ -480,7 +435,7 @@ expr()
     zzmatch(L_BRACK); zzCONSUME;
     atom_list();
     zzmatch(R_BRACK);
-    
+
     /* MR23 */		if (zzaRet.l != NULL) {
       (zzaRet.l)->trans[0] = zzaRet.r;
       (zzaRet.l)->label = set_dup(zzaArg(zztasp1,2 ).label);
@@ -495,7 +450,7 @@ expr()
       zzmatch(L_BRACK); zzCONSUME;
       atom_list();
       zzmatch(R_BRACK);
-      
+
       /* MR23 */		if (zzaRet.l != NULL) {
         (zzaRet.l)->trans[0] = zzaRet.r;
         (zzaRet.l)->label = set_dif(normal_chars,zzaArg(zztasp1,3 ).label);
@@ -509,8 +464,8 @@ expr()
         zzmatch(L_PAR); zzCONSUME;
         reg_expr();
         zzmatch(R_PAR);
-        
-        /* MR23 */		if (zzaRet.l != NULL) {				
+
+        /* MR23 */		if (zzaRet.l != NULL) {
           (zzaRet.l)->trans[0] = zzaArg(zztasp1,2 ).l;
           if (zzaArg(zztasp1,2 ).r) {
             (zzaArg(zztasp1,2 ).r)->trans[1] = zzaRet.r;    /* MR20 */
@@ -524,7 +479,7 @@ expr()
           zzmatch(L_BRACE); zzCONSUME;
           reg_expr();
           zzmatch(R_BRACE);
-          
+
           /* MR23 */		if (zzaRet.l != NULL) {
             (zzaRet.l)->trans[0] = zzaArg(zztasp1,2 ).l;
             (zzaRet.l)->trans[1] = zzaRet.r;
@@ -538,7 +493,7 @@ expr()
         else {
           if ( (setwd3[LA(1)]&0x1) ) {
             atom();
-            
+
             /* MR23 */		if (zzaRet.l != NULL) {
               (zzaRet.l)->trans[0] = zzaRet.r;
               (zzaRet.l)->label = set_dup(zzaArg(zztasp1,1 ).label);
@@ -559,12 +514,7 @@ fail:
   }
 }
 
-void
-#ifdef __USE_PROTOS
-atom_list(void)
-#else
-atom_list()
-#endif
+void atom_list()
 {
   zzRULE;
   zzBLOCK(zztasp1);
@@ -592,12 +542,7 @@ fail:
   }
 }
 
-void
-#ifdef __USE_PROTOS
-near_atom(void)
-#else
-near_atom()
-#endif
+void near_atom()
 {
   zzRULE;
   zzBLOCK(zztasp1);
@@ -634,7 +579,7 @@ near_atom()
         int debugLetter1 = zzaRet.letter;
         int debugLetter2 = zzaArg(zztasp2,2 ).letter;
       }
-      if (zzaRet.letter > zzaArg(zztasp2,2 ).letter 
+      if (zzaRet.letter > zzaArg(zztasp2,2 ).letter
       && zzaArg(zztasp2,2 ).letter != 0xff){       /* MR16 */
         error("invalid range  ", zzline);
       }
@@ -666,12 +611,7 @@ fail:
   }
 }
 
-void
-#ifdef __USE_PROTOS
-atom(void)
-#else
-atom()
-#endif
+void atom()
 {
   zzRULE;
   zzBLOCK(zztasp1);
@@ -696,12 +636,7 @@ fail:
   }
 }
 
-void
-#ifdef __USE_PROTOS
-anychar(void)
-#else
-anychar()
-#endif
+void anychar()
 {
   zzRULE;
   zzBLOCK(zztasp1);
@@ -790,23 +725,18 @@ anychar()
   return;
 fail:
   zzEXIT(zztasp1);
-  /* empty action */  
+  /* empty action */
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
   zzresynch(setwd3, 0x80);
   }
 }
 
 /* adds a new nfa to the binary tree and returns a pointer to it */
-nfa_node *
-#ifdef __USE_PROTOS
-new_nfa_node(void)
-#else
-new_nfa_node()
-#endif
+nfa_node * new_nfa_node()
 {
   register nfa_node *t;
   static int nfa_size=0;	/* elements nfa_array[] can hold */
-  
+
 	++nfa_allocated;
   if (nfa_size<=nfa_allocated){
     /* need to redo array */
@@ -832,12 +762,7 @@ new_nfa_node()
 
 
 /* initialize the model node used to fill in newly made nfa_nodes */
-void
-#ifdef __USE_PROTOS
-make_nfa_model_node(void)
-#else
-make_nfa_model_node()
-#endif
+void make_nfa_model_node()
 {
   nfa_model_node.node_no = -1; /* impossible value for real nfa node */
   nfa_model_node.nfa_set = 0;
@@ -850,14 +775,7 @@ make_nfa_model_node()
 #if defined(DEBUG) || defined(_DEBUG)
 
 /* print out the pointer value and the node_number */
-void
-#ifdef __USE_PROTOS
-fprint_dfa_pair(FILE *f, nfa_node *p)
-#else
-fprint_dfa_pair(f, p)
-FILE *f;
-nfa_node *p;
-#endif
+void fprint_dfa_pair(FILE *f, nfa_node *p)
 {
   if (p){
     fprintf(f, "%x (%d)", p, p->node_no);
@@ -867,17 +785,10 @@ nfa_node *p;
 }
 
 /* print out interest information on a set */
-void
-#ifdef __USE_PROTOS
-fprint_set(FILE *f, set s)
-#else
-fprint_set(f,s)
-FILE *f;
-set s;
-#endif
+void fprint_set(FILE *f, set s)
 {
   unsigned int *x;
-  
+
 	fprintf(f, "n = %d,", s.n);
   if (s.setword){
     fprintf(f, "setword = %x,   ", s.setword);
@@ -896,18 +807,11 @@ set s;
 return 0 if okay dump
 return 1 if screwed up
 */
-int
-#ifdef __USE_PROTOS
-dump_nfas(int first_node, int last_node)
-#else
-dump_nfas(first_node, last_node)
-int first_node;
-int last_node;
-#endif
+int dump_nfas(int first_node, int last_node)
 {
   register int i;
   nfa_node *t;
-  
+
 	for (i=first_node; i<=last_node; ++i){
     t = NFA(i);
     if (!t) break;
@@ -931,29 +835,19 @@ int last_node;
 /* DLG-specific syntax error message generator
 * (define USER_ZZSYN when compiling so don't get 2 definitions)
 */
-void
-#ifdef __USE_PROTOS
-zzsyn(char *text, int tok, char *egroup, SetWordType *eset, int etok, int k, char *bad_text)
-#else
-zzsyn(text, tok, egroup, eset, etok, k, bad_text)
-char *text, *egroup, *bad_text;
-int tok;
-int etok;
-int k;
-SetWordType *eset;
-#endif
+void zzsyn(char *text, int tok, char *egroup, SetWordType *eset, int etok, int k, char *bad_text)
 {
-fprintf(stderr, ErrHdr, file_str[0]!=NULL?file_str[0]:"stdin", zzline);
-fprintf(stderr, " syntax error at \"%s\"", (tok==zzEOF_TOKEN)?"EOF":text);
-if ( !etok && !eset ) {fprintf(stderr, "\n"); return;}
-if ( k==1 ) fprintf(stderr, " missing");
-else
-{
-fprintf(stderr, "; \"%s\" not", bad_text);
-if ( zzset_deg(eset)>1 ) fprintf(stderr, " in");
-}
-if ( zzset_deg(eset)>0 ) zzedecode(eset);
-else fprintf(stderr, " %s", zztokens[etok]);
-if ( strlen(egroup) > (size_t)0 ) fprintf(stderr, " in %s", egroup);
-fprintf(stderr, "\n");
+    fprintf(stderr, ErrHdr, file_str[0]!=NULL?file_str[0]:"stdin", zzline);
+    fprintf(stderr, " syntax error at \"%s\"", (tok==zzEOF_TOKEN)?"EOF":text);
+    if ( !etok && !eset ) {fprintf(stderr, "\n"); return;}
+    if ( k==1 ) fprintf(stderr, " missing");
+    else
+    {
+        fprintf(stderr, "; \"%s\" not", bad_text);
+        if ( zzset_deg(eset)>1 ) fprintf(stderr, " in");
+    }
+    if ( zzset_deg(eset)>0 ) zzedecode(eset);
+    else fprintf(stderr, " %s", zztokens[etok]);
+    if ( strlen(egroup) > (size_t)0 ) fprintf(stderr, " in %s", egroup);
+    fprintf(stderr, "\n");
 }

@@ -28,7 +28,7 @@
 
 /* MR1 Move pcctscfg.h to top of file 					*/
 
-#include "pcctscfg.h"						
+#include "pcctscfg.h"
 
 /* turn off warnings for unreferenced labels */
 
@@ -151,7 +151,6 @@ extern char *OutputDirectory;
 extern char	*class_name;
 
 /******************** Functions ******************************/
-#ifdef __USE_PROTOS
 extern char 	*dlg_malloc(int, char *, int); /* wrapper malloc */
 extern char 	*dlg_calloc(int, int, char *, int); /* wrapper calloc */
 extern int	reach(unsigned *, register int, unsigned *);
@@ -198,53 +197,3 @@ extern void intersect_nfa_labels(nfa_node *,set *);	/* MR1 */
 extern void r_intersect(nfa_node *,set *);		/* MR1 */
 extern void label_node(nfa_node *);			/* MR1 */
 extern void label_with_classes(nfa_node *);		/* MR1 */
-
-#else
-extern char *dlg_malloc();	/* wrapper malloc */
-extern char *dlg_calloc();	/* wrapper calloc */
-extern int	reach();
-extern set	closure();
-extern dfa_node *new_dfa_node();
-extern nfa_node *new_nfa_node();
-extern dfa_node *dfastate();
-extern dfa_node **nfa_to_dfa();
-extern void	internal_error();   /* MR9 23-Sep-97 */
-extern FILE	*read_stream();		/* opens file for reading */
-extern FILE	*write_stream();	/* opens file for writing */
-extern void	make_nfa_model_node();
-extern void	make_dfa_model_node();
-extern char *ClassName();
-extern char *OutMetaName();
-extern void error();
-extern void warning();
-extern void p_head();                   /* MR9 */
-extern void p_class_hdr();              /* MR9 */
-extern void p_includes();               /* MR9 */
-extern void p_tables();                 /* MR9 */
-extern void p_tail();					/* MR1 */
-extern void p_class_def1();				/* MR1 */
-extern void new_automaton_mode();			/* MR1 */
-extern int  relabel();					/* MR1 */
-extern void p_shift_table();				/* MR1 */
-extern void p_bshift_table();				/* MR1 */
-extern void p_class_table();				/* MR1 */
-extern void p_mode_def();				/* MR1 */
-extern void init();					/* MR1 */
-extern void p_class_def2();				/* MR1 */
-extern void clear_hash();				/* MR1 */
-extern void p_alternative_table();			/* MR1 */
-extern void p_node_table();				/* MR1 */
-extern void p_dfa_table();				/* MR1 */
-extern void p_accept_table();				/* MR1 */
-extern void p_action_table();				/* MR1 */
-extern void p_base_table();				/* MR1 */
-extern void p_single_node();				/* MR1 */
-extern char * minsize();				/* MR1 */
-extern void close1();					/* MR1 */
-extern void partition();				/* MR1 */
-extern void intersect_nfa_labels();			/* MR1 */
-extern void r_intersect();				/* MR1 */
-extern void label_node();				/* MR1 */
-extern void label_with_classes();			/* MR1 */
-
-#endif

@@ -44,13 +44,8 @@ int case_insensitive = FALSE;
 int warn_ambig = FALSE;
 int gen_cpp = FALSE;
 
-#ifdef __USE_PROTOS
+
 static int ci_strequ(char *a,char *b)
-#else
-static int ci_strequ(a,b)
-  char  *a;
-  char  *b;
-#endif
 {
   for ( ;*a != 0 && *b != 0; a++, b++) {
     if (toupper(*a) != toupper(*b)) return 0;
@@ -59,11 +54,11 @@ static int ci_strequ(a,b)
 }
 
 /* Option List Stuff */
-#ifdef __USE_PROTOS
-void p_comp0(void)		{comp_level = 0;}
-void p_comp1(void)		{comp_level = 1;}
-void p_comp2(void)		{comp_level = 2;}
-void p_stdio(void)		{ file_str[numfiles++] = NULL;}
+
+void p_comp0()		{comp_level = 0;}
+void p_comp1()		{comp_level = 1;}
+void p_comp2()		{comp_level = 2;}
+void p_stdio()		{ file_str[numfiles++] = NULL;}
 void p_file(char *s) 	{ file_str[numfiles++] = s;}
 void p_cl_name(char *s, char *t)
 	{
@@ -76,37 +71,13 @@ void p_cl_name(char *s, char *t)
 	}
 void p_mode_file(char *s, char *t){mode_file=t;}
 void p_outdir(char *s,char *t) {OutputDirectory=t;}
-void p_ansi(void)		{gen_ansi = TRUE;}
-void p_interactive(void)	{interactive = TRUE;}
-void p_case_s(void)		{ case_insensitive = FALSE; }
-void p_case_i(void)		{ case_insensitive = TRUE; }
-void p_warn_ambig(void)	{ warn_ambig = TRUE; }
-void p_cpp(void)		{ gen_cpp = TRUE; }
-#else
-void p_comp0()		{comp_level = 0;}
-void p_comp1()		{comp_level = 1;}
-void p_comp2()		{comp_level = 2;}
-void p_stdio()		{ file_str[numfiles++] = NULL;}
-void p_file(s) char *s;	{ file_str[numfiles++] = s;}
-void p_cl_name(s,t)
-	char *s, *t;
-	{
-		if ( gen_cpp ) {
-			class_name = t;
-		}
-		else {
-			warning("-cl only valid in C++ mode; -cl ignored...",0);
-		}
-	}
-void p_mode_file(s,t) char *s,*t;{mode_file=t;}
-void p_outdir(s,t) char *s,*t;{OutputDirectory=t;}
 void p_ansi()		{gen_ansi = TRUE;}
 void p_interactive()	{interactive = TRUE;}
 void p_case_s()		{ case_insensitive = FALSE; }
 void p_case_i()		{ case_insensitive = TRUE; }
 void p_warn_ambig()	{ warn_ambig = TRUE; }
 void p_cpp()		{ gen_cpp = TRUE; }
-#endif
+
 
 #ifdef __cplusplus
 typedef void (*WildFunc)(...);
@@ -136,20 +107,14 @@ Opt options[] = {
 	{ "-o",  1, (WildFunc)p_outdir, OutputDirectoryOption},
 	{ "-", 0, (WildFunc)p_stdio, "Use standard i/o rather than file"},
 	{ "*", 0, (WildFunc)p_file, ""}, /* anything else is a file */
-	{ NULL, 0, NULL }	
+	{ NULL, 0, NULL }
  };
 
-#ifdef __USE_PROTOS
+
 void ProcessArgs(int argc, char **argv, Opt *options)
-#else
-void ProcessArgs(argc, argv, options)
-int argc;
-char **argv;
-Opt *options;
-#endif
 {
 	Opt *p;
-	
+
 	while ( argc-- > 0 )
 	{
 		p = options;
@@ -174,13 +139,8 @@ Opt *options;
 	}
 }
 
-#ifdef __USE_PROTOS
+
 int main(int argc, char *argv[])
-#else
-int main(argc, argv)
-int argc;
-char *argv[];
-#endif
 {
 	init();
 	fprintf(stderr, "%s  Version %s   1989-2001\n", &(program[0]),
@@ -240,12 +200,7 @@ char *argv[];
 }
 
 /* initialize all the variables */
-void 
-#ifdef __USE_PROTOS
-init(void)
-#else
-init()
-#endif
+void init()
 {
 	register int i;
 
@@ -265,16 +220,11 @@ init()
 	clear_hash();
 	/* NOTE: need to set this flag before the lexer starts getting */
 	/* tokens */
-   	func_action = FALSE;	
+   	func_action = FALSE;
 }
 
 /* stuff that needs to be reset when a new automaton is being built */
-void 
-#ifdef __USE_PROTOS
-new_automaton_mode(void)					/* MR1 */
-#else
-new_automaton_mode()					/* MR1 */
-#endif
+void new_automaton_mode()					/* MR1 */
 {
 	set_free(used_chars);
 	clear_hash();

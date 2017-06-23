@@ -2,37 +2,37 @@
 
 	The following is a general-purpose set library originally developed
 	by Hank Dietz and enhanced by Terence Parr to allow dynamic sets.
-	
+
 	Sets are now structs containing the #words in the set and
 	a pointer to the actual set words.
-	
+
 	Generally, sets need not be explicitly allocated.  They are
 	created/extended/shrunk when appropriate (e.g. in set_of()).
 	HOWEVER, sets need to be destroyed (free()ed) when they go out of scope
 	or are otherwise no longer needed.  A routine is provided to
 	free a set.
-	
+
 	Sets can be explicitly created with set_new(s, max_elem).
-	
+
 	Sets can be declared to have minimum size to reduce realloc traffic.
 	Default minimum size = 1.
-	
+
 	Sets can be explicitly initialized to have no elements (set.n == 0)
 	by using the 'empty' initializer:
-	
+
 	Examples:
 		set a = empty;	-- set_deg(a) == 0
-		
+
 		return( empty );
-	
+
 	Example set creation and destruction:
-	
+
 	set
 	set_of2(e,g)
 	unsigned e,g;
 	{
 		set a,b,c;
-		
+
 		b = set_of(e);		-- Creates space for b and sticks in e
 		set_new(c, g);		-- set_new(); set_orel() ==> set_of()
 		set_orel(g, &c);
@@ -46,7 +46,7 @@
 	}
 
 	1987 by Hank Dietz
-	
+
 	Modified by:
 		Terence Parr
 		Purdue University
@@ -100,24 +100,12 @@ static unsigned min=1;
 /*
  * Set the minimum size (in words) of a set to reduce realloc calls
  */
-void
-#ifdef __USE_PROTOS
-set_size( unsigned n )
-#else
-set_size( n )
-unsigned n;
-#endif
+void set_size( unsigned n )
 {
 	min = n;
 }
 
-unsigned int
-#ifdef __USE_PROTOS
-set_deg( set a )
-#else
-set_deg( a )
-set a;
-#endif
+unsigned int set_deg( set a )
 {
 	/* Fast compute degree of a set... the number
 	   of elements present in the set.  Assumes
@@ -144,14 +132,7 @@ set a;
 	return(degree);
 }
 
-set
-#ifdef __USE_PROTOS
-set_or( set b, set c )
-#else
-set_or( b, c )
-set b;
-set c;
-#endif
+set set_or( set b, set c )
 {
 	/* Fast set union operation */
 	/* resultant set size is max(b, c); */
@@ -170,7 +151,7 @@ set c;
 	q = c.setword;
 	p = b.setword;
 	endp = &(b.setword[n]);
-	while ( p < endp ) *r++ = *p++ | *q++;	
+	while ( p < endp ) *r++ = *p++ | *q++;
 
 	/* Copy rest of bigger set into result */
 	p = &(big->setword[n]);
@@ -180,14 +161,7 @@ set c;
 	return(t);
 }
 
-set
-#ifdef __USE_PROTOS
-set_and( set b, set c )
-#else
-set_and( b, c )
-set b;
-set c;
-#endif
+set set_and( set b, set c )
 {
 	/* Fast set intersection operation */
 	/* resultant set size is min(b, c); */
@@ -206,19 +180,12 @@ set c;
 	q = c.setword;
 	p = b.setword;
 	endp = &(b.setword[n]);
-	while ( p < endp ) *r++ = *p++ & *q++;	
+	while ( p < endp ) *r++ = *p++ & *q++;
 
 	return(t);
 }
 
-set
-#ifdef __USE_PROTOS
-set_dif( set b, set c )
-#else
-set_dif( b, c )
-set b;
-set c;
-#endif
+set set_dif( set b, set c )
 {
 	/* Fast set difference operation b - c */
 	/* resultant set size is size(b) */
@@ -238,7 +205,7 @@ set c;
 	q = c.setword;
 	p = b.setword;
 	endp = &(b.setword[n]);
-	while ( p < endp ) *r++ = *p++ & (~ *q++);	
+	while ( p < endp ) *r++ = *p++ & (~ *q++);
 
 	/* Copy rest of b into result if size(b) > c */
 	if ( b.n > n )
@@ -251,13 +218,7 @@ set c;
 	return(t);
 }
 
-set
-#ifdef __USE_PROTOS
-set_of( unsigned b )
-#else
-set_of( b )
-unsigned b;
-#endif
+set set_of( unsigned b )
 {
 	/* Fast singleton set constructor operation */
 	static set a;
@@ -277,19 +238,12 @@ unsigned b;
  *
  * TJP 4-27-92 Fixed so won't try to alloc 0 bytes
  */
-void
-#ifdef __USE_PROTOS
-set_ext( set *a, unsigned int n )
-#else
-set_ext( a, n )
-set *a;
-unsigned int n;
-#endif
+void set_ext( set *a, unsigned int n )
 {
 	register unsigned *p;
 	register unsigned *endp;
 	unsigned int size;
-	
+
 	CHK((*a));
     if ( a->n == 0 )
     {
@@ -324,13 +278,7 @@ unsigned int n;
 	} while ( p < endp );
 }
 
-set
-#ifdef __USE_PROTOS
-set_not( set a )
-#else
-set_not( a )
-set a;
-#endif
+set set_not( set a )
 {
 	/* Fast not of set a (assumes all bits used) */
 	/* size of resultant set is size(a) */
@@ -345,7 +293,7 @@ set a;
 	if ( a.n == 0 ) return( empty );
 	set_ext(&t, a.n);
 	r = t.setword;
-	
+
 	do {
 		*r++ = (~ *p++);
 	} while ( p < endp );
@@ -353,14 +301,7 @@ set a;
 	return(t);
 }
 
-int
-#ifdef __USE_PROTOS
-set_equ( set a, set b )
-#else
-set_equ( a, b )
-set a;
-set b;
-#endif
+int set_equ( set a, set b )
 {
 /* 8-Nov-97     Make it work with sets of different sizes       */
 /*              Easy to understand, too.  Probably faster.      */
@@ -391,14 +332,7 @@ set b;
     };
 }
 
-int
-#ifdef __USE_PROTOS
-set_sub( set a, set b )
-#else
-set_sub( a, b )
-set a;
-set b;
-#endif
+int set_sub( set a, set b )
 {
 
 /* 8-Nov-97     Make it work with sets of different sizes       */
@@ -425,13 +359,7 @@ set b;
     return 1;
 }
 
-unsigned
-#ifdef __USE_PROTOS
-set_int( set b )
-#else
-set_int( b )
-set b;
-#endif
+unsigned set_int( set b )
 {
 	/* Fast pick any element of the set b */
 	register unsigned *p = b.setword;
@@ -457,31 +385,18 @@ set b;
 	return(nil);
 }
 
-int
-#ifdef __USE_PROTOS
-set_el( unsigned b, set a )
-#else
-set_el( b, a )
-unsigned b;
-set a;
-#endif
+int set_el( unsigned b, set a )
 {
 	CHK(a);
 	/* nil is an element of every set */
 	if (b == nil) return(1);
 	if ( a.n == 0 || NumWords(b) > a.n ) return(0);
-	
+
 	/* Otherwise, we have to check */
 	return( a.setword[DIVWORD(b)] & bitmask[MODWORD(b)] );
 }
 
-int
-#ifdef __USE_PROTOS
-set_nil( set a )
-#else
-set_nil( a )
-set a;
-#endif
+int set_nil( set a )
 {
 	/* Fast check for nil set */
 	register unsigned *p = a.setword;
@@ -490,7 +405,7 @@ set a;
 	CHK(a);
 	if ( a.n == 0 ) return(1);
 	endp = &(a.setword[a.n]);
-	
+
 	/* The set is not empty if any word used to store
 	   the set is non-zero.  This means one must be a
 	   bit careful about doing things like negation.
@@ -498,17 +413,11 @@ set a;
 	do {
 		if (*p) return(0);
 	} while (++p < endp);
-	
+
 	return(1);
 }
 
-char *
-#ifdef __USE_PROTOS
-set_str( set a )
-#else
-set_str( a )
-set a;
-#endif
+char * set_str( set a )
 {
 	/* Fast convert set a into ASCII char string...
 	   assumes that all word bits are used in the set
@@ -538,13 +447,7 @@ set a;
 	return(&(str_tmp[0]));
 }
 
-set
-#ifdef __USE_PROTOS
-set_val( register char *s )
-#else
-set_val( s )
-register char *s;
-#endif
+set set_val( register char *s )
 {
 	/* Fast convert set ASCII char string into a set.
 	   If the string ends early, the remaining set bits
@@ -578,14 +481,7 @@ register char *s;
 /*
  * Or element e into set a.  a can be empty.
  */
-void
-#ifdef __USE_PROTOS
-set_orel( unsigned e, set *a )
-#else
-set_orel( e, a )
-unsigned e;
-set *a;
-#endif
+void set_orel( unsigned e, set *a )
 {
 	CHK((*a));
 	if ( e == nil ) return;
@@ -596,14 +492,7 @@ set *a;
 /*
  * Or set b into set a.  a can be empty. does nothing if b empty.
  */
-void
-#ifdef __USE_PROTOS
-set_orin( set *a, set b )
-#else
-set_orin( a, b )
-set *a;
-set b;
-#endif
+void set_orin( set *a, set b )
 {
 	/* Fast set union operation */
 	/* size(a) is max(a, b); */
@@ -626,14 +515,7 @@ set b;
 /*
  * And set b into set a.  a can be empty. does nothing if b empty.
  */
-void
-#ifdef __USE_PROTOS
-set_andin( set *a, set b )
-#else
-set_andin( a, b )
-set *a;
-set b;
-#endif
+void set_andin( set *a, set b )
 {
 	/* Fast set intersection operation */
 	/* size(a) is max(a, b); */
@@ -652,14 +534,7 @@ set b;
 	} while ( q < endq );
 }
 
-void
-#ifdef __USE_PROTOS
-set_rm( unsigned e, set a )
-#else
-set_rm( e, a )
-unsigned e;
-set a;
-#endif
+void set_rm( unsigned e, set a )
 {
 	/* Does not effect size of set */
 	CHK(a);
@@ -667,18 +542,12 @@ set a;
 	a.setword[DIVWORD(e)] ^= (a.setword[DIVWORD(e)]&bitmask[MODWORD(e)]);
 }
 
-void
-#ifdef __USE_PROTOS
-set_clr( set a )
-#else
-set_clr( a )
-set a;
-#endif
+void set_clr( set a )
 {
 	/* Does not effect size of set */
 	register unsigned *p = a.setword;
 	register unsigned *endp;
-	
+
 	CHK(a);
 	if ( a.n == 0 ) return;
 	endp = &(a.setword[a.n]);
@@ -687,19 +556,13 @@ set a;
 	} while ( p < endp );
 }
 
-set
-#ifdef __USE_PROTOS
-set_dup( set a )
-#else
-set_dup( a )
-set a;
-#endif
+set set_dup( set a )
 {
 	set b;
 	register unsigned *p,
 					  *q    = a.setword,
 					  *endq; /* MR20 */
-	
+
 	CHK(a);
 	b = empty;
 	if ( a.n == 0 ) return( empty );
@@ -709,7 +572,7 @@ set a;
 	do {
 		*p++ = *q++;
 	} while ( q < endq );
-	
+
 	return(b);
 }
 
@@ -738,14 +601,7 @@ set a;
  *
  * We have saved many set calls and have not destroyed set a.
  */
-void
-#ifdef __USE_PROTOS
-_set_pdq( set a, register unsigned *q )
-#else
-_set_pdq( a, q )
-set a;
-register unsigned *q;
-#endif
+void _set_pdq( set a, register unsigned *q )
 {
 	register unsigned *p = a.setword,
 					  *endp = &(a.setword[a.n]);
@@ -769,17 +625,11 @@ register unsigned *q;
  * Same as _set_pdq except allocate memory.  set_pdq is the natural function
  * to use.
  */
-unsigned *
-#ifdef __USE_PROTOS
-set_pdq( set a )
-#else
-set_pdq( a )
-set a;
-#endif
+unsigned * set_pdq( set a )
 {
 	unsigned *q;
 	int max_deg;
-	
+
 	CHK(a);
 	max_deg = WORDSIZE*a.n;
 	/* assume a.n!=0 & no elements is rare, but still ok */
@@ -790,16 +640,10 @@ set a;
 	return( q );
 }
 
-/* a function that produces a hash number for the set
+/*
+ * A function that produces a hash number for the set.
  */
-unsigned int
-#ifdef __USE_PROTOS
-set_hash( set a, register unsigned int mod )
-#else
-set_hash( a, mod )
-set a;
-register unsigned int mod;
-#endif
+unsigned int set_hash( set a, register unsigned int mod )
 {
 	/* Fast hash of set a (assumes all bits used) */
 	register unsigned *p = &(a.setword[0]);

@@ -5,12 +5,12 @@
 
 	The following is a general-purpose set library originally developed
 	by Hank Dietz and enhanced by Terence Parr to allow dynamic sets.
-	
+
 	Sets are now structs containing the #words in the set and
 	a pointer to the actual set words.
 
 	1987 by Hank Dietz
-	
+
 	Modified by:
 		Terence Parr
 		Purdue University
@@ -62,7 +62,7 @@ if (((a).setword=(unsigned *)calloc(NumWords(_max),BytesPerWord))==NULL) \
 	{if ( (a).setword != NULL ) free((char *)((a).setword));	\
 	(a) = empty;}
 
-#ifdef __USE_PROTOS
+
 extern void set_size( unsigned );
 extern unsigned int set_deg( set );
 extern set set_or( set, set );
@@ -88,33 +88,6 @@ extern void set_PDQ( set, register unsigned * );
 extern unsigned *set_pdq( set );
 extern void _set_pdq( set a, register unsigned *q );
 extern unsigned int set_hash( set, register unsigned int );
-#else
-extern void set_size();
-extern unsigned int set_deg();
-extern set set_or();
-extern set set_and();
-extern set set_dif();
-extern set set_of();
-extern void set_ext();
-extern set set_not();
-extern int set_equ();
-extern int set_sub();
-extern unsigned set_int();
-extern int set_el();
-extern int set_nil();
-extern char * set_str();
-extern set set_val();
-extern void set_orel();
-extern void set_orin();
-extern void set_andin();
-extern void set_rm();
-extern void set_clr();
-extern set set_dup();
-extern void set_PDQ();
-extern unsigned *set_pdq();
-extern void _set_pdq();
-extern unsigned int set_hash();
-#endif
 
 extern set empty;
 
