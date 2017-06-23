@@ -27,7 +27,7 @@ MANFILES=dlg/dlg.1 antlr/antlr.1
 
 .PHONY : pccts dlg antlr sorcerer genmk pre welcome fini
 
-pccts:	pre welcome antlr dlg sorcerer genmk fini
+pccts:	pre welcome antlr dlg fini
 
 pre:
 	@if [ ! -d $(BINDIR) ] ; then mkdir -p $(BINDIR) ; fi
@@ -58,16 +58,16 @@ welcome	:	pre
 	@echo Making executables...
 
 antlr	:	pre
-	$(MAKE) -C antlr $@ || exit $$?
+	$(MAKE) -C antlr $@
 	@echo antlr executable now in $(BINDIR)
 
 dlg	:	pre
-	$(MAKE) -C dlg $@ || exit $$?
+	$(MAKE) -C dlg $@
 	@echo dlg executable now in $(BINDIR)
 
 genmk:
-	$(MAKE) -C support/genmk CC="$(CC)" COPT="$(COPT)" $@ || exit $$?
-	cd support/genmk && mv genmk ../../$(BINDIR) || exit $$?
+	$(MAKE) -C support/genmk CC="$(CC)" COPT="$(COPT)" $@
+	cd support/genmk && mv genmk ../../$(BINDIR)
 	@echo genmk executable now in $(BINDIR)
 
 fini:
@@ -75,18 +75,14 @@ fini:
 	@echo "       PCCTS 1.33MR33 installation complete"  # MRXXX
 
 clean:
-	(cd ./antlr; $(MAKE) -s clean)
-	(cd ./dlg; $(MAKE) -s clean)
-	(cd ./support/genmk; $(MAKE) -s clean)
+	$(MAKE) -C antlr -s clean
+	$(MAKE) -C dlg -s clean
 
 scrub:
-	(cd ./antlr; $(MAKE) -s scrub)
-	(cd ./dlg; $(MAKE) -s scrub)
+	$(MAKE) -C antlr -s scrub
+	$(MAKE) -C dlg -s scrub
 
 manpages:
-	# mkdir -p $(MANDIR)/man$(MANEXT)
-	if [ ! -d $(MANDIR) ] ; then \
-	  mkdir $(MANDIR) ; fi
 	if [ ! -d $(MANDIR)/man$(MANEXT) ] ; then \
-	  mkdir $(MANDIR)/man$(MANEXT); fi
+	  mkdir -p $(MANDIR)/man$(MANEXT); fi
 	cp -p $(MANFILES) $(MANDIR)/man$(MANEXT)
