@@ -117,7 +117,7 @@ PCCTS_H=../h
 CC ?= gcc
 ANTLR = ../bin/antlr
 DLG = ../bin/dlg
-CPPFLAGS += -I. -I$(SET) -I$(PCCTS_H) -DUSER_ZZSYN
+CPPFLAGS += -I. -I$(SET) -I$(PCCTS_H) -DUSER_ZZSYN -DZZLEXBUFSIZE=32000
 OBJ_EXT = o
 OUT_OBJ = -o 
 OBJ = dlg_p.o dlg_a.o main.o err.o set.o support.o output.o \
@@ -150,10 +150,6 @@ set.$(OBJ_EXT) : $(SET)/set.c
 
 lint:
 	lint *.c
-
-#
-# ****** These next targets are common to UNIX and PC world ********
-#
 
 #clean up all the intermediate files
 clean:

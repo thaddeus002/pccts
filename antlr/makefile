@@ -169,7 +169,7 @@ ANTLR = ../bin/antlr
 DLG = ../bin/dlg
 OBJ_EXT = o
 OUT_OBJ = -o 
-CPPFLAGS += -I. -I$(SET) -I$(PCCTS_H) -DUSER_ZZSYN
+CPPFLAGS += -I. -I$(SET) -I$(PCCTS_H) -DUSER_ZZSYN -DZZLEXBUFSIZE=32000
 
 #
 # SGI Users, use this CFLAGS
