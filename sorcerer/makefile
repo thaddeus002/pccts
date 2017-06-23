@@ -44,9 +44,11 @@ scan.o : scan.c mode.h tokens.h
 
 clean:
 	rm -f *.o core sor
+	$(MAKE) -C lib clean
 
 scrub:
 	rm -f *.o core $(GENHFILES) parser.dlg scan.c err.c sor.c sor
+	$(MAKE) -C lib scrub
 
 ci:
 	ci -u sor.g Makefile main.c globals.c gen.c set.c hash.c look.c cpp.c
