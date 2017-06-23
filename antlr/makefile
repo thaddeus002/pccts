@@ -184,7 +184,8 @@ antlr : $(OBJ) $(SRC)
 		mv antlr ../bin/.
 
 # what files does PCCTS generate (both ANTLR and DLG)
-PCCTS_GEN=antlr.c scan.c err.c tokens.h mode.h parser.dlg stdpccts.h remap.h
+#PCCTS_GEN=antlr.c scan.c err.c tokens.h mode.h parser.dlg stdpccts.h remap.h
+PCCTS_GEN=
 
 SRC=antlr.c scan.c err.c bits.c build.c fset2.c fset.c gen.c globals.c \
 	hash.c lex.c main.c misc.c $(SET)/set.c pred.c egman.c mrhoist.c fcache.c

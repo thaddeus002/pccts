@@ -75,12 +75,12 @@ fini:
 	@echo "       PCCTS 1.33MR33 installation complete"  # MRXXX
 
 clean:
-	$(MAKE) -C antlr -s clean
-	$(MAKE) -C dlg -s clean
+	$(MAKE) -C antlr clean
+	$(MAKE) -C dlg clean
 
 scrub:
-	$(MAKE) -C antlr -s scrub
-	$(MAKE) -C dlg -s scrub
+	$(MAKE) -C antlr scrub
+	$(MAKE) -C dlg scrub
 
 manpages:
 	if [ ! -d $(MANDIR)/man$(MANEXT) ] ; then \
