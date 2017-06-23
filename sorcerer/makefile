@@ -26,9 +26,10 @@ all:
 
 sor: $(OBJ) $(SRC)
 	$(CC) -o sor $(CFLAGS) $(OBJ)
-	mv sor $(BIN)/.
+	mv sor $(BIN)/
 
 sor.o : sor.c mode.h tokens.h
+	$(CC) $(CFLAGS) -c -o sor.o sor.c
 
 sor.c stdpccts.h parser.dlg tokens.h err.c : sor.g
 	$(ANTLR) $(AFLAGS) sor.g

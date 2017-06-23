@@ -12,108 +12,6 @@
 SET=../support/set
 PCCTS_H=../h
 
-##
-## Uncomment the appropriate section to build
-##
-
-#
-#   OS/2 & DOS 16 bit using MSC 6.0
-#
-#CC=cl
-#ANTLR=..\bin\antlr
-#DLG=..\bin\dlg
-#CFLAGS= -I. -I$(SET) -I$(PCCTS_H) /AL /Za /W3 -DPC -DUSER_ZZSYN
-#OUT_OBJ = -Fo
-#LIBS=/NOD:LLIBCE LLIBCEP
-#OBJ_EXT = obj
-#
-#dlg.exe : dlg_p.obj dlg_a.obj main.obj err.obj set.obj support.obj \
-#        output.obj relabel.obj automata.obj
-#        link @<<
-#$** /NOI
-#$@ /STACK:16384
-#
-#$(LIBS: = +^
-#)
-#$(DEF_FILE) $(LFLAGS) ;
-#<<
-#        bind $@ c:\os2\doscalls.lib
-#        copy *.exe ..\bin
-#
-
-#
-#   Borland C++ for DOS
-#
-#CC=bcc
-#ANTLR=..\bin\antlr
-#DLG=..\bin\dlg
-#CFLAGS= -I. -I$(SET) -I$(PCCTS_H) -ml -ff- -w- -DPC -DUSER_ZZSYN
-#OUT_OBJ = -o
-#LIBS= emu mathl cl
-#OBJ_EXT = obj
-#
-#dlg.exe : dlg_p.obj dlg_a.obj main.obj err.obj set.obj support.obj \
-#        output.obj relabel.obj automata.obj
-#       tlink @&&|
-#C0L $**
-#$@ /Tde /c
-#
-#$(LIBS)
-#$(DEF_FILE) $(LFLAGS) ;
-#|
-#        copy *.exe ..\bin
-#
-
-#
-# C-Set/2 for OS/2
-#
-#CC=icc
-#CFLAGS= -I. -I$(SET) -I$(PCCTS_H) /Sa /W3 /DUSER_ZZSYN
-#OUT_OBJ = -Fo
-#LIBS=
-#ANTLR=..\bin\antlr
-#DLG=..\bin\dlg
-#OBJ_EXT=obj
-#
-#dlg.exe : dlg_p.obj dlg_a.obj main.obj err.obj set.obj support.obj \
-#        output.obj relabel.obj automata.obj
-#        link386 @<<
-#$** /NOI
-#$@ /STACK:32768
-#
-#$(LIBS: = +^
-#)
-#$(DEF_FILE) $(LFLAGS) ;
-#<<
-#        copy *.exe ..\bin
-#
-
-#
-# Borland C++ for OS/2
-#
-#CC=bcc
-#CFLAGS= -I. -I$(SET) -I$(PCCTS_H) -w- -DUSER_ZZSYN
-#OUT_OBJ = -o
-#LIBS= c2 os2
-#
-#ANTLR=..\bin\antlr
-#DLG=..\bin\dlg
-#OBJ_EXT = obj
-#dlg.exe : dlg_p.obj dlg_a.obj main.obj err.obj set.obj support.obj \
-#        output.obj relabel.obj automata.obj
-#        tlink @&&|
-#c02 $** -c
-#dlg.exe
-#
-#C2 os2
-#
-#|
-#        copy *.exe ..\bin
-#
-
-#
-#   UNIX
-#
 CC ?= gcc
 ANTLR = ../bin/antlr
 DLG = ../bin/dlg
@@ -125,7 +23,7 @@ OBJ = dlg_p.o dlg_a.o main.o err.o set.o support.o output.o \
 
 dlg : $(OBJ) $(SRC)
 		$(CC) $(CFLAGS) $(CPPFLAGS) -o dlg $(OBJ)
-		mv dlg ../bin/.
+		mv dlg ../bin/
 
 SRC = dlg_p.c dlg_a.c main.c err.c $(SET)/set.c support.c output.c \
         relabel.c automata.c

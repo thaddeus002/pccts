@@ -36,134 +36,6 @@
 SET=../support/set
 PCCTS_H=../h
 
-##
-## Uncomment the appropriate section to build
-## (both targets and 'make' variable definitions)
-## Note that UNIX is the default
-##
-
-#
-#   OS/2 & DOS 16 bit using MSC 6.0
-#
-#CC=cl
-#ANTLR=..\bin\antlr
-#DLG=..\bin\dlg
-#CFLAGS= -I. -I$(SET) -I$(PCCTS_H) /AL /Za /W3 -DPC -DUSER_ZZSYN
-#OUT_OBJ = -Fo
-#LIBS=/NOD:LLIBCE LLIBCEP
-#OBJ_EXT = obj
-#
-#antlr.exe: antlr.obj scan.obj err.obj bits.obj build.obj fset2.obj \
-#        fset.obj gen.obj globals.obj hash.obj lex.obj main.obj \
-#        misc.obj set.obj pred.obj egamn.obj
-#       link @<<
-#$** /NOI
-#$@ /STACK:14336
-#
-#$(LIBS: = +^
-#)
-#$(DEF_FILE) $(LFLAGS) ;
-#<<
-#        bind $@ c:\os2\doscalls.lib
-#        copy *.exe ..\bin
-#
-
-#
-#   Borland C++ for DOS
-#
-#CC=bcc
-#ANTLR=..\bin\antlr
-#DLG=..\bin\dlg
-#CFLAGS= -I. -I$(SET) -I$(PCCTS_H) -ml -ff- -w- -DPC -DUSER_ZZSYN
-#OUT_OBJ = -o
-#LIBS= emu mathl cl
-#OBJ_EXT = obj
-#
-#antlr.exe: antlr.obj scan.obj err.obj bits.obj build.obj fset2.obj \
-#        fset.obj gen.obj globals.obj hash.obj lex.obj main.obj \
-#        misc.obj set.obj pred.obj egman.obj mrhoist.obj fcache.obj
-#       tlink @&&|
-#C0L $**
-#$@ /Tde /c
-#
-#$(LIBS)
-#$(DEF_FILE) $(LFLAGS) ;
-#|
-#        copy *.exe ..\bin
-#
-
-#
-# C-Set/2 for OS/2
-#
-#CC=icc
-#CFLAGS= -I. -I$(SET) -I$(PCCTS_H) /Sa /W3 -DUSER_ZZSYN -D__STDC__
-#OUT_OBJ = -Fo
-#LIBS=
-#ANTLR=..\bin\antlr
-#DLG=..\bin\dlg
-#OBJ_EXT = obj
-#
-#antlr.exe: antlr.obj scan.obj err.obj bits.obj build.obj fset2.obj \
-#        fset.obj gen.obj globals.obj hash.obj lex.obj main.obj \
-#        misc.obj set.obj pred.obj egman.obj mrhoist.obj fcache.obj
-#        link386 @<<
-#$** /NOI
-#$@ /STACK:32768
-#
-#$(LIBS: = +^
-#)
-#$(DEF_FILE) $(LFLAGS) ;
-#<<
-#        copy *.exe ..\bin
-#
-
-#
-# Borland C++ for OS/2
-#
-#CC=bcc
-#CFLAGS= -I. -I$(SET) -I$(PCCTS_H) -w- -v -DUSER_ZZSYN
-#OUT_OBJ = -o
-#LIBS= c2 os2
-#
-#ANTLR=..\bin\antlr
-#DLG=..\bin\dlg
-#OBJ_EXT = obj
-#antlr.exe: antlr.obj scan.obj err.obj bits.obj build.obj fset2.obj \
-#        fset.obj gen.obj globals.obj hash.obj lex.obj main.obj \
-#        misc.obj set.obj pred.obj egman.obj mrhoist.obj fcache.obj
-#        tlink @&&|
-#c02 $** -c -v
-#antlr.exe
-#
-#C2 os2
-#
-#|
-#        copy *.exe ..\bin
-#
-
-# *********** Target list of PC machines ***********
-#
-# Don't worry about the ambiguity messages coming from antlr
-# for making antlr.c etc...  [should be 10 of them, I think]
-#
-#antlr.c stdpccts.h parser.dlg tokens.h err.c : antlr.g
-#	$(ANTLR) antlr.g
-#
-#antlr.$(OBJ_EXT): antlr.c mode.h tokens.h
-#
-#scan.$(OBJ_EXT): scan.c mode.h tokens.h
-#
-#scan.c mode.h: parser.dlg
-#	$(DLG) -C2 parser.dlg scan.c
-#
-#set.$(OBJ_EXT): $(SET)/set.c
-#	$(CC) $(CFLAGS) -c $(OUT_OBJ)set.$(OBJ_EXT) $(SET)/set.c
-
-
-
-#
-#   UNIX  (default)
-#
 CC ?= gcc
 ANTLR = ../bin/antlr
 DLG = ../bin/dlg
@@ -176,12 +48,12 @@ CPPFLAGS += -I. -I$(SET) -I$(PCCTS_H) -DUSER_ZZSYN -DZZLEXBUFSIZE=32000
 #
 #CFLAGS= -O -I. -I$(SET) -I$(PCCTS_H) -DUSER_ZZSYN -woff 3262
 
-OBJ=antlr.o scan.o err.o bits.o build.o fset2.o fset.o gen.o  \
+OBJ=antlr.o scan.o err.o bits.o build.o fset2.o fset.o gen.o \
         globals.o hash.o lex.o main.o misc.o set.o pred.o egman.o mrhoist.o fcache.o
 
 antlr : $(OBJ) $(SRC)
 		$(CC) $(CFLAGS) $(CPPFLAGS) $(COTHER) -o antlr $(OBJ)
-		mv antlr ../bin/.
+		mv antlr ../bin/
 
 # what files does PCCTS generate (both ANTLR and DLG)
 #PCCTS_GEN=antlr.c scan.c err.c tokens.h mode.h parser.dlg stdpccts.h remap.h
@@ -208,9 +80,6 @@ set.o : $(SET)/set.c
 	$(CC) $(CFLAGS) $(CPPFLAGS) $(COTHER) -c -o set.o $(SET)/set.c
 
 
-#
-# ****** These next targets are common to UNIX and PC world ********
-#
 
 #clean up all the intermediate files
 clean:
