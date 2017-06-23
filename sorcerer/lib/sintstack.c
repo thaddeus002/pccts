@@ -28,13 +28,7 @@
  */
 #include <stdio.h>
 #include <setjmp.h>
-
-#ifdef PCCTS_USE_STDARG
 #include <stdarg.h>
-#else
-#include <varargs.h>
-#endif
-
 #include "CASTBase.h"
 #include "sintstack.h"
 

@@ -56,7 +56,7 @@
 #include "sym.h"
 #include "proto.h"
 
-static outfile = -1;
+static int outfile = -1;
 static char *current_rule;
 static ListNode *labels_for_func = NULL;
 static AST *whichRule;
@@ -289,7 +289,7 @@ AST *t;
 	whichRule=t;
 	s = (SymEntry *) hash_get(symbols, t->text);
 	require(s!=NULL, "gen_rule: sym tab broken");
-	
+
 	if ( t->file != outfile )      /* open new output file if need to */
 	{
 		if (strcmp(FileStr[t->file], "stdin")==0) output = stdout;
@@ -1002,7 +1002,7 @@ GLA *t;
 
     /* MR21 Problem reported by Peter Keller
        THM: Sor doesn't see predicate because of intervening action.
-       
+
     */
 
     if (alt != NULL) {
@@ -1010,7 +1010,7 @@ GLA *t;
         for (cursor = alt->down;
              cursor != NULL && Action == cursor->token;
              cursor = cursor->right) {
-			/* nothing */ 
+			/* nothing */
         }
         if (cursor != NULL &&
             cursor->token == PRED_OP &&
