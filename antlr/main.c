@@ -58,19 +58,9 @@ typedef struct _Opt {
 			char *descr;
 		} Opt;
 
-#ifdef __USE_PROTOS
 extern void ProcessArgs(int, char **, Opt *);
-#else
-extern void ProcessArgs();
-#endif
 
-#ifdef __USE_PROTOS
 int ci_strequ(char *a,char *b)
-#else
-int ci_strequ(a,b)
-  char  *a;
-  char  *b;
-#endif
 {
   for ( ;*a != 0 && *b != 0; a++, b++) {
     if (toupper(*a) != toupper(*b)) return 0;
@@ -78,12 +68,7 @@ int ci_strequ(a,b)
   return (*a == *b);
 }
 
-static void
-#ifdef __USE_PROTOS
-pStdin( void )
-#else
-pStdin( )
-#endif
+static void pStdin()
 {
 	if ( DontAcceptStdin )
 	{
@@ -96,13 +81,7 @@ pStdin( )
 	DontAcceptFiles = 1;
 }
 
-static void
-#ifdef __USE_PROTOS
-pFile( char *s )
-#else
-pFile( s )
-char *s;
-#endif
+static void pFile( char *s )
 {
 	if ( *s=='-' ) { warnNoFL( eMsg1("invalid option: '%s'",s) ); return; }
 	if ( DontAcceptFiles )
@@ -121,14 +100,7 @@ char *s;
         Bernard Giroud (b_giroud@decus.ch)
 */
 
-static void
-#ifdef __USE_PROTOS
-pFileList( char *s, char *t )
-#else
-pFileList( s, t )
-char *s;
-char *t;
-#endif
+static void pFileList( char *s, char *t )
 {
 #define MaxFLArea 1024
 	FILE *fl;
@@ -168,14 +140,7 @@ char *t;
 	DontAcceptStdin = 1;
 }
 
-static void
-#ifdef __USE_PROTOS
-pLLK( char *s, char *t )
-#else
-pLLK( s, t )
-char *s;
-char *t;
-#endif
+static void pLLK( char *s, char *t )
 {
 	LL_k = atoi(t);
 	if ( LL_k <= 0 ) {
@@ -184,14 +149,7 @@ char *t;
 	}
 }
 
-static void
-#ifdef __USE_PROTOS
-pCk( char *s, char *t )
-#else
-pCk( s, t )
-char *s;
-char *t;
-#endif
+static void pCk( char *s, char *t )
 {
 	CLL_k = atoi(t);
 	if ( CLL_k <= 0 ) {
@@ -200,14 +158,7 @@ char *t;
 	}
 }
 
-static void						                                     /* MR6 */
-#ifdef __USE_PROTOS
-pTab( char *s, char *t )			                        	     /* MR6 */
-#else
-pTab( s, t )				                    		             /* MR6 */
-char *s;							                                 /* MR6 */
-char *t;							                                 /* MR6 */
-#endif
+static void pTab( char *s, char *t )                        	     /* MR6 */
 {								                                     /* MR6 */
 	TabWidth = atoi(t);					                             /* MR6 */
 	if ( TabWidth < 0 || TabWidth > 8 ) {	            		     /* MR6 */
@@ -218,49 +169,25 @@ char *t;							                                 /* MR6 */
 
 static int ambAidDepthSpecified=0;                                   /* MR11 */
 
-static void						                                     /* MR11 */
-#ifdef __USE_PROTOS
-pAAd( char *s, char *t )			                        	     /* MR11 */
-#else
-pAAd( s, t )				                    		             /* MR11 */
-char *s;							                                 /* MR11 */
-char *t;							                                 /* MR11 */
-#endif
+static void pAAd( char *s, char *t )                        	     /* MR11 */
 {								                                     /* MR11 */
     ambAidDepthSpecified=1;                                          /* MR11 */
 	MR_AmbAidDepth = atoi(t);				                         /* MR11 */
 }							                                         /* MR11 */
 
-static void						                                     /* MR11 */
-#ifdef __USE_PROTOS
-pTreport( char *s, char *t )			                       	     /* MR11 */
-#else
-pTreport( s, t )				                  		             /* MR11 */
-    char *s;							                             /* MR11 */
-    char *t;							                             /* MR11 */
-#endif
+static void pTreport( char *s, char *t )                       	     /* MR11 */
 {								                                     /* MR11 */
 	TnodesReportThreshold = atoi(t);				                 /* MR11 */
 }							                                         /* MR11 */
 
-#ifdef __USE_PROTOS
-void chkGTFlag(void)	                                    /* 7-Apr-97 MR1 */
-#else
 void chkGTFlag()                                            /* 7-Apr-97 MR1 */
-#endif
 {
 	if ( !GenAST )
 		warn("#-variable or other AST item referenced w/o -gt option");
 }
 
 
-#ifdef __USE_PROTOS
 static void pInfo(char *s, char *t)                         /* MR10 */
-#else
-static void pInfo(s,t)                                      /* MR10 */
-  char  *s;
-  char  *t;
-#endif
 {
   char  *p;
   int   q;
@@ -284,7 +211,6 @@ static void pInfo(s,t)                                      /* MR10 */
   };
 }
 
-#ifdef __USE_PROTOS
 static void pCGen(void)	{ CodeGen = FALSE; LexGen = FALSE; }
 static void pLGen(void)	{ LexGen = FALSE; }
 static void pXTGen(void){ MR_Inhibit_Tokens_h_Gen = TRUE; }
@@ -330,85 +256,19 @@ static void pMR_BlkErr(void) { MR_BlkErr = 1; }                     /* MR21 */
 static void pStdout(void) {UseStdout = 1; }		                    /* MR6 */
 static void pW2(void) { WarningLevel = 2; }
 static void pCC(void) { GenCC = TRUE; }
-#else
-static void pCGen()	{ CodeGen = FALSE; LexGen = FALSE; }
-static void pLGen()	{ LexGen = FALSE; }
-static void pXTGen(){ MR_Inhibit_Tokens_h_Gen = TRUE; }             /* MR14 */
-static void pTGen()	{ TraceGen = TRUE; }
-static void pSGen()	{ GenExprSetsOpt = FALSE; }
-static void pPrt()		{ PrintOut = TRUE; pCGen(); pLGen(); }
-static void pPrtA()	{ PrintOut = TRUE; PrintAnnotate = TRUE; pCGen(); pLGen(); }
-static void pAst()		{ GenAST = TRUE; }
-static void pANSI()	{ GenANSI = TRUE; }
-static void pCr()		{ GenCR = TRUE; }
-static void pNOPURIFY()	{ PURIFY = FALSE; }
 
-/*static void pCt()		{ warnNoFL("-ct option is now the default"); }*/
-static void pLI()	    { GenLineInfo = TRUE; GenLineInfoMS = FALSE; }  /* MR14 */
-static void pLIms()	    { GenLineInfo = TRUE; GenLineInfoMS = TRUE; }   /* MR14 */
-static void pFr(s,t) char *s, *t; {RemapFileName = t;}
-static void pFe(s,t) char *s, *t; {ErrFileName = t;}
-static void pFl(s,t) char *s, *t; {DlgFileName = t;}
-static void pFm(s,t) char *s, *t; {ModeFileName = t;}
-static void pFt(s,t) char *s, *t; {DefFileName = t;}
 
-static void pE1()		{ elevel = 1; }
-static void pE2()		{ elevel = 2; }
-static void pE3()		{ elevel = 3; }
-static void pEGen()	{ GenEClasseForRules = 1; }
-static void pDL()
-	{
-	    DemandLookahead = 1;
-	    if ( GenCC ) {
-          warnNoFL("-gk does not work currently in C++ mode; -gk turned off");
-	      DemandLookahead = 0;
-	    }
-	}
-
-static void pAA(s,t) char *s; char *t; {MR_AmbAidRule = t;}          /* MR11 BJS 20-Mar-98 */
-static void pAAm(s) char *s; {MR_AmbAidMultiple = 1;}                /* MR11 BJS 20-Mar-98 */
-static void pGHdr()	{ GenStdPccts = 1; }
-static void pFHdr(s,t) char *s, *t; { stdpccts = t; pGHdr(); }
-static void pW1() { WarningLevel = 1; }
-static void pNewAST() { NewAST = 1; }                                /* MR13 */
-static void ptmakeInParser() { tmakeInParser = 1; }                  /* MR23 */
-static void pAlpha() { AlphaBetaTrace = 1; }                         /* MR14 */
-static void pMR_BlkErr() { MR_BlkErr = 1; }                          /* MR21 */
-static void pStdout() {UseStdout = 1; }	                             /* MR6 */
-static void pW2() { WarningLevel = 2; }
-static void pCC() { GenCC = TRUE; }
-#endif
-
-static void
-#ifdef __USE_PROTOS
-pPre( char *s, char *t )
-#else
-pPre( s, t )
-char *s;
-char *t;
-#endif
+static void pPre( char *s, char *t )
 {
 	RulePrefix = t;
 }
 
-static void
-#ifdef __USE_PROTOS
-pOut( char *s, char *t )
-#else
-pOut( s, t )
-char *s;
-char *t;
-#endif
+static void pOut( char *s, char *t )
 {
 	OutputDirectory = t;
 }
 
-static void
-#ifdef __USE_PROTOS
-pPred( void )
-#else
-pPred( )
-#endif
+static void pPred( )
 {
 	warnNoFL("-pr is no longer used (predicates employed if present); see -prc, -mrhoist, -mrhoistk");
 /*
@@ -419,14 +279,7 @@ pPred( )
 */
 }
 
-static void
-#ifdef __USE_PROTOS
-pPredCtx( char *s, char *t )
-#else
-pPredCtx(s,t)
-char *s;
-char *t;
-#endif
+static void pPredCtx( char *s, char *t )
 {
 	if ( ci_strequ(t,"on")) HoistPredicateContext = 1;
 	else if ( ci_strequ(t,"off")) HoistPredicateContext = 0;
@@ -437,14 +290,7 @@ char *t;
 	}
 }
 
-static void
-#ifdef __USE_PROTOS
-pMRhoist( char *s, char *t )
-#else
-pMRhoist(s,t)
-char *s;
-char *t;
-#endif
+static void pMRhoist( char *s, char *t )
 {
 	if ( ci_strequ(t,"on")) MRhoisting = 1;
 	else if ( ci_strequ(t,"off")==0 ) MRhoisting = 0;
@@ -457,14 +303,7 @@ char *t;
     };
 }
 
-static void
-#ifdef __USE_PROTOS
-pMRhoistk( char *s, char *t )
-#else
-pMRhoistk(s,t)
-char *s;
-char *t;
-#endif
+static void pMRhoistk( char *s, char *t )
 {
 	if ( ci_strequ(t,"on")) MRhoistingk = 1;
 	else if ( ci_strequ(t,"off")==0 ) MRhoistingk = 0;
@@ -475,14 +314,7 @@ char *t;
     };
 }
 
-static void
-#ifdef __USE_PROTOS
-pTRes( char *s, char *t )
-#else
-pTRes( s, t )
-char *s;
-char *t;
-#endif
+static void pTRes(char *s, char *t)
 {
 	TreeResourceLimit = atoi(t);
 	if ( TreeResourceLimit <= 0 )
@@ -627,29 +459,15 @@ Opt options[] = {
 void readDescr();
 void cleanUp();
 
-#ifdef __USE_PROTOS
 static void buildRulePtr( void );
 static void help( void );
 static void init( void );
 static void CompleteTokenSetRefs( void );
 static void ensure_no_C_file_collisions(char *);
 static void CompleteContextGuards(void);
-#else
-static void buildRulePtr( );
-static void help( );
-static void init( );
-static void CompleteTokenSetRefs( );
-static void ensure_no_C_file_collisions();
-static void CompleteContextGuards();
-#endif
 
-static void
-#ifdef __USE_PROTOS  /* <BJS> */
-report_numericPredLabels(ActionNode *a)
-#else
-report_numericPredLabels(a)
-ActionNode *a;
-#endif
+
+static void report_numericPredLabels(ActionNode *a)
 {                                                                           /* MR10 */
   warnFL("numeric references to attributes (e.g. $i or $i.j) in semantic pred will be null during guess mode",  /* MR10 */
             FileStr[a->file],a->line);                                      /* MR10 */
@@ -657,14 +475,7 @@ ActionNode *a;
 
 								/* M a i n */
 
-int
-#ifdef __USE_PROTOS
-main( int argc, char *argv[] )
-#else
-main( argc, argv )
-int argc;
-char *argv[];
-#endif
+int main( int argc, char *argv[] )
 {
 	int i;
 	static char EPSTR[] = "[Ep]";
@@ -799,7 +610,7 @@ char *argv[];
 	buildRulePtr();					/* create mapping from rule # to RuleBlk junction */
 	ComputeErrorSets();
 	FoLink( (Node *)SynDiag );		/* add follow links to end of all rules */
-	
+
 	if ( GenCR ) GenCrossRef( SynDiag );
 
 	if ( CodeGen )
@@ -890,15 +701,7 @@ char *argv[];
 #endif
 	GenRemapFile();					/* create remap.h */
 /* MR10 */    if (FoundGuessBlk) {
-#ifdef __cplusplus__
 /* MR10 */      list_apply(NumericPredLabels, (void (*)(void *))report_numericPredLabels);
-#else
-#ifdef __USE_PROTOS
-/* MR10 */      list_apply(NumericPredLabels, (void (*)(void *))report_numericPredLabels);
-#else
-/* MR10 */      list_apply(NumericPredLabels,report_numericPredLabels);
-#endif
-#endif
 /* MR10 */    };
 
     if (InfoT && TnodesAllocated > 0) {
@@ -955,15 +758,10 @@ char *argv[];
     }
 	cleanUp();
 	exit(PCCTS_EXIT_SUCCESS);
-    return 0;           /* MR11 make compilers happy */ 
+    return 0;           /* MR11 make compilers happy */
 }
 
-static void 
-#ifdef __USE_PROTOS 
-init( void )
-#else
-init( )
-#endif
+static void init( )
 {
 	SignalEntry *q;
 
@@ -990,7 +788,7 @@ init( )
 							  (Entry *)newSignalEntry("NoSemViableAlt"));
 	require(q!=NULL, "cannot alloc signal entry");
 	q->signum = sigNoSemViableAlt;
-	
+
 	reserved_positions = empty;
 	all_tokens = empty;
 	imag_tokens = empty;
@@ -1006,12 +804,7 @@ init( )
     MR_CompromisedRules=empty;  /* MR14 */
 }
 
-static void
-#ifdef __USE_PROTOS
-help( void )
-#else
-help( )
-#endif
+static void help( )
 {
 	Opt *p = options;
 	fprintf(stderr, "antlr [options] f1 f2 ... fn\n");
@@ -1025,23 +818,19 @@ help( )
 	}
 }
 
-/* The RulePtr array is filled in here.  RulePtr exists primarily
+/**
+ * The RulePtr array is filled in here.  RulePtr exists primarily
  * so that sets of rules can be maintained for the FOLLOW caching
  * mechanism found in rJunc().  RulePtr maps a rule num from 1 to n
  * to a pointer to its RuleBlk junction where n is the number of rules.
  */
-static void
-#ifdef __USE_PROTOS
-buildRulePtr( void )
-#else
-buildRulePtr( )
-#endif
+static void buildRulePtr( )
 {
 	int r=1;
 	Junction *p  = SynDiag;
 	RulePtr = (Junction **) calloc(NumRules+1, sizeof(Junction *));
 	require(RulePtr!=NULL, "cannot allocate RulePtr array");
-	
+
 	while ( p!=NULL )
 	{
 		require(r<=NumRules, "too many rules???");
@@ -1050,25 +839,14 @@ buildRulePtr( )
 	}
 }
 
-void
-#ifdef __USE_PROTOS
-dlgerror(const char *s)
-#else
-dlgerror(s)
-char *s;
-#endif
+void dlgerror(const char *s)
 {
 	fprintf(stderr, ErrHdr, FileStr[CurFile], zzline);
 	fprintf(stderr, " lexical error: %s (text was '%s')\n",
 					((s == NULL) ? "Lexical error" : s), zzlextext);
 }
 
-void
-#ifdef __USE_PROTOS
-readDescr( void )
-#else
-readDescr( )
-#endif
+void readDescr()
 {
 	zzerr = dlgerror;
 	input = NextFile();
@@ -1077,12 +855,7 @@ readDescr( )
     tnodes_used_in_guard_predicates_etc=TnodesInUse;    /* MR10 */
 }
 
-FILE *
-#ifdef __USE_PROTOS
-NextFile( void )
-#else
-NextFile( )
-#endif
+FILE *NextFile()
 {
 	FILE *f;
 
@@ -1103,7 +876,7 @@ NextFile( )
 	}
 }
 
-/*
+/**
  * Return a string corresponding to the output file name associated
  * with the input file name passed in.
  *
@@ -1125,13 +898,7 @@ NextFile( )
  * Use malloc() for new string.
  */
 
-char *
-#ifdef __USE_PROTOS
-outname( char *fs )
-#else
-outname( fs )
-char *fs;
-#endif
+char *outname(char *fs)
 {
     if ( GenCC) {
       return outnameX(fs,CPP_FILE_SUFFIX);
@@ -1140,14 +907,7 @@ char *fs;
     };
 }
 
-char *
-#ifdef __USE_PROTOS
-outnameX( char *fs ,char *suffix)
-#else
-outnameX( fs , suffix )
-char *fs;
-char *suffix;
-#endif
+char *outnameX( char *fs ,char *suffix)
 {
 	static char buf[MaxFileName+1];
 	char *p;
@@ -1163,15 +923,7 @@ char *suffix;
 	return( buf );
 }
 
-void
-#ifdef __USE_PROTOS
-fatalFL( char *err_, char *f, int l )
-#else
-fatalFL( err_, f, l )
-char *err_;
-char *f;
-int l;
-#endif
+void fatalFL( char *err_, char *f, int l )
 {
 	fprintf(stderr, ErrHdr, f, l);
 	fprintf(stderr,	" %s\n", err_);
@@ -1179,15 +931,7 @@ int l;
 	exit(PCCTS_EXIT_FAILURE);
 }
 
-void
-#ifdef __USE_PROTOS
-fatal_intern( char *err_, char *f, int l )
-#else
-fatal_intern( err_, f, l )
-char *err_;
-char *f;
-int l;
-#endif
+void fatal_intern( char *err_, char *f, int l )
 {
 	fprintf(stderr, ErrHdr, f, l);
 	fprintf(stderr,	" #$%%*&@# internal error: %s\n", err_);
@@ -1201,74 +945,46 @@ int l;
 	exit(PCCTS_EXIT_FAILURE);
 }
 
-void
-#ifdef __USE_PROTOS
-cleanUp( void )
-#else
-cleanUp( )
-#endif
+void cleanUp( void )
 {
 	if ( DefFile != NULL) fclose( DefFile );
 }
 
-/* sprintf up to 3 strings */
-char *
-#ifdef __USE_PROTOS
-eMsg3( char *s, char *a1, char *a2, char *a3 )
-#else
-eMsg3( s, a1, a2, a3 )
-char *s;
-char *a1;
-char *a2;
-char *a3;
-#endif
+/**
+ * Sprintf up to 3 strings.
+ * \param s format
+ * \param a1 first string
+ * \param a2 second string
+ * \param a3 third string
+ * \return a statically allocated string (don't free it). Each call of
+ * this function will override previous calls.
+ */
+char *eMsg3( char *s, char *a1, char *a2, char *a3 )
 {
-	static char buf[250];			/* DANGEROUS as hell !!!!!! */
-	
+	static char buf[250]; /* DANGEROUS as hell !!!!!! */
+
 	sprintf(buf, s, a1, a2, a3);
 	return( buf );
 }
 
-/* sprintf a decimal */
-char *
-#ifdef __USE_PROTOS
-eMsgd( char *s, int d )
-#else
-eMsgd( s, d )
-char *s;
-int d;
-#endif
+/** sprintf a decimal */
+char *eMsgd( char *s, int d )
 {
-	static char buf[250];			/* DANGEROUS as hell !!!!!! */
-	
+	static char buf[250]; /* DANGEROUS as hell !!!!!! */
+
 	sprintf(buf, s, d);
 	return( buf );
 }
 
-char *
-#ifdef __USE_PROTOS
-eMsgd2( char *s, int d1,int d2)
-#else
-eMsgd2( s, d1, d2 )
-char *s;
-int d1;
-int d2;
-#endif
+char *eMsgd2( char *s, int d1,int d2)
 {
-	static char buf[250];			/* DANGEROUS as hell !!!!!! */
-	
+	static char buf[250]; /* DANGEROUS as hell !!!!!! */
+
 	sprintf(buf, s, d1, d2);
 	return( buf );
 }
 
-void
-#ifdef __USE_PROTOS
-s_fprT( FILE *f, set e )
-#else
-s_fprT( f, e )
-FILE *f;
-set e;
-#endif
+void s_fprT(FILE *f, set e)
 {
 	register unsigned *p;
 	unsigned *q;
@@ -1285,17 +1001,11 @@ set e;
 	free((char *)q);
 }
 
-/* Return the token name or regular expression for a token number. */
-char *
-#ifdef __USE_PROTOS
-TerminalString( int token )
-#else
-TerminalString( token )
-int token;
-#endif
+/** Return the token name or regular expression for a token number. */
+char *TerminalString( int token )
 {
-	int     j;
-        static    char    imag_name[20];
+	int j;
+	static char imag_name[20];
 
 	/* look in all lexclasses for the token */
 	if ( TokenString(token) != NULL ) return TokenString(token);
@@ -1316,79 +1026,40 @@ int token;
 
                     /* S i m p l e  I n t  S t a c k */
 
-void
-#ifdef __USE_PROTOS
-pushint( int i )
-#else
-pushint( i )
-int i;
-#endif
+void pushint(int i)
 {
 	require(isp>0, "pushint: stack overflow");
 	istack[--isp] = i;
 }
 
-int
-#ifdef __USE_PROTOS
-popint( void )
-#else
-popint( )
-#endif
+int popint()
 {
 	require(isp<MAX_INT_STACK, "popint: stack underflow");
 	return istack[isp++];
 }
 
-int
-#ifdef __USE_PROTOS
-istacksize( void )
-#else
-istacksize( )
-#endif
+int istacksize( )
 {
 	return MAX_INT_STACK-isp;
 }
 
-void
-#ifdef __USE_PROTOS
-istackreset( void )
-#else
-istackreset( )
-#endif
+void istackreset( )
 {
 	isp = MAX_INT_STACK;
 }
 
-int
-#ifdef __USE_PROTOS
-istackempty( void )
-#else
-istackempty( )
-#endif
+int istackempty( )
 {
 	return isp==MAX_INT_STACK;
 }
 
-int
-#ifdef __USE_PROTOS
-topint( void )
-#else
-topint( )
-#endif
+int topint( )
 {
 	require(isp<MAX_INT_STACK, "topint: stack underflow");
 	return istack[isp];
 }
 
-void
-#ifdef __USE_PROTOS
-ProcessArgs( int argc, char **argv, Opt *options )
-#else
-ProcessArgs( argc, argv, options )
-int argc;
-char **argv;
-Opt *options;
-#endif
+void ProcessArgs( int argc, char **argv, Opt *options )
 {
 	Opt *p;
 	require(argv!=NULL, "ProcessArgs: command line NULL");
@@ -1408,8 +1079,8 @@ Opt *options;
   				     	(*p->process)( *argv, *(argv+1) );
 					    argv++;
                     } else {
-fprintf(stderr,"error: required argument for option %s omitted\n",*argv);
-exit(PCCTS_EXIT_FAILURE);
+                        fprintf(stderr,"error: required argument for option %s omitted\n",*argv);
+                        exit(PCCTS_EXIT_FAILURE);
                     };
 				}
 				else
@@ -1422,12 +1093,7 @@ exit(PCCTS_EXIT_FAILURE);
 	}
 }
 
-static void 
-#ifdef __USE_PROTOS
-CompleteContextGuards(void)
-#else
-CompleteContextGuards()
-#endif
+static void CompleteContextGuards()
 {
     ListNode *      p;
     Predicate *     pred;
@@ -1440,15 +1106,11 @@ CompleteContextGuards()
     }
 }
 
-/* Go back into the syntax diagram and compute all meta tokens; i.e.
+/**
+ * Go back into the syntax diagram and compute all meta tokens; i.e.
  * turn all '.', ranges, token class refs etc... into actual token sets
  */
-static void
-#ifdef __USE_PROTOS
-CompleteTokenSetRefs(void)
-#else
-CompleteTokenSetRefs()
-#endif
+static void CompleteTokenSetRefs()
 {
 	ListNode *p;
 
@@ -1500,14 +1162,8 @@ CompleteTokenSetRefs()
    MR10: if OutputDirectory was changed by user (-o option)
 */
 
-char *
-#ifdef __USE_PROTOS
-OutMetaName(char *n)
-#else
-OutMetaName(n)
-char *n;
-#endif
-{	
+char *OutMetaName(char *n)
+{
     static char *dir_sym = DirectorySymbol;
     static char newname[MaxFileName+1];
     char *p;
@@ -1533,13 +1189,7 @@ char *n;
 	return newname;
 }
 
-char *
-#ifdef __USE_PROTOS
-pcctsBaseName(char *n) /* MR32 */
-#else
-pcctsBaseName(n)
-char *n;
-#endif
+char *pcctsBaseName(char *n) /* MR32 */
 {
     static char newname[MaxFileName+1];
     static char* dir_sym = DirectorySymbol;
@@ -1560,13 +1210,7 @@ char *n;
     return newname;
 }
 
-static void
-#ifdef __USE_PROTOS
-ensure_no_C_file_collisions(char *class_c_file)
-#else
-ensure_no_C_file_collisions(class_c_file)
-char *class_c_file;
-#endif
+static void ensure_no_C_file_collisions(char *class_c_file)
 {
 	int i;
 
@@ -1586,38 +1230,18 @@ char *class_c_file;
 	}
 }
 
-void
-#ifdef __USE_PROTOS
-warnNoFL(char *err)
-#else
-warnNoFL(err)
-char *err;
-#endif
+void warnNoFL(char *err)
 {
 	fprintf(stderr, "warning: %s\n", err);
 }
 
-void
-#ifdef __USE_PROTOS
-warnFL(char *err,char *f,int l)
-#else
-warnFL(err,f,l)
-char *f;
-int l;
-char *err;
-#endif
+void warnFL(char *err,char *f,int l)
 {
-	fprintf(stderr, ErrHdr, f, l);						
+	fprintf(stderr, ErrHdr, f, l);
 	fprintf(stderr, " warning: %s\n", err);
 }
 
-void
-#ifdef __USE_PROTOS
-warn(char *err)												
-#else
-warn(err)												
-char *err;
-#endif
+void warn(char *err)
 {
 	/* back up the file number if we hit an error at the end of the last file */
 	if ( CurFile >= NumFiles && CurFile >= 1 ) CurFile--;
@@ -1625,13 +1249,7 @@ char *err;
 	fprintf(stderr, " warning: %s\n", err);
 }
 
-void
-#ifdef __USE_PROTOS
-warnNoCR( char *err )
-#else
-warnNoCR( err )											
-char *err;
-#endif
+void warnNoCR( char *err )
 {
 	/* back up the file number if we hit an error at the end of the last file */
 	if ( CurFile >= NumFiles && CurFile >= 1 ) CurFile--;
@@ -1639,38 +1257,18 @@ char *err;
 	fprintf(stderr, " warning: %s", err);
 }
 
-void
-#ifdef __USE_PROTOS
-errNoFL(char *err)
-#else
-errNoFL(err)
-char *err;
-#endif
+void errNoFL(char *err)
 {
 	fprintf(stderr, "error: %s\n", err);
 }
 
-void
-#ifdef __USE_PROTOS
-errFL(char *err,char *f,int l)
-#else
-errFL(err,f,l)
-char *err;
-char *f;
-int l;
-#endif
+void errFL(char *err,char *f,int l)
 {
-	fprintf(stderr, ErrHdr, f, l);						
+	fprintf(stderr, ErrHdr, f, l);
 	fprintf(stderr, " error: %s\n", err);
 }
 
-void
-#ifdef __USE_PROTOS
-err(char *err)												
-#else
-err(err)												
-char *err;
-#endif
+void err(char *err)
 {
 	/* back up the file number if we hit an error at the end of the last file */
 	if ( CurFile >= NumFiles && CurFile >= 1 ) CurFile--;
@@ -1678,13 +1276,7 @@ char *err;
 	fprintf(stderr, " error: %s\n", err);
 }
 
-void
-#ifdef __USE_PROTOS
-errNoCR( char *err )											
-#else
-errNoCR( err )											
-char *err;
-#endif
+void errNoCR( char *err )
 {
 	/* back up the file number if we hit an error at the end of the last file */
 	if ( CurFile >= NumFiles && CurFile >= 1 ) CurFile--;
@@ -1692,13 +1284,7 @@ char *err;
 	fprintf(stderr, " error: %s", err);
 }
 
-UserAction *
-#ifdef __USE_PROTOS
-newUserAction(char *s)
-#else
-newUserAction(s)
-char *s;
-#endif
+UserAction *newUserAction(s)
 {
 	UserAction *ua = (UserAction *) calloc(1, sizeof(UserAction));
 	require(ua!=NULL, "cannot allocate UserAction");
@@ -1710,13 +1296,7 @@ char *s;
 
 /* Added by TJP September 1994 */
 /* Take in file.h and return file_h; names w/o '.'s are left alone */
-char *
-#ifdef __USE_PROTOS
-gate_symbol(char *name)
-#else
-gate_symbol(name)
-char *name;
-#endif
+char *gate_symbol(char *name)
 {
 	static char buf[100];
 	char *p;
@@ -1729,14 +1309,7 @@ char *name;
 	return buf;
 }
 
-char *
-#ifdef __USE_PROTOS
-makeAltID(int blockid, int altnum)
-#else
-makeAltID(blockid, altnum)
-int blockid;
-int altnum;
-#endif
+char *makeAltID(int blockid, int altnum)
 {
 	static char buf[100];
 	char *p;
