@@ -60,17 +60,11 @@
 
 #include "pcctscfg.h"
 
-#ifdef NOT_USED /* SEE config.h */
+
 /* Define usable bits per unsigned int word */
-#ifdef PC
-#define WORDSIZE 16
-#define LogWordSize 4
-#else
-#define WORDSIZE 32
-#define LogWordSize 5
-#endif
 #define BytesPerWord    sizeof(unsigned)
-#endif
+#define	WORDSIZE        (sizeof(unsigned)*8)
+#define LogWordSize     (WORDSIZE==16?4:5)
 
 #define SETSIZE(a) ((a).n<<LogWordSize)     /* Maximum items per set */
 #define MODWORD(x) ((x) & (WORDSIZE-1))     /* x % WORDSIZE */
