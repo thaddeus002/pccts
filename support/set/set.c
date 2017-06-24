@@ -1,6 +1,7 @@
-/*  set.c
+/**
+    \file set.c
 
-    The following is a general-purpose set library originally developed
+    \brief The following is a general-purpose set library originally developed
     by Hank Dietz and enhanced by Terence Parr to allow dynamic sets.
 
     Sets are now structs containing the #words in the set and
@@ -96,21 +97,21 @@ static unsigned int min=1;
 #define CHK(a)
 #endif
 
-/*
- * Set the minimum size (in words) of a set to reduce realloc calls
+/**
+ * Set the minimum size (in words) of a set to reduce realloc calls.
  */
-void set_size( unsigned n )
+void set_size(unsigned n)
 {
     min = n;
 }
 
-unsigned int set_deg( set a )
+/**
+ * Fast compute degree of a set... the number of elements present in the
+ * set. Assumes that all word bits are used in the set and that
+ * SETSIZE(a) is a multiple of WORDSIZE.
+ */
+unsigned int set_deg(set a)
 {
-    /* Fast compute degree of a set... the number
-       of elements present in the set.  Assumes
-       that all word bits are used in the set
-       and that SETSIZE(a) is a multiple of WORDSIZE.
-    */
     register unsigned *p = &(a.setword[0]);
     register unsigned *endp = NULL; /* MR27 Avoid false memory check report */
     register unsigned degree = 0;
@@ -131,10 +132,12 @@ unsigned int set_deg( set a )
     return(degree);
 }
 
-set set_or( set b, set c )
+/**
+ * Fast set union operation
+ * resultant set size is max(b, c);
+ */
+set set_or(set b, set c)
 {
-    /* Fast set union operation */
-    /* resultant set size is max(b, c); */
     set *big;
     set t;
     unsigned int m,n;
@@ -160,10 +163,12 @@ set set_or( set b, set c )
     return(t);
 }
 
-set set_and( set b, set c )
+/**
+ * Fast set intersection operation
+ * resultant set size is min(b, c);
+ */
+set set_and(set b, set c)
 {
-    /* Fast set intersection operation */
-    /* resultant set size is min(b, c); */
     set t;
     unsigned int n;
     register unsigned *r, *p, *q, *endp;
@@ -184,10 +189,12 @@ set set_and( set b, set c )
     return(t);
 }
 
-set set_dif( set b, set c )
+/**
+ * Fast set difference operation b - c
+ * resultant set size is size(b)
+ */
+set set_dif(set b, set c)
 {
-    /* Fast set difference operation b - c */
-    /* resultant set size is size(b) */
     set t;
     unsigned int n;
     register unsigned *r, *p, *q, *endp;
@@ -217,9 +224,9 @@ set set_dif( set b, set c )
     return(t);
 }
 
-set set_of( unsigned b )
+/** Fast singleton set constructor operation */
+set set_of(unsigned b)
 {
-    /* Fast singleton set constructor operation */
     static set a;
 
     if ( b == nil ) return( empty );
@@ -229,7 +236,7 @@ set set_of( unsigned b )
     return(a);
 }
 
-/*
+/**
  * Extend (or shrink) the set passed in to have n words.
  *
  * if n is smaller than the minimum, boost n to have the minimum.
@@ -237,7 +244,7 @@ set set_of( unsigned b )
  *
  * TJP 4-27-92 Fixed so won't try to alloc 0 bytes
  */
-void set_ext( set *a, unsigned int n )
+void set_ext(set *a, unsigned int n)
 {
     register unsigned *p;
     register unsigned *endp;
@@ -277,11 +284,14 @@ void set_ext( set *a, unsigned int n )
     } while ( p < endp );
 }
 
-set set_not( set a )
+
+/**
+ * Fast not of set a (assumes all bits used)
+ * size of resultant set is size(a)
+ * ~empty = empty cause we don't know how bit to make set
+ */
+set set_not(set a)
 {
-    /* Fast not of set a (assumes all bits used) */
-    /* size of resultant set is size(a) */
-    /* ~empty = empty cause we don't know how bit to make set */
     set t;
     register unsigned *r;
     register unsigned *p = a.setword;
@@ -300,12 +310,12 @@ set set_not( set a )
     return(t);
 }
 
-int set_equ( set a, set b )
+/**
+ * Check for a equal to b.
+ * work with sets of different sizes.
+ */
+int set_equ(set a, set b)
 {
-/* 8-Nov-97     Make it work with sets of different sizes       */
-/*              Easy to understand, too.  Probably faster.      */
-/*              Check for a equal to b                          */
-
     unsigned int    count;      /* MR11 */
     unsigned int    i;          /* MR11 */
 
@@ -331,13 +341,11 @@ int set_equ( set a, set b )
     };
 }
 
-int set_sub( set a, set b )
+/**
+ * Check for a is a PROPER subset of b.
+ */
+int set_sub(set a, set b)
 {
-
-/* 8-Nov-97     Make it work with sets of different sizes       */
-/*              Easy to understand, too.  Probably faster.      */
-/*              Check for a is a PROPER subset of b             */
-
     unsigned int    count;
     unsigned int    i;
 
@@ -358,14 +366,18 @@ int set_sub( set a, set b )
     return 1;
 }
 
-unsigned set_int( set b )
+
+/**
+ * Fast pick any element of the set b
+ * \return nil if there is no element in b
+ */
+unsigned set_int(set b)
 {
-    /* Fast pick any element of the set b */
     register unsigned *p = b.setword;
     register unsigned *endp = &(b.setword[b.n]);
 
     CHK(b);
-    if ( b.n == 0 ) return( nil );
+    if ( b.n == 0 ) return(nil);
 
     do {
         if (*p) {
@@ -384,7 +396,7 @@ unsigned set_int( set b )
     return(nil);
 }
 
-int set_el( unsigned b, set a )
+int set_el(unsigned b, set a)
 {
     CHK(a);
     /* nil is an element of every set */
@@ -395,9 +407,13 @@ int set_el( unsigned b, set a )
     return( a.setword[DIVWORD(b)] & bitmask[MODWORD(b)] );
 }
 
-int set_nil( set a )
+/**
+ * Fast check for nil set
+ * \param a the set to check
+ * \return 0 (false) if any word is non-zero in the set a
+ */
+int set_nil(set a)
 {
-    /* Fast check for nil set */
     register unsigned *p = a.setword;
     register unsigned *endp;
 
@@ -416,14 +432,15 @@ int set_nil( set a )
     return(1);
 }
 
-char * set_str( set a )
+/**
+ * Fast convert set a into ASCII char string...
+ * assumes that all word bits are used in the set
+ * and that SETSIZE is a multiple of WORDSIZE.
+ * Trailing 0 bits are removed from the string.
+ * if no bits are on or set is empty, "" is returned.
+ */
+char *set_str(set a)
 {
-    /* Fast convert set a into ASCII char string...
-       assumes that all word bits are used in the set
-       and that SETSIZE is a multiple of WORDSIZE.
-       Trailing 0 bits are removed from the string.
-       if no bits are on or set is empty, "" is returned.
-    */
     register unsigned *p = a.setword;
     register unsigned *endp = &(a.setword[a.n]);
     static char str_tmp[StrSize+1];
@@ -446,13 +463,15 @@ char * set_str( set a )
     return(&(str_tmp[0]));
 }
 
-set set_val( register char *s )
+
+/**
+ * Fast convert set ASCII char string into a set.
+ * If the string ends early, the remaining set bits
+ * are all made zero.
+ * The resulting set size is just big enough to hold all elements.
+ */
+set set_val(register char *s)
 {
-    /* Fast convert set ASCII char string into a set.
-       If the string ends early, the remaining set bits
-       are all made zero.
-       The resulting set size is just big enough to hold all elements.
-    */
     static set a;
     register unsigned *p, *endp;
 
@@ -477,7 +496,7 @@ set set_val( register char *s )
     return(a);
 }
 
-/*
+/**
  * Or element e into set a.  a can be empty.
  */
 void set_orel( unsigned e, set *a )
@@ -488,7 +507,7 @@ void set_orel( unsigned e, set *a )
     a->setword[DIVWORD(e)] |= bitmask[MODWORD(e)];
 }
 
-/*
+/**
  * Or set b into set a.  a can be empty. does nothing if b empty.
  */
 void set_orin( set *a, set b )
@@ -511,7 +530,7 @@ void set_orin( set *a, set b )
     } while ( q < endq );
 }
 
-/*
+/**
  * And set b into set a.  a can be empty. does nothing if b empty.
  */
 void set_andin( set *a, set b )
@@ -533,17 +552,23 @@ void set_andin( set *a, set b )
     } while ( q < endq );
 }
 
-void set_rm( unsigned e, set a )
+/**
+ * Remove element e from set a.
+ * Does not affect size of set
+ */
+void set_rm(unsigned e, set a)
 {
-    /* Does not effect size of set */
     CHK(a);
     if ( (e == nil) || (NumWords(e) > a.n) ) return;
     a.setword[DIVWORD(e)] ^= (a.setword[DIVWORD(e)]&bitmask[MODWORD(e)]);
 }
 
-void set_clr( set a )
+/**
+ * Remove all elements in a set.
+ * Does not effect size of set.
+ */
+void set_clr(set a)
 {
-    /* Does not effect size of set */
     register unsigned *p = a.setword;
     register unsigned *endp;
 
@@ -555,7 +580,7 @@ void set_clr( set a )
     } while ( p < endp );
 }
 
-set set_dup( set a )
+set set_dup(set a)
 {
     set b;
     register unsigned *p,
@@ -575,7 +600,7 @@ set set_dup( set a )
     return(b);
 }
 
-/*
+/**
  * Return a nil terminated list of unsigned ints that represents all
  * "on" bits in the bit set.
  *
@@ -620,11 +645,11 @@ void _set_pdq( set a, register unsigned *q )
     *q = nil;
 }
 
-/*
+/**
  * Same as _set_pdq except allocate memory.  set_pdq is the natural function
  * to use.
  */
-unsigned * set_pdq( set a )
+unsigned *set_pdq(set a)
 {
     unsigned *q;
     int max_deg;
@@ -639,10 +664,10 @@ unsigned * set_pdq( set a )
     return( q );
 }
 
-/*
+/**
  * A function that produces a hash number for the set.
  */
-unsigned int set_hash( set a, register unsigned int mod )
+unsigned int set_hash(set a, register unsigned int mod)
 {
     /* Fast hash of set a (assumes all bits used) */
     register unsigned *p = &(a.setword[0]);
