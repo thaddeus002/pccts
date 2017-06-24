@@ -30,6 +30,7 @@
 #include <stdlib.h>
 
 #include "set.h"
+#include "pcctscfg.h"
 #include "syn.h"
 #include "hash.h"
 #include "generic.h"
@@ -212,12 +213,7 @@ Junction *alt;
   altArray[BlkLevel]=alt;
 }
 
-static void 
-#ifdef __USE_PROTOS
-arrayCheck(void)
-#else
-arrayCheck()
-#endif
+static void arrayCheck()
 {
   ExceptionGroup    **egArrayNew;
   LabelEntry        **leArrayNew;
@@ -252,12 +248,7 @@ arrayCheck()
 
 /* always call leFixup() BEFORE egFixup() */
 
-void 
-#ifdef __USE_PROTOS
-egFixup(void) 
-#else
-egFixup()
-#endif
+void egFixup()
 {
   int               i;
   ExceptionGroup    *nextEG;
@@ -276,11 +267,7 @@ egFixup()
 
 /* always call leFixup() BEFORE egFixup() */
 
-#ifdef __USE_PROTOS
-void leFixup(void) 
-#else
-void leFixup() 
-#endif
+void leFixup()
 {
 
   int               i;
@@ -298,11 +285,7 @@ void leFixup()
 
 /* always call altFixup() BEFORE egFixup() */
 
-#ifdef __USE_PROTOS
-void altFixup(void)
-#else
-void altFixup() 
-#endif
+void altFixup()
 {
 
   int               i;

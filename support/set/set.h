@@ -58,7 +58,6 @@
 #ifndef __GATE_SET_H
 #define __GATE_SET_H
 
-#include "pcctscfg.h"
 
 
 /* Define usable bits per unsigned int word */
