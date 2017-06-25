@@ -13,16 +13,16 @@
 
 A central place for information about PCCTS 1.33 is:
 
-        http://www.polhode.com/pccts.html
+        [http://www.polhode.com/pccts.html](http://www.polhode.com/pccts.html)
 
 The maintenance release is available from:
 
-        http://www.polhode.com/pccts133mr.zip
+        [http://www.polhode.com/pccts133mr.zip](http://www.polhode.com/pccts133mr.zip)
 
 There is a ready-to-run version for win32 for Microsoft Visual Studio
 at the same site.  It is available from:
 
-        http://www.polhode.com/win32.zip
+        [http://www.polhode.com/win32.zip](http://www.polhode.com/win32.zip)
 
 New users should visit http://www.polhode.com/pccts.html in
 order to get the following document:
@@ -35,9 +35,9 @@ useful for someone starting out. It is a based on 1.33mr21
 When you have a little more experience, be sure to review the
 following documents in the distribution kit:
 
-            CHANGES_FROM_133.txt
-            CHANGES_FROM_133_BEFORE_MR13.txt
-            KNOWN_PROBLEMS.txt
+        CHANGES_FROM_133.txt
+        CHANGES_FROM_133_BEFORE_MR13.txt
+        KNOWN_PROBLEMS.txt
 
 
 ## INSTALLATION (Unix)
@@ -55,12 +55,13 @@ following documents in the distribution kit:
         * sorcerer (not build by default)
         * genmk (not build by default)
 
-1. Copy the tools to /usr/bin or /usr/local/bin if you like. If you
-   don't wish to then add pccts/bin to your path.
+1. Copy the tools to _/usr/bin_ or _/usr/local/bin_ if you like. If you
+   don't wish to then add _pccts/bin_ to your path.
 
 1. To get an up-to-date list of program options execute the
-   program with no command line options.  To get up-to-date
-   documentation read CHANGES_FROM_133*.txt and KNOWN_PROBLEMS.txt
+   program with no command line options. To get up-to-date
+   documentation read _CHANGES_FROM_133*.txt_ and 
+   _KNOWN_PROBLEMS.txt_
    
 1. You need not create a library. The makefile created by genmk
    assumes that the files are not part of a library. 
@@ -75,11 +76,10 @@ following documents in the distribution kit:
 
    For C++ users place the following elements in the library:
 
-        AParser.cpp
-        ASTBase.cpp
-        ATokenBuffer.cpp
-        BufFileInput.cpp (optional)
-        DLexerBase.cpp
-        PCCTSAST.cpp
-        SList.cpp
-
+   * AParser.cpp
+   * ASTBase.cpp
+   * ATokenBuffer.cpp
+   * BufFileInput.cpp (optional)
+   * DLexerBase.cpp
+   * PCCTSAST.cpp
+   * SList.cpp
