@@ -44,25 +44,25 @@ following documents in the distribution kit:
 
 1. Clone this repository : `git clone https://github.com/thaddeus002/pccts.git`
 
-1. cd to the main pccts directory.
+1. Go to the main pccts directory : `cd pccts`
 
-1. make
+1. Build the tools : `make`
 
    This will create in bin directory :
 
-        antlr
-        dlg
-        sorcerer
-        genmk
+        * antlr
+        * dlg
+        * sorcerer (not build by default)
+        * genmk (not build by default)
 
-1. Copy to /usr/local/bin or /usr/local/bin if you like.  If you
+1. Copy the tools to /usr/bin or /usr/local/bin if you like. If you
    don't wish to then add pccts/bin to your path.
 
 1. To get an up-to-date list of program options execute the
    program with no command line options.  To get up-to-date
    documentation read CHANGES_FROM_133*.txt and KNOWN_PROBLEMS.txt
    
-1. You need not create a library.  The makefile created by genmk
+1. You need not create a library. The makefile created by genmk
    assumes that the files are not part of a library. 
 
    If you wish to create a library from elements of pccts/h:
