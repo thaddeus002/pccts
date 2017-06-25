@@ -11,21 +11,21 @@
                                  Hank Dietz
 
 
-A central place for information about PCCTS 1.33 is:
+A central place for information about PCCTS 1.33 is :
 
-    [http://www.polhode.com/pccts.html](http://www.polhode.com/pccts.html)
+   [http://www.polhode.com/pccts.html](http://www.polhode.com/pccts.html)
 
-The maintenance release is available from:
+The maintenance release is available from :
 
-    [http://www.polhode.com/pccts133mr.zip](http://www.polhode.com/pccts133mr.zip)
+   [http://www.polhode.com/pccts133mr.zip](http://www.polhode.com/pccts133mr.zip)
 
 There is a ready-to-run version for win32 for Microsoft Visual Studio
-at the same site.  It is available from:
+at the same site. It is available from :
 
-    [http://www.polhode.com/win32.zip](http://www.polhode.com/win32.zip)
+   [http://www.polhode.com/win32.zip](http://www.polhode.com/win32.zip)
 
 New users should visit http://www.polhode.com/pccts.html in
-order to get the following document:
+order to get the following document :
 
         "Notes For New Users of PCCTS"
 
@@ -44,15 +44,15 @@ following documents in the distribution kit:
 
 1. Clone this repository : 
 
-   > `git clone https://github.com/thaddeus002/pccts.git`
+   > git clone https://github.com/thaddeus002/pccts.git
 
 1. Go to the main pccts directory :
 
-   > `cd pccts`
+   > cd pccts
 
 1. Build the tools :
 
-   > `make`
+   > make
 
    This will create in _bin_ directory :
 
@@ -61,13 +61,13 @@ following documents in the distribution kit:
     * sorcerer (not build by default)
     * genmk (not build by default)
 
-1. Copy the tools to _/usr/bin_ or _/usr/local/bin_ if you like. If you
-   don't wish to then add _pccts/bin_ to your path.
+1. Copy the tools to `/usr/bin` or `/usr/local/bin` if you like. If you
+   don't wish to then add `pccts/bin` to your path.
 
 1. To get an up-to-date list of program options execute the
    program with no command line options. To get up-to-date
-   documentation read _CHANGES_FROM_133*.txt_ and 
-   _KNOWN_PROBLEMS.txt_
+   documentation read `CHANGES_FROM_133*.txt` and 
+   `KNOWN_PROBLEMS.txt`
    
 1. You need not create a library. The makefile created by genmk
    assumes that the files are not part of a library. 
@@ -82,10 +82,14 @@ following documents in the distribution kit:
 
    For C++ users place the following elements in the library:
 
-   * AParser.cpp
-   * ASTBase.cpp
-   * ATokenBuffer.cpp
-   * BufFileInput.cpp (optional)
-   * DLexerBase.cpp
-   * PCCTSAST.cpp
-   * SList.cpp
+    * AParser.cpp
+    * ASTBase.cpp
+    * ATokenBuffer.cpp
+    * BufFileInput.cpp (optional)
+    * DLexerBase.cpp
+    * PCCTSAST.cpp
+    * SList.cpp
+
+## LICENSE
+
+*pccts* is under public domain. See [LICENSE](LICENSE).
