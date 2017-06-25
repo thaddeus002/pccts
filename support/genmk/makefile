@@ -11,7 +11,9 @@ OBJ=genmk.o
 
 IFLAGS = -I../../h
 CC ?= cc
-BAG=../../bin/bag
+
+%.o: %.c
+	$(CC) $(CFLAGS) $(IFLAGS) -c $<
 
 genmk: $(OBJ) $(SRC) ../../h/pcctscfg.h
 	$(CC) $(CFLAGS) $(IFLAGS) -o genmk $(OBJ)
@@ -21,9 +23,3 @@ clean:
 
 scrub:
 	rm -rf genmk core *.o
-
-shar:
-	shar genmk.c makefile > genmk.shar
-
-archive:
-	$(BAG) genmk.c makefile > genmk.bag

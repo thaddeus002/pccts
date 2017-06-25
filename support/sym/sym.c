@@ -70,18 +70,18 @@
  *	main()
  *	{
  *	    Sym *scope1=NULL, *scope2=NULL, *a, *p;
- *	
+ *
  *	    zzs_init(101, 100);
- *	
+ *
  *	    a = zzs_new("Apple");	zzs_add(a->symbol, a);	-- No scope
  *	    zzs_scope( &scope1 );	-- enter scope 1
  *	    a = zzs_new("Plum");	zzs_add(a->symbol, a);
  *	    zzs_scope( &scope2 );	-- enter scope 2
  *	    a = zzs_new("Truck");	zzs_add(a->symbol, a);
- *	
+ *
  *    	p = zzs_get("Plum");
  *    	if ( p == NULL ) fprintf(stderr, "Hmmm...Can't find 'Plum'\n");
- *	
+ *
  *    	p = zzs_rmscope(&scope1)
  *    	for (; p!=NULL; p=p->scope) {printf("Scope1:  %s\n", p->symbol);}
  *    	p = zzs_rmscope(&scope2)
@@ -108,12 +108,8 @@
  */
 
 #include <stdio.h>
-#if defined(__STDC__) || defined(__USE_PROTOS)
 #include <string.h>
 #include <stdlib.h>
-#else
-#include <malloc.h>
-#endif
 #include "sym.h"
 
 #define StrSame		0
@@ -125,12 +121,7 @@ static char *strings;
 static char *strp;
 static int strsize = 0;
 
-#ifdef __USE_PROTOS
 void zzs_init(int sz,int strs)
-#else
-void zzs_init(sz, strs)
-int sz, strs;
-#endif
 {
 	if ( sz <= 0 || strs <= 0 ) return;
 	table = (Sym **) calloc(sz, sizeof(Sym *));
@@ -150,31 +141,21 @@ int sz, strs;
 	strp = strings;
 }
 
-#ifdef __USE_PROTOS
-void zzs_done(void)
-#else
 void zzs_done()
-#endif
 {
 	if ( table != NULL ) free( table );
 	if ( strings != NULL ) free( strings );
 }
 
-#ifdef __USE_PROTOS
 void zzs_add(char *key,Sym rec)
-#else
-void zzs_add(key, rec)
-char *key;
-register Sym *rec;
-#endif
 {
 	register unsigned int h=0;
 	register char *p=key;
-	
+
 	HASH(p, h);
 	rec->hash = h;					/* save hash code for fast comp later */
 	h %= size;
-	
+
 	if ( CurScope != NULL ) {rec->scope = *CurScope; *CurScope = rec;}
 	rec->next = table[h];			/* Add to doubly-linked list */
 	rec->prev = NULL;
@@ -183,19 +164,14 @@ register Sym *rec;
 	rec->head = &(table[h]);
 }
 
-#ifdef __USE_PROTOS
 Sym * zzs_get(char *key)
-#else
-Sym * zzs_get(key)
-char *key;
-#endif
 {
 	register unsigned int h=0;
 	register char *p=key;
 	register Sym *q;
-	
+
 	HASH(p, h);
-	
+
 	for (q = table[h%size]; q != NULL; q = q->next)
 	{
 		if ( q->hash == h )		/* do we even have a chance of matching? */
@@ -204,7 +180,7 @@ char *key;
 	return( NULL );
 }
 
-/*
+/**
  * Unlink p from the symbol table.  Hopefully, it's actually in the
  * symbol table.
  *
@@ -213,18 +189,13 @@ char *key;
  *
  * Will do nothing if all list pointers are NULL
  */
-#ifdef __USE_PROTOS
 void zzs_del(Sym *p)
-#else
-void zzs_del(p)
-register Sym *p;
-#endif
 {
 	if ( p == NULL ) {fprintf(stderr, "zzs_del(NULL)\n"); exit(1);}
 	if ( p->prev == NULL )	/* Head of list */
 	{
 		register Sym **t = p->head;
-		
+
 		if ( t == NULL ) return;	/* not part of symbol table */
 		(*t) = p->next;
 		if ( (*t) != NULL ) (*t)->prev = NULL;
@@ -238,12 +209,7 @@ register Sym *p;
 	p->head = NULL;
 }
 
-#ifdef __USE_PROTOS
 void zzs_keydel(char *key)
-#else
-void zzs_keydel(key)
-char *key;
-#endif
 {
 	Sym *p = zzs_get(key);
 
@@ -252,28 +218,16 @@ char *key;
 
 /* S c o p e  S t u f f */
 
-/* Set current scope to 'scope'; return current scope if 'scope' == NULL */
-
-#ifdef __USE_PROTOS
+/** Set current scope to 'scope'; return current scope if 'scope' == NULL */
 Sym ** zzs_scope(Sym **scope)
-#else
-Sym ** zzs_scope(scope)
-Sym **scope;
-#endif
 {
 	if ( scope == NULL ) return( CurScope );
 	CurScope = scope;
 	return( scope );
 }
 
-/* Remove a scope described by 'scope'.  Return pointer to 1st element in scope */
-
-#ifdef __USE_PROTOS
+/** Remove a scope described by 'scope'.  Return pointer to 1st element in scope */
 Sym * zzs_rmscope(Sym **scope)
-#else
-Sym * zzs_rmscope(scope)
-register Sym **scope;
-#endif
 {
 	register Sym *p;
 	Sym *start;
@@ -285,23 +239,19 @@ register Sym **scope;
 	return( start );
 }
 
-#ifdef __USE_PROTOS
-void zzs_stat(void)
-#else
 void zzs_stat()
-#endif
 {
 	static unsigned short count[20];
 	unsigned int i,n=0,low=0, hi=0;
 	register Sym **p;
 	float avg=0.0;
-	
+
 	for (i=0; i<20; i++) count[i] = 0;
 	for (p=table; p<&(table[size]); p++)
 	{
 		register Sym *q = *p;
 		unsigned int len;
-		
+
 		if ( q != NULL && low==0 ) low = p-table;
 		len = 0;
 		if ( q != NULL ) printf("[%d]", p-table);
@@ -335,55 +285,38 @@ void zzs_stat()
 	printf("Range of hash function: %d..%d\n", low, hi);
 }
 
-/*
+/**
  * Given a string, this function allocates and returns a pointer to a
  * symbol table record whose "symbol" pointer is reset to a position
  * in the string table.
  */
-
-#ifdef __USE_PROTOS
 Sym * zzs_new(char *text)
-#else
-Sym * zzs_new(text)
-char *text;
-#endif
 {
 	Sym *p;
-	
+
 	if ( (p = (Sym *) calloc(1,sizeof(Sym))) == 0 )
 	{
 		fprintf(stderr,"Out of memory\n");
 		exit(1);
 	}
 	p->symbol = zzs_strdup(text);
-	
+
 	return p;
 }
 
-/* create a new symbol table entry and add it to the symbol table */
-
-#ifdef __USE_PROTOS
+/** create a new symbol table entry and add it to the symbol table */
 Sym * zzs_newadd(char *text)
-#else
-Sym * zzs_newadd(text)
-char *text;
-#endif
 {
 	Sym *p = zzs_new(text);
 	if ( p != NULL ) zzs_add(text, p);
 	return p;
 }
 
-/* Add a string to the string table and return a pointer to it.
+/**
+ * Add a string to the string table and return a pointer to it.
  * Bump the pointer into the string table to next avail position.
  */
-
-#ifdef __USE_PROTOS
 char * zzs_strdup(char *s)
-#else
-char * zzs_strdup(s)
-register char *s;
-#endif
 {
 	register char *start=strp;
 

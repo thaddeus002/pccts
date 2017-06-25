@@ -54,7 +54,7 @@ following documents in the distribution kit:
 
    > make
 
-   This will create in _bin_ directory :
+   This will create in `bin` directory :
 
     * antlr
     * dlg

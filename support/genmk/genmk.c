@@ -67,158 +67,83 @@ static char *compilerCCC="CC";
 static char *compilerCC="cc";
 static char *pccts_path="/usr/local/pccts";
 
-#ifdef __STDC__
 void help(void);
 void mk(char *project, char **files, int n, int argc, char **argv);
 void pfiles(char **files, int n, char *suffix);
 void fatal(char *msg);
 void warn(char *msg);
-#else
-void help();
-void mk();
-void pfiles();
-void fatal();
-void warn();
-#endif
+void pclasses(char **classes, int n, char *suffix);
 
 typedef struct _Opt {
-			char *option;
-			int arg;
+	char *option;
+	int arg;
 #ifdef __cplusplus
-			void (*process)(...);
+	void (*process)(...);
 #else
-			void (*process)();
+	void (*process)();
 #endif
-			char *descr;
-		} Opt;
+	char *descr;
+} Opt;
 
-#ifdef __STDC__
 static void ProcessArgs(int, char **, Opt *);
-#else
-static void ProcessArgs();
-#endif
 
-static void
-#ifdef __STDC__
-pProj(char *s, char *t )
-#else
-pProj( s, t )
-char *s;
-char *t;
-#endif
+static void pProj(char *s, char *t )
 {
 	project = t;
 }
 
-static void
-#ifdef __STDC__
-pUL( char *s )
-#else
-pUL( s )
-char *s;
-#endif
+static void pUL( char *s )
 {
 	user_lexer = 1;
 }
 
-static void
-#ifdef __STDC__
-pCPP( char *s )
-#else
-pCPP( s )
-char *s;
-#endif
+static void pCPP( char *s )
 {
 	gen_CPP = 1;
 }
 
-static void
-#ifdef __STDC__
-pUT( char *s, char *t )
-#else
-pUT( s, t )
-char *s;
-char *t;
-#endif
+static void pUT( char *s, char *t )
 {
 	user_token_types = t;
 }
 
-static void
-#ifdef __STDC__
-pTrees( char *s )
-#else
-pTrees( s )
-char *s;
-#endif
+static void pTrees( char *s )
 {
 	gen_trees = 1;
 }
 
-static void
-#ifdef __STDC__
-pHoist( char *s )
-#else
-pHoist( s )
-char *s;
-#endif
+static void pHoist( char *s )
 {
 	gen_hoist = 1;
 }
 
-static void
-#ifdef __STDC__
-pSor( char *s )
-#else
-pSor( s )
-char *s;
-#endif
+static void pSor( char *s )
 {
 	require(num_sors<MAX_SORS, "exceeded max # of sorcerer groups");
 	num_sors++;
 	pTrees(NULL); /* silently turn on tree generation */
 }
 
-static void
-#ifdef __STDC__
-pSFiles( char *s, char *t )
-#else
-pSFiles( s, t )
-char *s;
-char *t;
-#endif
+static void pSFiles( char *s, char *t )
 {
 	if (num_sors==0)
 	{
 		pSor(NULL);
 		warn("sorcerer input file before any '-sor' option");
 	}
-		
+
 	require(num_sfiles[num_sors-1]<MAX_SFILES,
 		 "exceeded max # of sorcerer input files");
 	sfiles[num_sors-1][num_sfiles[num_sors-1]++] = t;
 }
 
-static void
-#ifdef __STDC__
-pCFiles( char *s, char *t )
-#else
-pCFiles( s, t )
-char *s;
-char *t;
-#endif
+static void pCFiles( char *s, char *t )
 {
 	require(num_cfiles<MAX_CFILES, "exceeded max # of C/C++ input files");
 	cfiles[num_cfiles++] = t;
 }
 
-int
-#ifdef __STDC__
-isKnownSuffix( char *s )
-#else
-isKnownSuffix( s )
-	char *s;
-#endif
+int isKnownSuffix( char *s )
 {
 	if(s==NULL) return 0;
 	if (strcasecmp(s,".c")==0) return 1;
@@ -230,13 +155,7 @@ isKnownSuffix( s )
 	return 0;
 }
 
-static void
-#ifdef __STDC__
-pFile( char *s )
-#else
-pFile( s )
-char *s;
-#endif
+static void pFile( char *s )
 {
 	if ( *s=='-' )
 	{
@@ -258,14 +177,7 @@ char *s;
 	files[num_files++] = s;
 }
 
-static void
-#ifdef __STDC__
-pClass( char *s, char *t )
-#else
-pClass( s, t )
-char *s;
-char *t;
-#endif
+static void pClass( char *s, char *t )
 {
 	if (num_sors==0)
 	{
@@ -277,14 +189,7 @@ char *t;
 	}
 }
 
-static void
-#ifdef __STDC__
-pDLGClass( char *s, char *t )
-#else
-pDLGClass( s, t )
-char *s;
-char *t;
-#endif
+static void pDLGClass( char *s, char *t )
 {
 	if ( !gen_CPP ) {
 		fprintf(stderr, "-dlg-class makes no sense without C++ mode; ignored...");
@@ -292,52 +197,24 @@ char *t;
 	else dlg_class = t;
 }
 
-static void
-#ifdef __STDC__
-pOdir( char *s, char *t )
-#else
-pOdir( s, t )
-char *s;
-char *t;
-#endif
+static void pOdir( char *s, char *t )
 {
 	outdir = t;
 }
 
-static void
-#ifdef __STDC__
-pHdr( char *s, char *t )
-#else
-pHdr( s, t )
-char *s;
-char *t;
-#endif
+static void pHdr( char *s, char *t )
 {
 	hdr = t;
 }
 
-static void
-#ifdef __STDC__
-pCompiler( char *s, char *t )
-#else
-pCompiler( s, t )
-char *s;
-char *t;
-#endif
+static void pCompiler( char *s, char *t )
 {
 	compilerCCC = t;
 	compilerCC = t;
 	nondef_comp = 1;
 }
 
-static void
-#ifdef __STDC__
-ppccts_path( char *s, char *t )
-#else
-ppccts_path( s, t )
-char *s;
-char *t;
-#endif
+static void ppccts_path( char *s, char *t )
 {
 	pccts_path = t;
 }
@@ -363,25 +240,15 @@ Opt options[] = {
 	{ NULL, 0, NULL, NULL }
 };
 
-#ifdef __STDC__
 extern char *DIR(void);
-#else
-extern char *DIR();
-#endif
 
-#ifdef __STDC__
 int main(int argc, char **argv)
-#else
-int main(argc, argv)
-int argc;
-char **argv;
-#endif
 {
 	int i;
-	
+
 	if ( argc == 1 ) { help(); DIE; }
 	for(i=0;i<MAX_SORS;i++) num_sfiles[i]=0;
-	
+
 	ProcessArgs(argc-1, &(argv[1]), options);
 
 	strcpy(ATOKENBUFFER_O, ATOKENBUFFER_C);
@@ -424,11 +291,7 @@ char **argv;
 	DONE;
 }
 
-#ifdef __STDC__
 void help(void)
-#else
-void help()
-#endif
 {
 	Opt *p = options;
 	static char buf[1000+1];
@@ -444,16 +307,7 @@ void help()
 	}
 }
 
-#ifdef __STDC__
 void mk(char *project, char **files, int n, int argc, char **argv)
-#else
-void mk(project, files, n, argc, argv)
-char *project;
-char **files;
-int n;
-int argc;
-char **argv;
-#endif
 {
 	int i,j;
 
@@ -476,7 +330,7 @@ char **argv;
 	else printf("# ANTLR-defined token types\n");
 	printf("#\n");
 /***********
-	printf(".SUFFIXES:\n.SUFFIXES:\t.o .cpp .c .h .g .i .dlg .sor\n"); 
+	printf(".SUFFIXES:\n.SUFFIXES:\t.o .cpp .c .h .g .i .dlg .sor\n");
  ***********/
 	if ( user_token_types!=NULL ) {
 		printf("# Make sure #tokdefs directive in ANTLR grammar lists this file:\n");
@@ -821,7 +675,7 @@ char **argv;
 			pclasses(&sclasses[i], 1, CPP_FILE_SUFFIX_NO_DOT);
 			printf(" ");
 			pclasses(&sclasses[i], 1, "h");
-			if ( strcmp(hdr,"stdpccts.h")!=0 ) 
+			if ( strcmp(hdr,"stdpccts.h")!=0 )
 			{
 				printf(" ");
 				printf("$(HDR_FILE) stdpccts.h");
@@ -842,7 +696,7 @@ char **argv;
 		printf("STreeParser%s ",OBJ_FILE_SUFFIX);
 		printf("$(SOR_LIB)%sSTreeParser.cpp\n\n",DirectorySymbol);
 	}
-	
+
 	printf("$(ANTLR_SPAWN) : $(GRM)\n");
 	printf("\t$(ANTLR) $(AFLAGS) $(GRM)\n");
 
@@ -927,14 +781,7 @@ char **argv;
 	printf("\n\n");
 }
 
-#ifdef __STDC__
 void pfiles(char **files, int n, char *suffix)
-#else
-void pfiles(files, n, suffix)
-char **files;
-int n;
-char *suffix;
-#endif
 {
 	int first=1;
 
@@ -965,14 +812,7 @@ char *suffix;
 	}
 }
 
-#ifdef __STDC__
-pclasses(char **classes, int n, char *suffix)
-#else
-pclasses(classes, n, suffix)
-char **classes;
-int n;
-char *suffix;
-#endif
+void pclasses(char **classes, int n, char *suffix)
 {
 	int first=1;
 
@@ -991,15 +831,7 @@ char *suffix;
 	}
 }
 
-static void
-#ifdef __STDC__
-ProcessArgs( int argc, char **argv, Opt *options )
-#else
-ProcessArgs( argc, argv, options )
-int argc;
-char **argv;
-Opt *options;
-#endif
+static void ProcessArgs( int argc, char **argv, Opt *options )
 {
 	Opt *p;
 	require(argv!=NULL, "ProcessArgs: command line NULL");
@@ -1028,35 +860,21 @@ Opt *options;
 	}
 }
 
-#ifdef __STDC__
 void fatal( char *err_)
-#else
-void fatal( err_)
-char *err_;
-#endif
 {
 	fprintf(stderr, "genmk: %s\n", err_);
 	exit(1);
 }
 
-#ifdef __STDC__
 void warn( char *err_)
-#else
-void warn( err_)
-char *err_;
-#endif
 {
 	fprintf(stderr, "genmk: %s\n", err_);
 }
 
-#ifdef __STDC__
-char *DIR(void)
-#else
 char *DIR()
-#endif
 {
 	static char buf[200+1];
-	
+
 	if ( strcmp(outdir,TopDirectory)==0 ) return "";
 	sprintf(buf, "%s%s", outdir, DirectorySymbol);
 	return buf;
