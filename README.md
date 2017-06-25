@@ -13,16 +13,16 @@
 
 A central place for information about PCCTS 1.33 is:
 
-        [http://www.polhode.com/pccts.html](http://www.polhode.com/pccts.html)
+    [http://www.polhode.com/pccts.html](http://www.polhode.com/pccts.html)
 
 The maintenance release is available from:
 
-        [http://www.polhode.com/pccts133mr.zip](http://www.polhode.com/pccts133mr.zip)
+    [http://www.polhode.com/pccts133mr.zip](http://www.polhode.com/pccts133mr.zip)
 
 There is a ready-to-run version for win32 for Microsoft Visual Studio
 at the same site.  It is available from:
 
-        [http://www.polhode.com/win32.zip](http://www.polhode.com/win32.zip)
+    [http://www.polhode.com/win32.zip](http://www.polhode.com/win32.zip)
 
 New users should visit http://www.polhode.com/pccts.html in
 order to get the following document:
@@ -42,18 +42,24 @@ following documents in the distribution kit:
 
 ## INSTALLATION (Unix)
 
-1. Clone this repository : `git clone https://github.com/thaddeus002/pccts.git`
+1. Clone this repository : 
 
-1. Go to the main pccts directory : `cd pccts`
+   > `git clone https://github.com/thaddeus002/pccts.git`
 
-1. Build the tools : `make`
+1. Go to the main pccts directory :
 
-   This will create in bin directory :
+   > `cd pccts`
 
-        * antlr
-        * dlg
-        * sorcerer (not build by default)
-        * genmk (not build by default)
+1. Build the tools :
+
+   > `make`
+
+   This will create in _bin_ directory :
+
+    * antlr
+    * dlg
+    * sorcerer (not build by default)
+    * genmk (not build by default)
 
 1. Copy the tools to _/usr/bin_ or _/usr/local/bin_ if you like. If you
    don't wish to then add _pccts/bin_ to your path.
