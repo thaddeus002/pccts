@@ -27,12 +27,7 @@
  */
 
 #include "pcctscfg.h"
-
-#ifdef __STDC__
 #include "pccts_stdlib.h"
-#else
-#include <malloc.h>
-#endif
 #include "pccts_string.h"
 
 /* 133MR1 include stdio.h for fprintf in charptr.c */
@@ -43,14 +38,7 @@
 
 #include "charptr.h"
 
-#ifdef __USE_PROTOS
 zzcr_attr(Attrib *a,int token,char *text)
-#else
-zzcr_attr(a,token,text)
-Attrib *a;
-int token;
-char *text;
-#endif
 {
 	*a = (char *) malloc(strlen(text)+1);			/* MR6 */
 	if ( *a == NULL ) {fprintf(stderr, "zzcr_attr: out of memory!\n"); exit(-1);}

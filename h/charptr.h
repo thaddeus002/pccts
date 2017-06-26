@@ -36,13 +36,22 @@
 #define ZZCHARPTR_H
 
 typedef char *Attrib;
+
+/**
+ * make a (of type Attrib *) to point to a null Attrib.
+ */
 #define zzdef0(a)		{*(a)=NULL;}
-/* MR8  Jens Tingleff (jensting@imaginet.fr)                                */
-/*          Set memory pointer to null after free()                         */
+
+/**
+ * Free an Attrib. And set memory pointer to null after free().
+ */
 #define zzd_attr(a)		{if ( *(a)!=NULL ) {free(*(a)); *(a)=NULL; }; }
 
-#ifdef __STDC__
-extern zzcr_attr(Attrib *,int,char *);
-#endif
+/**
+ * Make a point to a new string containg a given text.
+ * \param token not used
+ */
+extern void zzcr_attr(Attrib *a, int token ,char *text);
+
 
 #endif

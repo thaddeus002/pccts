@@ -1,5 +1,6 @@
-/*
- * genmk -- a program to make makefiles for PCCTS
+/**
+ * \file genmk.c
+ * \brief a program to make makefiles for PCCTS
  *
  * ANTLR 1.33MR23
  * Terence John Parr 1989 - 2000
@@ -11,13 +12,8 @@
 #include <string.h>
 #include "pcctscfg.h" /* be sensitive to what ANTLR/DLG call the files */
 
-#ifdef VAXC
-#define DIE		return 0;
-#define DONE	return 1;
-#else
 #define DIE		return 1;
 #define DONE	return 0;
-#endif
 
 #ifndef require
 #define require(expr, err) {if ( !(expr) ) fatal(err);}
@@ -67,57 +63,66 @@ static char *compilerCCC="CC";
 static char *compilerCC="cc";
 static char *pccts_path="/usr/local/pccts";
 
-void help(void);
+/** print help message */
+void help();
 void mk(char *project, char **files, int n, int argc, char **argv);
 void pfiles(char **files, int n, char *suffix);
+/** Print error message and quit program */
 void fatal(char *msg);
+/** Print warning message */
 void warn(char *msg);
 void pclasses(char **classes, int n, char *suffix);
 
+/**
+ * A program option.
+ */
 typedef struct _Opt {
-	char *option;
+    /** option name (like it appear on command line */
+    char *option;
+
 	int arg;
+    /** */
 #ifdef __cplusplus
 	void (*process)(...);
 #else
 	void (*process)();
 #endif
-	char *descr;
+	char *descr; /**< description, will be print on help message */
 } Opt;
 
 static void ProcessArgs(int, char **, Opt *);
 
-static void pProj(char *s, char *t )
+static void pProj(char *s, char *t)
 {
 	project = t;
 }
 
-static void pUL( char *s )
+static void pUL(char *s)
 {
 	user_lexer = 1;
 }
 
-static void pCPP( char *s )
+static void pCPP(char *s)
 {
 	gen_CPP = 1;
 }
 
-static void pUT( char *s, char *t )
+static void pUT(char *s, char *t)
 {
 	user_token_types = t;
 }
 
-static void pTrees( char *s )
+static void pTrees(char *s)
 {
 	gen_trees = 1;
 }
 
-static void pHoist( char *s )
+static void pHoist(char *s)
 {
 	gen_hoist = 1;
 }
 
-static void pSor( char *s )
+static void pSor(char *s)
 {
 	require(num_sors<MAX_SORS, "exceeded max # of sorcerer groups");
 	num_sors++;
@@ -162,6 +167,7 @@ static void pFile( char *s )
 		fprintf(stderr, "invalid option: '%s'; ignored...",s);
 		return;
 	}
+
 	switch(isKnownSuffix(strrchr(s,'.')))
 	{
 	 case 1: /* c/c++ */
@@ -219,6 +225,9 @@ static void ppccts_path( char *s, char *t )
 	pccts_path = t;
 }
 
+/**
+ * Options for the program.
+ */
 Opt options[] = {
 	{ "-CC", 0,	pCPP,			"Generate C++ output"},
 	{ "-class", 1,	pClass,		"Name of a grammar class defined in grammar (if C++)"},
@@ -240,7 +249,7 @@ Opt options[] = {
 	{ NULL, 0, NULL, NULL }
 };
 
-extern char *DIR(void);
+char *DIR();
 
 int main(int argc, char **argv)
 {
@@ -291,12 +300,15 @@ int main(int argc, char **argv)
 	DONE;
 }
 
-void help(void)
+/**
+ * Print help message on stderr.
+ */
+void help()
 {
 	Opt *p = options;
 	static char buf[1000+1];
 
-	fprintf(stderr, "genmk [options] f1.g ... fn.g\n");
+	fprintf(stderr, "Usage : genmk [options] f1.g ... fn.g\n");
 	while ( p->option!=NULL && *(p->option) != '*' )
 	{
 		buf[0]='\0';
@@ -860,22 +872,22 @@ static void ProcessArgs( int argc, char **argv, Opt *options )
 	}
 }
 
-void fatal( char *err_)
+void fatal(char *err)
 {
-	fprintf(stderr, "genmk: %s\n", err_);
+	fprintf(stderr, "genmk: %s\n", err);
 	exit(1);
 }
 
-void warn( char *err_)
+void warn(char *err)
 {
-	fprintf(stderr, "genmk: %s\n", err_);
+	fprintf(stderr, "genmk: %s\n", err);
 }
 
 char *DIR()
 {
 	static char buf[200+1];
 
-	if ( strcmp(outdir,TopDirectory)==0 ) return "";
+	if (!strcmp(outdir,TopDirectory)) return "";
 	sprintf(buf, "%s%s", outdir, DirectorySymbol);
 	return buf;
 }
