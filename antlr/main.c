@@ -1284,7 +1284,7 @@ void errNoCR( char *err )
 	fprintf(stderr, " error: %s", err);
 }
 
-UserAction *newUserAction(s)
+UserAction *newUserAction(char *s)
 {
 	UserAction *ua = (UserAction *) calloc(1, sizeof(UserAction));
 	require(ua!=NULL, "cannot allocate UserAction");
