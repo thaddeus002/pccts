@@ -12,6 +12,10 @@ OBJ=genmk.o
 IFLAGS = -I../../h
 CC ?= cc
 
+#ifndef PREFIX
+PREFIX=/usr/local
+#endif
+
 %.o: %.c
 	$(CC) $(CFLAGS) $(IFLAGS) -c $<
 
@@ -23,3 +27,6 @@ clean:
 
 scrub:
 	rm -rf genmk core *.o
+
+install:
+	install genmk $(PREFIX)/bin

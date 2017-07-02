@@ -13,17 +13,19 @@ SET=../support/set
 PCCTS_H=../h
 
 CC ?= gcc
-ANTLR = ../bin/antlr
-DLG = ../bin/dlg
 CPPFLAGS += -I. -I$(SET) -I$(PCCTS_H) -DUSER_ZZSYN -DZZLEXBUFSIZE=32000
 OBJ_EXT = o
-OUT_OBJ = -o 
+OUT_OBJ = -o
 OBJ = dlg_p.o dlg_a.o main.o err.o set.o support.o output.o \
         relabel.o automata.o
 
+#ifndef PREFIX
+PREFIX=/usr/local
+#endif
+
 dlg : $(OBJ) $(SRC)
 		$(CC) $(CFLAGS) $(CPPFLAGS) -o dlg $(OBJ)
-		mv dlg ../bin/
+
 
 SRC = dlg_p.c dlg_a.c main.c err.c $(SET)/set.c support.c output.c \
         relabel.c automata.c
@@ -55,5 +57,7 @@ clean:
 
 #remove everything in clean plus the PCCTS files generated
 scrub:
-	rm -f $(PCCTS_GEN) *.$(OBJ_EXT) core
+	rm -f dlg $(PCCTS_GEN) *.$(OBJ_EXT) core
 
+install: dlg
+	install dlg $(PREFIX)/bin
