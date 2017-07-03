@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <stdlib.h>
-#include <iostream.h>
+#include <iostream>
 
 #include "config.h"					/* include token defs */
 #include "tokens.h"					/* include token defs */
@@ -13,8 +13,8 @@
 #include "MyLexer.h"				/* define your lexer */
 typedef ANTLRCommonToken ANTLRToken;/* use a predefined Token class */
 
-void panic(char *s) {
-   cerr << s << '\n';
+void panic(std::string s) {
+   std::cerr << s << '\n';
    exit(5);
 }
 

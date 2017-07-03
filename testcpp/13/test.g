@@ -10,7 +10,7 @@
  *		found assignment to a
  */
 <<
-#include <stream.h>
+#include <iostream>
 #include "DLGLexer.h"
 #include "PBlackBox.h"
 typedef ANTLRCommonToken ANTLRToken;
