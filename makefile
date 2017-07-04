@@ -29,7 +29,7 @@ CC=gcc
 # Updated to split out make targets (for cccc) and enable jobserver.
 #
 
-.PHONY : pccts dlg antlr sorcerer genmk pre welcome fini
+.PHONY : pccts dlg antlr sorcerer genmk pre welcome fini testcpp
 
 pccts: welcome antlr dlg fini
 
@@ -74,6 +74,12 @@ fini:
 	@echo "       PCCTS 1.33MR33 build complete"
 	@echo "   do \"make install\" as root to install"
 	@echo
+
+testcpp:
+	$(MAKE) -C testcpp
+	$(MAKE) -C testcpp scrub
+
+tests: testcpp
 
 clean:
 	$(MAKE) -C antlr clean
