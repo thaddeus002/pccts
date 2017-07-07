@@ -12,6 +12,7 @@ PREFIX=/usr/local
 
 # Where will go the executable binary files
 BINDIR=$(PREFIX)/bin
+INCDIR=$(PREFIX)/include/pccts
 
 # This part added by Thomas Herter, M"unchen, Germany. See also manpages
 # target.
@@ -95,3 +96,5 @@ manpages: pre
 install: manpages
 	$(MAKE) -C antlr PREFIX=$(PREFIX) install
 	$(MAKE) -C dlg PREFIX=$(PREFIX) install
+	install -d $(INCDIR)
+	install h/* $(INCDIR)
