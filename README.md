@@ -1,48 +1,19 @@
+# Thaddeus' PCCTS
 
-                          Parr Research Corporation
-                                    with
-                  Purdue University Electrical Engineering
-                                    and
-                       University of Minnesota, AHPCRC
+This project is based on a fork of [PCCTS 1.33](http://www.polhode.com/pccts.html), first developed by Terence Parr.
 
-                                Terence Parr
-                                Russell Quong
-                                 Will Cohen
-                                 Hank Dietz
+## What is this?
 
+pccts is made of various programs :
 
-A central place for information about PCCTS 1.33 is :
+    * antlr
+    * dlg
+    * sorcerer (not build by default)
+    * genmk (not build by default) : makefiles generator
 
-   [http://www.polhode.com/pccts.html](http://www.polhode.com/pccts.html)
+## Installation
 
-The maintenance release is available from :
-
-   [http://www.polhode.com/pccts133mr.zip](http://www.polhode.com/pccts133mr.zip)
-
-There is a ready-to-run version for win32 for Microsoft Visual Studio
-at the same site. It is available from :
-
-   [http://www.polhode.com/win32.zip](http://www.polhode.com/win32.zip)
-
-New users should visit http://www.polhode.com/pccts.html in
-order to get the following document :
-
-        "Notes For New Users of PCCTS"
-
-This is a Postscript file of about 40 pages which is extremely 
-useful for someone starting out. It is a based on 1.33mr21
-
-When you have a little more experience, be sure to review the
-following documents in the distribution kit:
-
-        CHANGES_FROM_133.txt
-        CHANGES_FROM_133_BEFORE_MR13.txt
-        KNOWN_PROBLEMS.txt
-
-
-## INSTALLATION (Unix)
-
-1. Clone this repository : 
+1. Clone this repository :
 
    > git clone https://github.com/thaddeus002/pccts.git
 
@@ -54,23 +25,17 @@ following documents in the distribution kit:
 
    > make
 
-   This will create in `bin` directory :
+1. install :
 
-    * antlr
-    * dlg
-    * sorcerer (not build by default)
-    * genmk (not build by default)
-
-1. Copy the tools to `/usr/bin` or `/usr/local/bin` if you like. If you
-   don't wish to then add `pccts/bin` to your path.
+    > make install
 
 1. To get an up-to-date list of program options execute the
    program with no command line options. To get up-to-date
-   documentation read `CHANGES_FROM_133*.txt` and 
+   documentation read `CHANGES_FROM_133*.txt` and
    `KNOWN_PROBLEMS.txt`
-   
+
 1. You need not create a library. The makefile created by genmk
-   assumes that the files are not part of a library. 
+   assumes that the files are not part of a library.
 
    If you wish to create a library from elements of pccts/h:
 
@@ -90,6 +55,34 @@ following documents in the distribution kit:
     * PCCTSAST.cpp
     * SList.cpp
 
-## LICENSE
+## License
 
 *pccts* is under public domain. See [LICENSE](LICENSE).
+
+
+## pccts 1.33
+
+A central place for information about PCCTS 1.33 is :
+
+   [http://www.polhode.com/pccts.html](http://www.polhode.com/pccts.html)
+
+The maintenance release is available from :
+
+   [http://www.polhode.com/pccts133mr.zip](http://www.polhode.com/pccts133mr.zip)
+
+## Documentation
+
+New users should visit http://www.polhode.com/pccts.html in
+order to get the following document :
+
+        "Notes For New Users of PCCTS"
+
+This is a Postscript file of about 40 pages which is extremely
+useful for someone starting out. It is a based on 1.33mr21
+
+When you have a little more experience, be sure to review the
+following documents in the distribution kit:
+
+        CHANGES_FROM_133.txt
+        CHANGES_FROM_133_BEFORE_MR13.txt
+        KNOWN_PROBLEMS.txt
