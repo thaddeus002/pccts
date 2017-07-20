@@ -1,6 +1,6 @@
 # Thaddeus' PCCTS
 
-This project is based on a fork of [PCCTS 1.33](http://www.polhode.com/pccts.html), first developed by Terence Parr.
+This project is based on a fork of the Purdue Compiler Construction Toolset ([PCCTS 1.33](http://www.polhode.com/pccts.html)), first developed by Terence Parr.
 
 ## What is this?
 
@@ -11,23 +11,25 @@ pccts is made of various programs :
     * sorcerer (not build by default)
     * genmk (not build by default) : makefiles generator
 
+For more details on this programs, see "Documentation section".
+
 ## Installation
 
 1. Clone this repository :
 
-   > git clone https://github.com/thaddeus002/pccts.git
+    $ git clone https://github.com/thaddeus002/pccts.git
 
 1. Go to the main pccts directory :
 
-   > cd pccts
+    $ cd pccts
 
 1. Build the tools :
 
-   > make
+    $ make
 
 1. install :
 
-    > make install
+    $ make install
 
 1. To get an up-to-date list of program options execute the
    program with no command line options. To get up-to-date
@@ -59,23 +61,12 @@ pccts is made of various programs :
 
 *pccts* is under public domain. See [LICENSE](LICENSE).
 
-
-## pccts 1.33
-
-A central place for information about PCCTS 1.33 is :
-
-   [http://www.polhode.com/pccts.html](http://www.polhode.com/pccts.html)
-
-The maintenance release is available from :
-
-   [http://www.polhode.com/pccts133mr.zip](http://www.polhode.com/pccts133mr.zip)
-
 ## Documentation
 
-New users should visit http://www.polhode.com/pccts.html in
+New users should visit [the project 's page](https://thaddeus002.github.io/pccts) in
 order to get the following document :
 
-        "Notes For New Users of PCCTS"
+    "Notes For New Users of PCCTS"
 
 This is a Postscript file of about 40 pages which is extremely
 useful for someone starting out. It is a based on 1.33mr21
@@ -83,6 +74,6 @@ useful for someone starting out. It is a based on 1.33mr21
 When you have a little more experience, be sure to review the
 following documents in the distribution kit:
 
-        CHANGES_FROM_133.txt
-        CHANGES_FROM_133_BEFORE_MR13.txt
-        KNOWN_PROBLEMS.txt
+    CHANGES_FROM_133.txt
+    CHANGES_FROM_133_BEFORE_MR13.txt
+    KNOWN_PROBLEMS.txt
