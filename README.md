@@ -17,19 +17,19 @@ For more details on this programs, see "Documentation section".
 
 1. Clone this repository :
 
-    $ git clone https://github.com/thaddeus002/pccts.git
+        $ git clone https://github.com/thaddeus002/pccts.git
 
 1. Go to the main pccts directory :
 
-    $ cd pccts
+        $ cd pccts
 
 1. Build the tools :
 
-    $ make
+        $ make
 
 1. install :
 
-    $ make install
+        $ make install
 
 1. To get an up-to-date list of program options execute the
    program with no command line options. To get up-to-date
