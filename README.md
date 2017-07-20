@@ -6,10 +6,10 @@ This project is based on a fork of the Purdue Compiler Construction Toolset ([PC
 
 pccts is made of various programs :
 
-    * antlr
-    * dlg
-    * sorcerer (not build by default)
-    * genmk (not build by default) : makefiles generator
+ * antlr
+ * dlg
+ * sorcerer (not build by default)
+ * genmk (not build by default) : makefiles generator
 
 For more details on this programs, see "Documentation section".
 
