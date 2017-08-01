@@ -44,20 +44,12 @@ static int              highWater=0;
 static ExceptionGroup *lastEG=NULL;     /* used in altFixup()         */
 static int             lastBlkLevel=0;  /* used in altFixup()         */
 
-#ifdef __USE_PROTOS
 static void arrayCheck(void);
-#else
-static void arrayCheck();
-#endif
 
-/* Called to add an exception group for an alternative EG */
-
-#ifdef __USE_PROTOS
+/**
+ * Called to add an exception group for an alternative EG.
+ */
 void egAdd(ExceptionGroup * eg)
-#else
-void egAdd(eg)
-ExceptionGroup *eg;
-#endif
 {
   int               i;
 
@@ -181,13 +173,7 @@ ExceptionGroup *eg;
   };
 }
 
-#ifdef __USE_PROTOS
 void leAdd(LabelEntry * le)
-#else
-void leAdd(le)
-LabelEntry *le;
-#endif
-
 {
   arrayCheck();
   le->pendingLink=leArray[BlkLevel];
@@ -195,13 +181,7 @@ LabelEntry *le;
   leArray[BlkLevel]=le;
 }
 
-#ifdef __USE_PROTOS
 void altAdd(Junction *alt)
-#else
-void altAdd(alt)
-Junction *alt;
-#endif
-
 {
   arrayCheck();
 #if 0
@@ -224,7 +204,7 @@ static void arrayCheck()
   if (BlkLevel > highWater) highWater=BlkLevel;
 
   if (BlkLevel >= arraySize) {
-    arraySizeNew=BlkLevel+5;	/* MR20 */
+    arraySizeNew=BlkLevel+5;  /* MR20 */
     egArrayNew=(ExceptionGroup **)
         calloc(arraySizeNew,sizeof(ExceptionGroup *));
     leArrayNew=(LabelEntry **)
@@ -287,7 +267,6 @@ void leFixup()
 
 void altFixup()
 {
-
   int               i;
   Junction          *nextAlt;
   Junction          *innerAlt;

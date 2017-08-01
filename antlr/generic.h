@@ -28,9 +28,15 @@
  * 1989-2001
  */
 
-#define StrSame			0
+/**
+ * \file generic.h
+ * \brief define types and macros for antlr.
+ */
 
-#define DefaultParserName	"zzparser"
+
+#define StrSame     0
+
+#define DefaultParserName "zzparser"
 
 /* MR9  JVincent@novell.com     Allow user to override default ZZLEXBUFSIZE  */
 /* MR11 thm                     Raise antlr's own default ZZLEXBUFSIZE to 8k */
@@ -41,204 +47,209 @@
 #endif
 
 /* Tree/FIRST/FOLLOW defines -- valid only after all grammar has been read */
-#define ALT			TokenNum+1
-#define SET			TokenNum+2
-#define TREE_REF	TokenNum+3
+#define ALT     TokenNum+1
+#define SET     TokenNum+2
+#define TREE_REF  TokenNum+3
 
-					/* E r r o r  M a c r o s */
+          /* E r r o r  M a c r o s */
 
-#define fatal(err)	fatalFL(err, __FILE__, __LINE__)
-#define fatal_internal(err)	fatal_intern(err, __FILE__, __LINE__)
+#define fatal(err)  fatalFL(err, __FILE__, __LINE__)
+#define fatal_internal(err) fatal_intern(err, __FILE__, __LINE__)
 
 
-#define eMsg1(s,a)	eMsg3(s,a,NULL,NULL)
-#define eMsg2(s,a,b)	eMsg3(s,a,b,NULL)
+#define eMsg1(s,a)  eMsg3(s,a,NULL,NULL)
+#define eMsg2(s,a,b)  eMsg3(s,a,b,NULL)
 
-				/* S a n i t y  C h e c k i n g */
+        /* S a n i t y  C h e c k i n g */
 
 #ifndef require
 #define require(expr, err) {if ( !(expr) ) fatal_internal(err);}
 #endif
 
-					/* L i s t  N o d e s */
+          /* L i s t  N o d e s */
 
+/**
+ * A linked list of elements
+ */
 typedef struct _ListNode {
-			void *elem;			/* pointer to any kind of element */
-			struct _ListNode *next;
-		} ListNode;
+      void *elem;     /**< pointer to any kind of element */
+      struct _ListNode *next;
+} ListNode;
 
-/* Define a Cycle node which is used to track lists of cycles for later
+/**
+ * Define a Cycle node which is used to track lists of cycles for later
  * reconciliation by ResolveFoCycles().
  */
 typedef struct _c {
-			int croot;			/* cycle root */
-			set cyclicDep;		/* cyclic dependents */
-			unsigned deg;		/* degree of FOLLOW set of croot */
-		} Cycle;
+      int croot;      /**< cycle root */
+      set cyclicDep;  /**< cyclic dependents */
+      unsigned deg;   /**< degree of FOLLOW set of croot */
+} Cycle;
 
 typedef struct _e {
-			int tok;			/* error class name == TokenStr[tok] */
-			ListNode *elist;	/* linked list of elements in error set */
-			set eset;
-			int setdeg;			/* how big is the set */
-			int lexclass;		/* which lex class is it in? */
-		} ECnode;
+      int tok;      /**< error class name == TokenStr[tok] */
+      ListNode *elist;  /**< linked list of elements in error set */
+      set eset;
+      int setdeg;     /**< how big is the set */
+      int lexclass;   /**< which lex class is it in? */
+} ECnode;
 
 typedef struct _TCnode {
-			int tok;			/* token class name */
-			ListNode *tlist;	/* linked list of elements in token set */
-			set tset;
-			int lexclass;		/* which lex class is it in? */
-			unsigned char dumped; /* this def has been been dumped */
-			unsigned char dumpedComplement; /* this def has been been dumped */
-			unsigned setnum;	/* which set number is this guy? (if dumped) */
-			unsigned setnumComplement;		 /* MR23 */
-			unsigned setnumErrSet;			 /* MR23 which set is this #tokclass error set (if dumped) */
-			unsigned setnumErrSetComplement; /* MR23 */
-		} TCnode;
+      int tok;      /**< token class name */
+      ListNode *tlist;  /**< linked list of elements in token set */
+      set tset;
+      int lexclass;   /**< which lex class is it in? */
+      unsigned char dumped; /**< this def has been been dumped */
+      unsigned char dumpedComplement; /**< this def has been been dumped */
+      unsigned setnum;  /**< which set number is this guy? (if dumped) */
+      unsigned setnumComplement;     /* MR23 */
+      unsigned setnumErrSet;       /* MR23 which set is this #tokclass error set (if dumped) */
+      unsigned setnumErrSetComplement; /* MR23 */
+} TCnode;
 
 typedef struct _ft {
-			char *token;		/* id of token type to remap */
-			int tnum;			/* move token type to which token position */
-		} ForcedToken;
+      char *token;  /**< id of token type to remap */
+      int tnum;     /**< move token type to which token position */
+} ForcedToken;
 
 typedef struct _ContextGuardPredicates {    /* MR13 */
             Predicate *pred;                /* MR13 */
-        } ContextGuardPredicates;           /* MR13 */
+} ContextGuardPredicates;           /* MR13 */
 
-#define newListNode	(ListNode *) calloc(1, sizeof(ListNode));
-#define newCycle	(Cycle *) calloc(1, sizeof(Cycle));
-#define newECnode	(ECnode *) calloc(1, sizeof(ECnode));
-#define newTCnode	(TCnode *) calloc(1, sizeof(TCnode));
+#define newListNode (ListNode *) calloc(1, sizeof(ListNode));
+#define newCycle  (Cycle *) calloc(1, sizeof(Cycle));
+#define newECnode (ECnode *) calloc(1, sizeof(ECnode));
+#define newTCnode (TCnode *) calloc(1, sizeof(TCnode));
 
 
-				/* H a s h  T a b l e  E n t r i e s */
+        /* H a s h  T a b l e  E n t r i e s */
 
-typedef struct _t {				/* Token name or expression */
-			char *str;
-			struct _t *next;
-			int token;			/* token number */
-			unsigned char classname;	/* is it a err/tok class name or token */
-			TCnode *tclass;		/* ptr to token class */
-			char *action;
+typedef struct _t {       /* Token name or expression */
+      char *str;
+      struct _t *next;
+      int token;      /**< token number */
+      unsigned char classname;  /**< is it a err/tok class name or token */
+      TCnode *tclass;   /**< ptr to token class */
+      char *action;
             char *akaString;
-		} TermEntry;
+} TermEntry;
 
-typedef struct _r {				/* Rule name and ptr to start of rule */
-			char *str;
-			struct _t *next;
-			int rulenum;		/* RulePtr[rulenum]== ptr to RuleBlk junction */
-			unsigned char noAST;/* gen AST construction code? (def==gen code) */
-			char *egroup;		/* which error group (err reporting stuff) */
+typedef struct _r {       /**< Rule name and ptr to start of rule */
+      char *str;
+      struct _t *next;
+      int rulenum;    /**< RulePtr[rulenum]== ptr to RuleBlk junction */
+      unsigned char noAST; /**< gen AST construction code? (def==gen code) */
+      char *egroup;   /**< which error group (err reporting stuff) */
 #if 0
-			/* MR27  This appears to never be used.  Delete this code later. */
+      /* MR27  This appears to never be used.  Delete this code later. */
 
-			ListNode *el_labels;/* list of element labels ref in all of rule */
+      ListNode *el_labels; /**< list of element labels ref in all of rule */
 #endif
-			ListNode *ast_labels_in_actions; /* MR27 */
+      ListNode *ast_labels_in_actions; /* MR27 */
             unsigned char has_rule_exception;
             char dontComputeErrorSet;    /* MR14 - don't compute error set
                                           special for rule in alpha part of
                                           (alpha)? beta block */
-		} RuleEntry;
+} RuleEntry;
 
-typedef struct _f {				/* cache Fi/Fo set */
-			char *str;			/* key == (rulename, computation, k) */
-			struct _f *next;
-			set fset;			/* First/Follow of rule */
-			set rk;				/* set of k's remaining to be done after ruleref */
-			int incomplete;		/* only w/FOLLOW sets.  Use only if complete */
-		} CacheEntry;
+typedef struct _f {   /**< cache Fi/Fo set */
+      char *str;      /**< key == (rulename, computation, k) */
+      struct _f *next;
+      set fset;     /**< First/Follow of rule */
+      set rk;       /**< set of k's remaining to be done after ruleref */
+      int incomplete;   /**< only w/FOLLOW sets.  Use only if complete */
+} CacheEntry;
 
-typedef struct _LabelEntry {	/* element labels */
-			char *str;
-			struct _f *next;
-			Node *elem;			/* which element does it point to? */
-			ExceptionGroup *ex_group;
-								/* Is there an exception attached to label? */
-            ExceptionGroup *outerEG;                                 /* MR7 */
-                                /* next EG if ex_group doesn't catch it MR7 */
-            struct _LabelEntry  *pendingLink;                        /* MR7 */
-                                /* too lazy to use ListNode ?           MR7 */
-            int     curAltNum;                                       /* MR7 */
-		} LabelEntry;
+/** element labels */
+typedef struct _LabelEntry {
+      char *str;
+      struct _f *next;
+      Node *elem;     /**< which element does it point to? */
+      ExceptionGroup *ex_group;
+      /* Is there an exception attached to label? */
+      ExceptionGroup *outerEG;                                 /* MR7 */
+      /* next EG if ex_group doesn't catch it MR7 */
+      struct _LabelEntry  *pendingLink;                        /* MR7 */
+      /* too lazy to use ListNode ?           MR7 */
+      int     curAltNum;                                       /* MR7 */
+} LabelEntry;
 
 typedef struct _SignalEntry {
-			char *str;
-			struct _f *next;
-			int signum;			/* unique signal number */
-		} SignalEntry;
+      char *str;
+      struct _f *next;
+      int signum;     /**< unique signal number */
+} SignalEntry;
 
-typedef struct _PredEntry {				/* MR11 predicate name and ptr to string */
-			char              *str;
-            struct _PredEntry *next;
-            int               file;
-            int               line;
-            Predicate         *pred;
-            char              *predLiteral;
-		} PredEntry;
+typedef struct _PredEntry {       /* MR11 predicate name and ptr to string */
+      char              *str;
+      struct _PredEntry *next;
+      int               file;
+      int               line;
+      Predicate         *pred;
+      char              *predLiteral;
+} PredEntry;
 
 typedef struct _PointerStack {      /* MR10 */
         int     count;
         int     size;
         void    **data;
-        } PointerStack;
+} PointerStack;
 
-#define newTermEntry(s)		(TermEntry *) newEntry(s, sizeof(TermEntry))
-#define newRuleEntry(s)		(RuleEntry *) newEntry(s, sizeof(RuleEntry))
-#define newCacheEntry(s)	(CacheEntry *) newEntry(s, sizeof(CacheEntry))
-#define newLabelEntry(s)	(LabelEntry *) newEntry(s, sizeof(LabelEntry))
-#define newSignalEntry(s)	(SignalEntry *) newEntry(s, sizeof(SignalEntry))
+#define newTermEntry(s)   (TermEntry *) newEntry(s, sizeof(TermEntry))
+#define newRuleEntry(s)   (RuleEntry *) newEntry(s, sizeof(RuleEntry))
+#define newCacheEntry(s)  (CacheEntry *) newEntry(s, sizeof(CacheEntry))
+#define newLabelEntry(s)  (LabelEntry *) newEntry(s, sizeof(LabelEntry))
+#define newSignalEntry(s) (SignalEntry *) newEntry(s, sizeof(SignalEntry))
 #define newPredEntry(s)     (PredEntry *) newEntry(s,sizeof(PredEntry))
 
 typedef struct _UserAction {
-			char *action;
-			int file, line;
-		} UserAction;
+      char *action;
+      int file, line;
+} UserAction;
 
 
-					/* L e x i c a l  C l a s s */
+          /* L e x i c a l  C l a s s */
 
 /* to switch lex classes, switch ExprStr and Texpr (hash table) */
 typedef struct _lc {
-			char *classnum, **exprs;
-			Entry **htable;
-		} LClass;
+      char *classnum, **exprs;
+      Entry **htable;
+} LClass;
 
 typedef struct _exprOrder {
-			char *expr;
-			int lclass;
-		} Expr;
+      char *expr;
+      int lclass;
+} Expr;
 
 
 typedef Graph Attrib;
 
-						/* M a x i m u m s */
+            /* M a x i m u m s */
 
 /* MR20 Note G. Hobbelt These values are superceded by values in hash.h */
 
 #ifndef HashTableSize
-#define HashTableSize	253
+#define HashTableSize 253
 #endif
 #ifndef StrTableSize
-#define StrTableSize	15000	/* all tokens, nonterminals, rexprs stored here */
+#define StrTableSize  15000 /* all tokens, nonterminals, rexprs stored here */
 #endif
-#define MaxLexClasses	50		/* how many automatons */
+#define MaxLexClasses 50    /* how many automatons */
 /* TokenStart and EofToken are ignored if #tokdefs meta-op is used */
-#define TokenStart		2		/* MUST be in 1 + EofToken */
-#define EofToken		1		/* Always predefined to be 1 */
+#define TokenStart    2   /* MUST be in 1 + EofToken */
+#define EofToken    1   /* Always predefined to be 1 */
 
 #ifndef MaxNumFiles
-#define MaxNumFiles		99
+#define MaxNumFiles   99
 #endif
 
 /**** MR9 JVincent@novell.com  Move to pcctscfg.h */
-/**** #define MaxFileName		300	****/ /* MR9  Move to pcctscfg.h */ /* largest file name size */
+/**** #define MaxFileName   300 ****/ /* MR9  Move to pcctscfg.h */ /* largest file name size */
 
-#define MaxRuleName		100		/* largest rule name size */
-#define TSChunk			100		/* how much to expand TokenStr/ExprStr each time */
-#define TIChunk			TSChunk	/* expand TokenInd by same as TokenStr to mirror them */
-#define FoStackSize		100		/* deepest FOLLOW recursion possible */
+#define MaxRuleName   100   /* largest rule name size */
+#define TSChunk     100   /* how much to expand TokenStr/ExprStr each time */
+#define TIChunk     TSChunk /* expand TokenInd by same as TokenStr to mirror them */
+#define FoStackSize   100   /* deepest FOLLOW recursion possible */
 
 #define MaxClassDeclStuff   256    /* MR10 */
 
@@ -246,40 +257,25 @@ typedef Graph Attrib;
 
            /* S t a n d a r d  S i g n a l s */
 
-#define sigNoSignal				0
-#define sigMismatchedToken		1
-#define sigNoViableAlt			2
-#define sigNoSemViableAlt		3
+#define sigNoSignal       0
+#define sigMismatchedToken    1
+#define sigNoViableAlt      2
+#define sigNoSemViableAlt   3
 
 
 
 /* AST token types */
-#define ASTexclude		0
-#define ASTchild		1
-#define ASTroot			2
-#define ASTinclude		3		/* include subtree made by rule ref */
+#define ASTexclude    0
+#define ASTchild    1
+#define ASTroot     2
+#define ASTinclude    3   /* include subtree made by rule ref */
 
 
-#define PredictionVariable				"zzpr_expr"
-#define PredictionLexClassSuffix		"_zzpred"
+#define PredictionVariable        "zzpr_expr"
+#define PredictionLexClassSuffix    "_zzpred"
 
-#define WildCardString					"WildCard"
+#define WildCardString          "WildCard"
 
-#if 0
-    /*  Removed in version 1.33MR19
-        Don't understand why this never caused problems before
-    */
-
-    /*********************************************************
-    #ifndef ANTLRm
-	#define ANTLRm(st, f, _m)	zzbufsize = ZZLEXBUFSIZE;\
-					zzmode(_m);					\
-					zzenterANTLR(f);			\
-					st; ++zzasp;				\
-					zzleaveANTLR(f);
-	#endif						
-    *********************************************************/
-#endif
 
 #include "proto.h"
 #include "pcctscfg.h"   /* MR14 */
