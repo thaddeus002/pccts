@@ -1,9 +1,4 @@
-#ifndef SList_h
-#define SList_h
-
 /*
- * SList.h
- *
  * SOFTWARE RIGHTS
  *
  * We reserve no LEGAL rights to SORCERER -- SORCERER is in the public
@@ -31,8 +26,12 @@
  * 1992-2000
  */
 
-#include "pcctscfg.h"
+/** \file SList.h */
 
+#ifndef SList_h
+#define SList_h
+
+#include "pcctscfg.h"
 #include "pccts_stdio.h"
 #include "pccts_stdlib.h"
 
@@ -42,31 +41,40 @@ PCCTS_NAMESPACE_STD
 
 class PCCTS_AST;
 
+/**
+ * Linked list node that containts a void pointer.
+ */
 class SListNode {
 protected:
-	void *_elem;			/* pointer to any kind of element */
-	SListNode *_next;
+  void *_elem;      /* pointer to any kind of element */
+  SListNode *_next;
 public:
-	SListNode()				{_elem=_next=NULL;}
-	virtual ~SListNode()	{_elem=_next=NULL;}
-	void *elem()			{ return _elem; }
-	void setElem(void *e)	{ _elem = e; }
-	void setNext(SListNode *t)	{ _next = t; }
-	SListNode *next()		{ return _next; }
+  SListNode()       {_elem=_next=NULL;}
+  virtual ~SListNode()  {_elem=_next=NULL;}
+  void *elem()      { return _elem; }
+  void setElem(void *e) { _elem = e; }
+  void setNext(SListNode *t)  { _next = t; }
+  SListNode *next()   { return _next; }
 };
 
+/**
+ * Linked list with head and tail nodes.
+ */
 class SList {
-	SListNode *head, *tail;
+  SListNode *head, *tail;
 public:
-	SList() {head=tail=NULL;}
-	virtual ~SList() {head=tail=NULL;}
-	virtual void *iterate(SListNode **);
-	virtual void add(void *e);
-	virtual void lfree();
-	virtual PCCTS_AST *to_ast(SList list);
-	virtual void require(int e,char *err){ if ( !e ) panic(err); }
-	virtual void panic(char *err){ /* MR23 */ printMessage(stderr, "SList panic: %s\n", err); exit(PCCTS_EXIT_FAILURE); }
-	virtual int printMessage(FILE* pFile, const char* pFormat, ...); // MR23
+  SList() { head=tail=NULL; }
+  virtual ~SList() { head=tail=NULL; }
+  virtual void *iterate(SListNode **);
+  /** add an element to end of list. */
+  virtual void add(void *e);
+  /** free all nodes. this may by in destroyer */
+  virtual void lfree();
+  virtual PCCTS_AST *to_ast(SList list);
+  virtual void require(int e,char *err){ if ( !e ) panic(err); }
+  virtual void panic(char *err){ printMessage(stderr, "SList panic: %s\n", err); exit(PCCTS_EXIT_FAILURE); }
+  /** print a message in a file descriptor */
+  virtual int printMessage(FILE* pFile, const char* pFormat, ...);
 };
 
 #endif

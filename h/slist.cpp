@@ -1,6 +1,4 @@
 /*
- * SList.C
- *
  * SOFTWARE RIGHTS
  *
  * We reserve no LEGAL rights to SORCERER -- SORCERER is in the public
@@ -28,89 +26,88 @@
  * 1992-2000
  */
 
+/** \file slist.cpp */
+
 #define ANTLR_SUPPORT_CODE
 
 #include "SList.h"
-#include "pccts_stdarg.h" // MR23
+#include "pccts_stdarg.h"
 
-/* Iterate over a list of elements; returns ptr to a new element
+/**
+ * Iterate over a list of elements; returns ptr to a new element
  * in list upon every call and NULL when no more are left.
  * Very useful like this:
  *
- *		cursor = mylist;
- *		while ( (p=mylist->iterate(&cursor)) ) {
- *			// place with element p
- *		}
+ *    cursor = mylist;
+ *    while ( (p=mylist->iterate(&cursor)) ) {
+ *      // place with element p
+ *    }
  *
  * The cursor must be initialized to point to the list to iterate over.
  */
-void *SList::
-iterate(SListNode **cursor)
+void *SList::iterate(SListNode **cursor)
 {
-	void *e;
+  void *e;
 
-	if ( cursor == NULL || *cursor==NULL ) return NULL;
-	if ( head == *cursor ) { *cursor = (*cursor)->next(); }
-	e = (*cursor)->elem();
-	(*cursor) = (*cursor)->next();
-	return e;
+  if ( cursor == NULL || *cursor==NULL ) return NULL;
+  if ( head == *cursor ) { *cursor = (*cursor)->next(); }
+  e = (*cursor)->elem();
+  (*cursor) = (*cursor)->next();
+  return e;
 }
 
-/* add an element to end of list. */
-void SList::
-add(void *e)
+/** add an element to end of list. */
+void SList::add(void *e)
 {
-	SListNode *p, *tail=NULL;
-	require(e!=NULL, "slist_add: attempting to add NULL list element");
+  SListNode *p, *tail=NULL;
+  require(e!=NULL, "slist_add: attempting to add NULL list element");
 
-	p = new SListNode;
-	require(p!=NULL, "add: cannot alloc new list node");
-	p->setElem(e);
-	if ( head == NULL )
-	{
-		head = tail = p;
-	}
-	else								/* find end of list */
-	{
-		tail->setNext(p);
-		tail = p;
-	}
+  p = new SListNode;
+  require(p!=NULL, "add: cannot alloc new list node");
+
+  p->setElem(e);
+  if ( head == NULL )
+  {
+    head = tail = p;
+  }
+  else                /* find end of list */
+  {
+    tail->setNext(p);
+    tail = p;
+  }
 }
 
-void SList::
-lfree()
+void SList::lfree()
 {
-	SListNode *p,*q;
+  SListNode *p,*q;
 
-	if ( head==NULL ) return;	/* empty list */
-	for (p = head; p!=NULL; p=q)
-	{
-		q = p->next();
-		free(p);
-	}
+  if ( head==NULL ) return; /* empty list */
+  for (p = head; p!=NULL; p=q)
+  {
+    q = p->next();
+    free(p);
+  }
 }
 
-PCCTS_AST *SList::
-to_ast(SList list)
+PCCTS_AST *SList::to_ast(SList list)
 {
-	PCCTS_AST *t=NULL, *last=NULL;
-	SListNode *p;
+  PCCTS_AST *t=NULL, *last=NULL;
+  SListNode *p;
 
-	for (p = head; p!=NULL; p=p->next())
-	{
-		PCCTS_AST *u = (PCCTS_AST *)p->elem();
-		if ( last==NULL ) last = t = u;
-		else { last->setRight(u); last = u; }
-	}
-	return t;
+  for (p = head; p!=NULL; p=p->next())
+  {
+    PCCTS_AST *u = (PCCTS_AST *)p->elem();
+    if ( last==NULL ) last = t = u;
+    else { last->setRight(u); last = u; }
+  }
+  return t;
 }
 
-// MR23
 int SList::printMessage(FILE* pFile, const char* pFormat, ...)
 {
-	va_list marker;
-	va_start( marker, pFormat );
-  	int iRet = vfprintf(pFile, pFormat, marker);
-	va_end( marker );
-	return iRet;
+  va_list marker;
+  va_start( marker, pFormat );
+  int iRet = vfprintf(pFile, pFormat, marker);
+  va_end( marker );
+  return iRet;
 }

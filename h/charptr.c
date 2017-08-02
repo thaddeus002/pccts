@@ -40,7 +40,7 @@
 
 zzcr_attr(Attrib *a,int token,char *text)
 {
-	*a = (char *) malloc(strlen(text)+1);			/* MR6 */
-	if ( *a == NULL ) {fprintf(stderr, "zzcr_attr: out of memory!\n"); exit(-1);}
-	strcpy(*a, text);
+  *a = (char *) malloc(strlen(text)+1);
+  if ( *a == NULL ) {fprintf(stderr, "zzcr_attr: out of memory!\n"); exit(-1);}
+  strcpy(*a, text);
 }
