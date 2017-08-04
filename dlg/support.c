@@ -28,176 +28,124 @@
 #include <stdio.h>
 #include <string.h>
 #include "dlg.h"
-#ifdef MEMCHK
-#include "trax.h"
-#else
 #ifdef __STDC__
 #include <stdlib.h>
 #else
 #include <malloc.h>
 #endif /* __STDC__ */
-#endif
 
-int	err_found = 0;			/* indicates whether problem found */
+int err_found = 0;      /* indicates whether problem found */
 
-#ifdef __USE_PROTOS
 void internal_error(char *s, char *file,int line)    /* MR9 23-Sep-97 */
-#else
-void internal_error(s,file,line)    /* MR9 23-Sep-97 */
-char *s,*file;
-int line;
-#endif
 {
-	fprintf(stderr,s,file,line);
-	exit(PCCTS_EXIT_FAILURE);
+  fprintf(stderr,s,file,line);
+  exit(PCCTS_EXIT_FAILURE);
 }
 
-#ifdef __USE_PROTOS
 char *dlg_malloc(int bytes,char *file,int line)
-#else
-char *dlg_malloc(bytes,file,line)
-int bytes;
-char *file;
-int line;
-#endif
 {
-	char *t;
+  char *t;
 
-	t = (char *) malloc(bytes);
-	if (!t){
-		/* error */
-		internal_error("%s(%d): unable to allocate memory\n",
-			file,line);
-	}
-	return t;
+  t = (char *) malloc(bytes);
+  if (!t){
+    /* error */
+    internal_error("%s(%d): unable to allocate memory\n",
+      file,line);
+  }
+  return t;
 }
 
 
-#ifdef __USE_PROTOS
 char *dlg_calloc(int n,int bytes,char *file,int line)
-#else
-char *dlg_calloc(n,bytes,file,line)
-int n,bytes;
-char *file;
-int line;
-#endif
 {
-	char *t;
+  char *t;
 
-	t = (char *) calloc(n,bytes);
-	if (!t){
-		/* error */
-		internal_error("%s(%d): unable to allocate memory\n",
-			file,line);
-	}
-	return t;
+  t = (char *) calloc(n,bytes);
+  if (!t){
+    /* error */
+    internal_error("%s(%d): unable to allocate memory\n",
+      file,line);
+  }
+  return t;
 }
 
 
-#ifdef __USE_PROTOS
 FILE *read_stream(char *name)
-#else
-FILE *read_stream(name)
-char *name;
-#endif
 {
-	FILE *f;
+  FILE *f;
 
-	if (name){
-		if (name[0] == '-') {
-			fprintf(stderr, "dlg: invalid option: '%s'\n", name);
-			f = NULL;
-		}else{
-			f = fopen(name, "r");
-			if (f == NULL){
-				/* couldn't open file */
-				fprintf(stderr,
-					"dlg: Warning: Can't read file %s.\n",
-					name);
-			}
-		}
-	}else{
-		/* open stdin if nothing there */
-		f = stdin;
-	}
-	return f;
+  if (name){
+    if (name[0] == '-') {
+      fprintf(stderr, "dlg: invalid option: '%s'\n", name);
+      f = NULL;
+    }else{
+      f = fopen(name, "r");
+      if (f == NULL){
+        /* couldn't open file */
+        fprintf(stderr,
+          "dlg: Warning: Can't read file %s.\n",
+          name);
+      }
+    }
+  }else{
+    /* open stdin if nothing there */
+    f = stdin;
+  }
+  return f;
 }
 
-#ifdef __USE_PROTOS
 FILE *write_stream(char *name)
-#else
-FILE *write_stream(name)
-char *name;
-#endif
 {
-	FILE *f;
+  FILE *f;
 
-	if (name){
-		if (name[0] == '-') {
-			fprintf(stderr, "dlg: invalid option: '%s'\n", name);
-			f = NULL;
-		}else{
-			f = fopen(OutMetaName(name), "w");
-			if (f == NULL){
-				/* couldn't open file */
-				fprintf(stderr,
-					"dlg: Warning: Can't write to file %s.\n",
-					name);
-			}
-			else
+  if (name){
+    if (name[0] == '-') {
+      fprintf(stderr, "dlg: invalid option: '%s'\n", name);
+      f = NULL;
+    }else{
+      f = fopen(OutMetaName(name), "w");
+      if (f == NULL){
+        /* couldn't open file */
+        fprintf(stderr,
+          "dlg: Warning: Can't write to file %s.\n",
+          name);
+      }
+      else
 #ifdef SPECIAL_FOPEN
-                special_fopen_actions(OutMetaName(name));	/* MR1 */
+                special_fopen_actions(OutMetaName(name)); /* MR1 */
 #else
-		;						/* MR1 */
+    ;           /* MR1 */
 #endif
-		}
-	}else{
-		/* open stdout if nothing there */
-		f = stdout;
-	}
-	return f;
+    }
+  }else{
+    /* open stdout if nothing there */
+    f = stdout;
+  }
+  return f;
 }
 
 
-#ifdef __USE_PROTOS
 void fatal(char *message,int line_no)
-#else
-void fatal(message,line_no)
-char *message;
-int line_no;
-#endif
 {
-	fprintf(stderr,ErrHdr,
-		(file_str[0] ? file_str[0] : "stdin"), line_no);
-	fprintf(stderr, " Fatal: %s\n", message);
-	exit(PCCTS_EXIT_FAILURE);
+  fprintf(stderr,ErrHdr,
+    (file_str[0] ? file_str[0] : "stdin"), line_no);
+  fprintf(stderr, " Fatal: %s\n", message);
+  exit(PCCTS_EXIT_FAILURE);
 }
 
-#ifdef __USE_PROTOS
 void error(char *message,int line_no)
-#else
-void error(message,line_no)
-char *message;
-int line_no;
-#endif
 {
-	fprintf(stderr,ErrHdr,
-		(file_str[0] ? file_str[0] : "stdin"), line_no);
-	fprintf(stderr, " Error: %s\n", message);
-	err_found = 1;
+  fprintf(stderr,ErrHdr,
+    (file_str[0] ? file_str[0] : "stdin"), line_no);
+  fprintf(stderr, " Error: %s\n", message);
+  err_found = 1;
 }
 
-#ifdef __USE_PROTOS
 void warning(char *message,int line_no)
-#else
-void warning(message,line_no)
-char *message;
-int line_no;
-#endif
 {
-	fprintf(stderr,ErrHdr,
-		(file_str[0] ? file_str[0] : "stdin"), line_no);
-	fprintf(stderr, " Warning: %s\n", message);
+  fprintf(stderr,ErrHdr,
+    (file_str[0] ? file_str[0] : "stdin"), line_no);
+  fprintf(stderr, " Warning: %s\n", message);
 }
 
 /* MR10: Jeff Vincent
@@ -205,36 +153,31 @@ int line_no;
    MR10: if OutputDirectory was changed by user (-o option)
 */
 
-#ifdef __USE_PROTOS
 char *OutMetaName(char *n)
-#else
-char *OutMetaName(n)
-char *n;
-#endif
-{	
+{
     static char *dir_sym = DirectorySymbol;
     static char newname[MaxFileName+1];
     char *p;
 
-	/* If OutputDirectory is same as TopDirectory (platform default) then leave n alone. */
+  /* If OutputDirectory is same as TopDirectory (platform default) then leave n alone. */
     if (strcmp(OutputDirectory, TopDirectory) == 0)
-		return n;
+    return n;
 
-	/* p will point to filename without path information */
-	if ((p = strrchr(n, *dir_sym)) != NULL)
-		p++;
-	else
-		p = n;
+  /* p will point to filename without path information */
+  if ((p = strrchr(n, *dir_sym)) != NULL)
+    p++;
+  else
+    p = n;
 
-	/* Copy new output directory into newname[] */
-	strcpy(newname, OutputDirectory);
+  /* Copy new output directory into newname[] */
+  strcpy(newname, OutputDirectory);
 
-	/* if new output directory does not have trailing dir_sym, add it! */
-	if (newname[strlen(newname)-1] != *dir_sym)
-		strcat(newname, dir_sym);
+  /* if new output directory does not have trailing dir_sym, add it! */
+  if (newname[strlen(newname)-1] != *dir_sym)
+    strcat(newname, dir_sym);
 
-	/* contatenate FILE NAME ONLY to new output directory */
-	strcat(newname, p);
+  /* contatenate FILE NAME ONLY to new output directory */
+  strcat(newname, p);
 
-	return newname;
+  return newname;
 }
