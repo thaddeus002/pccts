@@ -14,8 +14,6 @@ PCCTS_H=../h
 
 CC ?= gcc
 CPPFLAGS += -I. -I$(SET) -I$(PCCTS_H) -DUSER_ZZSYN -DZZLEXBUFSIZE=32000
-OBJ_EXT = o
-OUT_OBJ = -o
 OBJ = dlg_p.o dlg_a.o main.o err.o set.o support.o output.o \
         relabel.o automata.o
 
@@ -36,28 +34,26 @@ SRC = dlg_p.c dlg_a.c main.c err.c $(SET)/set.c support.c output.c \
 #dlg_a.c mode.h : parser.dlg
 #	$(DLG) -C2 parser.dlg dlg_a.c
 
-dlg_p.$(OBJ_EXT) : dlg_p.c dlg.h tokens.h mode.h
+dlg_p.o : dlg_p.c dlg.h tokens.h mode.h
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c dlg_p.c
 
-dlg_a.$(OBJ_EXT) : dlg_a.c dlg.h tokens.h mode.h
+dlg_a.o : dlg_a.c dlg.h tokens.h mode.h
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c dlg_a.c
 
-main.$(OBJ_EXT) : main.c dlg.h
+main.o : main.c dlg.h
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c main.c
 
-set.$(OBJ_EXT) : $(SET)/set.c
+set.o : $(SET)/set.c
 	$(CC) -c $(CFLAGS) $(CPPFLAGS) $(SET)/set.c
-
-lint:
-	lint *.c
 
 #clean up all the intermediate files
 clean:
-	rm -f *.$(OBJ_EXT) core
+	rm -f *.o core
 
 #remove everything in clean plus the PCCTS files generated
 scrub:
-	rm -f dlg $(PCCTS_GEN) *.$(OBJ_EXT) core
+	rm -f dlg $(PCCTS_GEN) *.o core
 
 install: dlg
 	install dlg $(PREFIX)/bin
+	install dlg.1 $(PREFIX)/man/man1
