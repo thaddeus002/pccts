@@ -100,6 +100,25 @@ static unsigned int min=1;
 #define CHK(a)
 #endif
 
+
+/** make arg1 a set big enough to hold max elem # of arg2 */
+void set_new(set a, unsigned int _max) {
+  if ((a.setword=calloc(NumWords(_max),BytesPerWord))==NULL) {
+    fprintf(stderr, "set_new: Cannot allocate set with max of %u\n", _max);
+  }
+  a.n = NumWords(_max);
+}
+
+
+/** free memory used by a set */
+void set_free(set a) {
+  if ( a.setword != NULL ) {
+    free(a.setword);
+  }
+  a = empty;
+}
+
+
 /**
  * Set the minimum size (in words) of a set to reduce realloc calls.
  */

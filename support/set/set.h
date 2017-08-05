@@ -28,9 +28,7 @@
 
     Example set creation and destruction:
 
-    set
-    set_of2(e,g)
-    unsigned e,g;
+    set set_of2(unsigned e, unsigned g)
     {
         set a,b,c;
 
@@ -62,7 +60,7 @@
 
 /* Define usable bits per unsigned int word */
 #define BytesPerWord    sizeof(unsigned)
-#define	WORDSIZE        (sizeof(unsigned)*8)
+#define WORDSIZE        (sizeof(unsigned)*8)
 #define LogWordSize     (WORDSIZE==16?4:5)
 
 #define SETSIZE(a) ((a).n<<LogWordSize)     /* Maximum items per set */
@@ -81,24 +79,31 @@ typedef struct _set {
 
 /* M a c r o s */
 
+/** An empty set */
 #define set_init    {0, NULL}
+
+/** Verify that a set is null */
 #define set_null(a) ((a).setword==NULL)
 
-/** Num bytes to hold x */
-#define NumBytes(x)     (((x)>>3)+1)
 /** Num words to hold x */
 #define NumWords(x)     ((((unsigned)(x))>>LogWordSize)+1)
 
 /** make arg1 a set big enough to hold max elem # of arg2 */
-#define set_new(a,_max) \
-if (((a).setword=(unsigned *)calloc(NumWords(_max),BytesPerWord))==NULL) \
-        fprintf(stderr, "set_new: Cannot allocate set with max of %u\n", _max); \
-        (a).n = NumWords(_max);
+void set_new(set a, unsigned int _max) {
+  if ((a.setword=calloc(NumWords(_max),BytesPerWord))==NULL) {
+    fprintf(stderr, "set_new: Cannot allocate set with max of %u\n", _max);
+  }
+  a.n = NumWords(_max);
+}
+
 
 /** free memory used by a set */
-#define set_free(a)                                 \
-    {if ( (a).setword != NULL ) free((char *)((a).setword));    \
-    (a) = empty;}
+void set_free(set a) {
+  if ( a.setword != NULL ) {
+    free(a.setword);
+  }
+  a = empty;
+}
 
 
 /**
