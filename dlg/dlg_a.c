@@ -9,7 +9,7 @@
  * ANTLR Version 1.33MR33
  */
 
-#define ANTLR_VERSION	13333
+#define ANTLR_VERSION 13333
 #include "pcctscfg.h"
 #include "pccts_stdio.h"
 
@@ -20,17 +20,13 @@
 #include "dlgdef.h"
 LOOKAHEAD
 
-void
-#ifdef __USE_PROTOS
-zzerraction(void)
-#else
-zzerraction()
-#endif
+void zzerraction()
 {
-	(*zzerr)("invalid token");
-	zzadvance();
-	zzskip();
+  (*zzerr)("invalid token");
+  zzadvance();
+  zzskip();
 }
+
 /*
  * D L G tables
  *
@@ -46,44 +42,44 @@ zzerraction()
 
 
 
-int	func_action;		/* should actions be turned into functions?*/
-int	lex_mode_counter = 0;	/* keeps track of the number of %%names */
-/* MR1									    */
-/* MR1  11-Apr-97	Provide mechanism for inserting code into DLG class */
-/* MR1				via <<%%lexmember...>>			    */
-/* MR1									    */
-int	lexMember = 0;		/* <<%%lexmemeber ...>>	   		MR1 */
-int	lexAction = 0;		/* <<%%lexaction ...>>			MR1 */
-int	parserClass = 0;	/* <<%%parserclass ...>>        MR1 */
-int	lexPrefix = 0;		/* <<%%lexprefix ...>>			MR1 */
-char	theClassName[100];						     /* MR11 */
-char	*pClassName=theClassName;					 /* MR11 */
-int	firstLexMember=1;					             /* MR1 */
+int func_action;    /* should actions be turned into functions?*/
+int lex_mode_counter = 0; /* keeps track of the number of %%names */
+/* MR1                      */
+/* MR1  11-Apr-97 Provide mechanism for inserting code into DLG class */
+/* MR1        via <<%%lexmember...>>          */
+/* MR1                      */
+int lexMember = 0;    /* <<%%lexmemeber ...>>       MR1 */
+int lexAction = 0;    /* <<%%lexaction ...>>      MR1 */
+int parserClass = 0;  /* <<%%parserclass ...>>        MR1 */
+int lexPrefix = 0;    /* <<%%lexprefix ...>>      MR1 */
+char  theClassName[100];                 /* MR11 */
+char  *pClassName=theClassName;          /* MR11 */
+int firstLexMember=1;                      /* MR1 */
 
 
-void  xxputc(int c) {						/* MR1 */
-    if (parserClass) {						/* MR1 */
-      *pClassName++=c;						/* MR1 */
-      *pClassName=0;						/* MR1 */
-    } else if (lexMember || lexPrefix) {				/* MR1 */
-      if (class_stream != NULL) fputc(c,class_stream);		/* MR1 */
-    } else {							/* MR1 */
-      fputc(c,OUT);						/* MR1 */
-    };								/* MR1 */
-  }  								/* MR1 */
+void  xxputc(int c) {           /* MR1 */
+    if (parserClass) {            /* MR1 */
+      *pClassName++=c;            /* MR1 */
+      *pClassName=0;            /* MR1 */
+    } else if (lexMember || lexPrefix) {        /* MR1 */
+      if (class_stream != NULL) fputc(c,class_stream);    /* MR1 */
+    } else {              /* MR1 */
+      fputc(c,OUT);           /* MR1 */
+    };                /* MR1 */
+  }                 /* MR1 */
 
-  void xxprintf(char *format,char *string) {			/* MR1 */
-      if (lexMember || lexPrefix || parserClass) {			/* MR1 */
-        if (class_stream != NULL)					/* MR1 */
-        fprintf(class_stream,format,string);			/* MR1 */
-      } else {							/* MR1 */
-        fprintf(OUT,format,string);					/* MR1 */
-      };								/* MR1 */
-    }  								/* MR1 */
+  void xxprintf(char *format,char *string) {      /* MR1 */
+      if (lexMember || lexPrefix || parserClass) {      /* MR1 */
+        if (class_stream != NULL)         /* MR1 */
+        fprintf(class_stream,format,string);      /* MR1 */
+      } else {              /* MR1 */
+        fprintf(OUT,format,string);         /* MR1 */
+      };                /* MR1 */
+    }                 /* MR1 */
 
 static void act1()
 {
-		NLA = 1;
+    NLA = 1;
 }
 
 
@@ -122,36 +118,36 @@ static void act6()
 
 static void act7()
 {
-		NLA = LEXMEMBER;
-    lexMember=1;					/* MR1 */
-    if (firstLexMember != 0) {			/* MR1 */
-      firstLexMember=0;				/* MR1 */
-      p_class_def1();				/* MR1 */
-    };						/* MR1 */
-    zzmode(ACT);					/* MR1 */
-	}
+    NLA = LEXMEMBER;
+    lexMember=1;          /* MR1 */
+    if (firstLexMember != 0) {      /* MR1 */
+      firstLexMember=0;       /* MR1 */
+      p_class_def1();       /* MR1 */
+    };            /* MR1 */
+    zzmode(ACT);          /* MR1 */
+  }
 
 
 static void act8()
 {
-		NLA = LEXACTION;
+    NLA = LEXACTION;
     lexAction=1;zzmode(ACT);
-	}
+  }
 
 
 static void act9()
 {
-		NLA = PARSERCLASS;
-    parserClass=1;				/* MR1 */
-    zzmode(ACT);					/* MR1 */
-	}
+    NLA = PARSERCLASS;
+    parserClass=1;        /* MR1 */
+    zzmode(ACT);          /* MR1 */
+  }
 
 
 static void act10()
 {
-		NLA = LEXPREFIX;
+    NLA = LEXPREFIX;
     lexPrefix=1;zzmode(ACT);
-	}
+}
 
 
 static void act11()
@@ -162,147 +158,147 @@ static void act11()
     gen_cpp?"ANTLRTokenType":"static void",
     gen_cpp?ClassName("::"):"", ++action_no);
     zzmode(ACT); zzskip();
-	}
+}
 
 
 static void act12()
 {
-		NLA = GREAT_GREAT;
-	}
+    NLA = GREAT_GREAT;
+}
 
 
 static void act13()
 {
-		NLA = L_BRACE;
-	}
+    NLA = L_BRACE;
+}
 
 
 static void act14()
 {
-		NLA = R_BRACE;
-	}
+    NLA = R_BRACE;
+}
 
 
 static void act15()
 {
-		NLA = L_PAR;
-	}
+    NLA = L_PAR;
+}
 
 
 static void act16()
 {
-		NLA = R_PAR;
-	}
+    NLA = R_PAR;
+}
 
 
 static void act17()
 {
-		NLA = L_BRACK;
-	}
+    NLA = L_BRACK;
+}
 
 
 static void act18()
 {
-		NLA = R_BRACK;
-	}
+    NLA = R_BRACK;
+}
 
 
 static void act19()
 {
-		NLA = ZERO_MORE;
-	}
+    NLA = ZERO_MORE;
+}
 
 
 static void act20()
 {
-		NLA = ONE_MORE;
-	}
+    NLA = ONE_MORE;
+}
 
 
 static void act21()
 {
-		NLA = OR;
-	}
+    NLA = OR;
+}
 
 
 static void act22()
 {
-		NLA = RANGE;
-	}
+    NLA = RANGE;
+}
 
 
 static void act23()
 {
-		NLA = NOT;
-	}
+    NLA = NOT;
+}
 
 
 static void act24()
 {
-		NLA = OCTAL_VALUE;
+    NLA = OCTAL_VALUE;
     {int t; sscanf(&zzlextext[1],"%o",&t); zzlextext[0] = t;}
-	}
+}
 
 
 static void act25()
 {
-		NLA = HEX_VALUE;
+    NLA = HEX_VALUE;
     {int t; sscanf(&zzlextext[3],"%x",&t); zzlextext[0] = t;}
-	}
+}
 
 
 static void act26()
 {
-		NLA = DEC_VALUE;
+    NLA = DEC_VALUE;
     {int t; sscanf(&zzlextext[1],"%d",&t); zzlextext[0] = t;}
-	}
+  }
 
 
 static void act27()
 {
-		NLA = TAB;
+    NLA = TAB;
     zzlextext[0] = '\t';
-	}
+  }
 
 
 static void act28()
 {
-		NLA = NL;
+    NLA = NL;
     zzlextext[0] = '\n';
-	}
+  }
 
 
 static void act29()
 {
-		NLA = CR;
+    NLA = CR;
     zzlextext[0] = '\r';
-	}
+  }
 
 
 static void act30()
 {
-		NLA = BS;
+    NLA = BS;
     zzlextext[0] = '\b';
-	}
+  }
 
 
 static void act31()
 {
-		NLA = CONTINUATION;
+    NLA = CONTINUATION;
     zzline++; zzskip();
-	}
+  }
 
 
 static void act32()
 {
-		NLA = LIT;
+    NLA = LIT;
     zzlextext[0] = zzlextext[1];
 }
 
 
 static void act33()
 {
-		NLA = REGCHAR;
+    NLA = REGCHAR;
 }
 
 static unsigned char shift0[257] = {
@@ -337,75 +333,75 @@ static unsigned char shift0[257] = {
 
 static void act34()
 {
-		NLA = 1;
+    NLA = 1;
     error("unterminated action", zzline); zzmode(START);
 }
 
 
 static void act35()
 {
-		NLA = ACTION;
+    NLA = ACTION;
     if (func_action) fprintf(OUT,"}\n\n");
     zzmode(START);
-    /* MR1									    */
-    /* MR1  11-Apr-97	Provide mechanism for inserting code into DLG class */
-    /* MR1				via <<%%lexmember ...>>			    */
-    /* MR1			This is a consequence of not saving actions         */
-    /* MR1									    */
-    /* MR1 */	   parserClass=0;
-    /* MR1 */	   lexPrefix=0;
-    /* MR1 */	   lexAction=0;
-    /* MR1 */	   lexMember=0;
+    /* MR1                      */
+    /* MR1  11-Apr-97 Provide mechanism for inserting code into DLG class */
+    /* MR1        via <<%%lexmember ...>>         */
+    /* MR1      This is a consequence of not saving actions         */
+    /* MR1                      */
+    /* MR1 */    parserClass=0;
+    /* MR1 */    lexPrefix=0;
+    /* MR1 */    lexAction=0;
+    /* MR1 */    lexMember=0;
 }
 
 
 static void act36()
 {
-		NLA = 34;
+    NLA = 34;
     xxputc(zzlextext[0]); zzskip();
 }
 
 
 static void act37()
 {
-		NLA = 35;
+    NLA = 35;
     xxputc('>'); zzskip();
 }
 
 
 static void act38()
 {
-		NLA = 36;
+    NLA = 36;
     xxputc('\\'); zzskip();
 }
 
 
 static void act39()
 {
-		NLA = 37;
+    NLA = 37;
     xxputc(zzlextext[0]); ++zzline; zzskip();
 }
 
 
 static void act40()
 {
-		NLA = 38;
-    zzmode(ACTION_COMMENTS);			/* MR1 */
-    xxprintf("%s", &(zzlextext[0])); zzskip();	/* MR1 */
+    NLA = 38;
+    zzmode(ACTION_COMMENTS);      /* MR1 */
+    xxprintf("%s", &(zzlextext[0])); zzskip();  /* MR1 */
 }
 
 
 static void act41()
 {
-		NLA = 39;
-    zzmode(ACTION_CPP_COMMENTS);			/* MR1 */
-    xxprintf("%s", &(zzlextext[0])); zzskip();	/* MR1 */
+    NLA = 39;
+    zzmode(ACTION_CPP_COMMENTS);      /* MR1 */
+    xxprintf("%s", &(zzlextext[0])); zzskip();  /* MR1 */
 }
 
 
 static void act42()
 {
-		NLA = 40;
+    NLA = 40;
     xxputc(zzlextext[0]); zzskip();
 }
 
@@ -441,28 +437,28 @@ static unsigned char shift1[257] = {
 
 static void act43()
 {
-		NLA = 1;
+    NLA = 1;
 }
 
 
 static void act44()
 {
-		NLA = 41;
-    zzmode(ACT);					/* MR1 */
-    xxprintf("%s", &(zzlextext[0])); zzskip();	/* MR1 */
+    NLA = 41;
+    zzmode(ACT);          /* MR1 */
+    xxprintf("%s", &(zzlextext[0])); zzskip();  /* MR1 */
 }
 
 
 static void act45()
 {
-		NLA = 42;
+    NLA = 42;
     zzline++; xxputc(zzlextext[0]); zzskip();
 }
 
 
 static void act46()
 {
-		NLA = 43;
+    NLA = 43;
     xxputc(zzlextext[0]); zzskip();
 }
 
@@ -498,21 +494,21 @@ static unsigned char shift2[257] = {
 
 static void act47()
 {
-		NLA = 1;
+    NLA = 1;
 }
 
 
 static void act48()
 {
-		NLA = 44;
-    zzmode(ACT); zzline++;			/* MR1 */
-    xxprintf("%s", &(zzlextext[0])); zzskip();	/* MR1 */
+    NLA = 44;
+    zzmode(ACT); zzline++;      /* MR1 */
+    xxprintf("%s", &(zzlextext[0])); zzskip();  /* MR1 */
 }
 
 
 static void act49()
 {
-		NLA = 45;
+    NLA = 45;
     xxputc(zzlextext[0]); zzskip();
 }
 
@@ -545,7 +541,7 @@ static unsigned char shift3[257] = {
   2, 2, 2, 2, 2, 2, 2
 };
 
-#define DfaStates	94
+#define DfaStates 94
 typedef unsigned char DfaState;
 
 static DfaState st0[42] = {
@@ -1218,100 +1214,100 @@ static DfaState st93[4] = {
 
 
 DfaState *dfa[94] = {
-	st0,
-	st1,
-	st2,
-	st3,
-	st4,
-	st5,
-	st6,
-	st7,
-	st8,
-	st9,
-	st10,
-	st11,
-	st12,
-	st13,
-	st14,
-	st15,
-	st16,
-	st17,
-	st18,
-	st19,
-	st20,
-	st21,
-	st22,
-	st23,
-	st24,
-	st25,
-	st26,
-	st27,
-	st28,
-	st29,
-	st30,
-	st31,
-	st32,
-	st33,
-	st34,
-	st35,
-	st36,
-	st37,
-	st38,
-	st39,
-	st40,
-	st41,
-	st42,
-	st43,
-	st44,
-	st45,
-	st46,
-	st47,
-	st48,
-	st49,
-	st50,
-	st51,
-	st52,
-	st53,
-	st54,
-	st55,
-	st56,
-	st57,
-	st58,
-	st59,
-	st60,
-	st61,
-	st62,
-	st63,
-	st64,
-	st65,
-	st66,
-	st67,
-	st68,
-	st69,
-	st70,
-	st71,
-	st72,
-	st73,
-	st74,
-	st75,
-	st76,
-	st77,
-	st78,
-	st79,
-	st80,
-	st81,
-	st82,
-	st83,
-	st84,
-	st85,
-	st86,
-	st87,
-	st88,
-	st89,
-	st90,
-	st91,
-	st92,
-	st93
+  st0,
+  st1,
+  st2,
+  st3,
+  st4,
+  st5,
+  st6,
+  st7,
+  st8,
+  st9,
+  st10,
+  st11,
+  st12,
+  st13,
+  st14,
+  st15,
+  st16,
+  st17,
+  st18,
+  st19,
+  st20,
+  st21,
+  st22,
+  st23,
+  st24,
+  st25,
+  st26,
+  st27,
+  st28,
+  st29,
+  st30,
+  st31,
+  st32,
+  st33,
+  st34,
+  st35,
+  st36,
+  st37,
+  st38,
+  st39,
+  st40,
+  st41,
+  st42,
+  st43,
+  st44,
+  st45,
+  st46,
+  st47,
+  st48,
+  st49,
+  st50,
+  st51,
+  st52,
+  st53,
+  st54,
+  st55,
+  st56,
+  st57,
+  st58,
+  st59,
+  st60,
+  st61,
+  st62,
+  st63,
+  st64,
+  st65,
+  st66,
+  st67,
+  st68,
+  st69,
+  st70,
+  st71,
+  st72,
+  st73,
+  st74,
+  st75,
+  st76,
+  st77,
+  st78,
+  st79,
+  st80,
+  st81,
+  st82,
+  st83,
+  st84,
+  st85,
+  st86,
+  st87,
+  st88,
+  st89,
+  st90,
+  st91,
+  st92,
+  st93
 };
 
 
@@ -1329,70 +1325,70 @@ DfaState accepts[95] = {
 };
 
 void (*actions[50])() = {
-	zzerraction,
-	act1,
-	act2,
-	act3,
-	act4,
-	act5,
-	act6,
-	act7,
-	act8,
-	act9,
-	act10,
-	act11,
-	act12,
-	act13,
-	act14,
-	act15,
-	act16,
-	act17,
-	act18,
-	act19,
-	act20,
-	act21,
-	act22,
-	act23,
-	act24,
-	act25,
-	act26,
-	act27,
-	act28,
-	act29,
-	act30,
-	act31,
-	act32,
-	act33,
-	act34,
-	act35,
-	act36,
-	act37,
-	act38,
-	act39,
-	act40,
-	act41,
-	act42,
-	act43,
-	act44,
-	act45,
-	act46,
-	act47,
-	act48,
-	act49
+  zzerraction,
+  act1,
+  act2,
+  act3,
+  act4,
+  act5,
+  act6,
+  act7,
+  act8,
+  act9,
+  act10,
+  act11,
+  act12,
+  act13,
+  act14,
+  act15,
+  act16,
+  act17,
+  act18,
+  act19,
+  act20,
+  act21,
+  act22,
+  act23,
+  act24,
+  act25,
+  act26,
+  act27,
+  act28,
+  act29,
+  act30,
+  act31,
+  act32,
+  act33,
+  act34,
+  act35,
+  act36,
+  act37,
+  act38,
+  act39,
+  act40,
+  act41,
+  act42,
+  act43,
+  act44,
+  act45,
+  act46,
+  act47,
+  act48,
+  act49
 };
 
 static DfaState dfa_base[] = {
-	0,
-	73,
-	84,
-	90
+  0,
+  73,
+  84,
+  90
 };
 
 static unsigned char *b_class_no[] = {
-	shift0,
-	shift1,
-	shift2,
-	shift3
+  shift0,
+  shift1,
+  shift2,
+  shift3
 };
 
 

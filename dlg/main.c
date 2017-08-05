@@ -35,12 +35,12 @@
 #include <stdio.h>
 #include "stdpccts.h"
 
-char  version[] = "1.33MR33";
+char *version = "1.33MR33";
 int numfiles = 0;
-char  *file_str[2] = {NULL, NULL};
-char  *mode_file = "mode.h";
-char  *class_name = DEFAULT_CLASSNAME;
-char  *OutputDirectory = TopDirectory;
+char *file_str[2] = {NULL, NULL};
+char *mode_file = "mode.h";
+char *class_name = DEFAULT_CLASSNAME;
+char *OutputDirectory = TopDirectory;
 
 /* Option variables */
 int comp_level = 0;
@@ -49,14 +49,6 @@ int case_insensitive = FALSE;
 int warn_ambig = FALSE;
 int gen_cpp = FALSE;
 
-
-static int ci_strequ(char *a,char *b)
-{
-  for ( ;*a != 0 && *b != 0; a++, b++) {
-    if (toupper(*a) != toupper(*b)) return 0;
-  }
-  return (*a == *b);
-}
 
 /* Option List Stuff */
 
@@ -91,11 +83,11 @@ typedef void (*WildFunc)();
 #endif
 
 typedef struct {
-      char *option;
-      int  arg;
-      WildFunc process;
-      char *descr;
-    } Opt;
+  char *option;
+  int  arg;
+  WildFunc process;
+  char *descr;
+} Opt;
 
 Opt options[] = {
   { "-CC", 0, (WildFunc)p_cpp, "Generate C++ output" },
@@ -116,7 +108,16 @@ Opt options[] = {
  };
 
 
-void ProcessArgs(int argc, char **argv, Opt *options)
+static int ci_strequ(char *a,char *b)
+{
+  for ( ;*a != 0 && *b != 0; a++, b++) {
+    if (toupper(*a) != toupper(*b)) return 0;
+  }
+  return (*a == *b);
+}
+
+
+static void ProcessArgs(int argc, char **argv, Opt *options)
 {
   Opt *p;
 
@@ -240,8 +241,8 @@ void init()
   func_action = FALSE;
 }
 
-/* stuff that needs to be reset when a new automaton is being built */
-void new_automaton_mode()         /* MR1 */
+/** stuff that needs to be reset when a new automaton is being built */
+void new_automaton_mode()
 {
   set_free(used_chars);
   clear_hash();
