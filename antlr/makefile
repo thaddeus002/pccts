@@ -39,8 +39,6 @@ PCCTS_H=../h
 CC ?= gcc
 ANTLR = ../bin/antlr
 DLG = ../bin/dlg
-OBJ_EXT = o
-OUT_OBJ = -o
 CPPFLAGS += -I. -I$(SET) -I$(PCCTS_H) -DUSER_ZZSYN -DZZLEXBUFSIZE=32000
 
 #ifndef PREFIX
@@ -87,11 +85,11 @@ set.o : $(SET)/set.c
 
 #clean up all the intermediate files
 clean:
-	rm -f *.$(OBJ_EXT) core
+	rm -f *.o core
 
 #remove everything in clean plus the PCCTS files generated
 scrub:
-	rm -f antlr $(PCCTS_GEN) *.$(OBJ_EXT) core
+	rm -f antlr $(PCCTS_GEN) *.o core
 
 install: antlr
 	install antlr $(PREFIX)/bin
