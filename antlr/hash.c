@@ -34,9 +34,9 @@
  * The following functions are visible:
  *
  *    char  *mystrdup(char *);    Make space and copy string
- *    Entry   **newHashTable();   Create and return initialized hash table
- *    Entry *hash_add(Entry **, char *, Entry *)
- *    Entry *hash_get(Entry **, char *)
+ *    Entry **newHashTable();   Create and return initialized hash table
+ *    Entry *hash_add(Entry **, char *, Entry *);
+ *    Entry *hash_get(Entry **, char *);
  */
 
 
@@ -44,12 +44,7 @@
 #include "pcctscfg.h"
 #include "hash.h"
 
-#ifdef __USE_PROTOS
 #include <stdlib.h>
-#else
-#include <malloc.h>
-#endif
-
 #include <string.h>
 
 #define StrSame   0
@@ -59,9 +54,13 @@
       fprintf(stderr, " %s\n", err); exit(PCCTS_EXIT_FAILURE);}
 #define require(expr, err) {if ( !(expr) ) fatal(err);}
 
+/** number of entries in the table */
 static unsigned size = HashTableSize;
+/** uniq static char string for all table */
 static char *strings = NULL;
+/** cursor on global char table 'strings' */
 static char *strp;
+/** length of 'strings' */
 static unsigned strsize = StrTableSize;
 
 /** create the hash table and string table for terminals (string table only once) */
@@ -87,7 +86,7 @@ void killHashTable( Entry **table )
 }
 
 /** Given a table, add 'rec' with key 'key' (add to front of list). return ptr to entry */
-Entry *hash_add( Entry **table, char *key, Entry *rec )
+Entry *hash_add(Entry **table, char *key, Entry *rec)
 {
   unsigned h=0;
   char *p=key;

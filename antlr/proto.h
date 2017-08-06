@@ -367,7 +367,6 @@ extern void genHdr( int );
 extern void genHdr1( int );
 extern void dumpAction( char *, FILE *, int, int, int, int );
 extern void dumpActionPlus(ActionNode*, char *, FILE *, int, int, int, int );   /* MR21 */
-extern Entry ** newHashTable( void );
 extern Entry * hash_add( Entry **, char *, Entry * );
 extern Entry * hash_get( Entry **, char * );
 extern void hashStat( Entry ** );
@@ -382,7 +381,6 @@ extern int strmember( char *, char * );
 /* extern int HasComma( char * ); MR23 Replaced by hasMultipleOperands() */
 extern void DumpRetValStruct( FILE *, char *, int );
 extern char * StripQuotes( char * );
-extern int main( int, char *[] );
 extern void readDescr( void );
 extern FILE * NextFile( void );
 extern char * outnameX( char *, char *);

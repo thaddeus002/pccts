@@ -36,6 +36,7 @@
 
         /* H a s h  T a b l e  S t u f f */
 
+/** Number of 'Entry' in a hashtable, which is a table of 'Entry' */
 #ifndef HashTableSize
 #define HashTableSize 553
 #endif
@@ -60,9 +61,9 @@ Entry *hash_get(Entry **, char *);
 
 Entry **newHashTable();
 
-Entry *hash_add(Entry **, char *, Entry *);
+Entry *hash_add(Entry **table, char *key, Entry *rec);
 
-void  killHashTable(Entry **);
+void  killHashTable(Entry **table);
 
 /**
  * Add a string to the string table and return a pointer to it.
