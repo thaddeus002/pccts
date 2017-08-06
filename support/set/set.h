@@ -57,7 +57,6 @@
 #define __GATE_SET_H
 
 
-
 /* Define usable bits per unsigned int word */
 #define BytesPerWord    sizeof(unsigned)
 #define WORDSIZE        (sizeof(unsigned)*8)
@@ -88,22 +87,15 @@ typedef struct _set {
 /** Num words to hold x */
 #define NumWords(x)     ((((unsigned)(x))>>LogWordSize)+1)
 
+/** Global variable for an empty set */
+extern set empty;
+
 /** make arg1 a set big enough to hold max elem # of arg2 */
-void set_new(set a, unsigned int _max) {
-  if ((a.setword=calloc(NumWords(_max),BytesPerWord))==NULL) {
-    fprintf(stderr, "set_new: Cannot allocate set with max of %u\n", _max);
-  }
-  a.n = NumWords(_max);
-}
+void set_new(set a, unsigned int _max);
 
 
 /** free memory used by a set */
-void set_free(set a) {
-  if ( a.setword != NULL ) {
-    free(a.setword);
-  }
-  a = empty;
-}
+void set_free(set a);
 
 
 /**
@@ -269,8 +261,5 @@ void _set_pdq(set a, register unsigned *q);
  * A function that produces a hash number for the set.
  */
 unsigned int set_hash(set a, register unsigned int mod);
-
-/** Global variable for an empty set */
-extern set empty;
 
 #endif
