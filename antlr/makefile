@@ -95,3 +95,4 @@ scrub:
 
 install: antlr
 	install antlr $(PREFIX)/bin
+	install antlr.1 $(PREFIX)/man/man1
