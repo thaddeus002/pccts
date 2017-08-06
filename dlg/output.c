@@ -87,8 +87,6 @@ int operation_no = 0; /* used to mark nodes so that infinite loops avoided */
 int dfa_basep[MAX_MODES];   /* start of each group of states */
 int dfa_class_nop[MAX_MODES]; /* number of elements in each group of states*/
 
-int gen_ansi = FALSE;   /* allows ansi code to be generated */
-
 FILE *input_stream; /* where to read description from */
 FILE *output_stream;  /* where to put the output    */
 FILE *mode_stream;  /* where to put the mode.h stuff */
@@ -539,7 +537,7 @@ void p_base_table()
 }
 
 
-void p_class_table()            /* MR1 */
+void p_class_table()
 {
 #if 0
   register int m;

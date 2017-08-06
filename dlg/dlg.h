@@ -138,7 +138,6 @@ extern FILE *output_stream; /* where to put the output */
 extern FILE *mode_stream; /* where to put the mode output */
 extern FILE *class_stream;
 extern char *mode_file; /* name of file for mode output */
-extern int  gen_ansi; /* produce ansi compatible code */
 extern int  case_insensitive;/* ignore case of input spec. */
 extern int  warn_ambig; /* show if regular expressions ambiguous */
 extern int  gen_cpp;

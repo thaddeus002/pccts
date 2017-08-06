@@ -68,7 +68,6 @@ void p_cl_name(char *s, char *t)
   }
 void p_mode_file(char *s, char *t){mode_file=t;}
 void p_outdir(char *s,char *t) {OutputDirectory=t;}
-void p_ansi()   {gen_ansi = TRUE;}
 void p_interactive()  {interactive = TRUE;}
 void p_case_s()   { case_insensitive = FALSE; }
 void p_case_i()   { case_insensitive = TRUE; }
@@ -94,7 +93,6 @@ Opt options[] = {
   { "-C0", 0, (WildFunc)p_comp0, "No compression (default)" },
   { "-C1", 0, (WildFunc)p_comp1, "Compression level 1" },
   { "-C2", 0, (WildFunc)p_comp2, "Compression level 2" },
-  { "-ga", 0, (WildFunc)p_ansi, "Generate ansi C"},
   { "-Wambiguity", 0, (WildFunc)p_warn_ambig, "Warn if expressions ambiguous"},
   { "-m", 1, (WildFunc)p_mode_file, "Rename lexical mode output file"},
   { "-i", 0, (WildFunc)p_interactive, "Build interactive scanner (not valid for C++ mode)"},
