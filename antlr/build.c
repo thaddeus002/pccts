@@ -1,6 +1,4 @@
 /*
- * build.c -- functions associated with building syntax diagrams.
- *
  * SOFTWARE RIGHTS
  *
  * We reserve no LEGAL rights to the Purdue Compiler Construction Tool
@@ -28,6 +26,11 @@
  * 1989-2001
  */
 
+/**
+ * \file build.c
+ * \brief functions associated with building syntax diagrams.
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -45,7 +48,8 @@
       ((Junction *)g.left)->end = (Junction *) g.right;         \
       ((Junction *)g.right)->jtype = EndBlk;}
 
-/* Add the parameter string 'parm' to the parms field of a block-type junction
+/**
+ * Add the parameter string 'parm' to the parms field of a block-type junction
  * g.left points to the sentinel node on a block.  i.e. g.left->p1 points to
  * the actual junction with its jtype == some block-type.
  */
@@ -141,8 +145,7 @@ Graph buildAction( char *action, int file, int line, int is_predicate )
  *
  * Where o is a junction node.
  */
-Graph
-buildToken( char *text )
+Graph buildToken( char *text )
 {
   Junction *j1, *j2;
   Graph g;
@@ -508,13 +511,11 @@ Graph emptyAlt()
   return g;
 }
 
-/*  MR21
- *
- *  There is code in genBlk which recognizes the node created
- *  by emptyAlt() as a special case and bypasses it.  We don't
- *  want this to happen for the optBlk.
+/**
+ * There is code in genBlk which recognizes the node created
+ * by emptyAlt() as a special case and bypasses it. We don't
+ * want this to happen for the optBlk.
  */
-
 Graph emptyAlt3( )
 {
   Junction *j1, *j2, *j3;
@@ -522,7 +523,7 @@ Graph emptyAlt3( )
 
   j1 = newJunction();
   j2 = newJunction();
-    j3 = newJunction();
+  j3 = newJunction();
   j1->p1 = (Node *) j2;
   j2->p1 = (Node *) j3;
   g.left = (Node *) j1;

@@ -1,6 +1,4 @@
 /*
- * hash.h -- define hash table entries, sizes, hash function...
- *
  * SOFTWARE RIGHTS
  *
  * We reserve no LEGAL rights to the Purdue Compiler Construction Tool
@@ -28,46 +26,48 @@
  * 1989-2001
  */
 
-				/* H a s h  T a b l e  S t u f f */
+/**
+ * \file hash.h
+ * \brief define hash table entries, sizes, hash function...
+ */
+
+#ifndef __HASH_H_
+#define __HASH_H_
+
+        /* H a s h  T a b l e  S t u f f */
 
 #ifndef HashTableSize
-#define HashTableSize	553
-#endif
-
-#ifndef StrTableSize
-#ifdef PC32
-#define StrTableSize	1000000
-#endif
-#endif
-
-#ifndef StrTableSize
-#ifdef PC
-#define StrTableSize 655200
-#endif
+#define HashTableSize 553
 #endif
 
 #ifndef StrTableSize
 #define StrTableSize 1000000
 #endif
 
-typedef struct _entry {		/* Minimum hash table entry -- superclass */
-			char *str;
-			struct _entry *next;
-		} Entry;
+/** Minimum hash table entry -- superclass */
+typedef struct _entry {
+  char *str;
+  struct _entry *next;
+} Entry;
 
-/* Hash 's' using 'size', place into h (s is modified) */
-#define Hash(s,h,size)								\
-	{while ( *s != '\0' ) h = (h<<1) + *s++;		\
-	h %= size;}
+/** Hash 's' using 'size', place into h (s is modified) */
+#define Hash(s,h,size)                \
+  {while ( *s != '\0' ) h = (h<<1) + *s++;    \
+  h %= size;}
 
-#ifdef __USE_PROTOS
-Entry	*hash_get(Entry **, char *),
-		**newHashTable(void),
-		*hash_add(Entry **, char *, Entry *);
 
-void	killHashTable(Entry **);
+Entry *hash_get(Entry **, char *);
 
-#else
-Entry *hash_get(), **newHashTable(), *hash_add();
-void	killHashTable();        /* MR9 23-Sep-97 */
+Entry **newHashTable();
+
+Entry *hash_add(Entry **, char *, Entry *);
+
+void  killHashTable(Entry **);
+
+/**
+ * Add a string to the string table and return a pointer to it.
+ * Bump the pointer into the string table to next avail position.
+ */
+char *mystrdup(char *s);
+
 #endif
