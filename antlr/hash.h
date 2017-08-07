@@ -51,10 +51,6 @@ typedef struct _entry {
   struct _entry *next;
 } Entry;
 
-/** Hash 's' using 'size', place into h (s is modified) */
-#define Hash(s,h,size)                \
-  {while ( *s != '\0' ) h = (h<<1) + *s++;    \
-  h %= size;}
 
 
 Entry *hash_get(Entry **, char *);

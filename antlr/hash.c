@@ -52,6 +52,7 @@
 #define fatal(err)                              \
       {fprintf(stderr, "%s(%d):", __FILE__, __LINE__);        \
       fprintf(stderr, " %s\n", err); exit(PCCTS_EXIT_FAILURE);}
+
 #define require(expr, err) {if ( !(expr) ) fatal(err);}
 
 /** number of entries in the table */
@@ -62,6 +63,19 @@ static char *strings = NULL;
 static char *strp;
 /** length of 'strings' */
 static unsigned strsize = StrTableSize;
+
+
+/** Hash 's' using 'size', place into h (s is modified) */
+static unsigned int hash(char *s, unsigned int size) {
+
+  unsigned int h = 0;
+
+  while ( *s != '\0' ) {
+    h = (h<<1) + *s++;
+  }
+  return (h % size);
+}
+
 
 /** create the hash table and string table for terminals (string table only once) */
 Entry **newHashTable( )
@@ -92,7 +106,7 @@ Entry *hash_add(Entry **table, char *key, Entry *rec)
   char *p=key;
   require(table!=NULL && key!=NULL && rec!=NULL, "add: invalid addition");
 
-  Hash(p,h,size);
+  h=hash(p,size);
   rec->next = table[h];     /* Add to singly-linked list */
   table[h] = rec;
   return rec;
@@ -104,10 +118,12 @@ Entry *hash_get( Entry **table, char *key )
   unsigned h=0;
   char *p=key;
   Entry *q;
-/*  require(table!=NULL && key!=NULL, "get: invalid table and/or key");*/
-  if ( !(table!=NULL && key!=NULL) ) *((char *) 34) = 3;
+  /* require(table!=NULL && key!=NULL, "get: invalid table and/or key");*/
+  if ( !(table!=NULL && key!=NULL) ) {
+    *((char *) 34) = 3;
+  }
 
-  Hash(p,h,size);
+  h=hash(p,size);
   for (q = table[h]; q != NULL; q = q->next)
   {
     if ( strcmp(key, q->str) == StrSame ) return( q );
