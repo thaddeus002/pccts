@@ -100,20 +100,20 @@ static unsigned int min=1;
 
 
 /** make arg1 a set big enough to hold max elem # of arg2 */
-void set_new(set a, unsigned int _max) {
-  if ((a.setword=calloc(NumWords(_max),BytesPerWord))==NULL) {
+void set_new(set *a, unsigned int _max) {
+  if ((a->setword=calloc(NumWords(_max),BytesPerWord))==NULL) {
     fprintf(stderr, "set_new: Cannot allocate set with max of %u\n", _max);
   }
-  a.n = NumWords(_max);
+  a->n = NumWords(_max);
 }
 
 
 /** free memory used by a set */
-void set_free(set a) {
-  if ( a.setword != NULL ) {
-    free(a.setword);
+void set_destroy(set *a) {
+  if ( a->setword != NULL ) {
+    free(a->setword);
   }
-  a = empty;
+  *a = empty;
 }
 
 
@@ -250,7 +250,7 @@ set set_of(unsigned b)
     static set a;
 
     if ( b == nil ) return( empty );
-    set_new(a, b);
+    set_new(&a, b);
     a.setword[DIVWORD(b)] = bitmask[MODWORD(b)];
 
     return(a);
@@ -495,7 +495,7 @@ set set_val(register char *s)
     static set a;
     register unsigned *p, *endp;
 
-    set_new(a, ((unsigned)strlen(s)));
+    set_new(&a, ((unsigned)strlen(s)));
     p = a.setword;
     endp = &(a.setword[a.n]);
     do {

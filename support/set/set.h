@@ -90,12 +90,13 @@ typedef struct _set {
 /** Global variable for an empty set */
 extern set empty;
 
-/** make arg1 a set big enough to hold max elem # of arg2 */
-void set_new(set a, unsigned int _max);
 
+#define set_free(a)                                 \
+    {if ( (a).setword != NULL ) free((char *)((a).setword));    \
+    (a) = empty;}
 
 /** free memory used by a set */
-void set_free(set a);
+void set_destroy(set *a);
 
 
 /**
