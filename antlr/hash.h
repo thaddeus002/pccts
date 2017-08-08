@@ -51,15 +51,18 @@ typedef struct _entry {
   struct _entry *next;
 } Entry;
 
+/**
+ * A HashTable is a collection of Entry classed by hash of str.
+ */
+typedef Entry **HashTable;
 
+Entry *hash_get(HashTable table, char *key);
 
-Entry *hash_get(Entry **, char *);
+HashTable newHashTable();
 
-Entry **newHashTable();
+Entry *hash_add(HashTable table, char *key, Entry *rec);
 
-Entry *hash_add(Entry **table, char *key, Entry *rec);
-
-void  killHashTable(Entry **table);
+void  killHashTable(HashTable table);
 
 /**
  * Add a string to the string table and return a pointer to it.

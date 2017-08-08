@@ -41,17 +41,14 @@
 
 
 #include <stdio.h>
-#include "pcctscfg.h"
-#include "hash.h"
-
 #include <stdlib.h>
 #include <string.h>
 
-#define StrSame   0
+#include "hash.h"
 
 #define fatal(err)                              \
       {fprintf(stderr, "%s(%d):", __FILE__, __LINE__);        \
-      fprintf(stderr, " %s\n", err); exit(PCCTS_EXIT_FAILURE);}
+      fprintf(stderr, " %s\n", err); exit(-1);}
 
 #define require(expr, err) {if ( !(expr) ) fatal(err);}
 
@@ -78,11 +75,11 @@ static unsigned int hash(char *s, unsigned int size) {
 
 
 /** create the hash table and string table for terminals (string table only once) */
-Entry **newHashTable( )
+HashTable newHashTable( )
 {
-  Entry **table;
+  HashTable table;
 
-  table = (Entry **) calloc(size, sizeof(Entry *));
+  table = calloc(size, sizeof(Entry *));
   require( table != NULL, "cannot allocate hash table");
   if ( strings == NULL )
   {
@@ -93,14 +90,14 @@ Entry **newHashTable( )
   return table;
 }
 
-void killHashTable( Entry **table )
+void killHashTable( HashTable table )
 {
   /* for now, just free table, forget entries */
   free( (char *) table );
 }
 
 /** Given a table, add 'rec' with key 'key' (add to front of list). return ptr to entry */
-Entry *hash_add(Entry **table, char *key, Entry *rec)
+Entry *hash_add(HashTable table, char *key, Entry *rec)
 {
   unsigned h=0;
   char *p=key;
@@ -113,70 +110,21 @@ Entry *hash_add(Entry **table, char *key, Entry *rec)
 }
 
 /** Return ptr to 1st entry found in table under key (return NULL if none found) */
-Entry *hash_get( Entry **table, char *key )
+Entry *hash_get(HashTable table, char *key)
 {
   unsigned h=0;
   char *p=key;
   Entry *q;
-  /* require(table!=NULL && key!=NULL, "get: invalid table and/or key");*/
-  if ( !(table!=NULL && key!=NULL) ) {
-    *((char *) 34) = 3;
-  }
+  require(table!=NULL && key!=NULL, "get: invalid table and/or key");
 
   h=hash(p,size);
   for (q = table[h]; q != NULL; q = q->next)
   {
-    if ( strcmp(key, q->str) == StrSame ) return( q );
+    if ( !strcmp(key, q->str) ) return( q );
   }
   return( NULL );
 }
 
-#ifdef DEBUG_HASH
-void hashStat( Entry **table )
-{
-  static unsigned short count[20];
-  int i,n=0,low=0, hi=0;
-  Entry **p;
-  float avg=0.0;
-
-  for (i=0; i<20; i++) count[i] = 0;
-  for (p=table; p<&(table[size]); p++)
-  {
-    Entry *q = *p;
-    int len;
-
-    if ( q != NULL && low==0 ) low = p-table;
-    len = 0;
-    if ( q != NULL ) fprintf(stderr, "[%d]", p-table);
-    while ( q != NULL )
-    {
-      len++;
-      n++;
-      fprintf(stderr, " %s", q->str);
-      q = q->next;
-      if ( q == NULL ) fprintf(stderr, "\n");
-    }
-    count[len]++;
-    if ( *p != NULL ) hi = p-table;
-  }
-
-  fprintf(stderr, "Storing %d recs used %d hash positions out of %d\n",
-          n, size-count[0], size);
-  fprintf(stderr, "%f %% utilization\n",
-          ((float)(size-count[0]))/((float)size));
-  for (i=0; i<20; i++)
-  {
-    if ( count[i] != 0 )
-    {
-      avg += (((float)(i*count[i]))/((float)n)) * i;
-      fprintf(stderr, "Bucket len %d == %d (%f %% of recs)\n",
-              i, count[i], ((float)(i*count[i]))/((float)n));
-    }
-  }
-  fprintf(stderr, "Avg bucket length %f\n", avg);
-  fprintf(stderr, "Range of hash function: %d..%d\n", low, hi);
-}
-#endif
 
 /**
  * Add a string to the string table and return a pointer to it.
