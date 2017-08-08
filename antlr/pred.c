@@ -29,6 +29,7 @@
  */
 
 #include <stdio.h>
+#include <string.h>
 #include "pcctscfg.h"
 #include "set.h"
 #include "syn.h"
@@ -64,66 +65,66 @@ predicateLookaheadDepth(a)
 ActionNode *a;
 #endif
 {
-	int     max_k=0;
+  int     max_k=0;
 
     if (a->predEntry != NULL) {
        MR_pred_depth(a->predEntry->pred,&max_k);
        goto PREDENTRY_EXIT;
     }
 
-	if ( GenCC )
-	{
-		/* scan for LT(i) */
-		int k = 0;
-		char *p = a->action;
-		while ( p!=NULL )
-		{
-			p = strstr(p, "LT(");
-			if ( p!=NULL )
-			{
-				if ( p>=a->action && !isalpha(*(p-1)) )
-				{
-					k = atoi(p+strlen("LT("));
-					if ( k>max_k ) max_k=k;
-				}
-				p += strlen("LT(");
-			}
-		}
-	}
-	else {
-		/* scan for LATEXT(i) */
-		int k = 0;
-		char *p = a->action;
-		while ( p!=NULL )
-		{
-			p = strstr(p, "LATEXT(");
-			if ( p!=NULL )
-			{
-				p += strlen("LATEXT(");
-				k = atoi(p);
-				if ( k>max_k ) max_k=k;
-			}
-		}
-	}
+  if ( GenCC )
+  {
+    /* scan for LT(i) */
+    int k = 0;
+    char *p = a->action;
+    while ( p!=NULL )
+    {
+      p = strstr(p, "LT(");
+      if ( p!=NULL )
+      {
+        if ( p>=a->action && !isalpha(*(p-1)) )
+        {
+          k = atoi(p+strlen("LT("));
+          if ( k>max_k ) max_k=k;
+        }
+        p += strlen("LT(");
+      }
+    }
+  }
+  else {
+    /* scan for LATEXT(i) */
+    int k = 0;
+    char *p = a->action;
+    while ( p!=NULL )
+    {
+      p = strstr(p, "LATEXT(");
+      if ( p!=NULL )
+      {
+        p += strlen("LATEXT(");
+        k = atoi(p);
+        if ( k>max_k ) max_k=k;
+      }
+    }
+  }
 
-	if (max_k==0) {
-		max_k = 1;	   /* MR33 Badly designed if didn't set max_k when CLL_k = 1 */
-		if (CLL_k > 1) /* MR27 Don't warn if max(k,ck) == 1 */
-		{
-			if ( !a->frmwarned )
-			{
-				a->frmwarned = 1;
-				warnFL(eMsg1("predicate: %s missing, bad, or with i=0; assuming i=1",
-							 GenCC?"LT(i)":"LATEXT(i)"),
-					   FileStr[a->file], a->line);
-			}
-		}
-	}
+  if (max_k==0) {
+    max_k = 1;     /* MR33 Badly designed if didn't set max_k when CLL_k = 1 */
+    if (CLL_k > 1) /* MR27 Don't warn if max(k,ck) == 1 */
+    {
+      if ( !a->frmwarned )
+      {
+        a->frmwarned = 1;
+        warnFL(eMsg1("predicate: %s missing, bad, or with i=0; assuming i=1",
+               GenCC?"LT(i)":"LATEXT(i)"),
+             FileStr[a->file], a->line);
+      }
+    }
+  }
 
 /* MR10 */    if ( max_k > CLL_k) {
-/* MR10 */		if ( !a->frmwarned )
+/* MR10 */    if ( !a->frmwarned )
 /* MR10 */        {
-/* MR10 */			a->frmwarned = 1;
+/* MR10 */      a->frmwarned = 1;
 /* MR11 */ errFL(eMsgd2("predicate refers to lookahead token %d. Semantic lookahead is limited to max(k,ck)==%d",
 /* MR10 */                        max_k,CLL_k),
 /* MR10 */                        FileStr[a->file],a->line);
@@ -139,7 +140,7 @@ ActionNode *a;
 /* MR10 */    };
 
 PREDENTRY_EXIT:
-	return max_k;
+  return max_k;
 }
 
 /* Find all predicates in a block of alternatives.  DO NOT find predicates
@@ -155,47 +156,47 @@ find_in_aSubBlk( alt )
 Junction *alt;
 #endif
 {
-	Predicate *a, *head=NULL, *tail=NULL, *root=NULL;
-	Junction *p = alt;
+  Predicate *a, *head=NULL, *tail=NULL, *root=NULL;
+  Junction *p = alt;
 
     if (MRhoisting) {
       return MR_find_in_aSubBlk(alt);
     };
-	for (; p!=NULL; p=(Junction *)p->p2)
-	{
-		/* ignore empty alts */
-		if ( p->p1->ntype != nJunction ||
-			 ((Junction *)p->p1)->jtype != EndBlk )
-		{
-			a = find_predicates(p->p1);	/* get preds for this alt */
-			if ( a==NULL ) continue;
+  for (; p!=NULL; p=(Junction *)p->p2)
+  {
+    /* ignore empty alts */
+    if ( p->p1->ntype != nJunction ||
+       ((Junction *)p->p1)->jtype != EndBlk )
+    {
+      a = find_predicates(p->p1); /* get preds for this alt */
+      if ( a==NULL ) continue;
 
-			/* make an OR list of predicates */
-			if ( head==NULL )
-			{
-				root = new_pred();
-				root->expr = PRED_OR_LIST;
-				head = tail = a;
-				root->down = head;
-			}
-			else {
-				tail->right = a;
-				a->left = tail;
-				a->up = tail->up;
-				tail = a;
-			}
-		}
-	}
+      /* make an OR list of predicates */
+      if ( head==NULL )
+      {
+        root = new_pred();
+        root->expr = PRED_OR_LIST;
+        head = tail = a;
+        root->down = head;
+      }
+      else {
+        tail->right = a;
+        a->left = tail;
+        a->up = tail->up;
+        tail = a;
+      }
+    }
+  }
 
-	/* if just one pred, remove OR root */
-	if ( root!=NULL && root->down->right == NULL )
-	{
-		Predicate *d = root->down;
-		free( (char *) root);
-		return d;
-	}
+  /* if just one pred, remove OR root */
+  if ( root!=NULL && root->down->right == NULL )
+  {
+    Predicate *d = root->down;
+    free( (char *) root);
+    return d;
+  }
 
-	return root;
+  return root;
 }
 
 Predicate *
@@ -206,7 +207,7 @@ find_in_aOptBlk( alt )
 Junction *alt;
 #endif
 {
-	return find_in_aSubBlk( alt );
+  return find_in_aSubBlk( alt );
 }
 
 Predicate *
@@ -217,7 +218,7 @@ find_in_aLoopBegin( alt )
 Junction *alt;
 #endif
 {
-	return find_in_aSubBlk( (Junction *) alt->p1 );	/* get preds in alts */
+  return find_in_aSubBlk( (Junction *) alt->p1 ); /* get preds in alts */
 }
 
 Predicate *
@@ -228,8 +229,8 @@ find_in_aPlusBlk( alt )
 Junction *alt;
 #endif
 {
-	require(alt!=NULL&&alt->p2!=NULL, "invalid aPlusBlk");
-	return find_in_aSubBlk( alt );
+  require(alt!=NULL&&alt->p2!=NULL, "invalid aPlusBlk");
+  return find_in_aSubBlk( alt );
 }
 
 /* Look for a predicate;
@@ -239,9 +240,9 @@ Junction *alt;
  * allowable.  Init actions are ignored.
  *
  * WARNING:
- *		Assumes no (..)? block after predicate for the moment.
- *		Does not check to see if pred is in production that can generate
- *			a sequence contained in the set of ambiguous tuples.
+ *    Assumes no (..)? block after predicate for the moment.
+ *    Does not check to see if pred is in production that can generate
+ *      a sequence contained in the set of ambiguous tuples.
  *
  * Return the predicate found if any.
  */
@@ -256,250 +257,250 @@ Node *alt;
 #endif
 {
 #ifdef DBG_PRED
-	Junction *j;
-	RuleRefNode *r;
-	TokNode *t;
+  Junction *j;
+  RuleRefNode *r;
+  TokNode *t;
 #endif
-	Predicate *pred;
+  Predicate *pred;
 
-	if ( alt==NULL ) return NULL;
+  if ( alt==NULL ) return NULL;
 
 #ifdef DBG_PRED
-	switch ( alt->ntype )
-	{
-		case nJunction :
-			j = (Junction *) alt;
-			fprintf(stderr, "Junction(in %s)", j->rname);
-			switch ( j->jtype )
-			{
-				case aSubBlk :
-					fprintf(stderr,"aSubBlk\n");
-					break;
-				case aOptBlk :
-					fprintf(stderr,"aOptBlk\n");
-					break;
-				case aLoopBegin :
-					fprintf(stderr,"aLoopBeginBlk\n");
-					break;
-				case aLoopBlk :
-					fprintf(stderr,"aLoopBlk\n");
-					break;
-				case aPlusBlk :
-					fprintf(stderr,"aPlusBlk\n");
-					break;
-				case EndBlk :
-					fprintf(stderr,"EndBlk\n");
-					break;
-				case RuleBlk :
-					fprintf(stderr,"RuleBlk\n");
-					break;
-				case Generic :
-					fprintf(stderr,"Generic\n");
-					break;
-				case EndRule :
-					fprintf(stderr,"EndRule\n");
-					break;
-			}
-			break;
-		case nRuleRef :
-			r = (RuleRefNode *) alt;
-			fprintf(stderr, "RuleRef(in %s)\n", r->rname);
-			break;
-		case nToken :
-			t = (TokNode *) alt;
-			fprintf(stderr, "TokenNode(in %s)%s\n", t->rname, TokenString(t->token));
-			break;
-		case nAction :
-			fprintf(stderr, "Action\n");
-			break;
-	}
+  switch ( alt->ntype )
+  {
+    case nJunction :
+      j = (Junction *) alt;
+      fprintf(stderr, "Junction(in %s)", j->rname);
+      switch ( j->jtype )
+      {
+        case aSubBlk :
+          fprintf(stderr,"aSubBlk\n");
+          break;
+        case aOptBlk :
+          fprintf(stderr,"aOptBlk\n");
+          break;
+        case aLoopBegin :
+          fprintf(stderr,"aLoopBeginBlk\n");
+          break;
+        case aLoopBlk :
+          fprintf(stderr,"aLoopBlk\n");
+          break;
+        case aPlusBlk :
+          fprintf(stderr,"aPlusBlk\n");
+          break;
+        case EndBlk :
+          fprintf(stderr,"EndBlk\n");
+          break;
+        case RuleBlk :
+          fprintf(stderr,"RuleBlk\n");
+          break;
+        case Generic :
+          fprintf(stderr,"Generic\n");
+          break;
+        case EndRule :
+          fprintf(stderr,"EndRule\n");
+          break;
+      }
+      break;
+    case nRuleRef :
+      r = (RuleRefNode *) alt;
+      fprintf(stderr, "RuleRef(in %s)\n", r->rname);
+      break;
+    case nToken :
+      t = (TokNode *) alt;
+      fprintf(stderr, "TokenNode(in %s)%s\n", t->rname, TokenString(t->token));
+      break;
+    case nAction :
+      fprintf(stderr, "Action\n");
+      break;
+  }
 #endif
 
-	switch ( alt->ntype )
-	{
-		case nJunction :
-		{
-			Predicate *a, *b;
-			Junction *p = (Junction *) alt;	
+  switch ( alt->ntype )
+  {
+    case nJunction :
+    {
+      Predicate *a, *b;
+      Junction *p = (Junction *) alt;
 
-			/* lock nodes */
-			if ( p->jtype==aLoopBlk || p->jtype==RuleBlk ||
-				 p->jtype==aPlusBlk || p->jtype==EndRule )
-			{
-				require(p->pred_lock!=NULL, "rJunc: lock array is NULL");
-				if ( p->pred_lock[1] )
-				{
-					return NULL;
-				}
-				p->pred_lock[1] = TRUE;
-			}
+      /* lock nodes */
+      if ( p->jtype==aLoopBlk || p->jtype==RuleBlk ||
+         p->jtype==aPlusBlk || p->jtype==EndRule )
+      {
+        require(p->pred_lock!=NULL, "rJunc: lock array is NULL");
+        if ( p->pred_lock[1] )
+        {
+          return NULL;
+        }
+        p->pred_lock[1] = TRUE;
+      }
 
-			switch ( p->jtype )
-			{
-				case aSubBlk :
-					a = find_in_aSubBlk(p);
-					return a;	/* nothing is visible past this guy */
-				case aOptBlk :
-					a = find_in_aOptBlk(p);
-					return a;
-				case aLoopBegin :
-					a = find_in_aLoopBegin(p);
-					return a;
-				case aLoopBlk :
-					a = find_in_aSubBlk(p);
-					p->pred_lock[1] = FALSE;
-					return a;
-				case aPlusBlk :
-					a = find_in_aPlusBlk(p);
-					p->pred_lock[1] = FALSE;
-					return a;	/* nothing is visible past this guy */
-				case RuleBlk :
-					a = find_predicates(p->p1);
-					p->pred_lock[1] = FALSE;
-					return a;
-				case Generic :
-					a = find_predicates(p->p1);
-					b = find_predicates(p->p2);
-					if ( p->pred_lock!=NULL ) p->pred_lock[1] = FALSE;
-					if ( a==NULL ) return b;
-					if ( b==NULL ) return a;
-					/* otherwise OR the two preds together */
-					{
-					fatal_internal("hit unknown situation during predicate hoisting");
-					}
-				case EndBlk :
-				case EndRule :	/* Find no predicates after a rule ref */
-					return NULL;
-				default:
-					fatal_internal("this cannot be printed\n");
-					break;
-			}
-		}
-		case nAction :
-		{
-			ActionNode *p = (ActionNode *) alt;
+      switch ( p->jtype )
+      {
+        case aSubBlk :
+          a = find_in_aSubBlk(p);
+          return a; /* nothing is visible past this guy */
+        case aOptBlk :
+          a = find_in_aOptBlk(p);
+          return a;
+        case aLoopBegin :
+          a = find_in_aLoopBegin(p);
+          return a;
+        case aLoopBlk :
+          a = find_in_aSubBlk(p);
+          p->pred_lock[1] = FALSE;
+          return a;
+        case aPlusBlk :
+          a = find_in_aPlusBlk(p);
+          p->pred_lock[1] = FALSE;
+          return a; /* nothing is visible past this guy */
+        case RuleBlk :
+          a = find_predicates(p->p1);
+          p->pred_lock[1] = FALSE;
+          return a;
+        case Generic :
+          a = find_predicates(p->p1);
+          b = find_predicates(p->p2);
+          if ( p->pred_lock!=NULL ) p->pred_lock[1] = FALSE;
+          if ( a==NULL ) return b;
+          if ( b==NULL ) return a;
+          /* otherwise OR the two preds together */
+          {
+          fatal_internal("hit unknown situation during predicate hoisting");
+          }
+        case EndBlk :
+        case EndRule :  /* Find no predicates after a rule ref */
+          return NULL;
+        default:
+          fatal_internal("this cannot be printed\n");
+          break;
+      }
+    }
+    case nAction :
+    {
+      ActionNode *p = (ActionNode *) alt;
             if ( p->noHoist) return NULL;                           /* MR12c */
-			if ( p->init_action ) return find_predicates(p->next);
-			if ( p->is_predicate )
-			{
-				Tree *t=NULL;
+      if ( p->init_action ) return find_predicates(p->next);
+      if ( p->is_predicate )
+      {
+        Tree *t=NULL;
 #ifdef DBG_PRED
-				fprintf(stderr, "predicate: <<%s>>?\n", p->action);
+        fprintf(stderr, "predicate: <<%s>>?\n", p->action);
 #endif
-				if ( p->guardpred!=NULL )
-				{
-					pred = predicate_dup(p->guardpred);
+        if ( p->guardpred!=NULL )
+        {
+          pred = predicate_dup(p->guardpred);
                     MR_guardPred_plainSet(p,pred);                  /* MR12c */
-				}
-				else
-				{
-					pred = new_pred();
-					pred->k = predicateLookaheadDepth(p);
-					pred->source = p;
-					pred->expr = p->action;
-					if ( HoistPredicateContext && pred->k > 1 )
-					{
-						/* MR30 No need to use first_item_is_guess_block_extra
-						   since we know this is an action, not a (...)* or
-						   (...)+ block.
-						*/
+        }
+        else
+        {
+          pred = new_pred();
+          pred->k = predicateLookaheadDepth(p);
+          pred->source = p;
+          pred->expr = p->action;
+          if ( HoistPredicateContext && pred->k > 1 )
+          {
+            /* MR30 No need to use first_item_is_guess_block_extra
+               since we know this is an action, not a (...)* or
+               (...)+ block.
+            */
 
-						if ( first_item_is_guess_block((Junction *)p->next) )
-						{
+            if ( first_item_is_guess_block((Junction *)p->next) )
+            {
                             warnFL("cannot compute context of predicate in front of (..)? block",
                             FileStr[p->file], p->line);
-						}
-						else
-						{
-							ConstrainSearch = 0;
+            }
+            else
+            {
+              ConstrainSearch = 0;
 /* MR11 */                  if (p->ampersandPred != NULL) {
-/* MR11 */  					TRAV(p,
-/* MR11 */							 pred->k,
-/* MR11 */  						 &(pred->completionTree), t);
+/* MR11 */            TRAV(p,
+/* MR11 */               pred->k,
+/* MR11 */               &(pred->completionTree), t);
 /* MR11 */                  } else {
-    							TRAV(p->next,
-    								 pred->k,
-    								 &(pred->completionTree), t);
+                  TRAV(p->next,
+                     pred->k,
+                     &(pred->completionTree), t);
                             };
-							pred->tcontext = t;
+              pred->tcontext = t;
                             MR_check_pred_too_long(pred,pred->completionTree);
 #ifdef DBG_PRED
-							fprintf(stderr, "LL(%d) context:", pred->k);
-							preorder(t);
-							fprintf(stderr, "\n");
+              fprintf(stderr, "LL(%d) context:", pred->k);
+              preorder(t);
+              fprintf(stderr, "\n");
 #endif
-						}
-					}
-					else if ( HoistPredicateContext && pred->k == 1 )
-					{
-						pred->scontext[1] = empty;
-						/* MR30 No need to use first_item_is_guess_block_extra
-						   since we know this is an action.
-						*/
-						if ( first_item_is_guess_block((Junction *)p->next) )
-						{
+            }
+          }
+          else if ( HoistPredicateContext && pred->k == 1 )
+          {
+            pred->scontext[1] = empty;
+            /* MR30 No need to use first_item_is_guess_block_extra
+               since we know this is an action.
+            */
+            if ( first_item_is_guess_block((Junction *)p->next) )
+            {
                         warnFL("cannot compute context of predicate in front of (..)? block",
                                              FileStr[p->file], p->line);
-						}
-						else
-						{
-							REACH((Junction *)p->next,
-								  1,
-								  &(pred->completionSet),
-								  pred->scontext[1]);
+            }
+            else
+            {
+              REACH((Junction *)p->next,
+                  1,
+                  &(pred->completionSet),
+                  pred->scontext[1]);
                             MR_check_pred_too_long(pred,pred->completionSet);
 #ifdef DBG_PRED
-							fprintf(stderr, "LL(1) context:");
-							s_fprT(stderr, pred->scontext[1]);
-							fprintf(stderr, "\n");
+              fprintf(stderr, "LL(1) context:");
+              s_fprT(stderr, pred->scontext[1]);
+              fprintf(stderr, "\n");
 #endif
-						}
-					}
-				}
-				{
-					Predicate  *d = find_predicates(p->next);
+            }
+          }
+        }
+        {
+          Predicate  *d = find_predicates(p->next);
                     Predicate  *root;
 
 /* Warning: Doesn't seem like the up pointers will all be set correctly;
  * TJP: that's ok, we're not using them now.
  */
-					if ( d!=NULL )
-					{
-						root = new_pred();
-						root->expr = PRED_AND_LIST;
-						root->down = pred;
-						pred->right = d;
-						pred->up = root;
-						d->left = pred;
-						d->up = pred->up;
-						return root;
-					}
-				}
-				return pred;
-			}
-			return NULL;
-		}
-		case nRuleRef :
-		{
-			Predicate   *a;
-			RuleRefNode *p = (RuleRefNode *) alt;
-			Junction    *r;
+          if ( d!=NULL )
+          {
+            root = new_pred();
+            root->expr = PRED_AND_LIST;
+            root->down = pred;
+            pred->right = d;
+            pred->up = root;
+            d->left = pred;
+            d->up = pred->up;
+            return root;
+          }
+        }
+        return pred;
+      }
+      return NULL;
+    }
+    case nRuleRef :
+    {
+      Predicate   *a;
+      RuleRefNode *p = (RuleRefNode *) alt;
+      Junction    *r;
             Junction    *save_MR_RuleBlkWithHalt;
 
-			RuleEntry *q = (RuleEntry *) hash_get(Rname, p->text);
-			if ( q == NULL )
-			{
-				warnFL( eMsg1("rule %s not defined",p->text), FileStr[p->file], p->line );
-				return NULL;
-			}
-			r = RulePtr[q->rulenum];
-			if ( r->pred_lock[1] )
-			{
-				/* infinite left-recursion; ignore 'cause LL sup 1 (k) analysis
-				 * must have seen it earlier.
-				 */
-				return NULL;
-			}
+      RuleEntry *q = (RuleEntry *) hash_get(Rname, p->text);
+      if ( q == NULL )
+      {
+        warnFL( eMsg1("rule %s not defined",p->text), FileStr[p->file], p->line );
+        return NULL;
+      }
+      r = RulePtr[q->rulenum];
+      if ( r->pred_lock[1] )
+      {
+        /* infinite left-recursion; ignore 'cause LL sup 1 (k) analysis
+         * must have seen it earlier.
+         */
+        return NULL;
+      }
 
             /* MR10 There should only be one halt set at a time.        */
             /* MR10 Life would have been easier with a global variable  */
@@ -524,10 +525,10 @@ Node *alt;
 /* MR10 */  MR_pointerStackPush(&MR_RuleBlkWithHaltStack,MR_RuleBlkWithHalt);
 /* MR10 */  MR_pointerStackPush(&MR_PredRuleRefStack,p);
 
-			r->end->halt = TRUE;
+      r->end->halt = TRUE;
 /* MR10 */  MR_RuleBlkWithHalt=r;
 
-			a = find_predicates((Node *)r);
+      a = find_predicates((Node *)r);
 
             require(r->end->halt == TRUE,"rule->end->halt not set");
             r->end->halt = FALSE;
@@ -547,24 +548,24 @@ Node *alt;
 
 /***        fprintf(stderr,"\nRestoring halt on junction #%d\n",r->end->seq);   ***/
 
-			if ( a==NULL ) return NULL;
+      if ( a==NULL ) return NULL;
 
-			/* attempt to compute the "local" FOLLOW just like in normal lookahead
-			 * computation if needed
-			 */
+      /* attempt to compute the "local" FOLLOW just like in normal lookahead
+       * computation if needed
+       */
 
-			complete_context_sets(p,a);
-			complete_context_trees(p,a);
+      complete_context_sets(p,a);
+      complete_context_trees(p,a);
 
 /* MR10 */  MR_cleanup_pred_trees(a);
 
-			return a;
-		}
-		case nToken :
-			break;
-	}
+      return a;
+    }
+    case nToken :
+      break;
+  }
 
-	return NULL;
+  return NULL;
 }
 
 #ifdef __USE_PROTOS
@@ -588,14 +589,14 @@ new_pred( void )
 new_pred( )
 #endif
 {
-	Predicate *p = (Predicate *) calloc(1,sizeof(Predicate)); /* MR10 */
-	require(p!=NULL, "new_pred: cannot alloc predicate");
+  Predicate *p = (Predicate *) calloc(1,sizeof(Predicate)); /* MR10 */
+  require(p!=NULL, "new_pred: cannot alloc predicate");
     p->scontext[0]=empty;
     p->scontext[1]=empty;
     p->completionTree=empty;
     p->completionSet=empty;
     p->plainSet=empty;
-	return p;
+  return p;
 }
 
 static void
@@ -607,41 +608,41 @@ RuleRefNode *p;
 Predicate *a;
 #endif
 {
-	set rk2, b;
-	int k2;
+  set rk2, b;
+  int k2;
 
 #ifdef DBG_PRED
-	fprintf(stderr, "enter complete_context_sets\n");
+  fprintf(stderr, "enter complete_context_sets\n");
 #endif
-	for (; a!=NULL; a=a->right)
-	{
-		if ( a->expr == PRED_AND_LIST || a->expr == PRED_OR_LIST )
-		{
-			complete_context_sets(p,a->down);
-			continue;
-		}
-		rk2 = b = empty;
-		while ( !set_nil(a->completionSet) )
-		{
-			k2 = set_int(a->completionSet);
-			set_rm(k2, a->completionSet);
+  for (; a!=NULL; a=a->right)
+  {
+    if ( a->expr == PRED_AND_LIST || a->expr == PRED_OR_LIST )
+    {
+      complete_context_sets(p,a->down);
+      continue;
+    }
+    rk2 = b = empty;
+    while ( !set_nil(a->completionSet) )
+    {
+      k2 = set_int(a->completionSet);
+      set_rm(k2, a->completionSet);
 
             REACH(p->next, k2, &rk2, b);
-			set_orin(&(a->scontext[1]), b);
-			set_free(b);
-		}
+      set_orin(&(a->scontext[1]), b);
+      set_free(b);
+    }
 
-		set_orin(&(a->completionSet), rk2);/* remember what we couldn't do */
-		set_free(rk2);
+    set_orin(&(a->completionSet), rk2);/* remember what we couldn't do */
+    set_free(rk2);
 #ifdef DBG_PRED
-		fprintf(stderr, "LL(1) context for %s(addr 0x%x) after ruleref:", a->expr, a);
-		s_fprT(stderr, a->scontext[1]);
-		fprintf(stderr, "\n");
+    fprintf(stderr, "LL(1) context for %s(addr 0x%x) after ruleref:", a->expr, a);
+    s_fprT(stderr, a->scontext[1]);
+    fprintf(stderr, "\n");
 #endif
-/*		complete_context_sets(p, a->down);*/
-	}
+/*    complete_context_sets(p, a->down);*/
+  }
 #ifdef DBG_PRED
-	fprintf(stderr, "exit complete_context_sets\n");
+  fprintf(stderr, "exit complete_context_sets\n");
 #endif
 }
 
@@ -654,46 +655,46 @@ RuleRefNode *p;
 Predicate *a;
 #endif
 {
-	set rk2;
-	int k2;
-	Tree *u;
+  set rk2;
+  int k2;
+  Tree *u;
 
 #ifdef DBG_PRED
-	fprintf(stderr, "enter complete_context_trees\n");
+  fprintf(stderr, "enter complete_context_trees\n");
 #endif
-	for (; a!=NULL; a=a->right)
-	{
-		if ( a->expr == PRED_AND_LIST || a->expr == PRED_OR_LIST )
-		{
-			complete_context_trees(p, a->down);
-			continue;
-		}
-		rk2 = empty;
+  for (; a!=NULL; a=a->right)
+  {
+    if ( a->expr == PRED_AND_LIST || a->expr == PRED_OR_LIST )
+    {
+      complete_context_trees(p, a->down);
+      continue;
+    }
+    rk2 = empty;
 
-		/* any k left to do? if so, link onto tree */
-		while ( !set_nil(a->completionTree) )
-		{	
-			k2 = set_int(a->completionTree);
-			set_rm(k2, a->completionTree);
-			u = NULL;
+    /* any k left to do? if so, link onto tree */
+    while ( !set_nil(a->completionTree) )
+    {
+      k2 = set_int(a->completionTree);
+      set_rm(k2, a->completionTree);
+      u = NULL;
 
             TRAV(p->next, k2, &rk2, u);
 
-			/* any subtrees missing k2 tokens, add u onto end */
-			a->tcontext = tlink(a->tcontext, u, k2);
+      /* any subtrees missing k2 tokens, add u onto end */
+      a->tcontext = tlink(a->tcontext, u, k2);
             Tfree(u);   /* MR10 */
-		}
-		set_orin(&(a->completionTree), rk2);/* remember what we couldn't do */
-		set_free(rk2);
+    }
+    set_orin(&(a->completionTree), rk2);/* remember what we couldn't do */
+    set_free(rk2);
 #ifdef DBG_PRED
-		fprintf(stderr, "LL(i<%d) context after ruleref:", LL_k);
-		preorder(a->tcontext);
-		fprintf(stderr, "\n");
+    fprintf(stderr, "LL(i<%d) context after ruleref:", LL_k);
+    preorder(a->tcontext);
+    fprintf(stderr, "\n");
 #endif
-/*		complete_context_trees(p, a->down);*/
-	}
+/*    complete_context_trees(p, a->down);*/
+  }
 #ifdef DBG_PRED
-	fprintf(stderr, "exit complete_context_trees\n");
+  fprintf(stderr, "exit complete_context_trees\n");
 #endif
 }
 
@@ -706,20 +707,20 @@ covered_set( p )
 Predicate *p;
 #endif
 {
-	set a;
+  set a;
 
-	a = empty;
-	for (; p!=NULL; p=p->right)
-	{
-		if ( p->expr == PRED_AND_LIST || p->expr == PRED_OR_LIST )
-		{
-			set_orin(&a, covered_set(p->down));
-			continue;
-		}
-		set_orin(&a, p->scontext[1]);
-		set_orin(&a, covered_set(p->down));
-	}
-	return a;
+  a = empty;
+  for (; p!=NULL; p=p->right)
+  {
+    if ( p->expr == PRED_AND_LIST || p->expr == PRED_OR_LIST )
+    {
+      set_orin(&a, covered_set(p->down));
+      continue;
+    }
+    set_orin(&a, p->scontext[1]);
+    set_orin(&a, covered_set(p->down));
+  }
+  return a;
 }
 
 /* MR10 predicate_free()

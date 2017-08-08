@@ -131,7 +131,7 @@ typedef struct _t {       /* Token name or expression */
       unsigned char classname;  /**< is it a err/tok class name or token */
       TCnode *tclass;   /**< ptr to token class */
       char *action;
-            char *akaString;
+      char *akaString;
 } TermEntry;
 
 typedef struct _r {       /**< Rule name and ptr to start of rule */
@@ -146,8 +146,8 @@ typedef struct _r {       /**< Rule name and ptr to start of rule */
       ListNode *el_labels; /**< list of element labels ref in all of rule */
 #endif
       ListNode *ast_labels_in_actions; /* MR27 */
-            unsigned char has_rule_exception;
-            char dontComputeErrorSet;    /* MR14 - don't compute error set
+      unsigned char has_rule_exception;
+      char dontComputeErrorSet;    /* MR14 - don't compute error set
                                           special for rule in alpha part of
                                           (alpha)? beta block */
 } RuleEntry;
@@ -278,5 +278,4 @@ typedef Graph Attrib;
 
 
 #include "proto.h"
-#include "pcctscfg.h"   /* MR14 */
-#include <string.h>
+

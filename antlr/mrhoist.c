@@ -26,7 +26,7 @@
  */
 
 #include <stdio.h>
-
+#include <string.h>
 #include "pcctscfg.h"
 
 #include "set.h"
@@ -274,17 +274,17 @@ void MR_dumpTreeF(f,depth,tree,across)
 {
     int     newAcross=across;
 
-	if (tree == NULL ) return;
-	if (tree->down != NULL ) {
+  if (tree == NULL ) return;
+  if (tree->down != NULL ) {
       fprintf(output,"\n");
       MR_outputIndent(depth);
       fprintf(output, "(root =");
     };
-	if (tree->token == ALT ) {
+  if (tree->token == ALT ) {
       fprintf(output," %-16s","Alt");
-	} else if (tree->token==EpToken ) {
+  } else if (tree->token==EpToken ) {
       fprintf(output,"(%d)%13s",tree->v.rk," ");
-	} else {
+  } else {
       fprintf(output," %-16s",TerminalString(tree->token));
     };
     if (tree->down != NULL) {
@@ -858,11 +858,11 @@ set MR_First(ck,j,incomplete)
 
     tokensUsed=empty;
 
-	require(j->ntype==nJunction, "MR_First: non junction passed");
+  require(j->ntype==nJunction, "MR_First: non junction passed");
 
-	p = analysis_point((Junction *)j->p1);
+  p = analysis_point((Junction *)j->p1);
 
-	REACH(p,ck,incomplete,tokensUsed);
+  REACH(p,ck,incomplete,tokensUsed);
 
     return tokensUsed;
 }
@@ -926,9 +926,9 @@ void MR_complete_set(predDepth,tokensUsed,incomplete)
 {
     int             i;
     RuleRefNode     *ruleRef;
-	set             rk2;
+  set             rk2;
     set             b;
-	int             k2;
+  int             k2;
     Junction        *save_MR_RuleBlkWithHalt;
 
     if (set_int(*incomplete) > (unsigned) predDepth) {
@@ -959,19 +959,19 @@ void MR_complete_set(predDepth,tokensUsed,incomplete)
       b=empty;
 
       while ( !set_nil(*incomplete) ) {
-		k2=set_int(*incomplete);
+    k2=set_int(*incomplete);
         if (k2 > predDepth) break;                    /* <=== another exit from loop */
-		set_rm(k2,*incomplete);
+    set_rm(k2,*incomplete);
         REACH(ruleRef->next,k2,&rk2,b);
-		set_orin(tokensUsed,b);
-		set_free(b);
+    set_orin(tokensUsed,b);
+    set_free(b);
       };
 
       if (MR_RuleBlkWithHalt != NULL) MR_RuleBlkWithHalt->end->halt=FALSE;
 
-	  set_orin(incomplete,rk2);                       /* remember what we couldn't do */
+    set_orin(incomplete,rk2);                       /* remember what we couldn't do */
       set_free(rk2);
-	  if (set_int(*incomplete) > (unsigned) predDepth) break;    /* <=== another exit from loop */
+    if (set_int(*incomplete) > (unsigned) predDepth) break;    /* <=== another exit from loop */
     };
 
     MR_RuleBlkWithHalt=save_MR_RuleBlkWithHalt;
@@ -991,9 +991,9 @@ void MR_complete_tree(predDepth,t,incomplete)
 {
     int             i;
     RuleRefNode     *ruleRef;
-	set             rk2;
+  set             rk2;
     Tree            *u;
-	unsigned        k2;
+  unsigned        k2;
     Junction        *save_MR_RuleBlkWithHalt;
     int             saveConstrainSearch;
 
@@ -1026,26 +1026,26 @@ void MR_complete_tree(predDepth,t,incomplete)
 
       rk2=empty;
 
-      while ( !set_nil(*incomplete) ) {	
-		k2 = set_int(*incomplete);
+      while ( !set_nil(*incomplete) ) {
+    k2 = set_int(*incomplete);
         if (k2 > (unsigned) predDepth) break;       /* <=== another exit from loop */
-		set_rm(k2,*incomplete);
-		u = NULL;
+    set_rm(k2,*incomplete);
+    u = NULL;
 
         TRAV(ruleRef->next,k2,&rk2,u);
 
-			/* any subtrees missing k2 tokens, add u onto end */
+      /* any subtrees missing k2 tokens, add u onto end */
 
-		*t=tlink(*t,u,k2);
+    *t=tlink(*t,u,k2);
         Tfree(u);
       }
 
-	  set_orin(incomplete,rk2);         /* remember what we couldn't do */
+    set_orin(incomplete,rk2);         /* remember what we couldn't do */
       set_free(rk2);
 
       if (MR_RuleBlkWithHalt != NULL) MR_RuleBlkWithHalt->end->halt=FALSE;
 
-	  if (set_int(*incomplete) > (unsigned) predDepth) break;    /* <=== another exit from loop */
+    if (set_int(*incomplete) > (unsigned) predDepth) break;    /* <=== another exit from loop */
     };
 
     MR_RuleBlkWithHalt=save_MR_RuleBlkWithHalt;
@@ -1414,7 +1414,7 @@ Predicate * MR_find_in_aSubBlk(alt)
     Predicate       *root=NULL;
     Predicate       **tail=NULL;
 
-	Junction        *p;
+  Junction        *p;
 
     int             nAlts=0;
     Junction        **jList;
@@ -1451,10 +1451,10 @@ Predicate * MR_find_in_aSubBlk(alt)
     /* this section just counts the number of "interesting" alternatives  */
     /*   in order to allocate arrays                                      */
 
-	for (p=alt; p!=NULL; p=(Junction *)p->p2) {
-	  /* ignore empty alts */
-	  if ( p->p1->ntype != nJunction ||
-	        ((Junction *)p->p1)->jtype != EndBlk )	{
+  for (p=alt; p!=NULL; p=(Junction *)p->p2) {
+    /* ignore empty alts */
+    if ( p->p1->ntype != nJunction ||
+          ((Junction *)p->p1)->jtype != EndBlk )  {
         nAlts++;
       };
     };
@@ -1489,14 +1489,14 @@ Predicate * MR_find_in_aSubBlk(alt)
     /*   bit 0 => this alt has a semantic pred which is "covered"       */
     /*              by an alt without a semantic pred.  Don't hoist.    */
 
-	for (i=0,p=alt;
+  for (i=0,p=alt;
          p!=NULL && i<nAlts;
          i++,p=(Junction *)p->p2) {
 
-	  /* ignore empty alts */
+    /* ignore empty alts */
 
-	  if ( p->p1->ntype != nJunction ||
-	        ((Junction *)p->p1)->jtype != EndBlk )	{
+    if ( p->p1->ntype != nJunction ||
+          ((Junction *)p->p1)->jtype != EndBlk )  {
         jList[i]=MR_junctionWithoutP2(p);
         predList[i]=find_predicates(p->p1);      /* should be jList ????? */
         if (predList[i] != NULL) {
@@ -1687,9 +1687,9 @@ EXIT_SIMPLE:
       tail=&(predList[i]->right);
     };
 
-	/* if just one pred, remove OR root */
+  /* if just one pred, remove OR root */
 
-	if (root->down == NULL) {
+  if (root->down == NULL) {
       predicate_free(root);
       root=NULL;
     } else if (root->down->right == NULL) {
@@ -1697,7 +1697,7 @@ EXIT_SIMPLE:
       root->down=NULL;
       predicate_free(root);
       root=p;
-	}
+  }
 
     root=MR_predSimplifyALL(root);
 
@@ -1716,7 +1716,7 @@ EXIT_SIMPLE:
     free ( (char *) matchList);
     free ( (char *) plainContext);
 
-	return root;
+  return root;
 }
 
 #ifdef __USE_PROTOS
@@ -1829,7 +1829,7 @@ Junction *MR_nameToRuleBlk(name)
 
     q = (RuleEntry *) hash_get(Rname,name);
 
-	if ( q == NULL ) {
+  if ( q == NULL ) {
       return NULL;
     } else {
       return RulePtr[q->rulenum];
@@ -2484,22 +2484,22 @@ void MR_orphanRules(f)
   FILE      *f;
 #endif
 {
-	set         a;
+  set         a;
     Junction    *p;
     unsigned    e;
     RuleEntry   *re;
 
-	a=empty;
+  a=empty;
 
     if (! InfoO) return;
 
-	for (p=SynDiag; p!=NULL; p = (Junction *)p->p2)	{
+  for (p=SynDiag; p!=NULL; p = (Junction *)p->p2) {
       if ( (Junction *) (p->end)->p1 == NULL) {
         re=(RuleEntry *) hash_get(Rname,p->rname);
         require (re != NULL,"RuleEntry == NULL");
-		set_orel(re->rulenum, &a);
+    set_orel(re->rulenum, &a);
       }
-  	}
+    }
 
     if (set_deg(a) > 1) {
       fprintf(f,"note: Start rules: {");
@@ -2509,7 +2509,7 @@ void MR_orphanRules(f)
       };
       fprintf(f," }\n");
     };
-	set_free( a );
+  set_free( a );
 }
 
 /*  merge (X Y) and (X) to create (X)  */
@@ -2726,8 +2726,8 @@ int MR_suppressK_client(tree,tokensInChain)
 
 /***  constrain = &(fset[1]); ***/
 
-  MR_setConstrainPointer(&(fset[1]));	/* MR18 */
-  
+  MR_setConstrainPointer(&(fset[1])); /* MR18 */
+
   MR_pointerStackReset(&MR_BackTraceStack);
 
   TRAV(suppressNode,maxk,&incomplete,t);

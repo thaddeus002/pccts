@@ -7,18 +7,18 @@
  *
  * The following functions are visible:
  *
- *		int		addTname(char *);		Add token name
- *		int		addTexpr(char *);		Add token expression
- *		int		Tnum(char *);			Get number of expr/token
- *		void	Tklink(char *, char *);	Link a name with an expression
- *		int		hasAction(expr);		Does expr already have action assigned?
- *		void	setHasAction(expr);		Indicate that expr now has an action
- *		Entry	*newEntry(char *,int);	Create new table entry with certain size
- *		void	list_add(ListNode **list, char *e)
+ *    int   addTname(char *);   Add token name
+ *    int   addTexpr(char *);   Add token expression
+ *    int   Tnum(char *);     Get number of expr/token
+ *    void  Tklink(char *, char *); Link a name with an expression
+ *    int   hasAction(expr);    Does expr already have action assigned?
+ *    void  setHasAction(expr);   Indicate that expr now has an action
+ *    Entry *newEntry(char *,int);  Create new table entry with certain size
+ *    void  list_add(ListNode **list, char *e)
  *      void    list_free(ListNode **list, int freeData);   *** MR10 ***
- *		void	list_apply(ListNode *list, void (*f)())
- *		void	lexclass(char *m);		switch to new/old lexical class
- *		void	lexmode(int i);			switch to old lexical class i
+ *    void  list_apply(ListNode *list, void (*f)())
+ *    void  lexclass(char *m);    switch to new/old lexical class
+ *    void  lexmode(int i);     switch to old lexical class i
  *
  * SOFTWARE RIGHTS
  *
@@ -48,6 +48,7 @@
  */
 
 #include <stdio.h>
+#include <string.h>
 #include "pcctscfg.h"
 #include "set.h"
 #include "syn.h"
@@ -56,7 +57,7 @@
 #include "dlgdef.h"
 #include <ctype.h>
 
-static int tsize=TSChunk;		/* size of token str arrays */
+static int tsize=TSChunk;   /* size of token str arrays */
 
 static void
 #ifdef __USE_PROTOS
@@ -65,7 +66,7 @@ RemapForcedTokensInSyntaxDiagram(Node *);
 RemapForcedTokensInSyntaxDiagram();
 #endif
 
-				/* T o k e n  M a n i p u l a t i o n */
+        /* T o k e n  M a n i p u l a t i o n */
 
 /*
  * add token 't' to the TokenStr/Expr array.  Make more room if necessary.
@@ -85,30 +86,30 @@ Ttrack( t )
 char *t;
 #endif
 {
-	if ( TokenNum >= tsize )	/* terminal table overflow? */
-	{
-		char **p;
-		int i, more, j;
+  if ( TokenNum >= tsize )  /* terminal table overflow? */
+  {
+    char **p;
+    int i, more, j;
 
-		more = TSChunk * (1 + ((TokenNum-tsize) / TSChunk));
-		tsize += more;
-		TokenStr = (char **) realloc((char *)TokenStr, tsize*sizeof(char *));
-		require(TokenStr != NULL, "Ttrack: can't extend TokenStr");
-		for (i=0; i<NumLexClasses; i++)
-		{
-			lclass[i].exprs = (char **)
-							  realloc((char *)lclass[i].exprs, tsize*sizeof(char *));
-			require(lclass[i].exprs != NULL, "Ttrack: can't extend ExprStr");
-			for (p= &lclass[i].exprs[tsize-more],j=1; j<=more; j++) *p++ = NULL;
-		}
-		for (p= &TokenStr[tsize-more],i=1; i<=more; i++) *p++ = NULL;
-		lexmode( CurrentLexClass ); /* reset ExprStr in case table moved */
-	}
-	/* note: we use the actual ExprStr/TokenStr array
-	 * here as TokenInd doesn't exist yet
-	 */
-	if ( *t == '"' ) ExprStr[TokenNum] = t;
-	else TokenStr[TokenNum] = t;
+    more = TSChunk * (1 + ((TokenNum-tsize) / TSChunk));
+    tsize += more;
+    TokenStr = (char **) realloc((char *)TokenStr, tsize*sizeof(char *));
+    require(TokenStr != NULL, "Ttrack: can't extend TokenStr");
+    for (i=0; i<NumLexClasses; i++)
+    {
+      lclass[i].exprs = (char **)
+                realloc((char *)lclass[i].exprs, tsize*sizeof(char *));
+      require(lclass[i].exprs != NULL, "Ttrack: can't extend ExprStr");
+      for (p= &lclass[i].exprs[tsize-more],j=1; j<=more; j++) *p++ = NULL;
+    }
+    for (p= &TokenStr[tsize-more],i=1; i<=more; i++) *p++ = NULL;
+    lexmode( CurrentLexClass ); /* reset ExprStr in case table moved */
+  }
+  /* note: we use the actual ExprStr/TokenStr array
+   * here as TokenInd doesn't exist yet
+   */
+  if ( *t == '"' ) ExprStr[TokenNum] = t;
+  else TokenStr[TokenNum] = t;
 }
 
 static Expr *
@@ -119,12 +120,12 @@ newExpr( e )
 char *e;
 #endif
 {
-	Expr *p = (Expr *) calloc(1, sizeof(Expr));
-	require(p!=NULL, "newExpr: cannot alloc Expr node");
+  Expr *p = (Expr *) calloc(1, sizeof(Expr));
+  require(p!=NULL, "newExpr: cannot alloc Expr node");
 
-	p->expr = e;
-	p->lclass = CurrentLexClass;
-	return p;
+  p->expr = e;
+  p->lclass = CurrentLexClass;
+  return p;
 }
 
 /* switch to lexical class/mode m.  This amounts to creating a new
@@ -144,37 +145,37 @@ lexclass( m )
 char *m;
 #endif
 {
-	int i;
-	TermEntry *p;
-	static char EOFSTR[] = "\"@\"";
+  int i;
+  TermEntry *p;
+  static char EOFSTR[] = "\"@\"";
 
-	if ( hash_get(Tname, m) != NULL )
-	{
-		warn(eMsg1("lexclass name conflicts with token/errclass label '%s'",m));
-	}
-	/* does m already exist? */
-	i = LexClassIndex(m);
-	if ( i != -1 ) {lexmode(i); return;}
-	/* must make new one */
-	NumLexClasses++;
-	CurrentLexClass = NumLexClasses-1;
-	require(NumLexClasses<=MaxLexClasses, "number of allowable lexclasses exceeded\nIncrease MaxLexClasses in generic.h and recompile all C files");
-	lclass[CurrentLexClass].classnum = m;
-	lclass[CurrentLexClass].exprs = (char **) calloc(tsize, sizeof(char *));
-	require(lclass[CurrentLexClass].exprs!=NULL,
-			"lexclass: cannot allocate ExprStr");
-	lclass[CurrentLexClass].htable = newHashTable();
-	ExprStr = lclass[CurrentLexClass].exprs;
-	Texpr = lclass[CurrentLexClass].htable;
-	/* define EOF for each automaton */
-	p = newTermEntry( EOFSTR );
-	p->token = EofToken;	/* couldn't have remapped tokens yet, use EofToken */
-	hash_add(Texpr, EOFSTR, (Entry *)p);
-	list_add(&ExprOrder, (void *)newExpr(EOFSTR));
-	/* note: we use the actual ExprStr array
-	 * here as TokenInd doesn't exist yet
-	 */
-	ExprStr[EofToken] = EOFSTR;
+  if ( hash_get(Tname, m) != NULL )
+  {
+    warn(eMsg1("lexclass name conflicts with token/errclass label '%s'",m));
+  }
+  /* does m already exist? */
+  i = LexClassIndex(m);
+  if ( i != -1 ) {lexmode(i); return;}
+  /* must make new one */
+  NumLexClasses++;
+  CurrentLexClass = NumLexClasses-1;
+  require(NumLexClasses<=MaxLexClasses, "number of allowable lexclasses exceeded\nIncrease MaxLexClasses in generic.h and recompile all C files");
+  lclass[CurrentLexClass].classnum = m;
+  lclass[CurrentLexClass].exprs = (char **) calloc(tsize, sizeof(char *));
+  require(lclass[CurrentLexClass].exprs!=NULL,
+      "lexclass: cannot allocate ExprStr");
+  lclass[CurrentLexClass].htable = newHashTable();
+  ExprStr = lclass[CurrentLexClass].exprs;
+  Texpr = lclass[CurrentLexClass].htable;
+  /* define EOF for each automaton */
+  p = newTermEntry( EOFSTR );
+  p->token = EofToken;  /* couldn't have remapped tokens yet, use EofToken */
+  hash_add(Texpr, EOFSTR, (Entry *)p);
+  list_add(&ExprOrder, (void *)newExpr(EOFSTR));
+  /* note: we use the actual ExprStr array
+   * here as TokenInd doesn't exist yet
+   */
+  ExprStr[EofToken] = EOFSTR;
 }
 
 void
@@ -185,10 +186,10 @@ lexmode( i )
 int i;
 #endif
 {
-	require(i<NumLexClasses, "lexmode: invalid mode");
-	ExprStr = lclass[i].exprs;
-	Texpr = lclass[i].htable;
-	CurrentLexClass = i;
+  require(i<NumLexClasses, "lexmode: invalid mode");
+  ExprStr = lclass[i].exprs;
+  Texpr = lclass[i].htable;
+  CurrentLexClass = i;
 }
 
 /* return index into lclass array of lexical class. return -1 if nonexistent */
@@ -200,13 +201,13 @@ LexClassIndex( cl )
 char *cl;
 #endif
 {
-	int i;
+  int i;
 
-	for (i=0; i<NumLexClasses; i++)
-	{
-		if ( strcmp(lclass[i].classnum, cl) == 0 ) return i;
-	}
-	return -1;
+  for (i=0; i<NumLexClasses; i++)
+  {
+    if ( strcmp(lclass[i].classnum, cl) == 0 ) return i;
+  }
+  return -1;
 }
 
 int
@@ -217,12 +218,12 @@ hasAction( expr )
 char *expr;
 #endif
 {
-	TermEntry *p;
-	require(expr!=NULL, "hasAction: invalid expr");
+  TermEntry *p;
+  require(expr!=NULL, "hasAction: invalid expr");
 
-	p = (TermEntry *) hash_get(Texpr, expr);
-	require(p!=NULL, eMsg1("hasAction: expr '%s' doesn't exist",expr));
-	return (p->action!=NULL);
+  p = (TermEntry *) hash_get(Texpr, expr);
+  require(p!=NULL, eMsg1("hasAction: expr '%s' doesn't exist",expr));
+  return (p->action!=NULL);
 }
 
 void
@@ -234,12 +235,12 @@ char *expr;
 char *action;
 #endif
 {
-	TermEntry *p;
-	require(expr!=NULL, "setHasAction: invalid expr");
+  TermEntry *p;
+  require(expr!=NULL, "setHasAction: invalid expr");
 
-	p = (TermEntry *) hash_get(Texpr, expr);
-	require(p!=NULL, eMsg1("setHasAction: expr '%s' doesn't exist",expr));
-	p->action = action;
+  p = (TermEntry *) hash_get(Texpr, expr);
+  require(p!=NULL, eMsg1("setHasAction: expr '%s' doesn't exist",expr));
+  p->action = action;
 }
 
 ForcedToken *
@@ -251,11 +252,11 @@ char *token;
 int tnum;
 #endif
 {
-	ForcedToken *ft = (ForcedToken *) calloc(1, sizeof(ForcedToken));
-	require(ft!=NULL, "out of memory");
-	ft->token = token;
-	ft->tnum = tnum;
-	return ft;
+  ForcedToken *ft = (ForcedToken *) calloc(1, sizeof(ForcedToken));
+  require(ft!=NULL, "out of memory");
+  ft->token = token;
+  ft->tnum = tnum;
+  return ft;
 }
 
 /*
@@ -269,85 +270,85 @@ RemapForcedTokens(void)
 RemapForcedTokens()
 #endif
 {
-	ListNode *p;
-	ForcedToken *q;
-	int max_token_number=0;     /* MR9 23-Sep-97 Removed "unsigned" */
-	int i;
+  ListNode *p;
+  ForcedToken *q;
+  int max_token_number=0;     /* MR9 23-Sep-97 Removed "unsigned" */
+  int i;
 
-	if ( ForcedTokens == NULL ) return;
+  if ( ForcedTokens == NULL ) return;
 
-	/* find max token num */
-	for (p = ForcedTokens->next; p!=NULL; p=p->next)
-	{
-		q = (ForcedToken *) p->elem;
-		if ( q->tnum > max_token_number ) max_token_number = q->tnum;
-	}
-	fprintf(stderr, "max token number is %d\n", max_token_number);
+  /* find max token num */
+  for (p = ForcedTokens->next; p!=NULL; p=p->next)
+  {
+    q = (ForcedToken *) p->elem;
+    if ( q->tnum > max_token_number ) max_token_number = q->tnum;
+  }
+  fprintf(stderr, "max token number is %d\n", max_token_number);
 
-	/* make token indirection array */
-	TokenInd = (int *) calloc(max_token_number+1, sizeof(int));
-	LastTokenCounted = TokenNum;
-	TokenNum = max_token_number+1;
-	require(TokenInd!=NULL, "RemapForcedTokens: cannot allocate TokenInd");
+  /* make token indirection array */
+  TokenInd = (int *) calloc(max_token_number+1, sizeof(int));
+  LastTokenCounted = TokenNum;
+  TokenNum = max_token_number+1;
+  require(TokenInd!=NULL, "RemapForcedTokens: cannot allocate TokenInd");
 
-	/* fill token indirection array and change token id htable ; swap token indices */
-	for (i=1; i<TokenNum; i++) TokenInd[i] = i;
-	for (p = ForcedTokens->next; p!=NULL; p=p->next)
-	{
-		TermEntry *te;
-		int old_pos, t;
+  /* fill token indirection array and change token id htable ; swap token indices */
+  for (i=1; i<TokenNum; i++) TokenInd[i] = i;
+  for (p = ForcedTokens->next; p!=NULL; p=p->next)
+  {
+    TermEntry *te;
+    int old_pos, t;
 
-		q = (ForcedToken *) p->elem;
-		fprintf(stderr, "%s forced to %d\n", q->token, q->tnum);
-		te = (TermEntry *) hash_get(Tname, q->token);
-		require(te!=NULL, "RemapForcedTokens: token not in hash table");
-		old_pos = te->token;
-		fprintf(stderr, "Before: TokenInd[old_pos==%d] is %d\n", old_pos, TokenInd[old_pos]);
-		fprintf(stderr, "Before: TokenInd[target==%d] is %d\n", q->tnum, TokenInd[q->tnum]);
-		q = (ForcedToken *) p->elem;
-		t = TokenInd[old_pos];
-		TokenInd[old_pos] = q->tnum;
-		TokenInd[q->tnum] = t;
-		te->token = q->tnum;		/* update token type id symbol table */
-		fprintf(stderr, "After: TokenInd[old_pos==%d] is %d\n", old_pos, TokenInd[old_pos]);
-		fprintf(stderr, "After: TokenInd[target==%d] is %d\n", q->tnum, TokenInd[q->tnum]);
+    q = (ForcedToken *) p->elem;
+    fprintf(stderr, "%s forced to %d\n", q->token, q->tnum);
+    te = (TermEntry *) hash_get(Tname, q->token);
+    require(te!=NULL, "RemapForcedTokens: token not in hash table");
+    old_pos = te->token;
+    fprintf(stderr, "Before: TokenInd[old_pos==%d] is %d\n", old_pos, TokenInd[old_pos]);
+    fprintf(stderr, "Before: TokenInd[target==%d] is %d\n", q->tnum, TokenInd[q->tnum]);
+    q = (ForcedToken *) p->elem;
+    t = TokenInd[old_pos];
+    TokenInd[old_pos] = q->tnum;
+    TokenInd[q->tnum] = t;
+    te->token = q->tnum;    /* update token type id symbol table */
+    fprintf(stderr, "After: TokenInd[old_pos==%d] is %d\n", old_pos, TokenInd[old_pos]);
+    fprintf(stderr, "After: TokenInd[target==%d] is %d\n", q->tnum, TokenInd[q->tnum]);
 
-		/* Change the token number in the sym tab entry for the exprs
-		 * at the old position of the token id and the target position
-		 */
-		/* update expr at target (if any) of forced token id */
-		if ( q->tnum < TokenNum )	/* is it a valid position? */
-		{
-			for (i=0; i<NumLexClasses; i++)
-			{
-				if ( lclass[i].exprs[q->tnum]!=NULL )
-				{
-					/* update the symbol table for this expr */
-					TermEntry *e = (TermEntry *) hash_get(lclass[i].htable, lclass[i].exprs[q->tnum]);
-					require(e!=NULL, "RemapForcedTokens: expr not in hash table");
-					e->token = old_pos;
-					fprintf(stderr, "found expr '%s' at target %d in lclass[%d]; changed to %d\n",
-							lclass[i].exprs[q->tnum], q->tnum, i, old_pos);
-				}
-			}
-		}
-		/* update expr at old position (if any) of forced token id */
-		for (i=0; i<NumLexClasses; i++)
-		{
-			if ( lclass[i].exprs[old_pos]!=NULL )
-			{
-				/* update the symbol table for this expr */
-				TermEntry *e = (TermEntry *) hash_get(lclass[i].htable, lclass[i].exprs[old_pos]);
-				require(e!=NULL, "RemapForcedTokens: expr not in hash table");
-				e->token = q->tnum;
-				fprintf(stderr, "found expr '%s' for id %s in lclass[%d]; changed to %d\n",
-						lclass[i].exprs[old_pos], q->token, i, q->tnum);
-			}
-		}
-	}
+    /* Change the token number in the sym tab entry for the exprs
+     * at the old position of the token id and the target position
+     */
+    /* update expr at target (if any) of forced token id */
+    if ( q->tnum < TokenNum ) /* is it a valid position? */
+    {
+      for (i=0; i<NumLexClasses; i++)
+      {
+        if ( lclass[i].exprs[q->tnum]!=NULL )
+        {
+          /* update the symbol table for this expr */
+          TermEntry *e = (TermEntry *) hash_get(lclass[i].htable, lclass[i].exprs[q->tnum]);
+          require(e!=NULL, "RemapForcedTokens: expr not in hash table");
+          e->token = old_pos;
+          fprintf(stderr, "found expr '%s' at target %d in lclass[%d]; changed to %d\n",
+              lclass[i].exprs[q->tnum], q->tnum, i, old_pos);
+        }
+      }
+    }
+    /* update expr at old position (if any) of forced token id */
+    for (i=0; i<NumLexClasses; i++)
+    {
+      if ( lclass[i].exprs[old_pos]!=NULL )
+      {
+        /* update the symbol table for this expr */
+        TermEntry *e = (TermEntry *) hash_get(lclass[i].htable, lclass[i].exprs[old_pos]);
+        require(e!=NULL, "RemapForcedTokens: expr not in hash table");
+        e->token = q->tnum;
+        fprintf(stderr, "found expr '%s' for id %s in lclass[%d]; changed to %d\n",
+            lclass[i].exprs[old_pos], q->token, i, q->tnum);
+      }
+    }
+  }
 
-	/* Update SynDiag */
-	RemapForcedTokensInSyntaxDiagram((Node *)SynDiag);
+  /* Update SynDiag */
+  RemapForcedTokensInSyntaxDiagram((Node *)SynDiag);
 }
 
 static void
@@ -358,38 +359,38 @@ RemapForcedTokensInSyntaxDiagram(p)
 Node *p;
 #endif
 {
-	Junction *j = (Junction *) p;
-	RuleRefNode *r = (RuleRefNode *) p;
-	TokNode *t = (TokNode *)p;
+  Junction *j = (Junction *) p;
+  RuleRefNode *r = (RuleRefNode *) p;
+  TokNode *t = (TokNode *)p;
 
-	if ( p==NULL ) return;
-	require(p->ntype>=1 && p->ntype<=NumNodeTypes,	"Remap...: invalid diagram node");
-	switch ( p->ntype )
-	{
-		case nJunction :
-			if ( j->visited ) return;
-			if ( j->jtype == EndRule ) return;
-			j->visited = TRUE;
-			RemapForcedTokensInSyntaxDiagram( j->p1 );
-			RemapForcedTokensInSyntaxDiagram( j->p2 );
-			j->visited = FALSE;
-			return;
-		case nRuleRef :
-			RemapForcedTokensInSyntaxDiagram( r->next );
-			return;
-		case nToken :
-			if ( t->remapped ) return;	/* we've been here before */
-			t->remapped = 1;
-			fprintf(stderr, "remapping %d to %d\n", t->token, TokenInd[t->token]);
-			t->token = TokenInd[t->token];
-			RemapForcedTokensInSyntaxDiagram( t->next );
-			return;
-		case nAction :
-			RemapForcedTokensInSyntaxDiagram( ((ActionNode *)p)->next );
-			return;
-		default :
-			fatal_internal("invalid node type");
-	}
+  if ( p==NULL ) return;
+  require(p->ntype>=1 && p->ntype<=NumNodeTypes,  "Remap...: invalid diagram node");
+  switch ( p->ntype )
+  {
+    case nJunction :
+      if ( j->visited ) return;
+      if ( j->jtype == EndRule ) return;
+      j->visited = TRUE;
+      RemapForcedTokensInSyntaxDiagram( j->p1 );
+      RemapForcedTokensInSyntaxDiagram( j->p2 );
+      j->visited = FALSE;
+      return;
+    case nRuleRef :
+      RemapForcedTokensInSyntaxDiagram( r->next );
+      return;
+    case nToken :
+      if ( t->remapped ) return;  /* we've been here before */
+      t->remapped = 1;
+      fprintf(stderr, "remapping %d to %d\n", t->token, TokenInd[t->token]);
+      t->token = TokenInd[t->token];
+      RemapForcedTokensInSyntaxDiagram( t->next );
+      return;
+    case nAction :
+      RemapForcedTokensInSyntaxDiagram( ((ActionNode *)p)->next );
+      return;
+    default :
+      fatal_internal("invalid node type");
+  }
 }
 
 /*
@@ -407,15 +408,15 @@ addTname( token )
 char *token;
 #endif
 {
-	TermEntry *p;
-	require(token!=NULL, "addTname: invalid token name");
+  TermEntry *p;
+  require(token!=NULL, "addTname: invalid token name");
 
-	if ( (p=(TermEntry *)hash_get(Tname, token)) != NULL ) return p->token;
-	p = newTermEntry( token );
-	Ttrack( p->str );
-	p->token = TokenNum++;
-	hash_add(Tname, token, (Entry *)p);
-	return p->token;
+  if ( (p=(TermEntry *)hash_get(Tname, token)) != NULL ) return p->token;
+  p = newTermEntry( token );
+  Ttrack( p->str );
+  p->token = TokenNum++;
+  hash_add(Tname, token, (Entry *)p);
+  return p->token;
 }
 
 /* This is the same as addTname except we force the TokenNum to be tnum.
@@ -432,15 +433,15 @@ char *token;
 int tnum;
 #endif
 {
-	TermEntry *p;
-	require(token!=NULL, "addTname: invalid token name");
+  TermEntry *p;
+  require(token!=NULL, "addTname: invalid token name");
 
-	if ( (p=(TermEntry *)hash_get(Tname, token)) != NULL ) return p->token;
-	p = newTermEntry( token );
-	Ttrack( p->str );
-	p->token = tnum;
-	hash_add(Tname, token, (Entry *)p);
-	return p->token;
+  if ( (p=(TermEntry *)hash_get(Tname, token)) != NULL ) return p->token;
+  p = newTermEntry( token );
+  Ttrack( p->str );
+  p->token = tnum;
+  hash_add(Tname, token, (Entry *)p);
+  return p->token;
 }
 
 /*
@@ -455,17 +456,17 @@ addTexpr( expr )
 char *expr;
 #endif
 {
-	TermEntry *p;
-	require(expr!=NULL, "addTexpr: invalid regular expression");
+  TermEntry *p;
+  require(expr!=NULL, "addTexpr: invalid regular expression");
 
-	if ( (p=(TermEntry *)hash_get(Texpr, expr)) != NULL ) return p->token;
-	p = newTermEntry( expr );
-	Ttrack( p->str );
-	/* track the order in which they occur */
-	list_add(&ExprOrder, (void *)newExpr(p->str));
-	p->token = TokenNum++;
-	hash_add(Texpr, expr, (Entry *)p);
-	return p->token;
+  if ( (p=(TermEntry *)hash_get(Texpr, expr)) != NULL ) return p->token;
+  p = newTermEntry( expr );
+  Ttrack( p->str );
+  /* track the order in which they occur */
+  list_add(&ExprOrder, (void *)newExpr(p->str));
+  p->token = TokenNum++;
+  hash_add(Texpr, expr, (Entry *)p);
+  return p->token;
 }
 
 /* return the token number of 'term'.  Return 0 if no 'term' exists */
@@ -477,13 +478,13 @@ Tnum( term )
 char *term;
 #endif
 {
-	TermEntry *p;
-	require(term!=NULL, "Tnum: invalid terminal");
-	
-	if ( *term=='"' ) p = (TermEntry *) hash_get(Texpr, term);
-	else p = (TermEntry *) hash_get(Tname, term);
-	if ( p == NULL ) return 0;
-	else return p->token;
+  TermEntry *p;
+  require(term!=NULL, "Tnum: invalid terminal");
+
+  if ( *term=='"' ) p = (TermEntry *) hash_get(Texpr, term);
+  else p = (TermEntry *) hash_get(Tname, term);
+  if ( p == NULL ) return 0;
+  else return p->token;
 }
 
 /* associate a Name with an expr.  If both have been already assigned
@@ -501,46 +502,46 @@ char *token;
 char *expr;
 #endif
 {
-	TermEntry *p, *q;
-	require(token!=NULL && expr!=NULL, "Tklink: invalid token name and/or expr");
+  TermEntry *p, *q;
+  require(token!=NULL && expr!=NULL, "Tklink: invalid token name and/or expr");
 
-	p = (TermEntry *) hash_get(Tname, token);
-	q = (TermEntry *) hash_get(Texpr, expr);
-	if ( p != NULL && q != NULL )	/* both defined */
-	{
-		warn( eMsg2("token name %s and rexpr %s already defined; ignored",
-					token, expr) );
-		return;
-	}
-	if ( p==NULL && q==NULL )		/* both not defined */
-	{
-		int t = addTname( token );
-		q = newTermEntry( expr );
-		hash_add(Texpr, expr, (Entry *)q);
-		q->token = t;
-		/* note: we use the actual ExprStr array
-		 * here as TokenInd doesn't exist yet
-		 */
-		ExprStr[t] = q->str;
-		/* track the order in which they occur */
-		list_add(&ExprOrder, (void *)newExpr(q->str));
-		return;
-	}
-	if ( p != NULL )				/* one is defined, one is not */
-	{
-		q = newTermEntry( expr );
-		hash_add(Texpr, expr, (Entry *)q);
-		q->token = p->token;
-		ExprStr[p->token] = q->str;	/* both expr and token str defined now */
-		list_add(&ExprOrder, (void *)newExpr(q->str));
-	}
-	else							/* trying to associate name with expr here*/
-	{
-		p = newTermEntry( token );
-		hash_add(Tname, token, (Entry *)p);
-		p->token = q->token;
-		TokenStr[p->token] = p->str;/* both expr and token str defined now */
-	}
+  p = (TermEntry *) hash_get(Tname, token);
+  q = (TermEntry *) hash_get(Texpr, expr);
+  if ( p != NULL && q != NULL ) /* both defined */
+  {
+    warn( eMsg2("token name %s and rexpr %s already defined; ignored",
+          token, expr) );
+    return;
+  }
+  if ( p==NULL && q==NULL )   /* both not defined */
+  {
+    int t = addTname( token );
+    q = newTermEntry( expr );
+    hash_add(Texpr, expr, (Entry *)q);
+    q->token = t;
+    /* note: we use the actual ExprStr array
+     * here as TokenInd doesn't exist yet
+     */
+    ExprStr[t] = q->str;
+    /* track the order in which they occur */
+    list_add(&ExprOrder, (void *)newExpr(q->str));
+    return;
+  }
+  if ( p != NULL )        /* one is defined, one is not */
+  {
+    q = newTermEntry( expr );
+    hash_add(Texpr, expr, (Entry *)q);
+    q->token = p->token;
+    ExprStr[p->token] = q->str; /* both expr and token str defined now */
+    list_add(&ExprOrder, (void *)newExpr(q->str));
+  }
+  else              /* trying to associate name with expr here*/
+  {
+    p = newTermEntry( token );
+    hash_add(Tname, token, (Entry *)p);
+    p->token = q->token;
+    TokenStr[p->token] = p->str;/* both expr and token str defined now */
+  }
 }
 
 /*
@@ -557,17 +558,17 @@ char *text;
 int sz;
 #endif
 {
-	Entry *p;
-	require(text!=NULL, "new: NULL terminal");
-	
-	if ( (p = (Entry *) calloc(1,sz)) == 0 )
-	{
-		fatal_internal("newEntry: out of memory for terminals\n");
-		exit(PCCTS_EXIT_FAILURE);
-	}
-	p->str = mystrdup(text);
-	
-	return(p);
+  Entry *p;
+  require(text!=NULL, "new: NULL terminal");
+
+  if ( (p = (Entry *) calloc(1,sz)) == 0 )
+  {
+    fatal_internal("newEntry: out of memory for terminals\n");
+    exit(PCCTS_EXIT_FAILURE);
+  }
+  p->str = mystrdup(text);
+
+  return(p);
 }
 
 /*
@@ -586,26 +587,26 @@ ListNode **list;
 void *e;
 #endif
 {
-	ListNode *p, *tail;
-	require(e!=NULL, "list_add: attempting to add NULL list element");
+  ListNode *p, *tail;
+  require(e!=NULL, "list_add: attempting to add NULL list element");
 
-	p = newListNode;
-	require(p!=NULL, "list_add: cannot alloc new list node");
-	p->elem = e;
-	if ( *list == NULL )
-	{
-		ListNode *sentinel = newListNode;
-		require(sentinel!=NULL, "list_add: cannot alloc sentinel node");
-		*list=sentinel;
-		sentinel->next = p;
-		sentinel->elem = (char *)p;		/* set tail pointer */
-	}
-	else								/* find end of list */
-	{
-		tail = (ListNode *) (*list)->elem;	/* get tail pointer */
-		tail->next = p;
-		(*list)->elem = (char *) p;		/* reset tail */
-	}
+  p = newListNode;
+  require(p!=NULL, "list_add: cannot alloc new list node");
+  p->elem = e;
+  if ( *list == NULL )
+  {
+    ListNode *sentinel = newListNode;
+    require(sentinel!=NULL, "list_add: cannot alloc sentinel node");
+    *list=sentinel;
+    sentinel->next = p;
+    sentinel->elem = (char *)p;   /* set tail pointer */
+  }
+  else                /* find end of list */
+  {
+    tail = (ListNode *) (*list)->elem;  /* get tail pointer */
+    tail->next = p;
+    (*list)->elem = (char *) p;   /* reset tail */
+  }
 }
 
 /* MR10 list_free() frees the ListNode elements in the list       */
@@ -620,12 +621,12 @@ list_free(list,freeData)
   int           freeData;
 #endif
 {
-	ListNode *p;
+  ListNode *p;
     ListNode *next;
 
-	if (list == NULL) return;
+  if (list == NULL) return;
     if (*list == NULL) return;
-	for (p=*list; p != NULL; p=next) {
+  for (p=*list; p != NULL; p=next) {
       next=p->next;
       if (freeData && p->elem != NULL) {
         free( (char *) p->elem);
@@ -644,11 +645,11 @@ ListNode *list;
 void (*f)();
 #endif
 {
-	ListNode *p;
-	require(f!=NULL, "list_apply: NULL function to apply");
+  ListNode *p;
+  require(f!=NULL, "list_apply: NULL function to apply");
 
-	if ( list == NULL ) return;
-	for (p = list->next; p!=NULL; p=p->next) (*f)( p->elem );
+  if ( list == NULL ) return;
+  for (p = list->next; p!=NULL; p=p->next) (*f)( p->elem );
 }
 
 /* MR27 */
@@ -661,17 +662,17 @@ int list_search_cstring(list, cstring)
   char * cstring;
 #endif
 {
-	ListNode *p;
-	if (list == NULL ) return 0;
-	for (p = list->next; p!=NULL; p=p->next) {
-		if (p->elem == NULL) continue;
-		if (0 == strcmp((char *) p->elem , cstring)) return 1;
-	}
-	return 0;
+  ListNode *p;
+  if (list == NULL ) return 0;
+  for (p = list->next; p!=NULL; p=p->next) {
+    if (p->elem == NULL) continue;
+    if (0 == strcmp((char *) p->elem , cstring)) return 1;
+  }
+  return 0;
 }
 
-			/* F O L L O W  C y c l e  S t u f f */
-		
+      /* F O L L O W  C y c l e  S t u f f */
+
 /* make a key based upon (rulename, computation, k value).
  * Computation values are 'i'==FIRST, 'o'==FOLLOW.
  */
@@ -690,27 +691,27 @@ int computation;
 int k;
 #endif
 {
-	static char key[MaxRuleName+2+2+1];                                 /* MR10 */
-	int i;
-	
-	if ( k > 99 )                                                       /* MR10 */
-		fatal("k>99 is too big for this implementation of ANTLR!\n");   /* MR10 */
-	if ( (i=strlen(rule)) > MaxRuleName )                               /* MR10 */
-		fatal( eMsgd("rule name > max of %d\n", MaxRuleName) );         /* MR10 */
-	strcpy(key,rule);
+  static char key[MaxRuleName+2+2+1];                                 /* MR10 */
+  int i;
+
+  if ( k > 99 )                                                       /* MR10 */
+    fatal("k>99 is too big for this implementation of ANTLR!\n");   /* MR10 */
+  if ( (i=strlen(rule)) > MaxRuleName )                               /* MR10 */
+    fatal( eMsgd("rule name > max of %d\n", MaxRuleName) );         /* MR10 */
+  strcpy(key,rule);
 
 /* MR10 */     key[i]='*';
 /* MR10 */     key[i+1] = (char) computation; /* MR20 G. Hobbelt */
 /* MR10 */     if (k < 10) {
 /* MR10 */       key[i+2] = (char) ( '0' + k);
-/* MR10 */  	 key[i+3] = '\0';
+/* MR10 */     key[i+3] = '\0';
 /* MR10 */     } else {
 /* MR10 */       key[i+2] = (char) ( '0' + k/10);
 /* MR10 */       key[i+3] = (char) ( '0' + k % 10);
 /* MR10 */       key[i+4] = '\0';
 /* MR10 */     };
 
-	return key;
+  return key;
 }
 
 /* Push a rule onto the kth FOLLOW stack */
@@ -723,48 +724,48 @@ char *rule;
 int k;
 #endif
 {
-	RuleEntry *r;
-	require(rule!=NULL, "FoPush: tried to push NULL rule");
-	require(k<=CLL_k,	"FoPush: tried to access non-existent stack");
+  RuleEntry *r;
+  require(rule!=NULL, "FoPush: tried to push NULL rule");
+  require(k<=CLL_k, "FoPush: tried to access non-existent stack");
 
-	/*fprintf(stderr, "FoPush(%s)\n", rule);*/
-	r = (RuleEntry *) hash_get(Rname, rule);
-	if ( r == NULL ) {fatal_internal( eMsg1("rule %s must be defined but isn't", rule) );}
-	if ( FoStack[k] == NULL )		/* Does the kth stack exist yet? */
-	{
-		/*fprintf(stderr, "allocating FoStack\n");*/
-		FoStack[k] = (int *) calloc(FoStackSize, sizeof(int));
-		require(FoStack[k]!=NULL, "FoPush: cannot allocate FOLLOW stack\n");
-	}
-	if ( FoTOS[k] == NULL )
-	{
-		FoTOS[k]=FoStack[k];
-		*(FoTOS[k]) = r->rulenum;
-	}
-	else
-	{
+  /*fprintf(stderr, "FoPush(%s)\n", rule);*/
+  r = (RuleEntry *) hash_get(Rname, rule);
+  if ( r == NULL ) {fatal_internal( eMsg1("rule %s must be defined but isn't", rule) );}
+  if ( FoStack[k] == NULL )   /* Does the kth stack exist yet? */
+  {
+    /*fprintf(stderr, "allocating FoStack\n");*/
+    FoStack[k] = (int *) calloc(FoStackSize, sizeof(int));
+    require(FoStack[k]!=NULL, "FoPush: cannot allocate FOLLOW stack\n");
+  }
+  if ( FoTOS[k] == NULL )
+  {
+    FoTOS[k]=FoStack[k];
+    *(FoTOS[k]) = r->rulenum;
+  }
+  else
+  {
 #ifdef MEMCHK
-		require(valid(FoStack[k]), "FoPush: invalid FoStack");
+    require(valid(FoStack[k]), "FoPush: invalid FoStack");
 #endif
-		if ( FoTOS[k] >= &(FoStack[k][FoStackSize-1]) )
-			fatal( eMsgd("exceeded max depth of FOLLOW recursion (%d)\n",
-						FoStackSize) );
-		require(FoTOS[k]>=FoStack[k],
-				eMsg1("FoPush: FoStack stack-ptr is playing out of its sandbox",
-					  rule));
-		++(FoTOS[k]);
-		*(FoTOS[k]) = r->rulenum;
-	}
-	{
-		/*
-****		int *p;
-****		fprintf(stderr, "FoStack[k=%d]:\n", k);
-****		for (p=FoStack[k]; p<=FoTOS[k]; p++)
-****		{
-****			fprintf(stderr, "\t%s\n", RulePtr[*p]->rname);
-****		}
-		*/
-	}
+    if ( FoTOS[k] >= &(FoStack[k][FoStackSize-1]) )
+      fatal( eMsgd("exceeded max depth of FOLLOW recursion (%d)\n",
+            FoStackSize) );
+    require(FoTOS[k]>=FoStack[k],
+        eMsg1("FoPush: FoStack stack-ptr is playing out of its sandbox",
+            rule));
+    ++(FoTOS[k]);
+    *(FoTOS[k]) = r->rulenum;
+  }
+  {
+    /*
+****    int *p;
+****    fprintf(stderr, "FoStack[k=%d]:\n", k);
+****    for (p=FoStack[k]; p<=FoTOS[k]; p++)
+****    {
+****      fprintf(stderr, "\t%s\n", RulePtr[*p]->rname);
+****    }
+    */
+  }
 }
 
 /* Pop one rule off of the FOLLOW stack.  TOS ptr is NULL if empty. */
@@ -776,24 +777,24 @@ FoPop( k )
 int k;
 #endif
 {
-	require(k<=CLL_k, "FoPop: tried to access non-existent stack");
-	/*fprintf(stderr, "FoPop\n");*/
-	require(FoTOS[k]>=FoStack[k]&&FoTOS[k]<=&(FoStack[k][FoStackSize-1]),
-			"FoPop: FoStack stack-ptr is playing out of its sandbox");
-	if ( FoTOS[k] == FoStack[k] ) FoTOS[k] = NULL;
-	else (FoTOS[k])--;
+  require(k<=CLL_k, "FoPop: tried to access non-existent stack");
+  /*fprintf(stderr, "FoPop\n");*/
+  require(FoTOS[k]>=FoStack[k]&&FoTOS[k]<=&(FoStack[k][FoStackSize-1]),
+      "FoPop: FoStack stack-ptr is playing out of its sandbox");
+  if ( FoTOS[k] == FoStack[k] ) FoTOS[k] = NULL;
+  else (FoTOS[k])--;
 }
 
 /* Compute FOLLOW cycle.
  * Mark all FOLLOW sets for rules in cycle as incomplete.
  * Then, save cycle on the cycle list (Cycles) for later resolution.
  * The Cycle is stored in the form:
- *		(head of cycle==croot, rest of rules in cycle==cyclicDep)
+ *    (head of cycle==croot, rest of rules in cycle==cyclicDep)
  *
  * e.g. (Fo means "FOLLOW of", "-->" means requires or depends on)
  *
- *		Fo(x)-->Fo(a)-->Fo(b)-->Fo(c)-->Fo(x)
- *										   ^----Infinite recursion (cycle)
+ *    Fo(x)-->Fo(a)-->Fo(b)-->Fo(c)-->Fo(x)
+ *                       ^----Infinite recursion (cycle)
  *
  * the cycle would be: x -> {a,b,c} or stored as (x,{a,b,c}).  Fo(x) depends
  * on the FOLLOW of a,b, and c.  The root of a cycle is always complete after
@@ -809,67 +810,67 @@ char *rule;
 int k;
 #endif
 {
-	CacheEntry *f;
-	Cycle *c;
-	int *p;
-	RuleEntry *r;
-	require(rule!=NULL, "RegisterCycle: tried to register NULL rule");
-	require(k<=CLL_k,	"RegisterCycle: tried to access non-existent stack");
+  CacheEntry *f;
+  Cycle *c;
+  int *p;
+  RuleEntry *r;
+  require(rule!=NULL, "RegisterCycle: tried to register NULL rule");
+  require(k<=CLL_k, "RegisterCycle: tried to access non-existent stack");
 
-	/*fprintf(stderr, "RegisterCycle(%s)\n", rule);*/
-	/* Find cycle start */
-	r = (RuleEntry *) hash_get(Rname, rule);
-	require(r!=NULL,eMsg1("rule %s must be defined but isn't", rule));
-	require(FoTOS[k]>=FoStack[k]&&FoTOS[k]<=&(FoStack[k][FoStackSize-1]),
-			eMsg1("RegisterCycle(%s): FoStack stack-ptr is playing out of its sandbox",
-				  rule));
-/***	if ( FoTOS[k]<FoStack[k]||FoTOS[k]>&(FoStack[k][FoStackSize-1]) )
-****	{
-****		fprintf(stderr, "RegisterCycle(%s): FoStack stack-ptr is playing out of its sandbox\n",
-****						rule);
-****		fprintf(stderr, "RegisterCycle: sp==0x%x out of bounds 0x%x...0x%x\n",
-****						FoTOS[k], FoStack[k], &(FoStack[k][FoStackSize-1]));
-****		exit(PCCTS_EXIT_FAILURE);
-****	}
+  /*fprintf(stderr, "RegisterCycle(%s)\n", rule);*/
+  /* Find cycle start */
+  r = (RuleEntry *) hash_get(Rname, rule);
+  require(r!=NULL,eMsg1("rule %s must be defined but isn't", rule));
+  require(FoTOS[k]>=FoStack[k]&&FoTOS[k]<=&(FoStack[k][FoStackSize-1]),
+      eMsg1("RegisterCycle(%s): FoStack stack-ptr is playing out of its sandbox",
+          rule));
+/***  if ( FoTOS[k]<FoStack[k]||FoTOS[k]>&(FoStack[k][FoStackSize-1]) )
+****  {
+****    fprintf(stderr, "RegisterCycle(%s): FoStack stack-ptr is playing out of its sandbox\n",
+****            rule);
+****    fprintf(stderr, "RegisterCycle: sp==0x%x out of bounds 0x%x...0x%x\n",
+****            FoTOS[k], FoStack[k], &(FoStack[k][FoStackSize-1]));
+****    exit(PCCTS_EXIT_FAILURE);
+****  }
 ****/
 
 #ifdef MEMCHK
-	require(valid(FoStack[k]), "RegisterCycle: invalid FoStack");
+  require(valid(FoStack[k]), "RegisterCycle: invalid FoStack");
 #endif
-	for (p=FoTOS[k]; *p != r->rulenum && p >= FoStack[k]; --p) {;}
-	require(p>=FoStack[k], "RegisterCycle: FoStack is screwed up beyond belief");
-	if ( p == FoTOS[k] ) return;	/* don't worry about cycles to oneself */
-	
-	/* compute cyclic dependents (rules in cycle except head) */
-	c = newCycle;
-	require(c!=NULL, "RegisterCycle: couldn't alloc new cycle");
-	c->cyclicDep = empty;
-	c->croot = *p++;		/* record root of cycle */
-	for (; p<=FoTOS[k]; p++)
-	{
-		/* Mark all dependent rules as incomplete */
-		f = (CacheEntry *) hash_get(Fcache, Fkey(RulePtr[*p]->rname,'o',k));
-		if ( f==NULL )
-		{
-			f = newCacheEntry( Fkey(RulePtr[*p]->rname,'o',k) );
-			hash_add(Fcache, Fkey(RulePtr[*p]->rname,'o',k), (Entry *)f);
-		}
-		f->incomplete = TRUE;
-		
-		set_orel(*p, &(c->cyclicDep)); /* mark rule as dependent of croot */
-	}
-	list_add(&(Cycles[k]), (void *)c);
+  for (p=FoTOS[k]; *p != r->rulenum && p >= FoStack[k]; --p) {;}
+  require(p>=FoStack[k], "RegisterCycle: FoStack is screwed up beyond belief");
+  if ( p == FoTOS[k] ) return;  /* don't worry about cycles to oneself */
+
+  /* compute cyclic dependents (rules in cycle except head) */
+  c = newCycle;
+  require(c!=NULL, "RegisterCycle: couldn't alloc new cycle");
+  c->cyclicDep = empty;
+  c->croot = *p++;    /* record root of cycle */
+  for (; p<=FoTOS[k]; p++)
+  {
+    /* Mark all dependent rules as incomplete */
+    f = (CacheEntry *) hash_get(Fcache, Fkey(RulePtr[*p]->rname,'o',k));
+    if ( f==NULL )
+    {
+      f = newCacheEntry( Fkey(RulePtr[*p]->rname,'o',k) );
+      hash_add(Fcache, Fkey(RulePtr[*p]->rname,'o',k), (Entry *)f);
+    }
+    f->incomplete = TRUE;
+
+    set_orel(*p, &(c->cyclicDep)); /* mark rule as dependent of croot */
+  }
+  list_add(&(Cycles[k]), (void *)c);
 }
 
 /* make all rules in cycle complete
  *
  * while ( some set has changed ) do
- *		for each cycle do
- *			if degree of FOLLOW set for croot > old degree then
- *				update all FOLLOW sets for rules in cyclic dependency
- *				change = TRUE
- *			endif
- *		endfor
+ *    for each cycle do
+ *      if degree of FOLLOW set for croot > old degree then
+ *        update all FOLLOW sets for rules in cyclic dependency
+ *        change = TRUE
+ *      endif
+ *    endfor
  * endwhile
  */
 void
@@ -880,72 +881,72 @@ ResolveFoCycles( k )
 int k;
 #endif
 {
-	ListNode *p, *q;
-	Cycle *c;
-	int changed = 1;
-	CacheEntry *f,*g;
-	int r;
+  ListNode *p, *q;
+  Cycle *c;
+  int changed = 1;
+  CacheEntry *f,*g;
+  int r;
 /*  int i;  */  /* MR10 not useful */
-	unsigned d;
+  unsigned d;
 
     unsigned    *cursor;        /* MR10 */
     unsigned    *origin;        /* MR10 */
-	
-	/*fprintf(stderr, "Resolving following cycles for %d\n", k);*/
-	while ( changed )
-	{
-		changed = 0;
+
+  /*fprintf(stderr, "Resolving following cycles for %d\n", k);*/
+  while ( changed )
+  {
+    changed = 0;
 /* MR10 i = 0;  */
-		for (p = Cycles[k]->next; p!=NULL; p=p->next)
-		{
-			c = (Cycle *) p->elem;
-			/*fprintf(stderr, "cycle %d: %s -->", i++, RulePtr[c->croot]->rname);*/
-			/*s_fprT(stderr, c->cyclicDep);*/
-			/*fprintf(stderr, "\n");*/
-			f = (CacheEntry *)
-					hash_get(Fcache, Fkey(RulePtr[c->croot]->rname,'o',k));
-			require(f!=NULL, eMsg1("FOLLOW(%s) must be in cache but isn't", RulePtr[c->croot]->rname) );
-			if ( (d=set_deg(f->fset)) > c->deg )
-			{
-				/*fprintf(stderr, "Fo(%s) has changed\n", RulePtr[c->croot]->rname);*/
-				changed = 1;
-				c->deg = d;		/* update cycle FOLLOW set degree */
+    for (p = Cycles[k]->next; p!=NULL; p=p->next)
+    {
+      c = (Cycle *) p->elem;
+      /*fprintf(stderr, "cycle %d: %s -->", i++, RulePtr[c->croot]->rname);*/
+      /*s_fprT(stderr, c->cyclicDep);*/
+      /*fprintf(stderr, "\n");*/
+      f = (CacheEntry *)
+          hash_get(Fcache, Fkey(RulePtr[c->croot]->rname,'o',k));
+      require(f!=NULL, eMsg1("FOLLOW(%s) must be in cache but isn't", RulePtr[c->croot]->rname) );
+      if ( (d=set_deg(f->fset)) > c->deg )
+      {
+        /*fprintf(stderr, "Fo(%s) has changed\n", RulePtr[c->croot]->rname);*/
+        changed = 1;
+        c->deg = d;   /* update cycle FOLLOW set degree */
 
 /* MR10 */      origin=set_pdq(c->cyclicDep);
 /* MR10 */      for (cursor=origin; *cursor != nil; cursor++) {
 /* MR10 */         r=*cursor;
 
-/********		while ( !set_nil(c->cyclicDep) ) {      *****/
-/********					r = set_int(c->cyclicDep);  *****/
-/********					set_rm(r, c->cyclicDep);    *****/
+/********   while ( !set_nil(c->cyclicDep) ) {      *****/
+/********         r = set_int(c->cyclicDep);  *****/
+/********         set_rm(r, c->cyclicDep);    *****/
 
-					/*fprintf(stderr, "updating Fo(%s)\n", RulePtr[r]->rname);*/
-					g = (CacheEntry *)
-							hash_get(Fcache, Fkey(RulePtr[r]->rname,'o',k));
-					require(g!=NULL, eMsg1("FOLLOW(%s) must be in cache but isn't", RulePtr[r]->rname) );
-					set_orin(&(g->fset), f->fset);
-					g->incomplete = FALSE;
-				}
+          /*fprintf(stderr, "updating Fo(%s)\n", RulePtr[r]->rname);*/
+          g = (CacheEntry *)
+              hash_get(Fcache, Fkey(RulePtr[r]->rname,'o',k));
+          require(g!=NULL, eMsg1("FOLLOW(%s) must be in cache but isn't", RulePtr[r]->rname) );
+          set_orin(&(g->fset), f->fset);
+          g->incomplete = FALSE;
+        }
 /* MR10 */      free( (char *) origin);
 /* MR10 */      origin=NULL;
-			}
-		}
+      }
+    }
 /* MR10 - this if statement appears to be meaningless since i is always 0 */
-/* MR10		if ( i == 1 ) changed = 0;	*/ /* if only 1 cycle, no need to repeat */
-	}
-	/* kill Cycle list */
-	for (q = Cycles[k]->next; q != NULL; q=p)
-	{
-		p = q->next;
-		set_free( ((Cycle *)q->elem)->cyclicDep );
-		free((char *)q);
-	}
-	free( (char *)Cycles[k] );
-	Cycles[k] = NULL;
+/* MR10   if ( i == 1 ) changed = 0;  */ /* if only 1 cycle, no need to repeat */
+  }
+  /* kill Cycle list */
+  for (q = Cycles[k]->next; q != NULL; q=p)
+  {
+    p = q->next;
+    set_free( ((Cycle *)q->elem)->cyclicDep );
+    free((char *)q);
+  }
+  free( (char *)Cycles[k] );
+  Cycles[k] = NULL;
 }
 
 
-			/* P r i n t i n g  S y n t a x  D i a g r a m s */
+      /* P r i n t i n g  S y n t a x  D i a g r a m s */
 
 static void
 #ifdef __USE_PROTOS
@@ -956,87 +957,87 @@ Junction *q;
 int btype;
 #endif
 {
-	int k,a;
-	Junction *alt, *p;
+  int k,a;
+  Junction *alt, *p;
 
-	q->end->pvisited = TRUE;
-	if ( btype == aLoopBegin )
-	{
-		require(q->p2!=NULL, "pBlk: invalid ()* block");
-		PRINT(q->p1);
-		alt = (Junction *)q->p2;
-		PRINT(alt->p1);
-		if ( PrintAnnotate )
-		{
-			printf(" /* Opt ");
-			k = 1;
-			while ( !set_nil(alt->fset[k]) )
-			{
-				s_fprT(stdout, alt->fset[k]);
-				if ( k++ == CLL_k ) break;
-				if ( !set_nil(alt->fset[k]) ) printf(", ");
-			}
-			printf(" */\n");
-		}
-		return;
-	}
-	for (a=1,alt=q; alt != NULL; alt= (Junction *) alt->p2, a++)
-	{
-		if ( alt->p1 != NULL ) PRINT(alt->p1);
-		if ( PrintAnnotate )
-		{
-			printf( " /* [%d] ", alt->altnum);
-			k = 1;
-			while ( !set_nil(alt->fset[k]) )
-			{
-				s_fprT(stdout, alt->fset[k]);
-				if ( k++ == CLL_k ) break;
-				if ( !set_nil(alt->fset[k]) ) printf(", ");
-			}
-			if ( alt->p2 == NULL && btype == aOptBlk )
-				printf( " (optional branch) */\n");
-			else printf( " */\n");
-		}
+  q->end->pvisited = TRUE;
+  if ( btype == aLoopBegin )
+  {
+    require(q->p2!=NULL, "pBlk: invalid ()* block");
+    PRINT(q->p1);
+    alt = (Junction *)q->p2;
+    PRINT(alt->p1);
+    if ( PrintAnnotate )
+    {
+      printf(" /* Opt ");
+      k = 1;
+      while ( !set_nil(alt->fset[k]) )
+      {
+        s_fprT(stdout, alt->fset[k]);
+        if ( k++ == CLL_k ) break;
+        if ( !set_nil(alt->fset[k]) ) printf(", ");
+      }
+      printf(" */\n");
+    }
+    return;
+  }
+  for (a=1,alt=q; alt != NULL; alt= (Junction *) alt->p2, a++)
+  {
+    if ( alt->p1 != NULL ) PRINT(alt->p1);
+    if ( PrintAnnotate )
+    {
+      printf( " /* [%d] ", alt->altnum);
+      k = 1;
+      while ( !set_nil(alt->fset[k]) )
+      {
+        s_fprT(stdout, alt->fset[k]);
+        if ( k++ == CLL_k ) break;
+        if ( !set_nil(alt->fset[k]) ) printf(", ");
+      }
+      if ( alt->p2 == NULL && btype == aOptBlk )
+        printf( " (optional branch) */\n");
+      else printf( " */\n");
+    }
 
-		/* ignore implied empty alt of Plus blocks */
-		if ( alt->p2 != NULL && ((Junction *)alt->p2)->ignore ) break;
+    /* ignore implied empty alt of Plus blocks */
+    if ( alt->p2 != NULL && ((Junction *)alt->p2)->ignore ) break;
 
-		if ( alt->p2 != NULL && !(((Junction *)alt->p2)->p2==NULL && btype == aOptBlk) )
-		{
-			if ( pLevel == 1 )
-			{
-				printf("\n");
-				if ( a+1==pAlt1 || a+1==pAlt2 ) printf("=>");
-				printf("\t");
-			}
-			else printf(" ");
-			printf("|");
-			if ( pLevel == 1 )
-			{
-				p = (Junction *) ((Junction *)alt->p2)->p1;
-				while ( p!=NULL )
-				{
-					if ( p->ntype==nAction )
-					{
-						p=(Junction *)((ActionNode *)p)->next;
-						continue;
-					}
-					if ( p->ntype!=nJunction )
-					{
-						break;
-					}
-					if ( p->jtype==EndBlk || p->jtype==EndRule )
-					{
-						p = NULL;
-						break;
-					}
-					p = (Junction *)p->p1;
-				}
-				if ( p==NULL ) printf("\n\t");	/* Empty alt? */
-			}
-		}
-	}
-	q->end->pvisited = FALSE;
+    if ( alt->p2 != NULL && !(((Junction *)alt->p2)->p2==NULL && btype == aOptBlk) )
+    {
+      if ( pLevel == 1 )
+      {
+        printf("\n");
+        if ( a+1==pAlt1 || a+1==pAlt2 ) printf("=>");
+        printf("\t");
+      }
+      else printf(" ");
+      printf("|");
+      if ( pLevel == 1 )
+      {
+        p = (Junction *) ((Junction *)alt->p2)->p1;
+        while ( p!=NULL )
+        {
+          if ( p->ntype==nAction )
+          {
+            p=(Junction *)((ActionNode *)p)->next;
+            continue;
+          }
+          if ( p->ntype!=nJunction )
+          {
+            break;
+          }
+          if ( p->jtype==EndBlk || p->jtype==EndRule )
+          {
+            p = NULL;
+            break;
+          }
+          p = (Junction *)p->p1;
+        }
+        if ( p==NULL ) printf("\n\t");  /* Empty alt? */
+      }
+    }
+  }
+  q->end->pvisited = FALSE;
 }
 
 /* How to print out a junction */
@@ -1048,122 +1049,122 @@ pJunc( q )
 Junction *q;
 #endif
 {
-	int dum_k;
-	int doing_rule;
-	require(q!=NULL, "pJunc: NULL node");
-	require(q->ntype==nJunction, "pJunc: not junction");
-	
-	if ( q->pvisited == TRUE ) return;
-	q->pvisited = TRUE;
-	switch ( q->jtype )
-	{
-		case aSubBlk :
-			if ( PrintAnnotate ) First(q, 1, q->jtype, &dum_k);
-			if ( q->end->p1 != NULL && ((Junction *)q->end->p1)->ntype==nJunction &&
-				 ((Junction *)q->end->p1)->jtype == EndRule ) doing_rule = 1;
-			else doing_rule = 0;
-			pLevel++;
-			if ( pLevel==1 )
-			{
-				if ( pAlt1==1 ) printf("=>");
-				printf("\t");
-			}
-			else printf(" ");
-			if ( doing_rule )
-			{
-				if ( pLevel==1 ) printf(" ");
-				pBlk(q,q->jtype);
-			}
-			else {
-				printf("(");
-				if ( pLevel==1 ) printf(" ");
-				pBlk(q,q->jtype);
-				if ( pLevel>1 ) printf(" ");
-				printf(")");
-			}
-			if ( q->guess ) printf("?");
-			pLevel--;
-			if ( PrintAnnotate ) freeBlkFsets(q);
-			if ( q->end->p1 != NULL ) PRINT(q->end->p1);
-			break;
-		case aOptBlk :
-			if ( PrintAnnotate ) First(q, 1, q->jtype, &dum_k);
-			pLevel++;
-			if ( pLevel==1 )
-			{
-				if ( pAlt1==1 ) printf("=>");
-				printf("\t");
-			}
-			else printf(" ");
-			printf("{");
-			if ( pLevel==1 ) printf(" ");
-			pBlk(q,q->jtype);
-			if ( pLevel>1 ) printf(" ");
-			else printf("\n\t");
-			printf("}");
-			pLevel--;
-			if ( PrintAnnotate ) freeBlkFsets(q);
-			if ( q->end->p1 != NULL ) PRINT(q->end->p1);
-			break;
-		case aLoopBegin :
-			if ( PrintAnnotate ) First(q, 1, q->jtype, &dum_k);
-			pLevel++;
-			if ( pLevel==1 )
-			{
-				if ( pAlt1==1 ) printf("=>");
-				printf("\t");
-			}
-			else printf(" ");
-			printf("(");
-			if ( pLevel==1 ) printf(" ");
-			pBlk(q,q->jtype);
-			if ( pLevel>1 ) printf(" ");
-			else printf("\n\t");
-			printf(")*");
-			pLevel--;
-			if ( PrintAnnotate ) freeBlkFsets(q);
-			if ( q->end->p1 != NULL ) PRINT(q->end->p1);
-			break;
-		case aLoopBlk :
-			if ( PrintAnnotate ) First(q, 1, q->jtype, &dum_k);
-			pBlk(q,q->jtype);
-			if ( PrintAnnotate ) freeBlkFsets(q);
-			break;
-		case aPlusBlk :
-			if ( PrintAnnotate ) First(q, 1, q->jtype, &dum_k);
-			pLevel++;
-			if ( pLevel==1 )
-			{
-				if ( pAlt1==1 ) printf("=>");
-				printf("\t");
-			}
-			else printf(" ");
-			printf("(");
-			if ( pLevel==1 ) printf(" ");
-			pBlk(q,q->jtype);
-			if ( pLevel>1 ) printf(" ");
-			printf(")+");
-			pLevel--;
-			if ( PrintAnnotate ) freeBlkFsets(q);
-			if ( q->end->p1 != NULL ) PRINT(q->end->p1);
-			break;
-		case EndBlk :
-			break;
-		case RuleBlk :
-			printf( "\n%s :\n", q->rname);
-			PRINT(q->p1);
-			if ( q->p2 != NULL ) PRINT(q->p2);
-			break;
-		case Generic :
-			if ( q->p1 != NULL ) PRINT(q->p1);
-			q->pvisited = FALSE;
-			if ( q->p2 != NULL ) PRINT(q->p2);
-			break;
-		case EndRule :
-			printf( "\n\t;\n");
-			break;
-	}
-	q->pvisited = FALSE;
+  int dum_k;
+  int doing_rule;
+  require(q!=NULL, "pJunc: NULL node");
+  require(q->ntype==nJunction, "pJunc: not junction");
+
+  if ( q->pvisited == TRUE ) return;
+  q->pvisited = TRUE;
+  switch ( q->jtype )
+  {
+    case aSubBlk :
+      if ( PrintAnnotate ) First(q, 1, q->jtype, &dum_k);
+      if ( q->end->p1 != NULL && ((Junction *)q->end->p1)->ntype==nJunction &&
+         ((Junction *)q->end->p1)->jtype == EndRule ) doing_rule = 1;
+      else doing_rule = 0;
+      pLevel++;
+      if ( pLevel==1 )
+      {
+        if ( pAlt1==1 ) printf("=>");
+        printf("\t");
+      }
+      else printf(" ");
+      if ( doing_rule )
+      {
+        if ( pLevel==1 ) printf(" ");
+        pBlk(q,q->jtype);
+      }
+      else {
+        printf("(");
+        if ( pLevel==1 ) printf(" ");
+        pBlk(q,q->jtype);
+        if ( pLevel>1 ) printf(" ");
+        printf(")");
+      }
+      if ( q->guess ) printf("?");
+      pLevel--;
+      if ( PrintAnnotate ) freeBlkFsets(q);
+      if ( q->end->p1 != NULL ) PRINT(q->end->p1);
+      break;
+    case aOptBlk :
+      if ( PrintAnnotate ) First(q, 1, q->jtype, &dum_k);
+      pLevel++;
+      if ( pLevel==1 )
+      {
+        if ( pAlt1==1 ) printf("=>");
+        printf("\t");
+      }
+      else printf(" ");
+      printf("{");
+      if ( pLevel==1 ) printf(" ");
+      pBlk(q,q->jtype);
+      if ( pLevel>1 ) printf(" ");
+      else printf("\n\t");
+      printf("}");
+      pLevel--;
+      if ( PrintAnnotate ) freeBlkFsets(q);
+      if ( q->end->p1 != NULL ) PRINT(q->end->p1);
+      break;
+    case aLoopBegin :
+      if ( PrintAnnotate ) First(q, 1, q->jtype, &dum_k);
+      pLevel++;
+      if ( pLevel==1 )
+      {
+        if ( pAlt1==1 ) printf("=>");
+        printf("\t");
+      }
+      else printf(" ");
+      printf("(");
+      if ( pLevel==1 ) printf(" ");
+      pBlk(q,q->jtype);
+      if ( pLevel>1 ) printf(" ");
+      else printf("\n\t");
+      printf(")*");
+      pLevel--;
+      if ( PrintAnnotate ) freeBlkFsets(q);
+      if ( q->end->p1 != NULL ) PRINT(q->end->p1);
+      break;
+    case aLoopBlk :
+      if ( PrintAnnotate ) First(q, 1, q->jtype, &dum_k);
+      pBlk(q,q->jtype);
+      if ( PrintAnnotate ) freeBlkFsets(q);
+      break;
+    case aPlusBlk :
+      if ( PrintAnnotate ) First(q, 1, q->jtype, &dum_k);
+      pLevel++;
+      if ( pLevel==1 )
+      {
+        if ( pAlt1==1 ) printf("=>");
+        printf("\t");
+      }
+      else printf(" ");
+      printf("(");
+      if ( pLevel==1 ) printf(" ");
+      pBlk(q,q->jtype);
+      if ( pLevel>1 ) printf(" ");
+      printf(")+");
+      pLevel--;
+      if ( PrintAnnotate ) freeBlkFsets(q);
+      if ( q->end->p1 != NULL ) PRINT(q->end->p1);
+      break;
+    case EndBlk :
+      break;
+    case RuleBlk :
+      printf( "\n%s :\n", q->rname);
+      PRINT(q->p1);
+      if ( q->p2 != NULL ) PRINT(q->p2);
+      break;
+    case Generic :
+      if ( q->p1 != NULL ) PRINT(q->p1);
+      q->pvisited = FALSE;
+      if ( q->p2 != NULL ) PRINT(q->p2);
+      break;
+    case EndRule :
+      printf( "\n\t;\n");
+      break;
+  }
+  q->pvisited = FALSE;
 }
 
 /* How to print out a rule reference node */
@@ -1175,11 +1176,11 @@ pRuleRef( p )
 RuleRefNode *p;
 #endif
 {
-	require(p!=NULL, "pRuleRef: NULL node");
-	require(p->ntype==nRuleRef, "pRuleRef: not rule ref node");
-	
-	printf( " %s", p->text);
-	PRINT(p->next);
+  require(p!=NULL, "pRuleRef: NULL node");
+  require(p->ntype==nRuleRef, "pRuleRef: not rule ref node");
+
+  printf( " %s", p->text);
+  PRINT(p->next);
 }
 
 /* How to print out a terminal node */
@@ -1191,12 +1192,12 @@ pToken( p )
 TokNode *p;
 #endif
 {
-	require(p!=NULL, "pToken: NULL node");
-	require(p->ntype==nToken, "pToken: not token node");
+  require(p!=NULL, "pToken: NULL node");
+  require(p->ntype==nToken, "pToken: not token node");
 
-	if ( p->wild_card ) printf(" .");
-	printf( " %s", TerminalString(p->token));
-	PRINT(p->next);
+  if ( p->wild_card ) printf(" .");
+  printf( " %s", TerminalString(p->token));
+  PRINT(p->next);
 }
 
 /* How to print out a terminal node */
@@ -1208,22 +1209,22 @@ pAction( p )
 ActionNode *p;
 #endif
 {
-	require(p!=NULL, "pAction: NULL node");
-	require(p->ntype==nAction, "pAction: not action node");
-	
-	PRINT(p->next);
+  require(p!=NULL, "pAction: NULL node");
+  require(p->ntype==nAction, "pAction: not action node");
+
+  PRINT(p->next);
 }
 
-					/* F i l l  F o l l o w  L i s t s */
+          /* F i l l  F o l l o w  L i s t s */
 
 /*
  * Search all rules for all rule reference nodes, q to rule, r.
  * Add q->next to follow list dangling off of rule r.
  * i.e.
  *
- *		r: -o-R-o-->o--> Ptr to node following rule r in another rule
- *					|
- *					o--> Ptr to node following another reference to r.
+ *    r: -o-R-o-->o--> Ptr to node following rule r in another rule
+ *          |
+ *          o--> Ptr to node following another reference to r.
  *
  * This is the data structure employed to avoid FOLLOW set computation.  We
  * simply compute the FIRST (reach) of the EndRule Node which follows the
@@ -1236,15 +1237,15 @@ ActionNode *p;
  * The entire syntax diagram is layed out like this:
  *
  * SynDiag
- *	|
- *	v
- *	o-->R1--o
- *	|
- *	o-->R2--o
- *	|
- *	...
- *	|
- *	o-->Rn--o
+ *  |
+ *  v
+ *  o-->R1--o
+ *  |
+ *  o-->R2--o
+ *  |
+ *  ...
+ *  |
+ *  o-->Rn--o
  *
  */
 void
@@ -1255,21 +1256,21 @@ FoLink( p )
 Node *p;
 #endif
 {
-	RuleEntry *q;
-	Junction *j = (Junction *) p;
-	RuleRefNode *r = (RuleRefNode *) p;
+  RuleEntry *q;
+  Junction *j = (Junction *) p;
+  RuleRefNode *r = (RuleRefNode *) p;
 
-	if ( p==NULL ) return;
-	require(p->ntype>=1 && p->ntype<=NumNodeTypes,
-			eMsgd("FoLink: invalid diagram node: ntype==%d",p->ntype));
-	switch ( p->ntype )
-	{
-		case nJunction :
-			if ( j->fvisited ) return;
-			if ( j->jtype == EndRule ) return;
-			j->fvisited = TRUE;
-			FoLink( j->p1 );
-			FoLink( j->p2 );
+  if ( p==NULL ) return;
+  require(p->ntype>=1 && p->ntype<=NumNodeTypes,
+      eMsgd("FoLink: invalid diagram node: ntype==%d",p->ntype));
+  switch ( p->ntype )
+  {
+    case nJunction :
+      if ( j->fvisited ) return;
+      if ( j->jtype == EndRule ) return;
+      j->fvisited = TRUE;
+      FoLink( j->p1 );
+      FoLink( j->p2 );
 /* MR14 */
 /* MR14 */  /* Need to determine whether the guess block is an         */
 /* MR14 */  /* of the form (alpha)? beta before follow sets are        */
@@ -1284,53 +1285,53 @@ Node *p;
 /* MR14 */    ignore=analysis_point(j);
 /* MR14 */  }
 /* MR14 */
-			return;
-		case nRuleRef :
-			if ( r->linked ) return;
-			q = (RuleEntry *) hash_get(Rname, r->text);
-			if ( q == NULL )
-			{
-				warnFL( eMsg1("rule %s not defined",r->text), FileStr[r->file], r->line );
-			}
-			else
-			{
-				if ( r->parms!=NULL && RulePtr[q->rulenum]->pdecl==NULL )
-				{
-					warnFL( eMsg1("rule %s accepts no parameter(s)", r->text),
-							FileStr[r->file], r->line );
-				}
-				if ( r->parms==NULL && RulePtr[q->rulenum]->pdecl!=NULL )
-				{
-					warnFL( eMsg1("rule %s requires parameter(s)", r->text),
-							FileStr[r->file], r->line );
-				}
-				if ( r->assign!=NULL && RulePtr[q->rulenum]->ret==NULL )
-				{
-					warnFL( eMsg1("rule %s yields no return value(s)", r->text),
-							FileStr[r->file], r->line );
-				}
-				if ( r->assign==NULL && RulePtr[q->rulenum]->ret!=NULL )
-				{
-					warnFL( eMsg1("rule %s returns a value(s)", r->text),
-							FileStr[r->file], r->line );
-				}
-				if ( !r->linked )
-				{
-					addFoLink(	r->next, r->rname, RulePtr[q->rulenum] );
-					r->linked = TRUE;
-				}
-			}
-			FoLink( r->next );
-			return;
-		case nToken :
-			FoLink( ((TokNode *)p)->next );
-			return;
-		case nAction :
-			FoLink( ((ActionNode *)p)->next );
-			return;
-		default :
-			fatal_internal("invalid node type");
-	}
+      return;
+    case nRuleRef :
+      if ( r->linked ) return;
+      q = (RuleEntry *) hash_get(Rname, r->text);
+      if ( q == NULL )
+      {
+        warnFL( eMsg1("rule %s not defined",r->text), FileStr[r->file], r->line );
+      }
+      else
+      {
+        if ( r->parms!=NULL && RulePtr[q->rulenum]->pdecl==NULL )
+        {
+          warnFL( eMsg1("rule %s accepts no parameter(s)", r->text),
+              FileStr[r->file], r->line );
+        }
+        if ( r->parms==NULL && RulePtr[q->rulenum]->pdecl!=NULL )
+        {
+          warnFL( eMsg1("rule %s requires parameter(s)", r->text),
+              FileStr[r->file], r->line );
+        }
+        if ( r->assign!=NULL && RulePtr[q->rulenum]->ret==NULL )
+        {
+          warnFL( eMsg1("rule %s yields no return value(s)", r->text),
+              FileStr[r->file], r->line );
+        }
+        if ( r->assign==NULL && RulePtr[q->rulenum]->ret!=NULL )
+        {
+          warnFL( eMsg1("rule %s returns a value(s)", r->text),
+              FileStr[r->file], r->line );
+        }
+        if ( !r->linked )
+        {
+          addFoLink(  r->next, r->rname, RulePtr[q->rulenum] );
+          r->linked = TRUE;
+        }
+      }
+      FoLink( r->next );
+      return;
+    case nToken :
+      FoLink( ((TokNode *)p)->next );
+      return;
+    case nAction :
+      FoLink( ((ActionNode *)p)->next );
+      return;
+    default :
+      fatal_internal("invalid node type");
+  }
 }
 
 /*
@@ -1340,12 +1341,12 @@ Node *p;
  * (EndRule jtype) in a rule.
  *
  * Initial:
- *		r->end --> 	o
+ *    r->end -->  o
  *
  * After:
- *		r->end --> 	o-->o--> Ptr to node following rule r in another rule
- *						|
- *						o--> Ptr to node following another reference to r.
+ *    r->end -->  o-->o--> Ptr to node following rule r in another rule
+ *            |
+ *            o--> Ptr to node following another reference to r.
  *
  * Note that the links are added to the head of the list so that r->end->p1
  * always points to the most recently added follow-link.  At the end, it should
@@ -1361,17 +1362,17 @@ char *rname;
 Junction *r;
 #endif
 {
-	Junction *j;
-	require(r!=NULL,				"addFoLink: incorrect rule graph");
-	require(r->end!=NULL,			"addFoLink: incorrect rule graph");
-	require(r->end->jtype==EndRule,	"addFoLink: incorrect rule graph");
-	require(p!=NULL,				"addFoLink: NULL FOLLOW link");
+  Junction *j;
+  require(r!=NULL,        "addFoLink: incorrect rule graph");
+  require(r->end!=NULL,     "addFoLink: incorrect rule graph");
+  require(r->end->jtype==EndRule, "addFoLink: incorrect rule graph");
+  require(p!=NULL,        "addFoLink: NULL FOLLOW link");
 
-	j = newJunction();
-	j->rname = rname;			/* rname on follow links point to target rule */
-	j->p1 = p;					/* link to other rule */
-	j->p2 = (Node *) r->end->p1;/* point to head of list */
-	r->end->p1 = (Node *) j;	/* reset head to point to new node */
+  j = newJunction();
+  j->rname = rname;     /* rname on follow links point to target rule */
+  j->p1 = p;          /* link to other rule */
+  j->p2 = (Node *) r->end->p1;/* point to head of list */
+  r->end->p1 = (Node *) j;  /* reset head to point to new node */
 }
 
 void
@@ -1382,32 +1383,32 @@ GenCrossRef( p )
 Junction *p;
 #endif
 {
-	set a;
-	Junction *j;
-	RuleEntry *q;
-	unsigned e;
-	require(p!=NULL, "GenCrossRef: why are you passing me a null grammar?");
+  set a;
+  Junction *j;
+  RuleEntry *q;
+  unsigned e;
+  require(p!=NULL, "GenCrossRef: why are you passing me a null grammar?");
 
-	printf("Cross Reference:\n\n");
-	a = empty;
-	for (; p!=NULL; p = (Junction *)p->p2)
-	{
-		printf("Rule %20s referenced by {", p->rname);
-		/* make a set of rules for uniqueness */
-		for (j = (Junction *)(p->end)->p1; j!=NULL; j = (Junction *)j->p2)
-		{
-			q = (RuleEntry *) hash_get(Rname, j->rname);
-			require(q!=NULL, "GenCrossRef: FoLinks are screwed up");
-			set_orel(q->rulenum, &a);
-		}
-		for (; !set_nil(a); set_rm(e, a))
-		{
-			e = set_int(a);
-			printf(" %s", RulePtr[e]->rname);
-		}
-		printf(" }\n");
-	}
-	set_free( a );
+  printf("Cross Reference:\n\n");
+  a = empty;
+  for (; p!=NULL; p = (Junction *)p->p2)
+  {
+    printf("Rule %20s referenced by {", p->rname);
+    /* make a set of rules for uniqueness */
+    for (j = (Junction *)(p->end)->p1; j!=NULL; j = (Junction *)j->p2)
+    {
+      q = (RuleEntry *) hash_get(Rname, j->rname);
+      require(q!=NULL, "GenCrossRef: FoLinks are screwed up");
+      set_orel(q->rulenum, &a);
+    }
+    for (; !set_nil(a); set_rm(e, a))
+    {
+      e = set_int(a);
+      printf(" %s", RulePtr[e]->rname);
+    }
+    printf(" }\n");
+  }
+  set_free( a );
 }
 
 /*
@@ -1424,7 +1425,7 @@ Junction *p;
    hand written code ?
 
    Examples of input:
- 
+
         Foo f,
         Foo f = Foo(1),
         Foo f = Foo(1,2),
@@ -1521,7 +1522,7 @@ int *pNest;
 #endif
 {
   char *p = pStart;
-  
+
   int nest = 0;
 
   *pNest = (-1);
@@ -1544,11 +1545,11 @@ int *pNest;
         nest--;
         p++;
         break;
-      
+
       case '"' :
         p = skipStringLiteral(p);
         break;
-  
+
       case '\'' :
         p = skipCharLiteral(p);
         break;
@@ -1562,7 +1563,7 @@ int *pNest;
       case ',':
       case '=':
         if (nest == 0) goto EXIT;
-		p++;
+    p++;
         break;
 
       default:
@@ -1588,7 +1589,7 @@ int *pNest;
     if (*pNest != 0) return p;
     if (*p == ',') return p;
     if (*p == 0) return p;
-	p++;
+  p++;
   }
 }
 
@@ -1601,27 +1602,27 @@ char * getInitializer(pStart)
 char * pStart;
 #endif
 {
-	char *p;
-	char *pDataType;
-	char *pSymbol;
-	char *pEqualSign;
-	char *pValue;
-	char *pSeparator;
-	int nest = 0;
+  char *p;
+  char *pDataType;
+  char *pSymbol;
+  char *pEqualSign;
+  char *pValue;
+  char *pSeparator;
+  int nest = 0;
 
-	require(pStart!=NULL, "getInitializer: invalid string"); 
+  require(pStart!=NULL, "getInitializer: invalid string");
 
-	p = endFormal(pStart,
-			      &pDataType,
-				  &pSymbol,
-				  &pEqualSign,
-				  &pValue,
-				  &pSeparator,
-				  &nest);
+  p = endFormal(pStart,
+            &pDataType,
+          &pSymbol,
+          &pEqualSign,
+          &pValue,
+          &pSeparator,
+          &nest);
     if (nest != 0) return NULL;
     if (pEqualSign == NULL) return NULL;
     if (pValue == NULL) return NULL;
-	return strBetween(pValue, NULL, pSeparator);
+  return strBetween(pValue, NULL, pSeparator);
 }
 
 /*
@@ -1680,16 +1681,16 @@ static char strBetweenWorkArea[MAX_STR_BETWEEN_WORK_AREA];
 
 
 /*
-	strBetween(pStart, pNext, pStop)
+  strBetween(pStart, pNext, pStop)
 
     Creates a null terminated string by copying the text between two pointers
-	to a work area.  The start of the string is pStart.  The end of the string
-	is the character before pNext, or if pNext is null then the character before
-	pStop.  Trailing spaces are not included in the copy operation.
-	
-	This is used when a string contains several parts.  The pNext part may be
-	optional.  The pStop will stop the scan when the optional part is not present
-	(is a null pointer).
+  to a work area.  The start of the string is pStart.  The end of the string
+  is the character before pNext, or if pNext is null then the character before
+  pStop.  Trailing spaces are not included in the copy operation.
+
+  This is used when a string contains several parts.  The pNext part may be
+  optional.  The pStop will stop the scan when the optional part is not present
+  (is a null pointer).
 */
 
 #ifdef __USE_PROTOS
@@ -1710,12 +1711,12 @@ char *pStop;
   require (pEnd != NULL, "pEnd == NULL");
   require (pEnd >= pStart, "pEnd < pStart");
   for (pEnd--; pEnd >= pStart; pEnd--) { /* MR31 */
-	if (! isspace(*pEnd)) break;
+  if (! isspace(*pEnd)) break;
   }
   for (p = pStart;
        p <= pEnd && q < &strBetweenWorkArea[MAX_STR_BETWEEN_WORK_AREA-2];
-	   p++, q++) {
-	 *q = *p;
+     p++, q++) {
+   *q = *p;
   }
   *q = 0;
   return strBetweenWorkArea;
@@ -1740,7 +1741,7 @@ char *pStop;
                 Example: pointer to "f".
 
    ppEqualSign  Returns a pointer to the equal sign separating the
-                formal symbol from the initial value.  If there is 
+                formal symbol from the initial value.  If there is
                 no "=" then this will be NULL.
 
    ppValue      Returns a pointer to the initial value part of the
@@ -1755,8 +1756,8 @@ char *pStop;
                 for a successful parse of this portion of the formal
                 list.
 
-*/ 
- 
+*/
+
 #ifdef __USE_PROTOS
 char * endFormal(char *pStart,
                  char **ppDataType,
@@ -1767,12 +1768,12 @@ char * endFormal(char *pStart,
                  int *pNest)
 #else
 char * endFormal(pStart,
-			     ppDataType,
-				 ppSymbol,
-				 ppEqualSign,
-				 ppValue,
-				 ppSeparator,
-				 pNest)
+           ppDataType,
+         ppSymbol,
+         ppEqualSign,
+         ppValue,
+         ppSeparator,
+         pNest)
 char *pStart;
 char **ppDataType;
 char **ppSymbol;
@@ -1803,7 +1804,7 @@ int *pNest;
   /* We are not looking for the symbol, we are looking
      for the separator that follows the symbol.  Then
      we'll back up.
-   
+
      Search for the ',' or '=" or null terminator.
    */
 

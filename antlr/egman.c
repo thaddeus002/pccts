@@ -1,6 +1,4 @@
 /*
- * egman.c
- *
  * SOFTWARE RIGHTS
  *
  * We reserve no LEGAL rights to the Purdue Compiler Construction Tool
@@ -23,18 +21,20 @@
  *
  * ANTLR 1.33MR10
  * 2001
- *
  */
+
+/**
+ * \file egman.c
+ */
+
 
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "set.h"
-#include "pcctscfg.h"
 #include "syn.h"
 #include "hash.h"
 #include "generic.h"
-#include "proto.h"
+
 
 static ExceptionGroup **egArray=NULL;   /* ExceptionGroup by BlkLevel */
 static LabelEntry     **leArray=NULL;   /* LabelEntry by BlkLevel     */
@@ -44,7 +44,7 @@ static int              highWater=0;
 static ExceptionGroup *lastEG=NULL;     /* used in altFixup()         */
 static int             lastBlkLevel=0;  /* used in altFixup()         */
 
-static void arrayCheck(void);
+static void arrayCheck();
 
 /**
  * Called to add an exception group for an alternative EG.

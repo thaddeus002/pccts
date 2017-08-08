@@ -1,6 +1,4 @@
 /*
- * fcache.c
- *
  * SOFTWARE RIGHTS
  *
  * We reserve no LEGAL rights to the Purdue Compiler Construction Tool
@@ -25,38 +23,35 @@
  *
  */
 
+/**
+ * \file fcache.c
+ */
+
 #include <stdio.h>
 #include <ctype.h>
+#include <string.h>
 
-#include "pcctscfg.h"
-
-#include "set.h"
 #include "syn.h"
 #include "hash.h"
 #include "generic.h"
 
-#ifdef __USE_PROTOS
 CacheEntry *dumpFcache1(char *prev)
-#else
-CacheEntry *dumpFcache1(prev)
-  char  *prev;
-#endif
 {
-    Entry   **table=Fcache;
+  Entry   **table=Fcache;
 
-    int     low=0;
-    int     hi=0;
+  int     low=0;
+  int     hi=0;
 
-    CacheEntry  *least=NULL;
+  CacheEntry  *least=NULL;
 
-	Entry   **p;
+  Entry   **p;
 
-	for (p=table; p<&(table[HashTableSize]); p++) {
+  for (p=table; p<&(table[HashTableSize]); p++) {
 
-		CacheEntry *q =(CacheEntry *) *p;
-		
-		if ( q != NULL && low==0 ) low = p-table;
-		while ( q != NULL ) {
+    CacheEntry *q =(CacheEntry *) *p;
+
+    if ( q != NULL && low==0 ) low = p-table;
+    while ( q != NULL ) {
             if (strcmp(q->str,prev) > 0) {
               if (least == NULL) {
                 least=q;
@@ -66,20 +61,15 @@ CacheEntry *dumpFcache1(prev)
                 };
               };
             };
-			q = q->next;
-		};
+      q = q->next;
+    };
 
-		if ( *p != NULL ) hi = p-table;
-	}
-    return least;
+    if ( *p != NULL ) hi = p-table;
+  }
+  return least;
 }
 
-#ifdef __USE_PROTOS
 void reportFcache(CacheEntry *q)
-#else
-void reportFcache(q)
-  CacheEntry    *q;
-#endif
 {
     char        *qstr;
 
@@ -98,14 +88,8 @@ void reportFcache(q)
     MR_dumpTokenSet(stdout,1,q->fset);
 }
 
-void 
-#ifdef __USE_PROTOS
-DumpFcache(void) 
-#else
-DumpFcache() 
-#endif
+void DumpFcache()
 {
-
     char        *prev="";
     int          n=0;
     CacheEntry  *next;
