@@ -56,17 +56,12 @@
     Made it smell less bad to C++ 7/31/93 -- TJP
 */
 
+
 #include <stdio.h>
-#ifdef __STDC__
 #include <stdlib.h>
-#else
-#include <malloc.h>
-#endif
 #include <string.h>
 
 #include "set.h"
-
-
 
 
 #define MIN(i,j) ( (i) > (j) ? (j) : (i))
@@ -84,19 +79,13 @@ static unsigned bitmask[] = {
     0x10000000, 0x20000000, 0x40000000, 0x80000000
 };
 
+/** empty set */
 set empty = set_init;
+
+/** 1 */
 static unsigned int min=1;
 
 #define StrSize     200
-
-#ifdef MEMCHK
-#define CHK(a)                  \
-    if ( a.setword != NULL )    \
-      if ( !valid(a.setword) )  \
-        {fprintf(stderr, "%s(%u): invalid set\n",__FILE__,__LINE__); exit(-1);}
-#else
-#define CHK(a)
-#endif
 
 
 /** make arg1 a set big enough to hold max elem # of arg2 */
@@ -136,7 +125,6 @@ unsigned int set_deg(set a)
     register unsigned *endp = NULL; /* MR27 Avoid false memory check report */
     register unsigned degree = 0;
 
-    CHK(a);
     if ( a.n == 0 ) return(0);
     endp = &(a.setword[a.n]);
     while ( p < endp )
@@ -163,7 +151,6 @@ set set_or(set b, set c)
     unsigned int m,n;
     register unsigned *r, *p, *q, *endp;
 
-    CHK(b); CHK(c);
     t = empty;
     if (b.n > c.n) {big= &b; m=b.n; n=c.n;} else {big= &c; m=c.n; n=b.n;}
     set_ext(&t, m);
@@ -193,7 +180,6 @@ set set_and(set b, set c)
     unsigned int n;
     register unsigned *r, *p, *q, *endp;
 
-    CHK(b); CHK(c);
     t = empty;
     n = (b.n > c.n) ? c.n : b.n;
     if ( n == 0 ) return t;     /* TJP 4-27-92 fixed for empty set */
@@ -219,7 +205,6 @@ set set_dif(set b, set c)
     unsigned int n;
     register unsigned *r, *p, *q, *endp;
 
-    CHK(b); CHK(c);
     t = empty;
     n = (b.n <= c.n) ? b.n : c.n ;
     if ( b.n == 0 ) return t;       /* TJP 4-27-92 fixed for empty set */
@@ -270,7 +255,6 @@ void set_ext(set *a, unsigned int n)
     register unsigned *endp;
     unsigned int size;
 
-    CHK((*a));
     if ( a->n == 0 )
     {
         if ( n == 0 ) return;
@@ -317,7 +301,6 @@ set set_not(set a)
     register unsigned *p = a.setword;
     register unsigned *endp = &(a.setword[a.n]);
 
-    CHK(a);
     t = empty;
     if ( a.n == 0 ) return( empty );
     set_ext(&t, a.n);
@@ -336,10 +319,8 @@ set set_not(set a)
  */
 int set_equ(set a, set b)
 {
-    unsigned int    count;      /* MR11 */
-    unsigned int    i;          /* MR11 */
-
-    CHK(a); CHK(b);
+    unsigned int count;
+    unsigned int i;
 
     count=MIN(a.n,b.n);
     if (count == 0) return 1;
@@ -369,8 +350,6 @@ int set_sub(set a, set b)
     unsigned int    count;
     unsigned int    i;
 
-    CHK(a); CHK(b);
-
     if (a.n == 0) return 1;
     count=MIN(a.n,b.n);
     for (i=0; i < count; i++) {
@@ -396,7 +375,6 @@ unsigned set_int(set b)
     register unsigned *p = b.setword;
     register unsigned *endp = &(b.setword[b.n]);
 
-    CHK(b);
     if ( b.n == 0 ) return(nil);
 
     do {
@@ -418,7 +396,6 @@ unsigned set_int(set b)
 
 int set_el(unsigned b, set a)
 {
-    CHK(a);
     /* nil is an element of every set */
     if (b == nil) return(1);
     if ( a.n == 0 || NumWords(b) > a.n ) return(0);
@@ -437,7 +414,6 @@ int set_nil(set a)
     register unsigned *p = a.setword;
     register unsigned *endp;
 
-    CHK(a);
     if ( a.n == 0 ) return(1);
     endp = &(a.setword[a.n]);
 
@@ -466,7 +442,6 @@ char *set_str(set a)
     static char str_tmp[StrSize+1];
     register char *q = &(str_tmp[0]);
 
-    CHK(a);
     if ( a.n==0 ) {*q=0; return( &(str_tmp[0]) );}
     do {
         register unsigned t = *p;
@@ -521,7 +496,6 @@ set set_val(register char *s)
  */
 void set_orel( unsigned e, set *a )
 {
-    CHK((*a));
     if ( e == nil ) return;
     if ( NumWords(e) > a->n ) set_ext(a, NumWords(e));
     a->setword[DIVWORD(e)] |= bitmask[MODWORD(e)];
@@ -539,7 +513,6 @@ void set_orin( set *a, set b )
                       *q    = b.setword,
                       *endq; /* MR20 */
 
-    CHK((*a)); CHK(b);
     if ( b.n == 0 ) return;
     endq = &(b.setword[b.n]); /* MR20 */
     m = (a->n > b.n) ? a->n : b.n;
@@ -562,7 +535,6 @@ void set_andin( set *a, set b )
                       *q    = b.setword,
                       *endq = &(b.setword[b.n]);
 
-    CHK((*a)); CHK(b);
     if ( b.n == 0 ) return;
     m = (a->n > b.n) ? a->n : b.n;
     set_ext(a, m);
@@ -578,7 +550,6 @@ void set_andin( set *a, set b )
  */
 void set_rm(unsigned e, set a)
 {
-    CHK(a);
     if ( (e == nil) || (NumWords(e) > a.n) ) return;
     a.setword[DIVWORD(e)] ^= (a.setword[DIVWORD(e)]&bitmask[MODWORD(e)]);
 }
@@ -592,7 +563,6 @@ void set_clr(set a)
     register unsigned *p = a.setword;
     register unsigned *endp;
 
-    CHK(a);
     if ( a.n == 0 ) return;
     endp = &(a.setword[a.n]);
     do {
@@ -607,9 +577,8 @@ set set_dup(set a)
                       *q    = a.setword,
                       *endq; /* MR20 */
 
-    CHK(a);
     b = empty;
-    if ( a.n == 0 ) return( empty );
+    f ( a.n == 0 ) return( empty );
     endq = &(a.setword[a.n]);   /* MR20 */
     set_ext(&b, a.n);
     p = b.setword;
@@ -651,7 +620,6 @@ void _set_pdq( set a, register unsigned *q )
                       *endp = &(a.setword[a.n]);
     register unsigned e=0;
 
-    CHK(a);
     /* are there any space (possibility of elements)? */
     if ( a.n == 0 ) return;
     do {
@@ -674,7 +642,6 @@ unsigned *set_pdq(set a)
     unsigned *q;
     int max_deg;
 
-    CHK(a);
     max_deg = WORDSIZE*a.n;
     /* assume a.n!=0 & no elements is rare, but still ok */
     if ( a.n == 0 ) return(NULL);
@@ -694,7 +661,6 @@ unsigned int set_hash(set a, register unsigned int mod)
     register unsigned *endp = &(a.setword[a.n]);
     register unsigned i = 0;
 
-    CHK(a);
     while (p<endp){
         i += (*p);
         ++p;
