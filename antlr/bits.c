@@ -37,8 +37,6 @@
 #include <ctype.h>
 #include <assert.h>
 #include <string.h>
-#include "pcctscfg.h"
-#include "set.h"
 #include "syn.h"
 #include "hash.h"
 #include "generic.h"
@@ -78,7 +76,7 @@ void DumpIntAsChars( FILE *f, char *format, unsigned wd )
   }
 }
 
-/* Create a new setwd (ignoring [Ep] token on end) */
+/** Create a new setwd (ignoring [Ep] token on end) */
 void NewSetWd( )
 {
   SetWordType *p;
@@ -274,15 +272,7 @@ static void doEclass( char *eclass )
 
 void ComputeErrorSets( )
 {
-#ifdef __cplusplus
     list_apply(eclasses, (void (*)(void *)) doEclass);
-#else
-#ifdef __USE_PROTOS
-    list_apply(eclasses, (void (*)(void *)) doEclass);
-#else
-    list_apply(eclasses, doEclass);
-#endif
-#endif
 }
 
 void ComputeTokSets( )

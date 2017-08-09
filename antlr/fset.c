@@ -1,8 +1,4 @@
 /*
- * fset.c
- *
- * Compute FIRST and FOLLOW sets.
- *
  * SOFTWARE RIGHTS
  *
  * We reserve no LEGAL rights to the Purdue Compiler Construction Tool
@@ -30,10 +26,14 @@
  * 1989-2001
  */
 
+/**
+ * \file fset.c
+ * \brief Compute FIRST and FOLLOW sets.
+ */
+
+
 #include <stdio.h>
 #include <stdlib.h>
-
-#include "pcctscfg.h"
 
 #include "set.h"
 #include "syn.h"
@@ -42,12 +42,8 @@
 #include "dlgdef.h"
 #include "limits.h"
 
-#ifdef __USE_PROTOS
 static void ensure_predicates_cover_ambiguous_lookahead_sequences
                                     (Junction *, Junction *, char *, Tree *);
-#else
-static void ensure_predicates_cover_ambiguous_lookahead_sequences();
-#endif
 
 /*
  * What tokens are k tokens away from junction q?
@@ -117,21 +113,21 @@ int k;
 set *rk;
 #endif
 {
-	set     a, b;
+  set     a, b;
 
-	require(p!=NULL,				"rJunc: NULL node");
-	require(p->ntype==nJunction,	"rJunc: not junction");
+  require(p!=NULL,        "rJunc: NULL node");
+  require(p->ntype==nJunction,  "rJunc: not junction");
 
 #ifdef DBG_LL1
-	if ( p->jtype == RuleBlk ) fprintf(stderr, "FIRST(%s,%d) \n",((Junction *)p)->rname,k);
-	else fprintf(stderr, "rJunc: %s in rule %s\n",
-			decodeJType[p->jtype], ((Junction *)p)->rname);
+  if ( p->jtype == RuleBlk ) fprintf(stderr, "FIRST(%s,%d) \n",((Junction *)p)->rname,k);
+  else fprintf(stderr, "rJunc: %s in rule %s\n",
+      decodeJType[p->jtype], ((Junction *)p)->rname);
 #endif
-	/* if this is one of the added optional alts for (...)+ then return */
+  /* if this is one of the added optional alts for (...)+ then return */
 
     /* no need to pop backtrace - hasn't been pushed */
 
-	if ( p->ignore ) return empty;
+  if ( p->ignore ) return empty;
 
     if (MR_MaintainBackTrace) MR_pointerStackPush(&MR_BackTraceStack,p);
 
@@ -147,77 +143,77 @@ set *rk;
 /* MR14 */      return empty;
 /* MR14 */    }
 
-	/* locks are valid for aLoopBlk,aPlusBlk,RuleBlk,EndRule junctions only */
-	if ( p->jtype==aLoopBlk || p->jtype==RuleBlk ||
-		 p->jtype==aPlusBlk || p->jtype==EndRule )
-	{
-		require(p->lock!=NULL, "rJunc: lock array is NULL");
-		if ( p->lock[k] )
-		{
-			if ( p->jtype == EndRule )	/* FOLLOW cycle? */
-			{
+  /* locks are valid for aLoopBlk,aPlusBlk,RuleBlk,EndRule junctions only */
+  if ( p->jtype==aLoopBlk || p->jtype==RuleBlk ||
+     p->jtype==aPlusBlk || p->jtype==EndRule )
+  {
+    require(p->lock!=NULL, "rJunc: lock array is NULL");
+    if ( p->lock[k] )
+    {
+      if ( p->jtype == EndRule )  /* FOLLOW cycle? */
+      {
 #ifdef DBG_LL1
-				fprintf(stderr, "FOLLOW cycle to %s: panic!\n", p->rname);
+        fprintf(stderr, "FOLLOW cycle to %s: panic!\n", p->rname);
 #endif
                 if (! MR_AmbSourceSearch) RegisterCycle(p->rname, k);
-			}
+      }
             if (MR_MaintainBackTrace) MR_pointerStackPop(&MR_BackTraceStack);
-			return empty;
-		}
-		if ( p->jtype == RuleBlk &&
+      return empty;
+    }
+    if ( p->jtype == RuleBlk &&
                  p->end->halt  &&
-                     ! MR_AmbSourceSearch)	/* check for FIRST cache */
-		{
-			CacheEntry *q = (CacheEntry *) hash_get(Fcache, Fkey(p->rname,'i',k));
-			if ( q != NULL )
-			{
-				set_orin(rk, q->rk);
+                     ! MR_AmbSourceSearch)  /* check for FIRST cache */
+    {
+      CacheEntry *q = (CacheEntry *) hash_get(Fcache, Fkey(p->rname,'i',k));
+      if ( q != NULL )
+      {
+        set_orin(rk, q->rk);
                 if (MR_MaintainBackTrace) MR_pointerStackPop(&MR_BackTraceStack);
-   				return set_dup( q->fset );
-			}
-		}
-		if ( p->jtype == EndRule &&
+          return set_dup( q->fset );
+      }
+    }
+    if ( p->jtype == EndRule &&
                 !p->halt &&                     /* MR11 was using cache even when halt set */
-                     ! MR_AmbSourceSearch)		/* FOLLOW set cached already? */
-		{
-			CacheEntry *q = (CacheEntry *) hash_get(Fcache, Fkey(p->rname,'o',k));
-			if ( q != NULL )
-			{
+                     ! MR_AmbSourceSearch)    /* FOLLOW set cached already? */
+    {
+      CacheEntry *q = (CacheEntry *) hash_get(Fcache, Fkey(p->rname,'o',k));
+      if ( q != NULL )
+      {
 #ifdef DBG_LL1
-				fprintf(stderr, "cache for FOLLOW(%s,%d):", p->rname,k);
-				s_fprT(stderr, q->fset);
-				if ( q->incomplete ) fprintf(stderr, " (incomplete)");
-				fprintf(stderr, "\n");
+        fprintf(stderr, "cache for FOLLOW(%s,%d):", p->rname,k);
+        s_fprT(stderr, q->fset);
+        if ( q->incomplete ) fprintf(stderr, " (incomplete)");
+        fprintf(stderr, "\n");
 #endif
-				if ( !q->incomplete )
-				{
+        if ( !q->incomplete )
+        {
                     if (MR_MaintainBackTrace) MR_pointerStackPop(&MR_BackTraceStack);
-					return set_dup( q->fset );
-				}
-			}
-		}
-		p->lock[k] = TRUE;	/* This rule is busy */
-	}
+          return set_dup( q->fset );
+        }
+      }
+    }
+    p->lock[k] = TRUE;  /* This rule is busy */
+  }
 
-	a = b = empty;
+  a = b = empty;
 
-	if ( p->jtype == EndRule )
-	{
-		if (p->halt )			/* don't want FOLLOW here? */ /* unless MR10 hoisting */
-		{
- 	  	      p->lock[k] = FALSE;
-			  set_orel(k, rk);						/* indicate this k value needed */
+  if ( p->jtype == EndRule )
+  {
+    if (p->halt )     /* don't want FOLLOW here? */ /* unless MR10 hoisting */
+    {
+            p->lock[k] = FALSE;
+        set_orel(k, rk);            /* indicate this k value needed */
               if (MR_MaintainBackTrace) MR_pointerStackPop(&MR_BackTraceStack);
-			  return empty;
-		}
-		if (! MR_AmbSourceSearch) FoPush(p->rname, k);		/* Attempting FOLLOW */
-		if ( p->p1 == NULL ) set_orel((TokenInd!=NULL?TokenInd[EofToken]:EofToken), &a);/* if no FOLLOW assume EOF */
+        return empty;
+    }
+    if (! MR_AmbSourceSearch) FoPush(p->rname, k);    /* Attempting FOLLOW */
+    if ( p->p1 == NULL ) set_orel((TokenInd!=NULL?TokenInd[EofToken]:EofToken), &a);/* if no FOLLOW assume EOF */
 #ifdef DBG_LL1
-		fprintf(stderr, "-->FOLLOW(%s,%d)\n", p->rname,k);
+    fprintf(stderr, "-->FOLLOW(%s,%d)\n", p->rname,k);
 #endif
-	}
+  }
 
-	if ( p->p1 != NULL ) {
+  if ( p->p1 != NULL ) {
 /* MR14 */      if (p->guess) {
 /* MR14 */        if (p->guess_analysis_point == NULL) {
 /* MR14 */           Node * guess_point;
@@ -231,61 +227,61 @@ set *rk;
                 } else {
                   REACH(p->p1, k, rk, a);
                 }
-    }	
+    }
 
-	/* C a c h e  R e s u l t s */
+  /* C a c h e  R e s u l t s */
 
-	if ( p->jtype == RuleBlk && p->end->halt && ! MR_AmbSourceSearch)		/* can save FIRST set? */
-	{
-		CacheEntry *q = newCacheEntry( Fkey(p->rname,'i',k) );
-		/*fprintf(stderr, "Caching %s FIRST %d\n", p->rname, k);*/
-		hash_add(Fcache, Fkey(p->rname,'i',k), (Entry *)q);
-		q->fset = set_dup( a );
-		q->rk = set_dup( *rk );
-	}
+  if ( p->jtype == RuleBlk && p->end->halt && ! MR_AmbSourceSearch)   /* can save FIRST set? */
+  {
+    CacheEntry *q = newCacheEntry( Fkey(p->rname,'i',k) );
+    /*fprintf(stderr, "Caching %s FIRST %d\n", p->rname, k);*/
+    hash_add(Fcache, Fkey(p->rname,'i',k), (Entry *)q);
+    q->fset = set_dup( a );
+    q->rk = set_dup( *rk );
+  }
 
-	if ( p->jtype == EndRule &&
+  if ( p->jtype == EndRule &&
             !p->halt &&                         /* MR11 was using cache even with halt set */
-                 ! MR_AmbSourceSearch)			/* just completed FOLLOW? */
-	{
-		/* Cache Follow set */
-		CacheEntry *q = (CacheEntry *) hash_get(Fcache, Fkey(p->rname,'o',k));
-		if ( q==NULL )
-		{
-			q = newCacheEntry( Fkey(p->rname,'o',k) );
-			hash_add(Fcache, Fkey(p->rname,'o',k), (Entry *)q);
-		}
-		/*fprintf(stderr, "Caching %s FOLLOW %d\n", p->rname, k);*/
-		if ( set_nil(a) && !q->incomplete )
-		{
-			/* Don't ever save a nil set as complete.
-			 * Turn it into an eof set.
-			 */
-			set_orel(EofToken, &a);
-		}
-		set_orin(&(q->fset), a);
-		FoPop( k );
-		if ( FoTOS[k] == NULL && Cycles[k] != NULL ) ResolveFoCycles(k);
+                 ! MR_AmbSourceSearch)      /* just completed FOLLOW? */
+  {
+    /* Cache Follow set */
+    CacheEntry *q = (CacheEntry *) hash_get(Fcache, Fkey(p->rname,'o',k));
+    if ( q==NULL )
+    {
+      q = newCacheEntry( Fkey(p->rname,'o',k) );
+      hash_add(Fcache, Fkey(p->rname,'o',k), (Entry *)q);
+    }
+    /*fprintf(stderr, "Caching %s FOLLOW %d\n", p->rname, k);*/
+    if ( set_nil(a) && !q->incomplete )
+    {
+      /* Don't ever save a nil set as complete.
+       * Turn it into an eof set.
+       */
+      set_orel(EofToken, &a);
+    }
+    set_orin(&(q->fset), a);
+    FoPop( k );
+    if ( FoTOS[k] == NULL && Cycles[k] != NULL ) ResolveFoCycles(k);
 #ifdef DBG_LL1
-		fprintf(stderr, "saving FOLLOW(%s,%d):", p->rname, k);
-		s_fprT(stderr, q->fset);
-		if ( q->incomplete ) fprintf(stderr, " (incomplete)");
-		fprintf(stderr, "\n");
+    fprintf(stderr, "saving FOLLOW(%s,%d):", p->rname, k);
+    s_fprT(stderr, q->fset);
+    if ( q->incomplete ) fprintf(stderr, " (incomplete)");
+    fprintf(stderr, "\n");
 #endif
-	}
-	
+  }
+
     if (p->jtype != RuleBlk && p->p2 != NULL && /* MR14 */ ! p->guess) {
        REACH(p->p2, k, rk, b);
-    }	
+    }
 
-	if ( p->jtype==aLoopBlk || p->jtype==RuleBlk ||
-		 p->jtype==aPlusBlk || p->jtype==EndRule )
-		p->lock[k] = FALSE;							/* unlock node */
+  if ( p->jtype==aLoopBlk || p->jtype==RuleBlk ||
+     p->jtype==aPlusBlk || p->jtype==EndRule )
+    p->lock[k] = FALSE;             /* unlock node */
 
-	set_orin(&a, b);
-	set_free(b);
+  set_orin(&a, b);
+  set_free(b);
     if (MR_MaintainBackTrace) MR_pointerStackPop(&MR_BackTraceStack);
-	return a;
+  return a;
 }
 
 set
@@ -298,29 +294,29 @@ int k;
 set *rk_out;
 #endif
 {
-	set rk;
-	Junction *r;
-	int k2;
-	set a, rk2, b;
-	int save_halt;
-	RuleEntry *q = (RuleEntry *) hash_get(Rname, p->text);
-	require(p!=NULL,			"rRuleRef: NULL node");
-	require(p->ntype==nRuleRef,	"rRuleRef: not rule ref");
+  set rk;
+  Junction *r;
+  int k2;
+  set a, rk2, b;
+  int save_halt;
+  RuleEntry *q = (RuleEntry *) hash_get(Rname, p->text);
+  require(p!=NULL,      "rRuleRef: NULL node");
+  require(p->ntype==nRuleRef, "rRuleRef: not rule ref");
 
 #ifdef DBG_LL1
-	fprintf(stderr, "rRuleRef: %s\n", p->text);
+  fprintf(stderr, "rRuleRef: %s\n", p->text);
 #endif
 
     if (MR_MaintainBackTrace) MR_pointerStackPush(&MR_BackTraceStack,p);
 
-	if ( q == NULL )
-	{
-		warnFL( eMsg1("rule %s not defined",p->text), FileStr[p->file], p->line );
-		REACH(p->next, k, rk_out, a);
+  if ( q == NULL )
+  {
+    warnFL( eMsg1("rule %s not defined",p->text), FileStr[p->file], p->line );
+    REACH(p->next, k, rk_out, a);
         if (MR_MaintainBackTrace) MR_pointerStackPop(&MR_BackTraceStack);
-		return a;
-	}
-	rk2 = empty;
+    return a;
+  }
+  rk2 = empty;
 
 /* MR9 Problems with rule references in guarded predicates */
 /* MR9    Perhaps can use hash table to find rule ?        */
@@ -330,34 +326,34 @@ set *rk_out;
 /* MR9 */                                p->rname,q->str),FileStr[p->file],p->line);
 /* MR9 */    };
 
-	r = RulePtr[q->rulenum];
-	if ( r->lock[k] )
-	{
-		errNoFL( eMsg2("infinite left-recursion to rule %s from rule %s",
-						r->rname, p->rname) );
+  r = RulePtr[q->rulenum];
+  if ( r->lock[k] )
+  {
+    errNoFL( eMsg2("infinite left-recursion to rule %s from rule %s",
+            r->rname, p->rname) );
 
         if (MR_MaintainBackTrace) MR_pointerStackPop(&MR_BackTraceStack);
 
-		return empty;
-	}
+    return empty;
+  }
 
-	save_halt = r->end->halt;
-	r->end->halt = TRUE;		/* don't let reach fall off end of rule here */
-	rk = empty;
-	REACH(r, k, &rk, a);
-	r->end->halt = save_halt;
-	while ( !set_nil(rk) ) {
-		k2 = set_int(rk);               /* MR11 this messes up the ambiguity search routine */
-		set_rm(k2, rk);
-		REACH(p->next, k2, &rk2, b);    /* MR11 by changing the value of k                  */
-		set_orin(&a, b);
-		set_free(b);
-	}
-	set_free(rk);				/* this has no members, but free it's memory */
-	set_orin(rk_out, rk2);		/* remember what we couldn't do */
-	set_free(rk2);
+  save_halt = r->end->halt;
+  r->end->halt = TRUE;    /* don't let reach fall off end of rule here */
+  rk = empty;
+  REACH(r, k, &rk, a);
+  r->end->halt = save_halt;
+  while ( !set_nil(rk) ) {
+    k2 = set_int(rk);               /* MR11 this messes up the ambiguity search routine */
+    set_rm(k2, rk);
+    REACH(p->next, k2, &rk2, b);    /* MR11 by changing the value of k                  */
+    set_orin(&a, b);
+    set_free(b);
+  }
+  set_free(rk);       /* this has no members, but free it's memory */
+  set_orin(rk_out, rk2);    /* remember what we couldn't do */
+  set_free(rk2);
     if (MR_MaintainBackTrace) MR_pointerStackPop(&MR_BackTraceStack);
-	return a;
+  return a;
 }
 
 /*
@@ -376,14 +372,14 @@ int k;
 set *rk;
 #endif
 {
-	set a;
+  set a;
 
-	require(p!=NULL,			"rToken: NULL node");
-	require(p->ntype==nToken,	"rToken: not token node");
+  require(p!=NULL,      "rToken: NULL node");
+  require(p->ntype==nToken, "rToken: not token node");
 
 #ifdef DBG_LL1
-	fprintf(stderr, "rToken: %s\n", (TokenString(p->token)!=NULL)?TokenString(p->token):
-									ExprString(p->token));
+  fprintf(stderr, "rToken: %s\n", (TokenString(p->token)!=NULL)?TokenString(p->token):
+                  ExprString(p->token));
 #endif
 
 
@@ -409,22 +405,22 @@ set *rk;
       };
     };
 
-	if ( k-1 == 0 )	{
+  if ( k-1 == 0 ) {
 
         if (MR_MaintainBackTrace) MR_pointerStackPop(&MR_BackTraceStack);
 
-		if ( !set_nil(p->tset) ) {
+    if ( !set_nil(p->tset) ) {
             return set_dup(p->tset);
         } else {
-    		return set_of(p->token);
+        return set_of(p->token);
         };
-	}
+  }
 
-	REACH(p->next, k-1, rk, a);
-	
+  REACH(p->next, k-1, rk, a);
+
     if (MR_MaintainBackTrace) MR_pointerStackPop(&MR_BackTraceStack);
 
-	return a;
+  return a;
 }
 
 set
@@ -437,11 +433,11 @@ int k;
 set *rk;
 #endif
 {
-	set a;
+  set a;
 
-	require(p!=NULL,			"rJunc: NULL node");
-	require(p->ntype==nAction,	"rJunc: not action");
-	
+  require(p!=NULL,      "rJunc: NULL node");
+  require(p->ntype==nAction,  "rJunc: not action");
+
 /* MR11 */    if (p->is_predicate && p->ampersandPred != NULL) {
 /* MR11 */      Predicate   *pred=p->ampersandPred;
 /* MR11 */      if (k <= pred->k) {
@@ -455,11 +451,11 @@ set *rk;
        we'll look into that later
     */
 
-	REACH(p->next, k, rk, a);	/* ignore actions */
-	return a;
+  REACH(p->next, k, rk, a); /* ignore actions */
+  return a;
 }
 
-				/* A m b i g u i t y  R e s o l u t i o n */
+        /* A m b i g u i t y  R e s o l u t i o n */
 
 
 void
@@ -472,38 +468,38 @@ FILE *f;
 int want_nls;
 #endif
 {
-	int i;
+  int i;
 
     set     copy;               /* MR11 */
 
-	if ( want_nls ) fprintf(f, "\n\t");
-	else fprintf(f, " ");
+  if ( want_nls ) fprintf(f, "\n\t");
+  else fprintf(f, " ");
 
-	for (i=1; i<=CLL_k; i++)
-	{
+  for (i=1; i<=CLL_k; i++)
+  {
         copy=set_dup(fset[i]);  /* MR11 */
 
-		if ( i>1 )
-		{
-			if ( !want_nls ) fprintf(f, ", ");
-		}
-		if ( set_deg(copy) > 3 && elevel == 1 )
-		{
-			int e,m;
-			fprintf(f, "{");
-			for (m=1; m<=3; m++)
-			{
-				e=set_int(copy);
-				fprintf(f, " %s", TerminalString(e));
-				set_rm(e, copy);
-			}
-			fprintf(f, " ... }");
-		}
-		else s_fprT(f, copy);
-		if ( want_nls ) fprintf(f, "\n\t");
+    if ( i>1 )
+    {
+      if ( !want_nls ) fprintf(f, ", ");
+    }
+    if ( set_deg(copy) > 3 && elevel == 1 )
+    {
+      int e,m;
+      fprintf(f, "{");
+      for (m=1; m<=3; m++)
+      {
+        e=set_int(copy);
+        fprintf(f, " %s", TerminalString(e));
+        set_rm(e, copy);
+      }
+      fprintf(f, " ... }");
+    }
+    else s_fprT(f, copy);
+    if ( want_nls ) fprintf(f, "\n\t");
         set_free(copy);
-	}
-	fprintf(f, "\n");
+  }
+  fprintf(f, "\n");
 
 }
 
@@ -515,40 +511,40 @@ verify_context(predicate)
 Predicate *predicate;
 #endif
 {
-	if ( predicate == NULL ) return;
+  if ( predicate == NULL ) return;
 
-	if ( predicate->expr == PRED_OR_LIST ||
-		 predicate->expr == PRED_AND_LIST )
-	{
-		verify_context(predicate->down);
-		verify_context(predicate->right);       /* MR10 */
-		return;
-	}
+  if ( predicate->expr == PRED_OR_LIST ||
+     predicate->expr == PRED_AND_LIST )
+  {
+    verify_context(predicate->down);
+    verify_context(predicate->right);       /* MR10 */
+    return;
+  }
 
-	if ( !predicate->source->ctxwarned && predicate->source->guardpred==NULL &&
-		 ((predicate->k > 1 &&
-		 !is_single_tuple(predicate->tcontext)) ||
-		 ( predicate->k == 1 &&
-			  set_deg(predicate->scontext[1])>1 )) )
-	{
+  if ( !predicate->source->ctxwarned && predicate->source->guardpred==NULL &&
+     ((predicate->k > 1 &&
+     !is_single_tuple(predicate->tcontext)) ||
+     ( predicate->k == 1 &&
+        set_deg(predicate->scontext[1])>1 )) )
+  {
 
 /* MR9 Suppress annoying messages caused by our own clever(?) fix */
 
-  		fprintf(stderr, ErrHdr, FileStr[predicate->source->file],
-				predicate->source->line);
-		fprintf(stderr, " warning: predicate applied for >1 lookahead %d-sequences\n", predicate->k);
-		fprintf(stderr, ErrHdr, FileStr[predicate->source->file],
-				predicate->source->line);
-		fprintf(stderr, "     predicate text: \"%s\"\n",
+      fprintf(stderr, ErrHdr, FileStr[predicate->source->file],
+        predicate->source->line);
+    fprintf(stderr, " warning: predicate applied for >1 lookahead %d-sequences\n", predicate->k);
+    fprintf(stderr, ErrHdr, FileStr[predicate->source->file],
+        predicate->source->line);
+    fprintf(stderr, "     predicate text: \"%s\"\n",
                         (predicate->expr == NULL ? "(null)" : predicate->expr) );
-		fprintf(stderr, ErrHdr, FileStr[predicate->source->file],
-				predicate->source->line);
-		fprintf(stderr, "     You may only want one lookahead %d-sequence to apply\n", predicate->k);
-		fprintf(stderr, ErrHdr, FileStr[predicate->source->file],
-				predicate->source->line);
-		fprintf(stderr, "     Try using a context guard '(...)? =>'\n");
-		predicate->source->ctxwarned = 1;
-	}
+    fprintf(stderr, ErrHdr, FileStr[predicate->source->file],
+        predicate->source->line);
+    fprintf(stderr, "     You may only want one lookahead %d-sequence to apply\n", predicate->k);
+    fprintf(stderr, ErrHdr, FileStr[predicate->source->file],
+        predicate->source->line);
+    fprintf(stderr, "     Try using a context guard '(...)? =>'\n");
+    predicate->source->ctxwarned = 1;
+  }
     verify_context(predicate->right);       /* MR10 */
 }
 
@@ -557,12 +553,12 @@ Predicate *predicate;
  * the predicate(s) for productions alt1,alt2 cover the sequences in delta.
  *
  * For example,
- *	a : <<PRED1>>? (A B|A C)
- *	  | b
+ *  a : <<PRED1>>? (A B|A C)
+ *    | b
  *    ;
- *	b : <<PRED2>>? A B
- *	  | A C
- *	  ;
+ *  b : <<PRED2>>? A B
+ *    | A C
+ *    ;
  *
  * This should give a warning that (A C) predicts both productions and alt2
  * does not have a predicate in the production that generates (A C).
@@ -586,88 +582,88 @@ char *sub;
 Tree *ambig;
 #endif
 {
-	if ( !ParseWithPredicates ) return;
+  if ( !ParseWithPredicates ) return;
 
-	if ( ambig!=NULL )
-	{
-		Tree *non_covered = NULL;
-		if ( alt1->predicate!=NULL )
-			non_covered = tdif(ambig, alt1->predicate, alt1->fset, alt2->fset);
-		if ( (non_covered!=NULL || alt1->predicate==NULL) && WarningLevel>1 )
-		{
-			fprintf(stderr, ErrHdr, FileStr[alt1->file], alt1->line);
-			fprintf(stderr, " warning: alt %d %shas no predicate to resolve ambiguity",
-							alt1->altnum, sub);
-			if ( alt1->predicate!=NULL && non_covered!=NULL )
-			{
-				fprintf(stderr, " upon");
-				preorder(non_covered);
-			}
-			else if ( alt1->predicate==NULL )
-			{
-				fprintf(stderr, " upon");
-				preorder(ambig->down);
-			}
-			fprintf(stderr, "\n");
-		}
-		Tfree(non_covered);
-		non_covered = NULL;
-		if ( alt2->predicate!=NULL )
-			non_covered = tdif(ambig, alt2->predicate, alt1->fset, alt2->fset);
-		if ( (non_covered!=NULL || alt2->predicate==NULL) && WarningLevel>1 )
-		{
-			fprintf(stderr, ErrHdr, FileStr[alt2->file], alt2->line);
-			fprintf(stderr, " warning: alt %d %shas no predicate to resolve ambiguity",
-							alt2->altnum, sub);
-			if ( alt2->predicate!=NULL && non_covered!=NULL )
-			{
-				fprintf(stderr, " upon");
-				preorder(non_covered);
-			}
-			else if ( alt2->predicate==NULL )
-			{
-				fprintf(stderr, " upon");
-				preorder(ambig->down);
-			}
-			fprintf(stderr, "\n");
-		}
-		Tfree(non_covered);
-	}
-	else if ( !set_nil(alt1->fset[1]) )
-	{
-		set delta, non_covered;
-		delta = set_and(alt1->fset[1], alt2->fset[1]);
-		non_covered = set_dif(delta, covered_set(alt1->predicate));
-		if ( set_deg(non_covered)>0 && WarningLevel>1 )
-		{
-			fprintf(stderr, ErrHdr, FileStr[alt1->file], alt1->line);
-			fprintf(stderr, " warning: alt %d %shas no predicate to resolve ambiguity",
-							alt1->altnum, sub);
-			if ( alt1->predicate!=NULL )
-			{
-				fprintf(stderr, " upon ");
-				s_fprT(stderr, non_covered);
-			}
-			fprintf(stderr, "\n");
-		}
-		set_free( non_covered );
-		non_covered = set_dif(delta, covered_set(alt2->predicate));
-		if ( set_deg(non_covered)>0 && WarningLevel>1 )
-		{
-			fprintf(stderr, ErrHdr, FileStr[alt2->file], alt2->line);
-			fprintf(stderr, " warning: alt %d %shas no predicate to resolve ambiguity",
-							alt2->altnum, sub);
-			if ( alt2->predicate!=NULL )
-			{
-				fprintf(stderr, " upon ");
-				s_fprT(stderr, non_covered);
-			}
-			fprintf(stderr, "\n");
-		}
-		set_free( non_covered );
-		set_free( delta );
-	}
-	else fatal_internal("productions have no lookahead in predicate checking routine");
+  if ( ambig!=NULL )
+  {
+    Tree *non_covered = NULL;
+    if ( alt1->predicate!=NULL )
+      non_covered = tdif(ambig, alt1->predicate, alt1->fset, alt2->fset);
+    if ( (non_covered!=NULL || alt1->predicate==NULL) && WarningLevel>1 )
+    {
+      fprintf(stderr, ErrHdr, FileStr[alt1->file], alt1->line);
+      fprintf(stderr, " warning: alt %d %shas no predicate to resolve ambiguity",
+              alt1->altnum, sub);
+      if ( alt1->predicate!=NULL && non_covered!=NULL )
+      {
+        fprintf(stderr, " upon");
+        preorder(non_covered);
+      }
+      else if ( alt1->predicate==NULL )
+      {
+        fprintf(stderr, " upon");
+        preorder(ambig->down);
+      }
+      fprintf(stderr, "\n");
+    }
+    Tfree(non_covered);
+    non_covered = NULL;
+    if ( alt2->predicate!=NULL )
+      non_covered = tdif(ambig, alt2->predicate, alt1->fset, alt2->fset);
+    if ( (non_covered!=NULL || alt2->predicate==NULL) && WarningLevel>1 )
+    {
+      fprintf(stderr, ErrHdr, FileStr[alt2->file], alt2->line);
+      fprintf(stderr, " warning: alt %d %shas no predicate to resolve ambiguity",
+              alt2->altnum, sub);
+      if ( alt2->predicate!=NULL && non_covered!=NULL )
+      {
+        fprintf(stderr, " upon");
+        preorder(non_covered);
+      }
+      else if ( alt2->predicate==NULL )
+      {
+        fprintf(stderr, " upon");
+        preorder(ambig->down);
+      }
+      fprintf(stderr, "\n");
+    }
+    Tfree(non_covered);
+  }
+  else if ( !set_nil(alt1->fset[1]) )
+  {
+    set delta, non_covered;
+    delta = set_and(alt1->fset[1], alt2->fset[1]);
+    non_covered = set_dif(delta, covered_set(alt1->predicate));
+    if ( set_deg(non_covered)>0 && WarningLevel>1 )
+    {
+      fprintf(stderr, ErrHdr, FileStr[alt1->file], alt1->line);
+      fprintf(stderr, " warning: alt %d %shas no predicate to resolve ambiguity",
+              alt1->altnum, sub);
+      if ( alt1->predicate!=NULL )
+      {
+        fprintf(stderr, " upon ");
+        s_fprT(stderr, non_covered);
+      }
+      fprintf(stderr, "\n");
+    }
+    set_free( non_covered );
+    non_covered = set_dif(delta, covered_set(alt2->predicate));
+    if ( set_deg(non_covered)>0 && WarningLevel>1 )
+    {
+      fprintf(stderr, ErrHdr, FileStr[alt2->file], alt2->line);
+      fprintf(stderr, " warning: alt %d %shas no predicate to resolve ambiguity",
+              alt2->altnum, sub);
+      if ( alt2->predicate!=NULL )
+      {
+        fprintf(stderr, " upon ");
+        s_fprT(stderr, non_covered);
+      }
+      fprintf(stderr, "\n");
+    }
+    set_free( non_covered );
+    set_free( delta );
+  }
+  else fatal_internal("productions have no lookahead in predicate checking routine");
 }
 
 #ifdef __USE_PROTOS
@@ -720,7 +716,7 @@ void MR_doPredicatesHelp(inGuessBlock,alt1,alt2,jtype,sub)
              participate in the predication expression
         */
 
-      	fprintf(stderr, ErrHdr,FileStr[parentRule->file],parentRule->line);
+        fprintf(stderr, ErrHdr,FileStr[parentRule->file],parentRule->line);
         fprintf(stderr," warning: %s of %s in rule %s\n     (file %s alt %d line %d and alt %d line %d)\n%s",
           "the predicates used to disambiguate optional/exit paths of ",
           sub,
@@ -732,7 +728,7 @@ void MR_doPredicatesHelp(inGuessBlock,alt1,alt2,jtype,sub)
           alt2->line,
           "     are identical and have no resolving power\n");
       } else {
-    	fprintf(stderr, ErrHdr, FileStr[parentRule->file], parentRule->line);
+      fprintf(stderr, ErrHdr, FileStr[parentRule->file], parentRule->line);
         fprintf(stderr," warning: %s rule %s\n     (file %s alt %d line %d and alt %d line %d)\n%s",
           "the predicates used to disambiguate",
           CurRule,
@@ -929,34 +925,34 @@ Junction *alt2;
 int jtype;
 #endif
 {
-	unsigned **ftbl;
-	set *fset, b;
-	int i, numAmbig,n2;
-	Tree *ambig=NULL, *t, *u;
-	char *sub = "";
+  unsigned **ftbl;
+  set *fset, b;
+  int i, numAmbig,n2;
+  Tree *ambig=NULL, *t, *u;
+  char *sub = "";
     long    n;
     int     thisOverflow=0;             /* MR9 */
     long    set_deg_value;              /* MR10 */
     long    threshhold;                 /* MR10 */
 
-	require(block!=NULL, "NULL block");
-	require(block->ntype==nJunction, "invalid block");
+  require(block!=NULL, "NULL block");
+  require(block->ntype==nJunction, "invalid block");
 
-	/* These sets are used to constrain LL_k set, but are made CLL_k long anyway */
-	fset = (set *) calloc(CLL_k+1, sizeof(set));
-	require(fset!=NULL, "cannot allocate fset");
-	ftbl = (unsigned **) calloc(CLL_k+1, sizeof(unsigned *));
-	require(ftbl!=NULL, "cannot allocate ftbl");
+  /* These sets are used to constrain LL_k set, but are made CLL_k long anyway */
+  fset = (set *) calloc(CLL_k+1, sizeof(set));
+  require(fset!=NULL, "cannot allocate fset");
+  ftbl = (unsigned **) calloc(CLL_k+1, sizeof(unsigned *));
+  require(ftbl!=NULL, "cannot allocate ftbl");
 
-	/* create constraint table and count number of possible ambiguities (use<=LL_k) */
-	for (n=1,i=1; i<=CLL_k; i++)
-	{
-         		b = set_and(alt1->fset[i], alt2->fset[i]);
+  /* create constraint table and count number of possible ambiguities (use<=LL_k) */
+  for (n=1,i=1; i<=CLL_k; i++)
+  {
+            b = set_and(alt1->fset[i], alt2->fset[i]);
 /* MR9 */       set_deg_value = set_deg(b);
 /* MR10 */      if (n > 0) {
 /* MR10 */        threshhold = LONG_MAX / n;
 /* MR10 */        if (set_deg_value <= threshhold) {
-/* MR10 */       	n *= set_deg_value;
+/* MR10 */        n *= set_deg_value;
 /* MR10 */        } else {
 /* MR10 */          n=LONG_MAX;
 /* MR9 */           if (totalOverflow == 0) {
@@ -972,122 +968,122 @@ int jtype;
 /* MR10 */      } else {
 /* MR10 */        n *= set_deg_value;
 /* MR9 */       };
-		fset[i] = set_dup(b);
-		ftbl[i] = set_pdq(b);
-		set_free(b);
-	}
+    fset[i] = set_dup(b);
+    ftbl[i] = set_pdq(b);
+    set_free(b);
+  }
 
-	switch ( jtype )
-	{
-		case aSubBlk: sub = "of (..) "; break;
-		case aOptBlk: sub = "of {..} "; break;
-		case aLoopBegin: sub = "of (..)* "; break;
-		case aLoopBlk: sub = "of (..)* "; break;
-		case aPlusBlk: sub = "of (..)+ "; break;
-		case RuleBlk: sub = "of the rule itself "; break;
-		default : sub = ""; break;
-	}
+  switch ( jtype )
+  {
+    case aSubBlk: sub = "of (..) "; break;
+    case aOptBlk: sub = "of {..} "; break;
+    case aLoopBegin: sub = "of (..)* "; break;
+    case aLoopBlk: sub = "of (..)* "; break;
+    case aPlusBlk: sub = "of (..)+ "; break;
+    case RuleBlk: sub = "of the rule itself "; break;
+    default : sub = ""; break;
+  }
 
-	/* If the block is marked as a compressed lookahead only block, then
-	 * simply return; ambiguity warning is given only at warning level 2.
-	 */
-	if ( block->approx>0 )
-	{
-		if ( ParseWithPredicates )
-		{
+  /* If the block is marked as a compressed lookahead only block, then
+   * simply return; ambiguity warning is given only at warning level 2.
+   */
+  if ( block->approx>0 )
+  {
+    if ( ParseWithPredicates )
+    {
             if (alt1->predicate != NULL) predicate_free(alt1->predicate);  /* MR12 */
             if (alt2->predicate != NULL) predicate_free(alt2->predicate);  /* MR12 */
 
             require(MR_PredRuleRefStack.count == 0,"PredRuleRef stack not empty");
-          	alt1->predicate = MR_find_predicates_and_supp((Node *)alt1->p1);
+            alt1->predicate = MR_find_predicates_and_supp((Node *)alt1->p1);
             require(MR_PredRuleRefStack.count == 0,"PredRuleRef stack not empty");
             require (MR_predicate_context_completed(alt1->predicate),"predicate alt 1 not completed");
             alt1->predicate=MR_predSimplifyALL(alt1->predicate);
 
             require(MR_PredRuleRefStack.count == 0,"PredRuleRef stack not empty");
-    		alt2->predicate = MR_find_predicates_and_supp((Node *)alt2->p1);
+        alt2->predicate = MR_find_predicates_and_supp((Node *)alt2->p1);
             require(MR_PredRuleRefStack.count == 0,"PredRuleRef stack not empty");
             require (MR_predicate_context_completed(alt2->predicate),"predicate alt 2 not completed");
             alt2->predicate=MR_predSimplifyALL(alt2->predicate);
 
             MR_doPredicatesHelp(0,alt1,alt2,jtype,sub);
 
-			if ( HoistPredicateContext
+      if ( HoistPredicateContext
                     && (alt1->predicate!=NULL||alt2->predicate!=NULL) )
-			{
-				verify_context(alt1->predicate);
-				verify_context(alt2->predicate);
-			}
+      {
+        verify_context(alt1->predicate);
+        verify_context(alt2->predicate);
+      }
 
-			if ( HoistPredicateContext
+      if ( HoistPredicateContext
                      && (alt1->predicate!=NULL||alt2->predicate!=NULL)
                      && WarningLevel>1 )
-			ensure_predicates_cover_ambiguous_lookahead_sequences(alt1, alt2, sub, ambig);
-		}
-
-		if ( WarningLevel>1 )
-		{
-			fprintf(stderr, ErrHdr, FileStr[alt1->file], alt1->line);
-			if ( jtype == aLoopBegin || jtype == aPlusBlk )
-				fprintf(stderr, " warning: optional/exit path and alt(s) %sambiguous upon", sub);
-			else
-				fprintf(stderr, " warning(approx): alts %d and %d %sambiguous upon",
-						alt1->altnum, alt2->altnum, sub);
-			dumpAmbigMsg(fset, stderr, 0);
-            MR_traceAmbSource(fset,alt1,alt2);
-		}
-		for (i=1; i<=CLL_k; i++) set_free( fset[i] );
-		free((char *)fset);
-		for (i=1; i<=CLL_k; i++) free( (char *)ftbl[i] );
-		free((char *)ftbl);
-		return;
+      ensure_predicates_cover_ambiguous_lookahead_sequences(alt1, alt2, sub, ambig);
     }
 
-	/* if all sets have degree 1 for k<LL_k, then must be ambig upon >=1 permutation;
-	 * don't bother doing full LL(k) analysis.
-	 * (This "if" block handles the LL(1) case)
-	 */
+    if ( WarningLevel>1 )
+    {
+      fprintf(stderr, ErrHdr, FileStr[alt1->file], alt1->line);
+      if ( jtype == aLoopBegin || jtype == aPlusBlk )
+        fprintf(stderr, " warning: optional/exit path and alt(s) %sambiguous upon", sub);
+      else
+        fprintf(stderr, " warning(approx): alts %d and %d %sambiguous upon",
+            alt1->altnum, alt2->altnum, sub);
+      dumpAmbigMsg(fset, stderr, 0);
+            MR_traceAmbSource(fset,alt1,alt2);
+    }
+    for (i=1; i<=CLL_k; i++) set_free( fset[i] );
+    free((char *)fset);
+    for (i=1; i<=CLL_k; i++) free( (char *)ftbl[i] );
+    free((char *)ftbl);
+    return;
+    }
 
-	n2 = 0;
-	for (i=1; i<LL_k; i++) n2 += set_deg(alt1->fset[i])+set_deg(alt2->fset[i]);
+  /* if all sets have degree 1 for k<LL_k, then must be ambig upon >=1 permutation;
+   * don't bother doing full LL(k) analysis.
+   * (This "if" block handles the LL(1) case)
+   */
+
+  n2 = 0;
+  for (i=1; i<LL_k; i++) n2 += set_deg(alt1->fset[i])+set_deg(alt2->fset[i]);
 
     /* here STARTS the special case in which the lookahead sets for alt1 and alt2
        all have degree 1 for k<LL_k (including LL_k=1)
     */
 
-	if ( n2==2*(LL_k-1) )
-	{
+  if ( n2==2*(LL_k-1) )
+  {
 
         /* TJP: added to fix the case where LL(1) and syntactic predicates didn't
          * work.  It now recognizes syntactic predicates, but does not like combo:
          * LL(1)/syn/sem predicates. (10/24/93)
          */
 
-		if ( first_item_is_guess_block_extra((Junction *)alt1->p1)!=NULL )
-		{
-			if ( WarningLevel==1 )
-			{
-				for (i=1; i<=CLL_k; i++) set_free( fset[i] );
-				free((char *)fset);
-				for (i=1; i<=CLL_k; i++) free( (char *)ftbl[i] );
-				free((char *)ftbl);
-				return;
-			}
+    if ( first_item_is_guess_block_extra((Junction *)alt1->p1)!=NULL )
+    {
+      if ( WarningLevel==1 )
+      {
+        for (i=1; i<=CLL_k; i++) set_free( fset[i] );
+        free((char *)fset);
+        for (i=1; i<=CLL_k; i++) free( (char *)ftbl[i] );
+        free((char *)ftbl);
+        return;
+      }
 
-			fprintf(stderr, ErrHdr, FileStr[alt1->file], alt1->line);
-			if ( jtype == aLoopBegin || jtype == aPlusBlk )
-			   fprintf(stderr, " warning: optional/exit path and alt(s) %sambiguous upon", sub);
-			else
-			   fprintf(stderr, " warning: alts %d and %d %sambiguous upon",
-					   alt1->altnum, alt2->altnum, sub);
-			dumpAmbigMsg(fset, stderr, 0);
+      fprintf(stderr, ErrHdr, FileStr[alt1->file], alt1->line);
+      if ( jtype == aLoopBegin || jtype == aPlusBlk )
+         fprintf(stderr, " warning: optional/exit path and alt(s) %sambiguous upon", sub);
+      else
+         fprintf(stderr, " warning: alts %d and %d %sambiguous upon",
+             alt1->altnum, alt2->altnum, sub);
+      dumpAmbigMsg(fset, stderr, 0);
             MR_traceAmbSource(fset,alt1,alt2);
-		}
+    }
 
-		ambig = NULL;
-		if ( LL_k>1 ) ambig = make_tree_from_sets(alt1->fset, alt2->fset);
-		if ( ParseWithPredicates )
-		{
+    ambig = NULL;
+    if ( LL_k>1 ) ambig = make_tree_from_sets(alt1->fset, alt2->fset);
+    if ( ParseWithPredicates )
+    {
            if (alt1->predicate != NULL) predicate_free(alt1->predicate);  /* MR12 */
            if (alt2->predicate != NULL) predicate_free(alt2->predicate);  /* MR12 */
 
@@ -1098,53 +1094,53 @@ int jtype;
            alt1->predicate=MR_predSimplifyALL(alt1->predicate);
 
            require(MR_PredRuleRefStack.count == 0,"PredRuleRef stack not empty");
-    	   alt2->predicate = MR_find_predicates_and_supp((Node *)alt2->p1);
+         alt2->predicate = MR_find_predicates_and_supp((Node *)alt2->p1);
            require(MR_PredRuleRefStack.count == 0,"PredRuleRef stack not empty");
            require (MR_predicate_context_completed(alt2->predicate),"predicate alt 2 not completed");
            alt2->predicate=MR_predSimplifyALL(alt2->predicate);
 
            MR_doPredicatesHelp(0,alt1,alt2,jtype,sub);
 
-		   if ( HoistPredicateContext && (alt1->predicate!=NULL||alt2->predicate!=NULL) )
-		   {
-				verify_context(alt1->predicate);
-				verify_context(alt2->predicate);
-		   }
-		   if (HoistPredicateContext&&(alt1->predicate!=NULL||alt2->predicate!=NULL) && WarningLevel>1)
-			  ensure_predicates_cover_ambiguous_lookahead_sequences(alt1, alt2, sub, ambig);
-		   if ( WarningLevel == 1 &&
-			   (alt1->predicate!=NULL||alt2->predicate!=NULL))
-		   {
-			  for (i=1; i<=CLL_k; i++) set_free( fset[i] );
-			  free((char *)fset);
-			  for (i=1; i<=CLL_k; i++) free( (char *)ftbl[i] );
-			  free((char *)ftbl);
-			  Tfree(ambig);
-			  return;
-		   }
-		}
+       if ( HoistPredicateContext && (alt1->predicate!=NULL||alt2->predicate!=NULL) )
+       {
+        verify_context(alt1->predicate);
+        verify_context(alt2->predicate);
+       }
+       if (HoistPredicateContext&&(alt1->predicate!=NULL||alt2->predicate!=NULL) && WarningLevel>1)
+        ensure_predicates_cover_ambiguous_lookahead_sequences(alt1, alt2, sub, ambig);
+       if ( WarningLevel == 1 &&
+         (alt1->predicate!=NULL||alt2->predicate!=NULL))
+       {
+        for (i=1; i<=CLL_k; i++) set_free( fset[i] );
+        free((char *)fset);
+        for (i=1; i<=CLL_k; i++) free( (char *)ftbl[i] );
+        free((char *)ftbl);
+        Tfree(ambig);
+        return;
+       }
+    }
 /* end TJP (10/24/93) */
 
-		fprintf(stderr, ErrHdr, FileStr[alt1->file], alt1->line);
-		if ( jtype == aLoopBegin || jtype == aPlusBlk )
-			fprintf(stderr, " warning: optional/exit path and alt(s) %sambiguous upon", sub);
-		else
-		   fprintf(stderr, " warning: alts %d and %d %sambiguous upon",
-				   alt1->altnum, alt2->altnum, sub);
-		if ( elevel == 3 && LL_k>1 )
-		{
-		   preorder(ambig);
-		   fprintf(stderr, "\n");
-  	       for (i=1; i<=CLL_k; i++) set_free( fset[i] );
-    	   free((char *)fset);
-		   for (i=1; i<=CLL_k; i++) free( (char *)ftbl[i] );
-		   free((char *)ftbl);
-		   Tfree(ambig);
-		   return;
+    fprintf(stderr, ErrHdr, FileStr[alt1->file], alt1->line);
+    if ( jtype == aLoopBegin || jtype == aPlusBlk )
+      fprintf(stderr, " warning: optional/exit path and alt(s) %sambiguous upon", sub);
+    else
+       fprintf(stderr, " warning: alts %d and %d %sambiguous upon",
+           alt1->altnum, alt2->altnum, sub);
+    if ( elevel == 3 && LL_k>1 )
+    {
+       preorder(ambig);
+       fprintf(stderr, "\n");
+           for (i=1; i<=CLL_k; i++) set_free( fset[i] );
+         free((char *)fset);
+       for (i=1; i<=CLL_k; i++) free( (char *)ftbl[i] );
+       free((char *)ftbl);
+       Tfree(ambig);
+       return;
         };
 
-		Tfree(ambig);
-		dumpAmbigMsg(fset, stderr, 0);
+    Tfree(ambig);
+    dumpAmbigMsg(fset, stderr, 0);
 
         /* because this is a special case in which both alt1 and alt2 have
            lookahead sets of degree 1 for k<LL_k (including k=1) the linear
@@ -1153,125 +1149,125 @@ int jtype;
 
         MR_traceAmbSource(fset,alt1,alt2);
 
-		for (i=1; i<=CLL_k; i++) set_free( fset[i] );
-		free((char *)fset);
-		for (i=1; i<=CLL_k; i++) free( (char *)ftbl[i] );
-		free((char *)ftbl);
-		return;
-	}
+    for (i=1; i<=CLL_k; i++) set_free( fset[i] );
+    free((char *)fset);
+    for (i=1; i<=CLL_k; i++) free( (char *)ftbl[i] );
+    free((char *)ftbl);
+    return;
+  }
 
     /* here ENDS the special case in which the lookahead sets for alt1 and alt2
        all have degree 1 for k<LL_k (including LL_k=1)
     */
 
-	/* in case tree construction runs out of memory, set info to make good err msg */
+  /* in case tree construction runs out of memory, set info to make good err msg */
 
-	CurAmbigAlt1 = alt1->altnum;
-	CurAmbigAlt2 = alt2->altnum;
-	CurAmbigbtype = sub;
-	CurAmbigfile = alt1->file;
-	CurAmbigline = alt1->line;
-	
-	/* Don't do full LL(n) analysis if (...)? block because the block,
-	   by definition, defies LL(n) analysis.
-	   If guess (...)? block and ambiguous then don't remove anything from
-	   2nd alt to resolve ambig.
-	   Want to predict with LL sup 1 ( n ) decision not LL(n) if guess block
-	   since it is much cheaper than LL(n).  LL sup 1 ( n ) "covers" the LL(n)
-	   lookahead information.
+  CurAmbigAlt1 = alt1->altnum;
+  CurAmbigAlt2 = alt2->altnum;
+  CurAmbigbtype = sub;
+  CurAmbigfile = alt1->file;
+  CurAmbigline = alt1->line;
 
-	   Note: LL(n) context cannot be computed for semantic predicates when
-	   followed by (..)?.
+  /* Don't do full LL(n) analysis if (...)? block because the block,
+     by definition, defies LL(n) analysis.
+     If guess (...)? block and ambiguous then don't remove anything from
+     2nd alt to resolve ambig.
+     Want to predict with LL sup 1 ( n ) decision not LL(n) if guess block
+     since it is much cheaper than LL(n).  LL sup 1 ( n ) "covers" the LL(n)
+     lookahead information.
 
-	   If (..)? then we scream "AAAHHHH!  No LL(n) analysis will help"
+     Note: LL(n) context cannot be computed for semantic predicates when
+     followed by (..)?.
+
+     If (..)? then we scream "AAAHHHH!  No LL(n) analysis will help"
 
        Is 'ambig' always defined if we enter this if?  I hope so
-	   because the 'ensure...()' func references it. TJP Nov 1993.
-	   */
+     because the 'ensure...()' func references it. TJP Nov 1993.
+     */
 
-	/* THM MR30:  Instead of using first_item_is_guss_block we use
-	   first_item_is_guess_block_extra which will look inside a
-	   loop block for a guess block.  In other words ( (...)? )*.
-	   It there is an ambiguity in this circumstance then we suppress
-	   the normal methods of resolving ambiguities.
-	*/
+  /* THM MR30:  Instead of using first_item_is_guss_block we use
+     first_item_is_guess_block_extra which will look inside a
+     loop block for a guess block.  In other words ( (...)? )*.
+     It there is an ambiguity in this circumstance then we suppress
+     the normal methods of resolving ambiguities.
+  */
 
-	if ( first_item_is_guess_block_extra((Junction *)alt1->p1)!=NULL )
-	{
-		if ( ParseWithPredicates )
-		{
+  if ( first_item_is_guess_block_extra((Junction *)alt1->p1)!=NULL )
+  {
+    if ( ParseWithPredicates )
+    {
             if (alt1->predicate != NULL) predicate_free(alt1->predicate);  /* MR12 */
             if (alt2->predicate != NULL) predicate_free(alt2->predicate);  /* MR12 */
             require(MR_PredRuleRefStack.count == 0,"PredRuleRef stack not empty");
-        	alt1->predicate = MR_find_predicates_and_supp((Node *)alt1->p1);
+          alt1->predicate = MR_find_predicates_and_supp((Node *)alt1->p1);
             require(MR_PredRuleRefStack.count == 0,"PredRuleRef stack not empty");
             require (MR_predicate_context_completed(alt1->predicate),"predicate alt 1 not completed");
             alt1->predicate=MR_predSimplifyALL(alt1->predicate);
 
             require(MR_PredRuleRefStack.count == 0,"PredRuleRef stack not empty");
-    		alt2->predicate = MR_find_predicates_and_supp((Node *)alt2->p1);
+        alt2->predicate = MR_find_predicates_and_supp((Node *)alt2->p1);
             require(MR_PredRuleRefStack.count == 0,"PredRuleRef stack not empty");
             require (MR_predicate_context_completed(alt2->predicate),"predicate alt 2 not completed");
             alt2->predicate=MR_predSimplifyALL(alt2->predicate);
 
             MR_doPredicatesHelp(1,alt1,alt2,jtype,sub);
 
-			if ( HoistPredicateContext && (alt1->predicate!=NULL||alt2->predicate!=NULL) )
-			{
-				verify_context(alt1->predicate);
-				verify_context(alt2->predicate);
-			}
-			if ( HoistPredicateContext && (alt1->predicate!=NULL||alt2->predicate!=NULL) && WarningLevel>1 )
-				ensure_predicates_cover_ambiguous_lookahead_sequences(alt1, alt2, sub, ambig);
-			if ( WarningLevel==1 &&
-				(alt1->predicate!=NULL||alt2->predicate!=NULL))
-			{
-				for (i=1; i<=CLL_k; i++) set_free( fset[i] );
-				free((char *)fset);
-				for (i=1; i<=CLL_k; i++) free( (char *)ftbl[i] );
-				free((char *)ftbl);
-				return;
-			}
-		}
+      if ( HoistPredicateContext && (alt1->predicate!=NULL||alt2->predicate!=NULL) )
+      {
+        verify_context(alt1->predicate);
+        verify_context(alt2->predicate);
+      }
+      if ( HoistPredicateContext && (alt1->predicate!=NULL||alt2->predicate!=NULL) && WarningLevel>1 )
+        ensure_predicates_cover_ambiguous_lookahead_sequences(alt1, alt2, sub, ambig);
+      if ( WarningLevel==1 &&
+        (alt1->predicate!=NULL||alt2->predicate!=NULL))
+      {
+        for (i=1; i<=CLL_k; i++) set_free( fset[i] );
+        free((char *)fset);
+        for (i=1; i<=CLL_k; i++) free( (char *)ftbl[i] );
+        free((char *)ftbl);
+        return;
+      }
+    }
 
-		if ( WarningLevel>1 )
-		{
-			fprintf(stderr, ErrHdr, FileStr[alt1->file], alt1->line);
-			if ( jtype == aLoopBegin || jtype == aPlusBlk )
-				fprintf(stderr, " warning: optional/exit path and alt(s) %sambiguous upon", sub);
-			else
-				fprintf(stderr, " warning: alts %d and %d %sambiguous upon",
-						alt1->altnum, alt2->altnum, sub);
-			dumpAmbigMsg(fset, stderr, 0);
+    if ( WarningLevel>1 )
+    {
+      fprintf(stderr, ErrHdr, FileStr[alt1->file], alt1->line);
+      if ( jtype == aLoopBegin || jtype == aPlusBlk )
+        fprintf(stderr, " warning: optional/exit path and alt(s) %sambiguous upon", sub);
+      else
+        fprintf(stderr, " warning: alts %d and %d %sambiguous upon",
+            alt1->altnum, alt2->altnum, sub);
+      dumpAmbigMsg(fset, stderr, 0);
             MR_traceAmbSource(fset,alt1,alt2);
-		}
+    }
 
-		for (i=1; i<=CLL_k; i++) set_free( fset[i] );
-		free((char *)fset);
-		for (i=1; i<=CLL_k; i++) free( (char *)ftbl[i] );
-		free((char *)ftbl);
-		return;
-	}
-	
-	/* Not resolved with (..)? block.  Do full LL(n) analysis */
-	
-	/* ambig is the set of k-tuples truly in common between alt 1 and alt 2 */
+    for (i=1; i<=CLL_k; i++) set_free( fset[i] );
+    free((char *)fset);
+    for (i=1; i<=CLL_k; i++) free( (char *)ftbl[i] );
+    free((char *)ftbl);
+    return;
+  }
+
+  /* Not resolved with (..)? block.  Do full LL(n) analysis */
+
+  /* ambig is the set of k-tuples truly in common between alt 1 and alt 2 */
     /* MR11 VerifyAmbig once used fset destructively */
 
-	ambig = VerifyAmbig(alt1, alt2, ftbl, fset, &t, &u, &numAmbig);
+  ambig = VerifyAmbig(alt1, alt2, ftbl, fset, &t, &u, &numAmbig);
 
-	/* are all things in intersection really ambigs? */
+  /* are all things in intersection really ambigs? */
 
-	if (thisOverflow ||  numAmbig < n )                     /* MR9 */
-	{
-		Tree *v;
+  if (thisOverflow ||  numAmbig < n )                     /* MR9 */
+  {
+    Tree *v;
 
-		/* remove ambig permutation from 2nd alternative to resolve ambig;
-		 * We want to compute the set of artificial tuples, arising from
-		 * LL sup 1 (n) compression, that collide with real tuples from the
-		 * 2nd alternative.  This is the set of "special case" tuples that
-		 * the LL sup 1 (n) decision template maps incorrectly.
-		 */
+    /* remove ambig permutation from 2nd alternative to resolve ambig;
+     * We want to compute the set of artificial tuples, arising from
+     * LL sup 1 (n) compression, that collide with real tuples from the
+     * 2nd alternative.  This is the set of "special case" tuples that
+     * the LL sup 1 (n) decision template maps incorrectly.
+     */
 
         /* when generating code in genExpr() it does
          *
@@ -1281,102 +1277,102 @@ int jtype;
          *               after removal of conflicts, not alt1 !
          */
 
-		if ( ambig!=NULL )
-		{
+    if ( ambig!=NULL )
+    {
             /* at the top of ambig is an ALT node */
 
-			for (v=ambig->down; v!=NULL; v=v->right)
-			{
-				u = trm_perm(u, v);     /* remove v FROM u */
-			}
-/*			fprintf(stderr, "after rm alt2:"); preorder(u); fprintf(stderr, "\n");*/
-		}
-		Tfree( t );
-		alt1->ftree = tappend(alt1->ftree, u);
-		alt1->ftree = tleft_factor(alt1->ftree);
-	}
+      for (v=ambig->down; v!=NULL; v=v->right)
+      {
+        u = trm_perm(u, v);     /* remove v FROM u */
+      }
+/*      fprintf(stderr, "after rm alt2:"); preorder(u); fprintf(stderr, "\n");*/
+    }
+    Tfree( t );
+    alt1->ftree = tappend(alt1->ftree, u);
+    alt1->ftree = tleft_factor(alt1->ftree);
+  }
 
-	if ( ambig==NULL )
-	{
-		for (i=1; i<=CLL_k; i++) set_free( fset[i] );
-		free((char *)fset);
-		for (i=1; i<=CLL_k; i++) free( (char *)ftbl[i] );
-		free((char *)ftbl);
-		return;
-	}
+  if ( ambig==NULL )
+  {
+    for (i=1; i<=CLL_k; i++) set_free( fset[i] );
+    free((char *)fset);
+    for (i=1; i<=CLL_k; i++) free( (char *)ftbl[i] );
+    free((char *)ftbl);
+    return;
+  }
 
-	ambig = tleft_factor(ambig);
+  ambig = tleft_factor(ambig);
 
 /* TJP:
  * At this point, we surely have an LL(k) ambiguity.  Check for predicates
  */
-	if ( ParseWithPredicates )
-	{
+  if ( ParseWithPredicates )
+  {
         if (alt1->predicate != NULL) predicate_free(alt1->predicate);  /* MR12 */
         if (alt2->predicate != NULL) predicate_free(alt2->predicate);  /* MR12 */
         require(MR_PredRuleRefStack.count == 0,"PredRuleRef stack not empty");
-    	alt1->predicate = MR_find_predicates_and_supp((Node *)alt1->p1);
+      alt1->predicate = MR_find_predicates_and_supp((Node *)alt1->p1);
         require(MR_PredRuleRefStack.count == 0,"PredRuleRef stack not empty");
         require (MR_predicate_context_completed(alt1->predicate),"predicate alt 1 not completed");
         alt1->predicate=MR_predSimplifyALL(alt1->predicate);
 
         require(MR_PredRuleRefStack.count == 0,"PredRuleRef stack not empty");
-		alt2->predicate = MR_find_predicates_and_supp((Node *)alt2->p1);
+    alt2->predicate = MR_find_predicates_and_supp((Node *)alt2->p1);
         require(MR_PredRuleRefStack.count == 0,"PredRuleRef stack not empty");
         require (MR_predicate_context_completed(alt2->predicate),"predicate alt 2 not completed");
         alt2->predicate=MR_predSimplifyALL(alt2->predicate);
 
         MR_doPredicatesHelp(0,alt1,alt2,jtype,sub);
 
-		if ( HoistPredicateContext && (alt1->predicate!=NULL||alt2->predicate!=NULL) )
-		{
-			verify_context(alt1->predicate);
-			verify_context(alt2->predicate);
-		}
-		if ( HoistPredicateContext && (alt1->predicate!=NULL||alt2->predicate!=NULL) && WarningLevel>1 )
-		   ensure_predicates_cover_ambiguous_lookahead_sequences(alt1, alt2, sub, ambig);
-		if ( WarningLevel==1 &&
- 			(alt1->predicate!=NULL||alt2->predicate!=NULL))
-		{
+    if ( HoistPredicateContext && (alt1->predicate!=NULL||alt2->predicate!=NULL) )
+    {
+      verify_context(alt1->predicate);
+      verify_context(alt2->predicate);
+    }
+    if ( HoistPredicateContext && (alt1->predicate!=NULL||alt2->predicate!=NULL) && WarningLevel>1 )
+       ensure_predicates_cover_ambiguous_lookahead_sequences(alt1, alt2, sub, ambig);
+    if ( WarningLevel==1 &&
+      (alt1->predicate!=NULL||alt2->predicate!=NULL))
+    {
 
-			/* We found at least one pred for at least one of the alts;
-			 * If warnings are low, just return.
-			 */
+      /* We found at least one pred for at least one of the alts;
+       * If warnings are low, just return.
+       */
 
-			Tfree(ambig);
+      Tfree(ambig);
             for (i=1; i<=CLL_k; i++) set_free( fset[i] );
-    	    free((char *)fset);
-    		for (i=1; i<=CLL_k; i++) free( (char *)ftbl[i] );
-    		free((char *)ftbl);
-			return;
-		}
-		/* else we're gonna give a warning */
-	}
+          free((char *)fset);
+        for (i=1; i<=CLL_k; i++) free( (char *)ftbl[i] );
+        free((char *)ftbl);
+      return;
+    }
+    /* else we're gonna give a warning */
+  }
 /* end TJP addition */
 
-	fprintf(stderr, ErrHdr, FileStr[alt1->file], alt1->line);
-	if ( jtype == aLoopBegin || jtype == aPlusBlk )
-		fprintf(stderr, " warning: optional/exit path and alt(s) %sambiguous upon", sub);
-	else
-		fprintf(stderr, " warning: alts %d and %d %sambiguous upon",
-					alt1->altnum, alt2->altnum, sub);
-	if ( elevel == 3 )
-	{
-		preorder(ambig->down);      /* <===== k>1 ambiguity message data */
-		fprintf(stderr, "\n");
-	} else {
+  fprintf(stderr, ErrHdr, FileStr[alt1->file], alt1->line);
+  if ( jtype == aLoopBegin || jtype == aPlusBlk )
+    fprintf(stderr, " warning: optional/exit path and alt(s) %sambiguous upon", sub);
+  else
+    fprintf(stderr, " warning: alts %d and %d %sambiguous upon",
+          alt1->altnum, alt2->altnum, sub);
+  if ( elevel == 3 )
+  {
+    preorder(ambig->down);      /* <===== k>1 ambiguity message data */
+    fprintf(stderr, "\n");
+  } else {
         MR_skipped_e3_report=1;
-    	dumpAmbigMsg(fset, stderr, 0);
+      dumpAmbigMsg(fset, stderr, 0);
     };
 
     MR_traceAmbSourceK(ambig,alt1,alt2);     /* <====== k>1 ambiguity aid */
 
-	Tfree(ambig);
+  Tfree(ambig);
 
     for (i=1; i<=CLL_k; i++) set_free( fset[i] );
-	free((char *)fset);
-	for (i=1; i<=CLL_k; i++) free( (char *)ftbl[i] );
-	free((char *)ftbl);
+  free((char *)fset);
+  for (i=1; i<=CLL_k; i++) free( (char *)ftbl[i] );
+  free((char *)ftbl);
 }
 
 /* Don't analyze alpha block of (alpha)?beta; if (alpha)? then analyze
@@ -1390,7 +1386,7 @@ analysis_point( j )
 Junction *j;
 #endif
 {
-	Junction *gblock;
+  Junction *gblock;
 
     /* MR13b  When there was an action/predicate preceding a guess block
               the guess block became invisible at the analysis_point.
@@ -1401,34 +1397,34 @@ Junction *j;
               until I know it works.
     */
 
-	if ( j->ntype != nJunction && j->ntype != nAction) return j;
+  if ( j->ntype != nJunction && j->ntype != nAction) return j;
 
-	gblock = first_item_is_guess_block((Junction *)j);
+  gblock = first_item_is_guess_block((Junction *)j);
 
-	if ( gblock!=NULL )
-	{
-		Junction *past = gblock->end;
-		Junction *p;
-		require(past!=NULL, "analysis_point: no end block on (...)? block");
+  if ( gblock!=NULL )
+  {
+    Junction *past = gblock->end;
+    Junction *p;
+    require(past!=NULL, "analysis_point: no end block on (...)? block");
 
-		for (p=(Junction *)past->p1; p!=NULL; )
-		{
-			if ( p->ntype==nAction )
-			{
-				p=(Junction *)((ActionNode *)p)->next;
-				continue;
-			}
-			if ( p->ntype!=nJunction )
-			{
+    for (p=(Junction *)past->p1; p!=NULL; )
+    {
+      if ( p->ntype==nAction )
+      {
+        p=(Junction *)((ActionNode *)p)->next;
+        continue;
+      }
+      if ( p->ntype!=nJunction )
+      {
                 past->alpha_beta_guess_end=1;           /* MR14 */
-				return (Junction *)past->p1;
-			}
-			if ( p->jtype==EndBlk || p->jtype==EndRule )
-			{
-				return j;
-			}
-/* MR6                                									      */
-/* MR6	A guess block is of the form "(alpha)? beta" or "(alpha)?".           */
+        return (Junction *)past->p1;
+      }
+      if ( p->jtype==EndBlk || p->jtype==EndRule )
+      {
+        return j;
+      }
+/* MR6                                                        */
+/* MR6  A guess block is of the form "(alpha)? beta" or "(alpha)?".           */
 /* MR6  When beta is omitted (second form) this means "(alpha)? alpha".       */
 /* MR6  The program does not store another copy of alpha in this case.        */
 /* MR6  During analysis when the program needs to know what follows the       */
@@ -1445,21 +1441,21 @@ Junction *j;
 /* MR6                                                                        */
 /* MR6  This won't work for the special case "(alpha)? ()" because it has no  */
 /* MR6    rule references or token nodes.  It eventually encounters a         */
-/* MR6	  junction of type EndBlk or EndRule and says to its caller: nothing  */
+/* MR6    junction of type EndBlk or EndRule and says to its caller: nothing  */
 /* MR6    more here to analyze - must be of the form "(alpha)?".              */
 /* MR6                                                                        */
 /* MR6  In the case of "(alpha)? ()" it should return a pointer to "()"       */
 /* MR6                                                                        */
 /* MR6  I think.                                                              */
 /* MR6                                                                        */
-			if ( p->jtype!=Generic) {		                           /* MR6 */
+      if ( p->jtype!=Generic) {                              /* MR6 */
                 past->alpha_beta_guess_end=1;                          /* MR14 */
-				return (Junction *)past->p1;                           /* MR6 */
-			};					                                       /* MR6 */
-   			p=(Junction *)p->p1;
-		}
-	}
-	return j;
+        return (Junction *)past->p1;                           /* MR6 */
+      };                                                 /* MR6 */
+        p=(Junction *)p->p1;
+    }
+  }
+  return j;
 }
 
 set
@@ -1473,83 +1469,83 @@ int jtype;
 int *max_k;
 #endif
 {
-	Junction *alt1, *alt2;
-	set a, rk, fCurBlk;
-	int savek;
-	int p1, p2;
+  Junction *alt1, *alt2;
+  set a, rk, fCurBlk;
+  int savek;
+  int p1, p2;
 
     int     save_maintainBackTrace;
 
-	require(j->ntype==nJunction, "First: non junction passed");
+  require(j->ntype==nJunction, "First: non junction passed");
 
-	/* C o m p u t e  F I R S T  s e t  w i t h  k  l o o k a h e a d */
-	fCurBlk = rk = empty;
-	for (alt1=j; alt1!=NULL; alt1 = (Junction *)alt1->p2 )
-	{
-		Junction * p = NULL;
-		Junction * p1junction = NULL;
-		p = analysis_point((Junction *)alt1->p1);
-		p1junction = (Junction *) (alt1->p1);
+  /* C o m p u t e  F I R S T  s e t  w i t h  k  l o o k a h e a d */
+  fCurBlk = rk = empty;
+  for (alt1=j; alt1!=NULL; alt1 = (Junction *)alt1->p2 )
+  {
+    Junction * p = NULL;
+    Junction * p1junction = NULL;
+    p = analysis_point((Junction *)alt1->p1);
+    p1junction = (Junction *) (alt1->p1);
 #if 0
-		if (p != p1junction) {
-			fprintf(stdout,"Analysis point for #%d is #%d", p1junction->seq, p->seq); /* debug */
-		}
+    if (p != p1junction) {
+      fprintf(stdout,"Analysis point for #%d is #%d", p1junction->seq, p->seq); /* debug */
+    }
 #endif
-		REACH(p, k, &rk, alt1->fset[k]);
-		require(set_nil(rk), "rk != nil");
-		set_free(rk);
-		set_orin(&fCurBlk, alt1->fset[k]);
-	}
+    REACH(p, k, &rk, alt1->fset[k]);
+    require(set_nil(rk), "rk != nil");
+    set_free(rk);
+    set_orin(&fCurBlk, alt1->fset[k]);
+  }
 
-	/* D e t e c t  A m b i g u i t i e s */
-	*max_k = 1;
-	for (p1=1,alt1=j; alt1!=NULL; alt1 = (Junction *)alt1->p2, p1++)
-	{
-		for (p2=1,alt2=(Junction *)alt1->p2; alt2!=NULL; alt2 = (Junction *)alt2->p2, p2++)
-		{
-			savek = k;
-			a = set_and(alt1->fset[k], alt2->fset[k]);
-			while ( !set_nil(a) )
-			{
-				/* if we have hit the max k requested, just give warning */
-				if ( j->approx==k ) {
-				}
+  /* D e t e c t  A m b i g u i t i e s */
+  *max_k = 1;
+  for (p1=1,alt1=j; alt1!=NULL; alt1 = (Junction *)alt1->p2, p1++)
+  {
+    for (p2=1,alt2=(Junction *)alt1->p2; alt2!=NULL; alt2 = (Junction *)alt2->p2, p2++)
+    {
+      savek = k;
+      a = set_and(alt1->fset[k], alt2->fset[k]);
+      while ( !set_nil(a) )
+      {
+        /* if we have hit the max k requested, just give warning */
+        if ( j->approx==k ) {
+        }
 
-				if ( k==CLL_k )
-				{
+        if ( k==CLL_k )
+        {
 #ifdef NOT_USED
-***					int save_LL_k = LL_k;
-***					int save_CLL_k = CLL_k;
-***					/* Get new LL_k from interactive feature if enabled */
-***					if ( AImode )
-***						AmbiguityDialog(j, jtype, alt1, alt2, &CLL_k, &LL_k);
+***         int save_LL_k = LL_k;
+***         int save_CLL_k = CLL_k;
+***         /* Get new LL_k from interactive feature if enabled */
+***         if ( AImode )
+***           AmbiguityDialog(j, jtype, alt1, alt2, &CLL_k, &LL_k);
 #endif
-					*max_k = CLL_k;
+          *max_k = CLL_k;
                     save_maintainBackTrace=MR_MaintainBackTrace;
                     if (AlphaBetaTrace) MR_MaintainBackTrace=0;
-					HandleAmbiguity(j, alt1, alt2, jtype);
+          HandleAmbiguity(j, alt1, alt2, jtype);
                     MR_MaintainBackTrace=save_maintainBackTrace;
-					break;
-				}
-				else
-				{
-					Junction *p = analysis_point((Junction *)alt1->p1);
-					Junction *q = analysis_point((Junction *)alt2->p1);
-					k++;	/* attempt ambig alts again with more lookahead */
+          break;
+        }
+        else
+        {
+          Junction *p = analysis_point((Junction *)alt1->p1);
+          Junction *q = analysis_point((Junction *)alt2->p1);
+          k++;  /* attempt ambig alts again with more lookahead */
 
-					REACH(p, k, &rk, alt1->fset[k]);
-					require(set_nil(rk), "rk != nil");
-					REACH(q, k, &rk, alt2->fset[k]);
-					require(set_nil(rk), "rk != nil");
-					set_free(a);
-					a = set_and(alt1->fset[k], alt2->fset[k]);
-					if ( k > *max_k ) *max_k = k;
-				}
-			}
-			set_free(a);
-			k = savek;
-		}
-	}
+          REACH(p, k, &rk, alt1->fset[k]);
+          require(set_nil(rk), "rk != nil");
+          REACH(q, k, &rk, alt2->fset[k]);
+          require(set_nil(rk), "rk != nil");
+          set_free(a);
+          a = set_and(alt1->fset[k], alt2->fset[k]);
+          if ( k > *max_k ) *max_k = k;
+        }
+      }
+      set_free(a);
+      k = savek;
+    }
+  }
 
-	return fCurBlk;
+  return fCurBlk;
 }

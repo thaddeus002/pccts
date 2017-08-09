@@ -1,6 +1,4 @@
 /*
- * pred.c -- source for predicate detection, manipulation
- *
  * SOFTWARE RIGHTS
  *
  * We reserve no LEGAL rights to the Purdue Compiler Construction Tool
@@ -28,9 +26,13 @@
  * 1989-2001
  */
 
+/**
+ * \file pred.c
+ * \brief source for predicate detection, manipulation
+ */
+
 #include <stdio.h>
 #include <string.h>
-#include "pcctscfg.h"
 #include "set.h"
 #include "syn.h"
 #include "hash.h"

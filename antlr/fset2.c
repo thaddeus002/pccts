@@ -1,8 +1,4 @@
 /*
- * fset2.c
- *
- * Compute FIRST sets for full LL(k)
- *
  * SOFTWARE RIGHTS
  *
  * We reserve no LEGAL rights to the Purdue Compiler Construction Tool
@@ -28,6 +24,11 @@
  * Parr Research Corporation
  * with Purdue University and AHPCRC, University of Minnesota
  * 1989-2001
+ */
+
+/**
+ * \file fset2.c
+ * \brief Compute FIRST sets for full LL(k)
  */
 
 #include <stdio.h>

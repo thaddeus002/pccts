@@ -1,25 +1,4 @@
 /*
- * misc.c
- *
- * Manage tokens, regular expressions.
- * Print methods for debugging
- * Compute follow lists onto tail ends of rules.
- *
- * The following functions are visible:
- *
- *    int   addTname(char *);   Add token name
- *    int   addTexpr(char *);   Add token expression
- *    int   Tnum(char *);     Get number of expr/token
- *    void  Tklink(char *, char *); Link a name with an expression
- *    int   hasAction(expr);    Does expr already have action assigned?
- *    void  setHasAction(expr);   Indicate that expr now has an action
- *    Entry *newEntry(char *,int);  Create new table entry with certain size
- *    void  list_add(ListNode **list, char *e)
- *      void    list_free(ListNode **list, int freeData);   *** MR10 ***
- *    void  list_apply(ListNode *list, void (*f)())
- *    void  lexclass(char *m);    switch to new/old lexical class
- *    void  lexmode(int i);     switch to old lexical class i
- *
  * SOFTWARE RIGHTS
  *
  * We reserve no LEGAL rights to the Purdue Compiler Construction Tool
@@ -47,9 +26,32 @@
  * 1989-2001
  */
 
+/**
+ * \file misc.c
+ *
+ * Manage tokens, regular expressions.
+ * Print methods for debugging
+ * Compute follow lists onto tail ends of rules.
+ *
+ * The following functions are visible:
+ *
+ *    int   addTname(char *);   Add token name
+ *    int   addTexpr(char *);   Add token expression
+ *    int   Tnum(char *);     Get number of expr/token
+ *    void  Tklink(char *, char *); Link a name with an expression
+ *    int   hasAction(expr);    Does expr already have action assigned?
+ *    void  setHasAction(expr);   Indicate that expr now has an action
+ *    Entry *newEntry(char *,int);  Create new table entry with certain size
+ *    void  list_add(ListNode **list, char *e)
+ *      void    list_free(ListNode **list, int freeData);   *** MR10 ***
+ *    void  list_apply(ListNode *list, void (*f)())
+ *    void  lexclass(char *m);    switch to new/old lexical class
+ *    void  lexmode(int i);     switch to old lexical class i
+ */
+
+
 #include <stdio.h>
 #include <string.h>
-#include "pcctscfg.h"
 #include "set.h"
 #include "syn.h"
 #include "hash.h"

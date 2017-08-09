@@ -35,7 +35,6 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
-#include "pcctscfg.h"
 #include "set.h"
 #include "syn.h"
 #include "hash.h"

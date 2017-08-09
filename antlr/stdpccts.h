@@ -1,7 +1,9 @@
 #ifndef STDPCCTS_H
 #define STDPCCTS_H
-/*
- * stdpccts.h -- P C C T S  I n c l u d e
+
+/**
+ * \file stdpccts.h
+ * P C C T S  I n c l u d e
  *
  * Terence Parr, Will Cohen, and Hank Dietz: 1989-2001
  * Purdue University Electrical Engineering
@@ -10,13 +12,11 @@
  */
 
 #ifndef ANTLR_VERSION
-#define ANTLR_VERSION	13333
+#define ANTLR_VERSION 13333
 #endif
 
-#include "pcctscfg.h"
 #include "pccts_stdio.h"
 
-#include "pcctscfg.h"
 #include "set.h"
 #include <ctype.h>
 #include "syn.h"
@@ -27,5 +27,4 @@
 #include "antlr.h"
 #include "tokens.h"
 #include "dlgdef.h"
-#include "mode.h"
 #endif

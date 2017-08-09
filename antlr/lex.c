@@ -1,6 +1,4 @@
 /*
- * lex.c  --  Generate all of the lexical type files: parser.dlg tokens.h
- *
  * SOFTWARE RIGHTS
  *
  * We reserve no LEGAL rights to the Purdue Compiler Construction Tool
@@ -28,6 +26,11 @@
  * 1989-2001
  */
 
+/**
+ * \file lex.c
+ * \brief Generate all of the lexical type files: parser.dlg tokens.h
+ */
+
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
@@ -42,13 +45,8 @@
 
 #define DLGErrorString "invalid token"
 
-/* Generate a complete lexical description of the lexemes found in the grammar */
-void
-#ifdef __USE_PROTOS
-genLexDescr( void )
-#else
-genLexDescr( )
-#endif
+/** Generate a complete lexical description of the lexemes found in the grammar */
+void genLexDescr()
 {
   ListNode *p;
   FILE *dlgFile = fopen(OutMetaName(DlgFileName), "w");

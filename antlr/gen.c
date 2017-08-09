@@ -1,8 +1,4 @@
 /*
- * gen.c
- *
- * Generate C code (ANSI, K&R, C++)
- *
  * SOFTWARE RIGHTS
  *
  * We reserve no LEGAL rights to the Purdue Compiler Construction Tool
@@ -30,11 +26,16 @@
  * 1989-2001
  */
 
+/**
+ * \file gen.c
+ * \brief Generate C code (ANSI, K&R, C++)
+ */
+
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
-#include "pcctscfg.h"
 #include "set.h"
 #include "syn.h"
 #include "hash.h"

@@ -1,6 +1,4 @@
 /*
- * mrhoist.c
- *
  * SOFTWARE RIGHTS
  *
  * We reserve no LEGAL rights to the Purdue Compiler Construction Tool
@@ -25,9 +23,13 @@
  *
  */
 
+/**
+ * \file mrhoist.c
+ */
+
+
 #include <stdio.h>
 #include <string.h>
-#include "pcctscfg.h"
 
 #include "set.h"
 #include "syn.h"
