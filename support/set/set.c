@@ -85,7 +85,8 @@ set empty = set_init;
 /** 1 */
 static unsigned int min=1;
 
-#define StrSize     200
+/** */
+#define STR_SIZE     200
 
 
 /** make arg1 a set big enough to hold max elem # of arg2 */
@@ -109,7 +110,7 @@ void set_destroy(set *a) {
 /**
  * Set the minimum size (in words) of a set to reduce realloc calls.
  */
-void set_size(unsigned n)
+void set_size(unsigned int n)
 {
     min = n;
 }
@@ -411,11 +412,11 @@ int set_el(unsigned b, set a)
  */
 int set_nil(set a)
 {
-    register unsigned *p = a.setword;
-    register unsigned *endp;
+    unsigned int *p = a.setword;
+    unsigned int *endp;
 
     if ( a.n == 0 ) return(1);
-    endp = &(a.setword[a.n]);
+    endp = a.setword + a.n;
 
     /* The set is not empty if any word used to store
        the set is non-zero.  This means one must be a
@@ -437,25 +438,29 @@ int set_nil(set a)
  */
 char *set_str(set a)
 {
-    register unsigned *p = a.setword;
-    register unsigned *endp = &(a.setword[a.n]);
-    static char str_tmp[StrSize+1];
-    register char *q = &(str_tmp[0]);
+    unsigned int *p = a.setword;
+    unsigned int *endp = a.setword + a.n;
+    static char str_tmp[STR_SIZE+1];
+    char *q = str_tmp;
 
-    if ( a.n==0 ) {*q=0; return( &(str_tmp[0]) );}
+    if (a.n == 0) {
+        str_tmp[0]='\0';
+        return(str_tmp);
+    }
+
     do {
-        register unsigned t = *p;
-        register unsigned *b = &(bitmask[0]);
+        unsigned int t = *p;
+        unsigned int *b = bitmask;
         do {
-            *(q++) = (char) ((t & *b) ? '1' : '0');
-        } while (++b < &(bitmask[WORDSIZE]));
+            *(q++) = (t & *b) ? '1' : '0';
+        } while (++b < bitmask+WORDSIZE);
     } while (++p < endp);
 
     /* Trim trailing 0s & NULL terminate the string */
-    while ((q > &(str_tmp[0])) && (*(q-1) != '1')) --q;
-    *q = 0;
+    while ((q > str_tmp) && (*(q-1) != '1')) --q;
+    *q = '\0';
 
-    return(&(str_tmp[0]));
+    return(str_tmp);
 }
 
 
