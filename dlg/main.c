@@ -33,6 +33,7 @@
 
 #include <libgen.h> /* for basename() */
 #include <stdio.h>
+#include "dlg.h"
 #include "stdpccts.h"
 
 char *version = "1.33MR33";

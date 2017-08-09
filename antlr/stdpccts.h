@@ -17,11 +17,7 @@
 
 #include "pccts_stdio.h"
 
-#include "set.h"
 #include <ctype.h>
-#include "syn.h"
-#include "hash.h"
-#include "generic.h"
 #define zzcr_attr(attr,tok,t)
 #define zzSET_SIZE 20
 #include "antlr.h"

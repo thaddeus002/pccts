@@ -36,7 +36,9 @@
 /* To set a breakpoint for fatal error look for "fatal_intern" */
 
 #include <stdio.h>
-
+#include "syn.h"
+#include "hash.h"
+#include "generic.h"
 #include "stdpccts.h"
 
 #define MAX_INT_STACK 50
