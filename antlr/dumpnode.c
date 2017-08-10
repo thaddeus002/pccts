@@ -6,12 +6,7 @@
 #include "hash.h"
 #include "generic.h"
 
-#ifdef __USE_PROTOS
 void dumpset1(set s)
-#else
-void dumpset1(s)
-  set   s;
-#endif
 {
   if (set_nil(s)) {
     fprintf(stderr,"{}");
@@ -20,23 +15,13 @@ void dumpset1(s)
   };
 }
 
-#ifdef __USE_PROTOS
 void dumpset(set s)
-#else
-void dumpset(s)
-  set   s;
-#endif
 {
   dumpset1(s);
   fprintf(stderr,"\n");
 }
 
-#ifdef __USE_PROTOS
 int isEndRule(Node * p)
-#else
-int isEndRule(p)
-  Node *    p;
-#endif
 {
   int       result=0;
   if ( p->ntype == nJunction &&
@@ -46,13 +31,7 @@ int isEndRule(p)
   return result;
 }
 
-#ifdef __USE_PROTOS
 void dumppred1(int depth,Predicate *p)
-#else
-void dumppred1(depth,p)
-  int           depth;
-  Predicate     *p;
-#endif
 {
   int       i;
   int       k;
@@ -109,57 +88,31 @@ void dumppred1(depth,p)
   };
 }
 
-#ifdef __USE_PROTOS
 void dumppred(Predicate *p)
-#else
-void dumppred(p)
-  Predicate     *p;
-#endif
 {
   fprintf(stderr,"---------------------------------\n");
   dumppred1(0,p);
   fprintf(stderr,"\n");
 }
 
-#ifdef __USE_PROTOS
 void dumppredtree(Predicate *p)
-#else
-void dumppredtree(p)
-  Predicate     *p;
-#endif
 {
   fprintf(stderr,"predicate k=%d \"%s\" line %d\n",p->k,p->expr,p->source->line);
   dumpset(p->scontext[1]);
 }
 
-#ifdef __USE_PROTOS
 void dumppredexpr(Predicate *p)
-#else
-void dumppredexpr(p)
-  Predicate     *p;
-#endif
 {
   fprintf(stderr,"    pred expr \"%s\"\n",p->expr);
 }
 
-#ifdef __USE_PROTOS
 void dt(Tree *t)
-#else
-void dt(t)
-  Tree  *t;
-#endif
 {
   MR_dumpTreeF(stderr,0,t,5);
 }
 
-#ifdef __USE_PROTOS
 void d(Node * p)
-#else
-void d(p)
-  Node *    p;
-#endif
 {
-
   Junction      *j;
   RuleRefNode   *r;
   TokNode       *t;
@@ -213,7 +166,7 @@ void d(p)
            fprintf(stderr," (p2 valid)");
         };
       };
-	  if (j->ignore) fprintf(stderr, " ignore/plus-block-bypass");
+    if (j->ignore) fprintf(stderr, " ignore/plus-block-bypass");
       if (j->fset != NULL && set_deg(*j->fset) != 0) {
          fprintf(stderr,"\nfset:\n");
          dumpset(*j->fset);
@@ -257,12 +210,7 @@ void d(p)
    };
 }
 
-#ifdef __USE_PROTOS
 Node * dp1(Node * p)
-#else
-Node * dp1(p)
-  Node *    p;
-#endif
 {
   Node  *result=NULL;
 
@@ -275,12 +223,7 @@ Node * dp1(p)
   return result;
 }
 
-#ifdef __USE_PROTOS
 Node * dp2(Node * p)
-#else
-Node * dp2(p)
-  Node *    p;
-#endif
 {
   Node  *result=NULL;
 
@@ -293,13 +236,7 @@ Node * dp2(p)
   return result;
 }
 
-#ifdef __USE_PROTOS
 Node * dn(Node * p)
-#else
-Node * dn(p)
-  Node *    p;
-#endif
-
 {
   Node  *result=NULL;
 
@@ -316,12 +253,7 @@ Node * dn(p)
   return result;
 }
 
-#ifdef __USE_PROTOS
 void df(Node * p)
-#else
-void df(p)
-  Node *    p;
-#endif
 {
   int       count=0;
   Node      *next;
@@ -339,13 +271,7 @@ void df(p)
   };
 }
 
-#ifdef __USE_PROTOS
-Node * dfn(Node * p,int target)
-#else
-Node * dfn(p,target)
-  Node *    p;
-  int       target;
-#endif
+Node *dfn(Node * p,int target)
 {
   Node      *result=NULL;
   int       count=0;
@@ -372,12 +298,7 @@ Node * dfn(p,target)
 
 static int findnodeMatch;
 
-#ifdef __USE_PROTOS
 Junction *findnode1(Node *n)
-#else
-Junction *findnode1(n)
-  Node  *n;
-#endif
 {
    Node         *next;
    Junction     *j;
@@ -399,12 +320,7 @@ Junction *findnode1(n)
    return findnode1(next);
 }
 
-#ifdef __USE_PROTOS
 Junction *findnode(int match)
-#else
-Junction *findnode(match)
-  int   match;
-#endif
 {
   Junction  *j;
   Junction  *result=NULL;

@@ -36,11 +36,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#ifdef PCCTS_USE_STDARG
 #include <stdarg.h>
-#else
-#include <varargs.h>
-#endif
 
 #include "set.h"
 #include "syn.h"
@@ -59,11 +55,7 @@ int maxk;               /* set to initial k upon tree construction request */
                         /* MR11 make global */
 static Tree *FreeList = NULL;
 
-#ifdef __USE_PROTOS
 static int tmember_of_context(Tree *, Predicate *);
-#else
-static int tmember_of_context();
-#endif
 
 #if TREE_DEBUG
 set     set_of_tnodes_in_use;
@@ -74,13 +66,7 @@ int     stop_on_tnode_seq_number=(-1);     /* (-1) to disable */
  * Then each sibling
  */
 
-void
-#ifdef __USE_PROTOS
-preorder( Tree *tree )
-#else
-preorder( tree )
-Tree *tree;
-#endif
+void preorder( Tree *tree )
 {
   if ( tree == NULL ) return;
   if ( tree->down != NULL ) fprintf(stderr, " (");
@@ -92,14 +78,7 @@ Tree *tree;
   preorder(tree->right);
 }
 
-#ifdef __USE_PROTOS
 int MR_tree_matches_constraints(int k,set * constrain,Tree *t)
-#else
-int MR_tree_matches_constraints(k,constrain,t)
-  int       k;
-  set *     constrain;
-  Tree *    t;
-#endif
 {
   int       i;
   Tree      *u;
@@ -144,23 +123,11 @@ int MR_tree_matches_constraints(k,constrain,t)
 static int pruneCount=0;
 static int prunePeak=200;
 
-Tree *
-#ifdef __USE_PROTOS
-prune( Tree *t, int k )
-#else
-prune( t, k )
-Tree *t;
-int k;
-#endif
+Tree *prune( Tree *t, int k )
 {
     pruneCount++;
     if (pruneCount > prunePeak+100) {
       prunePeak=pruneCount;
-#if 0
-***   fprintf(stderr,"pruneCount=%d\n",pruneCount);
-/***  preorder(t);   ***/
-***   fprintf(stderr,"\n",pruneCount);
-#endif
     };
     if ( t == NULL ) {
         pruneCount--;
@@ -229,12 +196,7 @@ va_dcl
 }
 
 Tree *
-#ifdef __USE_PROTOS
 tnode( int tok )
-#else
-tnode( tok )
-int tok;
-#endif
 {
   Tree *p, *newblk;
   static int n=0;
@@ -294,13 +256,7 @@ int tok;
   return p;
 }
 
-static Tree *
-#ifdef __USE_PROTOS
-eofnode( int k )
-#else
-eofnode( k )
-int k;
-#endif
+static Tree *eofnode( int k )
 {
   Tree *t=NULL;
   int i;
@@ -314,13 +270,7 @@ int k;
 
 
 
-void
-#ifdef __USE_PROTOS
-_Tfree( Tree *t )
-#else
-_Tfree( t )
-Tree *t;
-#endif
+void _Tfree( Tree *t )
 {
   if ( t!=NULL )
   {
@@ -339,13 +289,7 @@ Tree *t;
 }
 
 /* tree duplicate */
-Tree *
-#ifdef __USE_PROTOS
-tdup( Tree *t )
-#else
-tdup( t )
-Tree *t;
-#endif
+Tree *tdup( Tree *t )
 {
   Tree *u;
 
@@ -358,13 +302,7 @@ Tree *t;
 }
 
 /* tree duplicate (assume tree is a chain downwards) */
-Tree *
-#ifdef __USE_PROTOS
-tdup_chain( Tree *t )
-#else
-tdup_chain( t )
-Tree *t;
-#endif
+Tree *tdup_chain( Tree *t )
 {
   Tree *u;
 
@@ -375,14 +313,7 @@ Tree *t;
   return u;
 }
 
-Tree *
-#ifdef __USE_PROTOS
-tappend( Tree *t, Tree *u )
-#else
-tappend( t, u )
-Tree *t;
-Tree *u;
-#endif
+Tree *tappend( Tree *t, Tree *u )
 {
   Tree *w;
 
@@ -398,13 +329,7 @@ Tree *u;
 }
 
 /* dealloc all nodes in a tree */
-void
-#ifdef __USE_PROTOS
-Tfree( Tree *t )
-#else
-Tfree( t )
-Tree *t;
-#endif
+void Tfree( Tree *t )
 {
   if ( t == NULL ) return;
   Tfree( t->down );
@@ -428,15 +353,7 @@ Tree *t;
  * We look for all [Ep] needing remaining_k nodes and replace with u.
  * u is not destroyed or actually used by the tree (a copy is made).
  */
-Tree *
-#ifdef __USE_PROTOS
-tlink( Tree *t, Tree *u, int remaining_k )
-#else
-tlink( t, u, remaining_k )
-Tree *t;
-Tree *u;
-int remaining_k;
-#endif
+Tree *tlink( Tree *t, Tree *u, int remaining_k )
 {
   Tree *p;
   require(remaining_k!=0, "tlink: bad tree");
@@ -462,13 +379,7 @@ int remaining_k;
 }
 
 /* remove as many ALT nodes as possible while still maintaining semantics */
-Tree *
-#ifdef __USE_PROTOS
-tshrink( Tree *t )
-#else
-tshrink( t )
-Tree *t;
-#endif
+Tree *tshrink( Tree *t )
 {
   if ( t == NULL ) return NULL;
   t->down = tshrink( t->down );
@@ -503,13 +414,7 @@ Tree *t;
   return t;
 }
 
-Tree *
-#ifdef __USE_PROTOS
-tflatten( Tree *t )
-#else
-tflatten( t )
-Tree *t;
-#endif
+Tree *tflatten( Tree *t )
 {
   if ( t == NULL ) return NULL;
   t->down = tflatten( t->down );
@@ -529,15 +434,7 @@ Tree *t;
   return t;
 }
 
-Tree *
-#ifdef __USE_PROTOS
-tJunc( Junction *p, int k, set *rk )
-#else
-tJunc( p, k, rk )
-Junction *p;
-int k;
-set *rk;
-#endif
+Tree *tJunc( Junction *p, int k, set *rk )
 {
   Tree *t=NULL, *u=NULL;
   Junction *alt;
@@ -677,15 +574,7 @@ set *rk;
   return tmake(tnode(ALT), t, u, NULL);
 }
 
-Tree *
-#ifdef __USE_PROTOS
-tRuleRef( RuleRefNode *p, int k, set *rk_out )
-#else
-tRuleRef( p, k, rk_out )
-RuleRefNode *p;
-int k;
-set *rk_out;
-#endif
+Tree *tRuleRef( RuleRefNode *p, int k, set *rk_out )
 {
   int k2;
   Tree *t=NULL, *u=NULL;
@@ -747,15 +636,7 @@ set *rk_out;
   return t;
 }
 
-Tree *
-#ifdef __USE_PROTOS
-tToken( TokNode *p, int k, set *rk )
-#else
-tToken( p, k, rk )
-TokNode *p;
-int k;
-set *rk;
-#endif
+Tree *tToken( TokNode *p, int k, set *rk )
 {
   Tree *t=NULL, *tset=NULL, *u;
 
@@ -874,21 +755,12 @@ set *rk;
   return tset;
 }
 
-Tree *
-#ifdef __USE_PROTOS
-tAction( ActionNode *p, int k, set *rk )
-#else
-tAction( p, k, rk )
-ActionNode *p;
-int k;
-set *rk;
-#endif
+Tree *tAction( ActionNode *p, int k, set *rk )
 {
   Tree        *t=NULL;
     set         *save_fset=NULL;
     int         i;
 
-  /* fprintf(stderr, "tAction\n"); */
 
 /*  An MR_SuppressSearch is looking for things that can be
       reached even when the predicate is false.
@@ -1020,14 +892,7 @@ EXIT:
 
 /* see if e exists in s as a possible input permutation (e is always a chain) */
 
-int
-#ifdef __USE_PROTOS
-tmember( Tree *e, Tree *s )
-#else
-tmember( e, s )
-Tree *e;
-Tree *s;
-#endif
+int tmember( Tree *e, Tree *s )
 {
   if ( e==NULL||s==NULL ) return 0;
 /** fprintf(stderr, "tmember(");
@@ -1050,14 +915,7 @@ Tree *s;
  * Only check s to the depth of e.  In other words, 'e' can be a shorter
  * sequence than s.
  */
-int
-#ifdef __USE_PROTOS
-tmember_constrained( Tree *e, Tree *s)
-#else
-tmember_constrained( e, s )
-Tree *e;
-Tree *s;
-#endif
+int tmember_constrained( Tree *e, Tree *s)
 {
   if ( e==NULL||s==NULL ) return 0;
 /** fprintf(stderr, "tmember_constrained(");
@@ -1078,13 +936,7 @@ Tree *s;
 }
 
 /* combine (? (A t) ... (A u) ...) into (? (A t u)) */
-Tree *
-#ifdef __USE_PROTOS
-tleft_factor( Tree *t )
-#else
-tleft_factor( t )
-Tree *t;
-#endif
+Tree *tleft_factor( Tree *t )
 {
   Tree *u, *v, *trail, *w;
 
@@ -1117,14 +969,7 @@ Tree *t;
 }
 
 /* remove the permutation p from t if present */
-Tree *
-#ifdef __USE_PROTOS
-trm_perm( Tree *t, Tree *p )
-#else
-trm_perm( t, p )
-Tree *t;
-Tree *p;
-#endif
+Tree *trm_perm( Tree *t, Tree *p )
 {
   /*
   fprintf(stderr, "trm_perm(");
@@ -1161,14 +1006,7 @@ Tree *p;
 }
 
 /* add the permutation 'perm' to the LL_k sets in 'fset' */
-void
-#ifdef __USE_PROTOS
-tcvt( set *fset, Tree *perm )
-#else
-tcvt( fset, perm )
-set *fset;
-Tree *perm;
-#endif
+void tcvt( set *fset, Tree *perm )
 {
   if ( perm==NULL ) return;
   set_orel(perm->token, fset);
@@ -1178,13 +1016,7 @@ Tree *perm;
 /* for each element of ftbl[k], make it the root of a tree with permute(ftbl[k+1])
  * as a child.
  */
-Tree *
-#ifdef __USE_PROTOS
-permute( int k, int max_k )
-#else
-permute( k, max_k )
-int k, max_k;
-#endif
+Tree *permute( int k, int max_k )
 {
   Tree *t, *u;
 
@@ -1209,19 +1041,7 @@ int k, max_k;
  * ALGORITHM may change to look for something other than LL_k size
  * trees ==> maxk will have to change.
  */
-Tree *
-#ifdef __USE_PROTOS
-VerifyAmbig( Junction *alt1, Junction *alt2, unsigned **ft, set *fs, Tree **t, Tree **u, int *numAmbig )
-#else
-VerifyAmbig( alt1, alt2, ft, fs, t, u, numAmbig )
-Junction *alt1;
-Junction *alt2;
-unsigned **ft;
-set *fs;
-Tree **t;
-Tree **u;
-int *numAmbig;
-#endif
+Tree *VerifyAmbig( Junction *alt1, Junction *alt2, unsigned **ft, set *fs, Tree **t, Tree **u, int *numAmbig )
 {
   set rk;
   Tree *perm, *ambig=NULL;
@@ -1338,30 +1158,17 @@ int *numAmbig;
   return ambig;
 }
 
-static Tree *
-#ifdef __USE_PROTOS
-bottom_of_chain( Tree *t )
-#else
-bottom_of_chain( t )
-Tree *t;
-#endif
+static Tree *bottom_of_chain( Tree *t )
 {
     if ( t==NULL ) return NULL;
     for (; t->down != NULL; t=t->down) {;}
     return t;
 }
 
-/*
+/**
  * Make a tree from k sets where the degree of the first k-1 sets is 1.
  */
-Tree *
-#ifdef __USE_PROTOS
-make_tree_from_sets( set *fset1, set *fset2 )
-#else
-make_tree_from_sets( fset1, fset2 )
-set *fset1;
-set *fset2;
-#endif
+Tree *make_tree_from_sets( set *fset1, set *fset2 )
 {
   set inter;
   int i;
@@ -1399,19 +1206,11 @@ set *fset2;
   return t;
 }
 
-/* create and return the tree of lookahead k-sequences that are in t, but not
+/**
+ * Create and return the tree of lookahead k-sequences that are in t, but not
  * in the context of predicates in predicate list p.
  */
-Tree *
-#ifdef __USE_PROTOS
-tdif( Tree *ambig_tuples, Predicate *p, set *fset1, set *fset2 )
-#else
-tdif( ambig_tuples, p, fset1, fset2 )
-Tree *ambig_tuples;
-Predicate *p;
-set *fset1;
-set *fset2;
-#endif
+Tree *tdif( Tree *ambig_tuples, Predicate *p, set *fset1, set *fset2 )
 {
   unsigned **ft;
   Tree *dif=NULL;
@@ -1482,14 +1281,7 @@ set *fset2;
 /* is lookahead sequence t a member of any context tree for any
  * predicate in p?
  */
-static int
-#ifdef __USE_PROTOS
-tmember_of_context( Tree *t, Predicate *p )
-#else
-tmember_of_context( t, p )
-Tree *t;
-Predicate *p;
-#endif
+static int tmember_of_context( Tree *t, Predicate *p )
 {
   for (; p!=NULL; p=p->right)
   {
@@ -1501,13 +1293,7 @@ Predicate *p;
   return 0;
 }
 
-int
-#ifdef __USE_PROTOS
-is_single_tuple( Tree *t )
-#else
-is_single_tuple( t )
-Tree *t;
-#endif
+int is_single_tuple( Tree *t )
 {
   if ( t == NULL ) return 0;
   if ( t->right != NULL ) return 0;
@@ -1519,14 +1305,7 @@ Tree *t;
 /* MR10 Check that a context guard contains only allowed things */
 /* MR10   (mainly token references).                            */
 
-#ifdef __USE_PROTOS
 int contextGuardOK(Node *p,int h,int *hmax)
-#else
-int contextGuardOK(p,h,hmax)
-  Node  *p;
-  int   h;
-  int   *hmax;
-#endif
 {
     Junction     *j;
     TokNode      *tn;
@@ -1577,19 +1356,12 @@ Fail:
  *   --o-->TOKEN-->o-->o-->TOKEN-->o-- ... -->o-->TOKEN-->o--
  * An error is printed for any other type.
  */
-Predicate *
-#ifdef __USE_PROTOS
-computePredFromContextGuard(Graph blk,int *msgDone)    /* MR10 */
-#else
-computePredFromContextGuard(blk,msgDone)               /* MR10 */
-  Graph     blk;
-  int       *msgDone;                                       /* MR10 */
-#endif
+Predicate *computePredFromContextGuard(Graph blk,int *msgDone)    /* MR10 */
 {
     Junction *junc = (Junction *)blk.left, *p;
     Tree        *t=NULL;
-  Predicate   *pred = NULL;
-  set         scontext, rk;
+    Predicate   *pred = NULL;
+    set         scontext, rk;
     int         ok;
     int         hmax=0;
 
@@ -1604,14 +1376,14 @@ computePredFromContextGuard(blk,msgDone)               /* MR10 */
       return NULL;                                          /* MR10 */
     };                                                      /* MR10 */
     if (hmax == 0) {
-errFL("guard is 0 tokens long",FileStr[junc->file],junc->line);          /* MR11 */
+      errFL("guard is 0 tokens long",FileStr[junc->file],junc->line);          /* MR11 */
       *msgDone=1;
       return NULL;
     };
     if (hmax > CLL_k) {                                     /* MR10 */
-errFL(eMsgd2("guard is %d tokens long - lookahead is limited to max(k,ck)==%d", /* MR10 */
-        hmax,CLL_k),                                        /* MR10 */
-        FileStr[junc->file],junc->line);                    /* MR10 */
+      errFL(eMsgd2("guard is %d tokens long - lookahead is limited to max(k,ck)==%d", /* MR10 */
+      hmax,CLL_k),                                        /* MR10 */
+      FileStr[junc->file],junc->line);                    /* MR10 */
       *msgDone=1;                                           /* MR10 */
       return NULL;                                          /* MR10 */
     };                                                      /* MR10 */
@@ -1630,11 +1402,7 @@ errFL(eMsgd2("guard is %d tokens long - lookahead is limited to max(k,ck)==%d", 
     t = tshrink( t );
     t = tflatten( t );
     t = tleft_factor( t );
-/*
-    fprintf(stderr, "ctx guard:");
-    preorder(t);
-    fprintf(stderr, "\n");
-*/
+
     pred->tcontext = t;
   }
   else
@@ -1642,11 +1410,7 @@ errFL(eMsgd2("guard is %d tokens long - lookahead is limited to max(k,ck)==%d", 
     REACH(p, 1, &rk, scontext);
     require(set_nil(rk), "rk != nil");
     set_free(rk);
-/*
-    fprintf(stderr, "LL(1) ctx guard is:");
-    s_fprT(stderr, scontext);
-    fprintf(stderr, "\n");
-*/
+
     pred->scontext[1] = scontext;
   }
 
@@ -1660,12 +1424,7 @@ errFL(eMsgd2("guard is %d tokens long - lookahead is limited to max(k,ck)==%d", 
    meta-tokens are not known.
 */
 
-#ifdef __USE_PROTOS
 void recomputeContextGuard(Predicate *pred)
-#else
-void recomputeContextGuard(pred)
-    Predicate   *pred;
-#endif
 {
     Tree *          t=NULL;
   set             scontext;
@@ -1746,15 +1505,6 @@ void MR_traceAmbSourceKclient()
 
   for (i=0 ; i < 2 ; i++) {
 
-#if 0
-**    fprintf(stdout,"  Choice:%d  Depth:%d  ",i+1,MR_AmbSourceSearchLimit);
-**    fprintf(stdout,"(");
-**    for (j=1 ; j <= MR_AmbSourceSearchLimit ; j++) {
-**      if (j != 1) fprintf(stdout," ");
-**      fprintf(stdout,"%s",TerminalString(tokensInChain[j]));
-**    };
-**    fprintf(stdout,")\n\n");
-#endif
 
     fset=matchSets[i];
 
@@ -1788,12 +1538,7 @@ void MR_traceAmbSourceKclient()
   MR_AmbSourceSearchChoice=0;
 }
 
-#ifdef __USE_PROTOS
 Tree *tTrunc(Tree *t,int depth)
-#else
-Tree *tTrunc(t,depth)
-  Tree  *t;
-#endif
 {
     Tree    *u;
 
@@ -1811,13 +1556,7 @@ Tree *tTrunc(t,depth)
     return u;
 }
 
-#ifdef __USE_PROTOS
 void MR_iterateOverTree(Tree *t,int chain[])
-#else
-void MR_iterateOverTree(t,chain)
-  Tree          *t;
-  int           chain[];
-#endif
 {
   if (t == NULL) return;
   chain[0]=t->token;
@@ -1830,14 +1569,7 @@ void MR_iterateOverTree(t,chain)
   chain[0]=0;
 }
 
-#ifdef __USE_PROTOS
 void MR_traceAmbSourceK(Tree *t,Junction *alt1,Junction *alt2)
-#else
-void MR_traceAmbSourceK(t,alt1,alt2)
-  Tree      *t;
-  Junction  *alt1;
-  Junction  *alt2;
-#endif
 {
     int         i;
     int         depth;
@@ -1926,14 +1658,7 @@ void MR_traceAmbSourceK(t,alt1,alt2)
    the user only specified a ck=3 grammar
 */
 
-#ifdef __USE_PROTOS
 void MR_traceAmbSource(set *matchSets,Junction *alt1, Junction *alt2)
-#else
-void MR_traceAmbSource(matchSets,alt1,alt2)
-  set       *matchSets;
-  Junction  *alt1;
-  Junction  *alt2;
-#endif
 {
     set         *save_fset;
     Junction    *p[2];
@@ -2052,14 +1777,7 @@ void MR_backTraceDumpItemReset() {
   itemCount=0;
 }
 
-#ifdef __USE_PROTOS
 void MR_backTraceDumpItem(FILE *f,int skip,Node *n)
-#else
-void MR_backTraceDumpItem(f,skip,n)
-  FILE      *f;
-  int       skip;
-  Node      *n;
-#endif
 {
   TokNode       *tn;
   RuleRefNode   *rrn;
@@ -2142,11 +1860,7 @@ EXIT:
 
 static PointerStack     previousBackTrace={0,0,NULL};
 
-#ifdef __USE_PROTOS
-void MR_backTraceReport(void)
-#else
 void MR_backTraceReport()
-#endif
 {
   int       i;
   int       match = 0;
@@ -2241,12 +1955,7 @@ void MR_backTraceReport()
   };
 }
 
-#ifdef __USE_PROTOS
 void MR_setConstrainPointer(set * newConstrainValue)
-#else
-void MR_setConstrainPointer(newConstrainValue)
-  set * newConstrainValue;
-#endif
 {
   constrain=newConstrainValue;
 }

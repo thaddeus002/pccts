@@ -103,15 +103,7 @@ static void ensure_predicates_cover_ambiguous_lookahead_sequences
  * the alt and then resetting it afterwards.
  */
 
-set
-#ifdef __USE_PROTOS
-rJunc( Junction *p, int k, set *rk )
-#else
-rJunc( p, k, rk )
-Junction *p;
-int k;
-set *rk;
-#endif
+set rJunc( Junction *p, int k, set *rk )
 {
   set     a, b;
 
@@ -284,15 +276,7 @@ set *rk;
   return a;
 }
 
-set
-#ifdef __USE_PROTOS
-rRuleRef( RuleRefNode *p, int k, set *rk_out )
-#else
-rRuleRef( p, k, rk_out )
-RuleRefNode *p;
-int k;
-set *rk_out;
-#endif
+set rRuleRef( RuleRefNode *p, int k, set *rk_out )
 {
   set rk;
   Junction *r;
@@ -362,15 +346,7 @@ set *rk_out;
  * TJP 10/11/93 modified this so that token nodes that are actually
  * ranges (T1..T2) work.
  */
-set
-#ifdef __USE_PROTOS
-rToken( TokNode *p, int k, set *rk )
-#else
-rToken( p, k, rk )
-TokNode *p;
-int k;
-set *rk;
-#endif
+set rToken( TokNode *p, int k, set *rk )
 {
   set a;
 
@@ -423,15 +399,7 @@ set *rk;
   return a;
 }
 
-set
-#ifdef __USE_PROTOS
-rAction( ActionNode *p, int k, set *rk )
-#else
-rAction( p, k, rk )
-ActionNode *p;
-int k;
-set *rk;
-#endif
+set rAction( ActionNode *p, int k, set *rk )
 {
   set a;
 
@@ -458,19 +426,11 @@ set *rk;
         /* A m b i g u i t y  R e s o l u t i o n */
 
 
-void
-#ifdef __USE_PROTOS
-dumpAmbigMsg( set *fset, FILE *f, int want_nls )
-#else
-dumpAmbigMsg( fset, f, want_nls )
-set *fset;
-FILE *f;
-int want_nls;
-#endif
+void dumpAmbigMsg( set *fset, FILE *f, int want_nls )
 {
   int i;
 
-    set     copy;               /* MR11 */
+  set     copy;               /* MR11 */
 
   if ( want_nls ) fprintf(f, "\n\t");
   else fprintf(f, " ");
@@ -503,13 +463,7 @@ int want_nls;
 
 }
 
-static void
-#ifdef __USE_PROTOS
-verify_context(Predicate *predicate)
-#else
-verify_context(predicate)
-Predicate *predicate;
-#endif
+static void verify_context(Predicate *predicate)
 {
   if ( predicate == NULL ) return;
 
@@ -570,17 +524,8 @@ Predicate *predicate;
  * If ambig is nonempty, then ambig in LL(k) sense -> use tree info; else use fset
  * info.  Actually, sets are used only if k=1 for this grammar.
  */
-static void
-#ifdef __USE_PROTOS
-ensure_predicates_cover_ambiguous_lookahead_sequences
+static void ensure_predicates_cover_ambiguous_lookahead_sequences
                         ( Junction *alt1, Junction *alt2, char *sub, Tree *ambig )
-#else
-ensure_predicates_cover_ambiguous_lookahead_sequences( alt1, alt2, sub, ambig )
-Junction *alt1;
-Junction *alt2;
-char *sub;
-Tree *ambig;
-#endif
 {
   if ( !ParseWithPredicates ) return;
 
@@ -666,16 +611,7 @@ Tree *ambig;
   else fatal_internal("productions have no lookahead in predicate checking routine");
 }
 
-#ifdef __USE_PROTOS
 void MR_doPredicatesHelp(int inGuessBlock,Junction *alt1,Junction *alt2,int jtype,char *sub)
-#else
-void MR_doPredicatesHelp(inGuessBlock,alt1,alt2,jtype,sub)
-  int       inGuessBlock;
-  Junction  *alt1;
-  Junction  *alt2;
-  int       jtype;
-  char      *sub;
-#endif
 {
     Predicate   *p1;
     Predicate   *p2;
@@ -914,16 +850,7 @@ void MR_doPredicatesHelp(inGuessBlock,alt1,alt2,jtype,sub)
 
 static  int     totalOverflow=0;                /* MR9 */
 
-void
-#ifdef __USE_PROTOS
-HandleAmbiguity( Junction *block, Junction *alt1, Junction *alt2, int jtype )
-#else
-HandleAmbiguity( block, alt1, alt2, jtype )
-Junction *block;
-Junction *alt1;
-Junction *alt2;
-int jtype;
-#endif
+void HandleAmbiguity( Junction *block, Junction *alt1, Junction *alt2, int jtype )
 {
   unsigned **ftbl;
   set *fset, b;
@@ -955,13 +882,6 @@ int jtype;
 /* MR10 */        n *= set_deg_value;
 /* MR10 */        } else {
 /* MR10 */          n=LONG_MAX;
-/* MR9 */           if (totalOverflow == 0) {
-#if 0
-                      /* MR10 comment this out because it just makes users worry */
-
-/* MR9 */             warnNoFL("Overflow in computing number of possible ambiguities in HandleAmbiguity\n");
-#endif
-/* MR9 */           };
 /* MR9 */           thisOverflow++;
 /* MR9 */           totalOverflow++;
 /* MR9 */         };
@@ -1378,13 +1298,7 @@ int jtype;
 /* Don't analyze alpha block of (alpha)?beta; if (alpha)? then analyze
  * Return the 1st node of the beta block if present else return j.
  */
-Junction *
-#ifdef __USE_PROTOS
-analysis_point( Junction *j )
-#else
-analysis_point( j )
-Junction *j;
-#endif
+Junction *analysis_point( Junction *j )
 {
   Junction *gblock;
 
@@ -1458,16 +1372,7 @@ Junction *j;
   return j;
 }
 
-set
-#ifdef __USE_PROTOS
-First( Junction *j, int k, int jtype, int *max_k )
-#else
-First( j, k, jtype, max_k )
-Junction *j;
-int k;
-int jtype;
-int *max_k;
-#endif
+set First( Junction *j, int k, int jtype, int *max_k )
 {
   Junction *alt1, *alt2;
   set a, rk, fCurBlk;
@@ -1486,11 +1391,6 @@ int *max_k;
     Junction * p1junction = NULL;
     p = analysis_point((Junction *)alt1->p1);
     p1junction = (Junction *) (alt1->p1);
-#if 0
-    if (p != p1junction) {
-      fprintf(stdout,"Analysis point for #%d is #%d", p1junction->seq, p->seq); /* debug */
-    }
-#endif
     REACH(p, k, &rk, alt1->fset[k]);
     require(set_nil(rk), "rk != nil");
     set_free(rk);

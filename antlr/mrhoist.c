@@ -38,11 +38,7 @@
 #include "dlgdef.h"
 #include <ctype.h>
 
-#ifdef __USE_PROTOS
 void dumppred(Predicate *);
-#else
-void dumppred();
-#endif
 
 /*
   Try to determine whether predicate "first" is true for
@@ -53,13 +49,7 @@ void dumppred();
 
 */
 
-#ifdef __USE_PROTOS
 int MR_secondPredicateUnreachable(Predicate *first,Predicate *second)
-#else
-int MR_secondPredicateUnreachable(first,second)
-  Predicate     *first;
-  Predicate     *second;
-#endif
 {
   Predicate     *f;
   Predicate     *s;
@@ -186,13 +176,7 @@ B_next_f:
   return 0; /* MR20 MSVC 5.0 complains about missing return statement */
 }
 
-#ifdef __USE_PROTOS
 void MR_xxxIndent(FILE *f,int depth)
-#else
-void MR_xxxIndent(f,depth)
-  FILE  *f;
-  int   depth;
-#endif
 {
   int   i;
 
@@ -201,44 +185,23 @@ void MR_xxxIndent(f,depth)
   };
 }
 
-#ifdef __USE_PROTOS
 void MR_stderrIndent(int depth)
-#else
-void MR_stderrIndent(depth)
-  int   depth;
-#endif
 {
   MR_xxxIndent(stderr,depth);
 }
 
-#ifdef __USE_PROTOS
 void MR_outputIndent(int depth)
-#else
-void MR_outputIndent(depth)
-  int   depth;
-#endif
 {
   MR_xxxIndent(output,depth);
 }
 
-#ifdef __USE_PROTOS
 void MR_set_reuse(set *s)
-#else
-void MR_set_reuse(s)
-  set   *s;
-#endif
 {
   set_free(*s);
   *s=empty;
 }
 
-#ifdef __USE_PROTOS
 void MR_dumpPredRuleRefStack(FILE *iounit,int indent)
-#else
-void MR_dumpPredRuleRefStack(iounit,indent)
-  FILE  *iounit;
-  int   indent;
-#endif
 {
     int             i;
     int             j;
@@ -264,24 +227,16 @@ void MR_dumpPredRuleRefStack(iounit,indent)
     };
 }
 
-#ifdef __USE_PROTOS
 void MR_dumpTreeF(FILE *f,int depth,Tree *tree,int across)
-#else
-void MR_dumpTreeF(f,depth,tree,across)
-  FILE  *f;
-  Tree  *tree;
-  int   depth;
-  int   across;
-#endif
 {
-    int     newAcross=across;
+  int     newAcross=across;
 
   if (tree == NULL ) return;
   if (tree->down != NULL ) {
       fprintf(output,"\n");
       MR_outputIndent(depth);
       fprintf(output, "(root =");
-    };
+  };
   if (tree->token == ALT ) {
       fprintf(output," %-16s","Alt");
   } else if (tree->token==EpToken ) {
@@ -306,26 +261,12 @@ void MR_dumpTreeF(f,depth,tree,across)
     MR_dumpTreeF(f,depth,tree->right,newAcross+1);
 }
 
-#ifdef __USE_PROTOS
 void MR_dumpTreeX(int depth,Tree *tree,int across)
-#else
-void MR_dumpTreeX(depth,tree,across)
-  Tree  *tree;
-  int   depth;
-  int   across;
-#endif
 {
   MR_dumpTreeF(output,depth,tree,across);
 }
 
-#ifdef __USE_PROTOS
 void MR_dumpTokenSet(FILE *f,int depth,set s)
-#else
-void MR_dumpTokenSet(f,depth,s)
-  FILE  *f;
-  int   depth;
-  set   s;
-#endif
 {
     int     i;
     int     j;
@@ -355,14 +296,7 @@ void MR_dumpTokenSet(f,depth,s)
     free( (char *) pdq);
 }
 
-#ifdef __USE_PROTOS
 void MR_dumpPred1(int depth,Predicate *p,int withContext)
-#else
-void MR_dumpPred1(depth,p,withContext)
-  int           depth;
-  Predicate     *p;
-  int           withContext;
-#endif
 {
   unsigned      k;
 
@@ -441,23 +375,12 @@ void MR_dumpPred1(depth,p,withContext)
   };
 }
 
-#ifdef __USE_PROTOS
 void MR_dumpPred(Predicate *p,int withContext)
-#else
-void MR_dumpPred(p,withContext)
-  Predicate     *p;
-  int           withContext;
-#endif
 {
   MR_dumpPred1(0,p,withContext);
 }
 
-#ifdef __USE_PROTOS
 Tree * MR_make_tree_from_set(set s)
-#else
-Tree * MR_make_tree_from_set(s)
-  set   s;
-#endif
 {
   Tree  *t=NULL;
   Tree  *node;
@@ -478,13 +401,7 @@ Tree * MR_make_tree_from_set(s)
   return t;
 }
 
-#ifdef __USE_PROTOS
 void MR_check_pred_too_long(Predicate *p,set completion)
-#else
-void MR_check_pred_too_long(p,completion)
-  Predicate     *p;
-  set           completion;
-#endif
 {
   if (p != NULL &&
       p->source != NULL &&
@@ -497,12 +414,7 @@ warnFL("It is unusual (but ok) for a semantic predicate to test context past the
   };
 }
 
-#ifdef __USE_PROTOS
 int MR_predicate_context_completed(Predicate *p)
-#else
-int MR_predicate_context_completed(p)
-  Predicate     *p;
-#endif
 {
   if (p == NULL) return 1;
   if (p->expr != PRED_AND_LIST &&
@@ -514,12 +426,7 @@ int MR_predicate_context_completed(p)
          MR_predicate_context_completed(p->right);
 }
 
-#ifdef __USE_PROTOS
 Node * MR_advance(Node *n)
-#else
-Node * MR_advance(n)
-  Node  *n;
-#endif
 {
     if (n == NULL) return NULL;
     switch (n->ntype) {
@@ -529,15 +436,10 @@ Node * MR_advance(n)
       case nAction:     return ((ActionNode *)n)->next;
       default:          return NULL;
     };
-  return NULL; /* MSVC 5.0 complains about missing return statement */
+    return NULL; /* MSVC 5.0 complains about missing return statement */
 }
 
-#ifdef __USE_PROTOS
 Junction * MR_find_endRule(Node *n)
-#else
-Junction * MR_find_endRule(n)
-  Node  *n;
-#endif
 {
     Node    *next;
     if (n == NULL) return NULL;
@@ -559,13 +461,7 @@ Junction * MR_find_endRule(n)
 
 */
 
-#ifdef __USE_PROTOS
 Tree *MR_computeTreeIntersection(Tree *l,Tree *r)
-#else
-Tree *MR_computeTreeIntersection(l,r)
-    Tree    *l;
-    Tree    *r;
-#endif
 {
     Tree    *result=NULL;
     Tree    **tail;
@@ -620,13 +516,7 @@ Tree *MR_computeTreeIntersection(l,r)
 
 /* requires input trees to be in "canonical" format */
 
-#ifdef __USE_PROTOS
 Tree *MR_computeTreeAND(Tree *l,Tree *r)
-#else
-Tree *MR_computeTreeAND(l,r)
-    Tree    *l;
-    Tree    *r;
-#endif
 {
     Tree    *result=NULL;
     Tree    **tail;
@@ -667,13 +557,7 @@ Tree *MR_computeTreeAND(l,r)
     return result;
 }
 
-#ifdef __USE_PROTOS
 void MR_union_plain_sets1(Predicate *p,set *theUnion)
-#else
-void MR_union_plain_sets1(p,theUnion)
-  Predicate     *p;
-  set           *theUnion;
-#endif
 {
   if (p == NULL) return;
   MR_union_plain_sets1(p->down,theUnion);
@@ -682,12 +566,7 @@ void MR_union_plain_sets1(p,theUnion)
   return;
 }
 
-#ifdef __USE_PROTOS
 set MR_union_plain_sets(Predicate *p)
-#else
-set MR_union_plain_sets(p)
-  Predicate     *p;
-#endif
 {
   set   theUnion;
 
@@ -702,12 +581,7 @@ set MR_union_plain_sets(p)
    in fact the opposite: (A B) with (A) gives (A)
 */
 
-#ifdef __USE_PROTOS
 Tree *MR_compute_pred_tree_ctxXX(Predicate *p)
-#else
-Tree *MR_compute_pred_tree_ctxXX(p)
-  Predicate     *p;
-#endif
 {
     Tree        *result=NULL;
     Predicate   *q;
@@ -746,39 +620,6 @@ Tree *MR_compute_pred_tree_ctxXX(p)
       return result;
     };
 
-#if 0
-**    if (p->expr == PRED_AND_LIST) {
-**
-**      Predicate     *l;
-**      Predicate     *r;
-**      Tree          *l1;
-**      Tree          *r1;
-**      Tree          *prevl1;
-**
-**      l=p->down;
-**      require (l->right != NULL,"MR_compute_pred_tree - AND has only one child");
-**
-**/* l1 and r1 should already be in "canonical" format */
-**
-**      l1=MR_compute_pred_tree(l);
-**      for (r=l->right; r != NULL; r=r->right) {
-**        r1=MR_compute_pred_tree(r);
-**        prevl1=l1;
-**        l1=MR_computeTreeAND(l1,r1);
-**        Tfree(r1);
-**        Tfree(prevl1);
-**      };
-**
-**/* result from computeTreeAND should be in "canonical" format */
-**
-**      result=l1;
-**
-**/* result of MR_computeTreeAND should be in "canonical" format */
-**
-**      return result;
-**    };
-#endif
-
     if (p->k == 1) {
       result=MR_make_tree_from_set(p->scontext[1]);
     } else {
@@ -791,13 +632,7 @@ Tree *MR_compute_pred_tree_ctxXX(p)
     return result;
 }
 
-#ifdef __USE_PROTOS
 void MR_pred_depth(Predicate *p,int *maxDepth)
-#else
-void MR_pred_depth(p,maxDepth)
-  Predicate     *p;
-  int           *maxDepth;
-#endif
 {
   if (p == NULL) return;
   if (p->expr != PRED_OR_LIST &&
@@ -810,12 +645,7 @@ void MR_pred_depth(p,maxDepth)
 
 /* this computes the OR of all the contexts */
 
-#ifdef __USE_PROTOS
 set MR_compute_pred_set(Predicate *p)
-#else
-set MR_compute_pred_set(p)
-  Predicate     *p;
-#endif
 {
     set         result;
     Predicate   *q;
@@ -846,35 +676,23 @@ set MR_compute_pred_set(p)
     };
 }
 
-#ifdef __USE_PROTOS
 set MR_First(int ck,Junction *j,set *incomplete)
-#else
-set MR_First(ck,j,incomplete)
-  int       ck;
-  Junction  *j;
-  set       *incomplete;
-#endif
 {
     Junction    *p;
     set         tokensUsed;
 
     tokensUsed=empty;
 
-  require(j->ntype==nJunction, "MR_First: non junction passed");
+    require(j->ntype==nJunction, "MR_First: non junction passed");
 
-  p = analysis_point((Junction *)j->p1);
+    p = analysis_point((Junction *)j->p1);
 
-  REACH(p,ck,incomplete,tokensUsed);
+    REACH(p,ck,incomplete,tokensUsed);
 
     return tokensUsed;
 }
 
-#ifdef __USE_PROTOS
 void MR_cleanup_pred_trees(Predicate *p)
-#else
-void MR_cleanup_pred_trees(p)
-  Predicate     *p;
-#endif
 {
   Tree      *t;
 
@@ -893,12 +711,7 @@ void MR_cleanup_pred_trees(p)
 
 /* does NOT return canonical tree */
 
-#ifdef __USE_PROTOS
 Tree * MR_remove_epsilon_from_tree(Tree *t)
-#else
-Tree * MR_remove_epsilon_from_tree(t)
-  Tree  *t;
-#endif
 {
   if (t == NULL) return NULL;
 
@@ -917,14 +730,7 @@ Tree * MR_remove_epsilon_from_tree(t)
   };
 }
 
-#ifdef __USE_PROTOS
 void MR_complete_set(int predDepth,set *tokensUsed,set *incomplete)
-#else
-void MR_complete_set(predDepth,tokensUsed,incomplete)
-  int       predDepth;
-  set       *tokensUsed;
-  set       *incomplete;
-#endif
 {
     int             i;
     RuleRefNode     *ruleRef;
@@ -982,20 +788,13 @@ void MR_complete_set(predDepth,tokensUsed,incomplete)
     };
 }
 
-#ifdef __USE_PROTOS
 void MR_complete_tree(int predDepth,Tree **t,set *incomplete)
-#else
-void MR_complete_tree(predDepth,t,incomplete)
-  int       predDepth;
-  Tree      **t;
-  set       *incomplete;
-#endif
 {
     int             i;
     RuleRefNode     *ruleRef;
-  set             rk2;
+    set             rk2;
     Tree            *u;
-  unsigned        k2;
+    unsigned        k2;
     Junction        *save_MR_RuleBlkWithHalt;
     int             saveConstrainSearch;
 
@@ -1058,13 +857,7 @@ void MR_complete_tree(predDepth,t,incomplete)
     ConstrainSearch=saveConstrainSearch;
 }
 
-#ifdef __USE_PROTOS
 void MR_complete_predicates(int predDepth,Predicate *pred)
-#else
-void MR_complete_predicates(predDepth,pred)
-  int           predDepth;
-  Predicate     *pred;
-#endif
 {
   if (pred == NULL) return;
   if (pred->expr != PRED_AND_LIST &&
@@ -1076,12 +869,7 @@ void MR_complete_predicates(predDepth,pred)
   MR_complete_predicates(predDepth,pred->right);
 }
 
-#ifdef __USE_PROTOS
 Junction * MR_junctionWithoutP2(Junction *j)
-#else
-Junction * MR_junctionWithoutP2(j)
-  Junction  *j;
-#endif
 {
   Junction  *thisAlt;
 
@@ -1105,14 +893,7 @@ Junction * MR_junctionWithoutP2(j)
   return thisAlt;
 }
 
-#ifdef __USE_PROTOS
 int MR_tree_equ(Tree *big, Tree *small) {
-#else
-int MR_tree_equ(big,small)
-  Tree  *big;
-  Tree  *small;
-{
-#endif
 
   Tree      *b;
   Tree      *s;
@@ -1159,13 +940,7 @@ next_s:
 
 /* this does not compare sources - only contexts ! */
 
-#ifdef __USE_PROTOS
 int MR_identicalContext(Predicate *p,Predicate *q)
-#else
-int MR_identicalContext(p,q)
-  Predicate     *p;
-  Predicate     *q;
-#endif
 {
   if (p->k != q->k) return 0;
   require ( (p->tcontext == NULL) == (q->tcontext == NULL),
@@ -1177,18 +952,8 @@ int MR_identicalContext(p,q)
   };
 }
 
-#ifdef __USE_PROTOS
 void MR_reportSetSuppression(int predDepth,
             set predSet,set plainSet,Junction *jPred,Junction *jPlain,Predicate *p)
-#else
-void MR_reportSetSuppression(predDepth,predSet,plainSet,jPred,jPlain,p)
-  int       predDepth;
-  set       predSet;
-  set       plainSet;
-  Junction  *jPred;
-  Junction  *jPlain;
-  Predicate *p;
-#endif
 {
   if (InfoP) {
     fprintf(output,"\n#if 0\n\n");
@@ -1214,19 +979,8 @@ void MR_reportSetSuppression(predDepth,predSet,plainSet,jPred,jPlain,p)
   };
 }
 
-#ifdef __USE_PROTOS
 void MR_reportSetRestriction(int predDepth,set predSet,set plainSet,
             Junction *jPred,Junction *jPlain,Predicate *origPred,Predicate *newPred)
-#else
-void MR_reportSetRestriction(predDepth,predSet,plainSet,jPred,jPlain,origPred,newPred)
-  int       predDepth;
-  set       predSet;
-  set       plainSet;
-  Junction  *jPred;
-  Junction  *jPlain;
-  Predicate *origPred;
-  Predicate *newPred;
-#endif
 {
   set       intersect;
 
@@ -1267,12 +1021,7 @@ void MR_reportSetRestriction(predDepth,predSet,plainSet,jPred,jPlain,origPred,ne
 
 /* don't use Pass3 by itself unless you know that inverted is not important */
 
-#ifdef __USE_PROTOS
 Predicate * MR_removeRedundantPredPass3(Predicate *p)
-#else
-Predicate * MR_removeRedundantPredPass3(p)
-  Predicate *p;
-#endif
 {
   Predicate     *q;
 
@@ -1304,12 +1053,7 @@ Predicate * MR_removeRedundantPredPass3(p)
   return p;
 }
 
-#ifdef __USE_PROTOS
 void MR_removeRedundantPredPass2(Predicate *p)
-#else
-void MR_removeRedundantPredPass2(p)
-  Predicate *p;
-#endif
 {
   Predicate     *q;
 
@@ -1348,26 +1092,19 @@ void MR_removeRedundantPredPass2(p)
   return;
 }
 
-#if 0
+/*
    this totally ignores the implications of guarded predicates
      in which the part after the guard could possibly cover a predicate.
    that would be much harder:
 
-        rule : (A)? => <<p>>? sub1;     /* 1 */
-             | (B)? => <<r>>? sub2      /* 2 */
-        sub1 : (A)? => <<q>>? A B       /* 3 */
-             | B                        /* 4 - suppresses line 2 */
+        rule : (A)? => <<p>>? sub1;     // 1
+             | (B)? => <<r>>? sub2      // 2
+        sub1 : (A)? => <<q>>? A B       // 3
+             | B                        // 4 - suppresses line 2
              ;
-#endif
+*/
 
-#ifdef __USE_PROTOS
 void MR_apply_restriction1(Predicate *pred,set *plainSet,int *changed)
-#else
-void MR_apply_restriction1(pred,plainSet,changed)
-  Predicate     *pred;
-  set           *plainSet;
-  int           *changed;
-#endif
 {
   if (pred == NULL) return;
   MR_apply_restriction1(pred->right,plainSet,changed);
@@ -1390,13 +1127,7 @@ void MR_apply_restriction1(pred,plainSet,changed)
   };
 }
 
-#ifdef __USE_PROTOS
 void MR_orin_plainSet(Predicate *p,set plainSet)
-#else
-void MR_orin_plainSet(p,plainSet)
-  Predicate     *p;
-  set           plainSet;
-#endif
 {
   if (p == NULL) return;
   MR_orin_plainSet(p->down,plainSet);
@@ -1406,17 +1137,12 @@ void MR_orin_plainSet(p,plainSet)
 
 Predicate   *PRED_SUPPRESS;
 
-#ifdef __USE_PROTOS
 Predicate * MR_find_in_aSubBlk(Junction *alt)
-#else
-Predicate * MR_find_in_aSubBlk(alt)
-  Junction  *alt;
-#endif
 {
     Predicate       *root=NULL;
     Predicate       **tail=NULL;
 
-  Junction        *p;
+    Junction        *p;
 
     int             nAlts=0;
     Junction        **jList;
@@ -1721,14 +1447,7 @@ EXIT_SIMPLE:
   return root;
 }
 
-#ifdef __USE_PROTOS
 void MR_predContextPresent(Predicate *p,int *allHaveContext,int *noneHaveContext)
-#else
-void MR_predContextPresent(p,allHaveContext,noneHaveContext)
-  Predicate     *p;
-  int           *allHaveContext;
-  int           *noneHaveContext;
-#endif
 {
   if (p == NULL) return;
   MR_predContextPresent(p->right,allHaveContext,noneHaveContext);
@@ -1744,13 +1463,7 @@ void MR_predContextPresent(p,allHaveContext,noneHaveContext)
   MR_predContextPresent(p->down,allHaveContext,noneHaveContext);
 }
 
-#ifdef __USE_PROTOS
 int MR_pointerStackPush(PointerStack *ps,void *dataPointer)
-#else
-int MR_pointerStackPush(ps,dataPointer)
-  PointerStack  *ps;
-  void          *dataPointer;
-#endif
 {
   void             **newStack;
   int              newSize;
@@ -1772,12 +1485,7 @@ int MR_pointerStackPush(ps,dataPointer)
   return ps->count-1;
 }
 
-#ifdef __USE_PROTOS
 void * MR_pointerStackPop(PointerStack *ps)
-#else
-void * MR_pointerStackPop(ps)
-  PointerStack  *ps;
-#endif
 {
   void  *dataPointer;
 
@@ -1789,23 +1497,13 @@ void * MR_pointerStackPop(ps)
   return dataPointer;
 }
 
-#ifdef __USE_PROTOS
 void * MR_pointerStackTop(PointerStack *ps)
-#else
-void * MR_pointerStackTop(ps)
-  PointerStack  *ps;
-#endif
 {
   require(ps->count > 0,"MR_pointerStackTop underflow");
   return ps->data[ps->count-1];
 }
 
-#ifdef __USE_PROTOS
 void MR_pointerStackReset(PointerStack *ps)
-#else
-void MR_pointerStackReset(ps)
-  PointerStack  *ps;
-#endif
 {
   int i;
   if (ps->data != NULL) {
@@ -1816,12 +1514,7 @@ void MR_pointerStackReset(ps)
   ps->count=0;
 }
 
-#ifdef __USE_PROTOS
 Junction *MR_nameToRuleBlk(char *name)
-#else
-Junction *MR_nameToRuleBlk(name)
-  char  *name;
-#endif
 {
     RuleEntry *q;
 
@@ -1831,32 +1524,19 @@ Junction *MR_nameToRuleBlk(name)
 
     q = (RuleEntry *) hash_get(Rname,name);
 
-  if ( q == NULL ) {
+    if ( q == NULL ) {
       return NULL;
     } else {
       return RulePtr[q->rulenum];
     };
 }
 
-#ifdef __USE_PROTOS
 Junction * MR_ruleReferenced(RuleRefNode *rrn)
-#else
-Junction * MR_ruleReferenced(rrn)
-  RuleRefNode   *rrn;
-#endif
 {
     return MR_nameToRuleBlk(rrn->text);
 }
 
-#ifdef __USE_PROTOS
 void MR_comparePredLeaves(Predicate *me,Predicate *myParent,Predicate *him,Predicate *hisParent)
-#else
-void MR_comparePredLeaves(me,myParent,him,hisParent)
-    Predicate *me;
-    Predicate *myParent;
-    Predicate *him;
-    Predicate *hisParent;
-#endif
 {
     if (me == NULL) return;
     if (me == him) {
@@ -1934,13 +1614,7 @@ void MR_comparePredLeaves(me,myParent,him,hisParent)
     };
 }
 
-#ifdef __USE_PROTOS
 void MR_removeRedundantPredPass1(Predicate *me,Predicate *myParent)
-#else
-void MR_removeRedundantPredPass1(me,myParent)
-  Predicate     *me;
-  Predicate     *myParent;
-#endif
 {
     if (me == NULL) return;
     if (me->redundant) {
@@ -1962,12 +1636,7 @@ void MR_removeRedundantPredPass1(me,myParent)
 
 /* pretty much ignores things with the inverted bit set */
 
-#ifdef __USE_PROTOS
 Predicate *MR_predFlatten(Predicate *p)
-#else
-Predicate *MR_predFlatten(p)
-  Predicate     *p;
-#endif
 {
     if (p == NULL) return NULL;
     if (p->expr == PRED_OR_LIST
@@ -2027,12 +1696,7 @@ Predicate *MR_predFlatten(p)
 
 static char *alwaysFalseWarning=NULL;
 
-#ifdef __USE_PROTOS
 Predicate *checkPredicateConflict(Predicate *p)
-#else
-Predicate *checkPredicateConflict(p)
-  Predicate     *p;
-#endif
 {
   if (p->isConst) {
     if (p->constValue == 1) {
@@ -2063,24 +1727,13 @@ Predicate *checkPredicateConflict(p)
 }
 
 
-#ifdef __USE_PROTOS
 int MR_countPredNodes(Predicate *p)
-#else
-int MR_countPredNodes(p)
-  Predicate     *p;
-#endif
 {
   if (p == NULL) return 0;
   return 1 + MR_countPredNodes(p->down) + MR_countPredNodes(p->right);
 }
 
-#ifdef __USE_PROTOS
 Predicate *MR_predSimplifyALLX(Predicate *p,int skipPass3)
-#else
-Predicate *MR_predSimplifyALLX(p,skipPass3)
-  Predicate     *p;
-  int           skipPass3;
-#endif
 {
   int       countBefore;
   int       countAfter;
@@ -2105,22 +1758,12 @@ Predicate *MR_predSimplifyALLX(p,skipPass3)
   return p;
 }
 
-#ifdef __USE_PROTOS
 Predicate *MR_predSimplifyALL(Predicate *p)
-#else
-Predicate *MR_predSimplifyALL(p)
-  Predicate     *p;
-#endif
 {
   return MR_predSimplifyALLX(p,0);
 }
 
-#ifdef __USE_PROTOS
 void MR_releaseResourcesUsedInRule(Node *n)
-#else
-void MR_releaseResourcesUsedInRule(n)
-  Node  *n;
-#endif
 {
    Node         *next;
    Junction     *j;
@@ -2153,12 +1796,7 @@ void MR_releaseResourcesUsedInRule(n)
    MR_releaseResourcesUsedInRule(next);
 }
 
-#ifdef __USE_PROTOS
 int MR_allPredLeaves(Predicate *p)
-#else
-int MR_allPredLeaves(p)
-  Predicate *p;
-#endif
 {
   Predicate     *q;
 
@@ -2172,12 +1810,7 @@ int MR_allPredLeaves(p)
 
 /* make sure it works for the last rule in a file */
 
-#ifdef __USE_PROTOS
 int MR_offsetFromRule(Node *n)
-#else
-int MR_offsetFromRule(n)
-  Node      *n;
-#endif
 {
   Junction  *j;
   int       offset=(-1);
@@ -2206,12 +1839,7 @@ int MR_offsetFromRule(n)
 static char ruleNameStatic1[ruleNameMax];
 static char ruleNameStatic2[ruleNameMax+10];
 
-#ifdef __USE_PROTOS
 char * MR_ruleNamePlusOffset(Node *n)
-#else
-char * MR_ruleNamePlusOffset(n)
-  Node      *n;
-#endif
 {
     int     offset=MR_offsetFromRule(n);
 
@@ -2224,12 +1852,7 @@ char * MR_ruleNamePlusOffset(n)
     return ruleNameStatic2;
 }
 
-#ifdef __USE_PROTOS
 int MR_max_height_of_tree(Tree *t)
-#else
-int MR_max_height_of_tree(t)
-  Tree  *t;
-#endif
 {
   int       h;
   int       height=0;
@@ -2246,13 +1869,7 @@ int MR_max_height_of_tree(t)
   return height;
 }
 
-#ifdef __USE_PROTOS
 int MR_all_leaves_same_height(Tree *t,int depth)
-#else
-int MR_all_leaves_same_height(t,depth)
-  Tree  *t;
-  int   depth;
-#endif
 {
   if (t == NULL) {
     return (depth==0);
@@ -2274,14 +1891,7 @@ int MR_all_leaves_same_height(t,depth)
   };
 }
 
-#ifdef __USE_PROTOS
 void MR_projectTreeOntoSet(Tree *tree,int ck,set *ckset)
-#else
-void MR_projectTreeOntoSet(tree,ck,ckset)
-  Tree  *tree;
-  int   ck;
-  set   *ckset;
-#endif
 {
     if (tree == NULL) return;
 
@@ -2299,13 +1909,7 @@ void MR_projectTreeOntoSet(tree,ck,ckset)
     };
 }
 
-#ifdef __USE_PROTOS
 int MR_comparePredicates(Predicate *a,Predicate *b)
-#else
-int MR_comparePredicates(a,b)
-  Predicate     *a;
-  Predicate     *b;
-#endif
 {
   Predicate     *p;
   Predicate     *q;
@@ -2388,12 +1992,7 @@ NEXT_P:
  *    a new predicate symbol is created by referring to others in the pred expr.
  */
 
-#ifdef __USE_PROTOS
 Predicate *MR_unfold(Predicate *pred)
-#else
-Predicate *MR_unfold(pred)
-  Predicate     *pred;
-#endif
 {
   Predicate     *result;
 
@@ -2432,13 +2031,7 @@ Predicate *MR_unfold(pred)
    at no other times
 */
 
-#ifdef __USE_PROTOS
 void MR_simplifyInverted(Predicate *pred,int inverted)
-#else
-void MR_simplifyInverted(pred,inverted)
-  Predicate     *pred;
-  int           inverted;
-#endif
 {
   int       newInverted;
 
@@ -2465,12 +2058,7 @@ void MR_simplifyInverted(pred,inverted)
 
 /* only remove it from AND and OR nodes, not leaves */
 
-#ifdef __USE_PROTOS
 void MR_clearPredEntry(Predicate *p)
-#else
-void MR_clearPredEntry(p)
-  Predicate     *p;
-#endif
 {
    if (p == NULL) return;
    MR_clearPredEntry(p->down);
@@ -2479,12 +2067,7 @@ void MR_clearPredEntry(p)
 }
 
 
-#ifdef __USE_PROTOS
 void MR_orphanRules(FILE *f)
-#else
-void MR_orphanRules(f)
-  FILE      *f;
-#endif
 {
   set         a;
     Junction    *p;
@@ -2519,13 +2102,7 @@ void MR_orphanRules(f)
 static int      *mergeChain;
 static Tree     *mergeTree;
 
-#ifdef __USE_PROTOS
 Tree *MR_merge_tree_contexts_client(Tree *t,int chain[])
-#else
-Tree *MR_merge_tree_contexts_client(t,chain)
-  Tree  *t;
-  int   chain[];
-#endif
 {
   if (t == NULL)  return NULL;
   if (chain[0] == 0) {
@@ -2541,13 +2118,7 @@ Tree *MR_merge_tree_contexts_client(t,chain)
   return t;
 }
 
-#ifdef __USE_PROTOS
 void MR_iterateOverTreeContexts(Tree *t,int chain[])
-#else
-void MR_iterateOverTreeContexts(t,chain)
-  Tree          *t;
-  int           chain[];
-#endif
 {
   if (t == NULL) return;
   chain[0]=t->token;
@@ -2560,12 +2131,7 @@ void MR_iterateOverTreeContexts(t,chain)
   chain[0]=0;
 }
 
-#ifdef __USE_PROTOS
 Tree *MR_merge_tree_contexts(Tree *t)
-#else
-Tree *MR_merge_tree_contexts(t)
-  Tree  *t;
-#endif
 {
     int     h=MR_max_height_of_tree(t);
 
@@ -2581,12 +2147,7 @@ Tree *MR_merge_tree_contexts(t)
     return t;
 }
 
-#ifdef __USE_PROTOS
 Tree *MR_compute_pred_tree_context(Predicate *p)
-#else
-Tree *MR_compute_pred_tree_context(p)
-  Predicate *p;
-#endif
 {
   Tree  *t;
 
@@ -2595,13 +2156,7 @@ Tree *MR_compute_pred_tree_context(p)
   return t;
 }
 
-#ifdef __USE_PROTOS
 void MR_guardPred_plainSet(ActionNode *anode,Predicate *pred)
-#else
-void MR_guardPred_plainSet(anode,pred)
-  ActionNode    *anode;
-  Predicate     *pred;
-#endif
 {
   Junction      *j;
   Predicate     *workPred;
@@ -2663,12 +2218,7 @@ int                 MR_SuppressSearch=0;
 static int          suppressSucceeded;
 static Predicate *  suppressPredicate;
 
-#ifdef __USE_PROTOS
 int MR_isChain(Tree *t)
-#else
-int MR_isChain(t)
-  Tree  *t;
-#endif
 {
   Tree  *u;
 
@@ -2678,13 +2228,7 @@ int MR_isChain(t)
   return 1;
 }
 
-#ifdef __USE_PROTOS
 int MR_suppressK_client(Tree *tree,int tokensInChain[])
-#else
-int MR_suppressK_client(tree,tokensInChain)
-  Tree      *tree;
-  int       tokensInChain[];
-#endif
 {
   int       i;
   set       *save_fset;
@@ -2750,13 +2294,7 @@ int MR_suppressK_client(tree,tokensInChain)
   return suppressSucceeded;
 }
 
-#ifdef __USE_PROTOS
 Tree * MR_iterateOverTreeSuppressK(Tree *t,int chain[])
-#else
-Tree * MR_iterateOverTreeSuppressK(t,chain)
-  Tree          *t;
-  int           chain[];
-#endif
 {
   if (t == NULL) return NULL;
   t->right=MR_iterateOverTreeSuppressK(t->right,&chain[0]);
@@ -2786,13 +2324,7 @@ Tree * MR_iterateOverTreeSuppressK(t,chain)
 
 /* @@@ */
 
-#ifdef __USE_PROTOS
 Predicate * MR_suppressK(Node *j,Predicate *p)
-#else
-Predicate * MR_suppressK(j,p)
-  Node          *j;
-  Predicate     *p;
-#endif
 {
   Predicate     *result;
   int           guardPred=0;
@@ -2862,11 +2394,7 @@ EXIT:
   return result;
 }
 
-#ifdef __USE_PROTOS
-void MR_suppressSearchReport(void)
-#else
 void MR_suppressSearchReport()
-#endif
 {
   int       i;
   Node      *p;
@@ -2932,12 +2460,7 @@ void MR_suppressSearchReport()
   }
 }
 
-#ifdef __USE_PROTOS
 void MR_markCompromisedRule(Node *n)
-#else
-void MR_markCompromisedRule(n)
-  Node *n;
-#endif
 {
   RuleEntry     *q;
   Node          *mark=NULL;
@@ -2972,11 +2495,7 @@ void MR_markCompromisedRule(n)
   set_orel(q->rulenum,&MR_CompromisedRules);
 }
 
-#ifdef __USE_PROTOS
-void MR_alphaBetaTraceReport(void)
-#else
 void MR_alphaBetaTraceReport()
-#endif
 {
   int       i;
 
@@ -3007,12 +2526,7 @@ void MR_alphaBetaTraceReport()
   fprintf(output,"#endif\n");
 }
 
-#ifdef __USE_PROTOS
 void MR_dumpRuleSet(set s)
-#else
-void MR_dumpRuleSet(s)
-  set   s;
-#endif
 {
     unsigned    *cursor;
     unsigned    *origin=set_pdq(s);

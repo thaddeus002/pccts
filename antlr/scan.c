@@ -1142,20 +1142,9 @@ static void act103()
     if ( zzbufovf ) {
       err( eMsgd("predicate buffer overflow; size %d",ZZLEXBUFSIZE));
     };
-#ifdef __cplusplus__
-    /* MR10 */                    list_apply(CurActionLabels, (void (*)(void *))mark_label_used_in_sem_pred);
-#else
-#ifdef __STDC__
-    /* MR10 */                    list_apply(CurActionLabels, (void (*)(void *))mark_label_used_in_sem_pred);
-#else
-#ifdef __USE_PROTOS
-    /* MRxx */                    list_apply(CurActionLabels, (void (*)(void *))mark_label_used_in_sem_pred);
-#else
-    /* MR10 */                    list_apply(CurActionLabels,mark_label_used_in_sem_pred);
-#endif
-#endif
-#endif
-  }
+
+  list_apply(CurActionLabels, (void (*)(void *))mark_label_used_in_sem_pred);
+}
 
 
 static void act104()

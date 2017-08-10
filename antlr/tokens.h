@@ -1,5 +1,6 @@
 #ifndef tokens_h
 #define tokens_h
+
 /* tokens.h -- List of labelled tokens and stuff
  *
  * Generated from: antlr.g
@@ -8,6 +9,7 @@
  * Purdue University Electrical Engineering
  * ANTLR Version 1.33MR33
  */
+
 #define zzEOF_TOKEN 1
 #define Eof 1
 #define QuotedTerm 2
@@ -23,151 +25,34 @@
 #define ID 148
 #define INT 150
 
-#ifdef __USE_PROTOS
-void grammar(void);
-#else
-extern void grammar();
-#endif
 
-#ifdef __USE_PROTOS
-void class_def(void);
-#else
-extern void class_def();
-#endif
-
-#ifdef __USE_PROTOS
+void grammar();
+void class_def();
 void rule(void);
-#else
-extern void rule();
-#endif
-
-#ifdef __USE_PROTOS
-void laction(void);
-#else
-extern void laction();
-#endif
-
-#ifdef __USE_PROTOS
-void lmember(void);
-#else
-extern void lmember();
-#endif
-
-#ifdef __USE_PROTOS
-void lprefix(void);
-#else
-extern void lprefix();
-#endif
-
-#ifdef __USE_PROTOS
-void aPred(void);
-#else
-extern void aPred();
-#endif
-
-#ifdef __USE_PROTOS
-extern Predicate * predOrExpr(void);
-#else
+void laction();
+void lmember();
+void lprefix();
+void aPred();
 extern Predicate * predOrExpr();
-#endif
-
-#ifdef __USE_PROTOS
-extern Predicate * predAndExpr(void);
-#else
 extern Predicate * predAndExpr();
-#endif
-
-#ifdef __USE_PROTOS
-extern Predicate * predPrimary(void);
-#else
 extern Predicate * predPrimary();
-#endif
-
-#ifdef __USE_PROTOS
-void aLexclass(void);
-#else
-extern void aLexclass();
-#endif
-
-#ifdef __USE_PROTOS
-void error(void);
-#else
-extern void error();
-#endif
-
-#ifdef __USE_PROTOS
-void tclass(void);
-#else
-extern void tclass();
-#endif
-
-#ifdef __USE_PROTOS
-void token(void);
-#else
-extern void token();
-#endif
-
-#ifdef __USE_PROTOS
+void aLexclass();
+void error();
+void tclass();
+void token();
 void block(set * toksrefd,set * rulesrefd);
-#else
-extern void block();
-#endif
-
-#ifdef __USE_PROTOS
 void alt(set * toksrefd,set * rulesrefd);
-#else
-extern void alt();
-#endif
-
-#ifdef __USE_PROTOS
-extern LabelEntry * element_label(void);
-#else
 extern LabelEntry * element_label();
-#endif
-
-#ifdef __USE_PROTOS
 extern Node * element(int old_not,int first_on_line,int use_def_MT_handler);
-#else
-extern Node * element();
-#endif
-
-#ifdef __USE_PROTOS
-void default_exception_handler(void);
-#else
-extern void default_exception_handler();
-#endif
-
-#ifdef __USE_PROTOS
-extern ExceptionGroup * exception_group(void);
-#else
+void default_exception_handler();
 extern ExceptionGroup * exception_group();
-#endif
-
-#ifdef __USE_PROTOS
-extern ExceptionHandler * exception_handler(void);
-#else
 extern ExceptionHandler * exception_handler();
-#endif
-
-#ifdef __USE_PROTOS
 void enum_file(char * fname);
-#else
-extern void enum_file();
-#endif
-
-#ifdef __USE_PROTOS
 void defines(char * fname);
-#else
-extern void defines();
-#endif
-
-#ifdef __USE_PROTOS
 void enum_def(char * fname);
-#else
-extern void enum_def();
-#endif
 
 #endif
+
 extern SetWordType zzerr1[];
 extern SetWordType zzerr2[];
 extern SetWordType zzerr3[];

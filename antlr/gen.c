@@ -115,14 +115,9 @@ static int tabs = 0;
       }
 
 static void
-#ifdef __USE_PROTOS
-tab( void )
-#else
 tab( )
-#endif
 TAB
 
-#ifdef __USE_PROTOS
 static char *tokenFollowSet(TokNode *);
 static ActionNode *findImmedAction( Node * );
 static void dumpRetValAssign(char *, char *, RuleRefNode *);    /* MR30 */
@@ -136,21 +131,6 @@ static void genExprTree( Tree *t, int k );
 static void genExprTreeOriginal( Tree *t, int k );                  /* MR10 */
 static char * findOuterHandlerLabel(ExceptionGroup *eg);            /* MR7 */
 static void OutLineInfo(FILE *file,int line,char *fileName);        /* MR14 */
-#else
-static char *tokenFollowSet();
-static ActionNode *findImmedAction();
-static void dumpRetValAssign();
-static void dumpAfterActions();
-static set ComputeErrorSet();
-static void makeErrorClause();
-static void DumpFuncHeader();
-static int has_guess_block_as_first_item();
-static int genExprSets();
-static void genExprTree();
-static void genExprTreeOriginal();                                  /* MR10 */
-static char * findOuterHandlerLabel();                              /* MR7 */
-static void OutLineInfo();                                          /* MR14 */
-#endif
 
 #define gen(s)      {tab(); fprintf(output, s);}
 #define gen1(s,a)   {tab(); fprintf(output, s,a);}
@@ -173,23 +153,14 @@ static void OutLineInfo();                                          /* MR14 */
 
 /* MR11 a convenient place to set a break point */
 
-#ifdef __USE_PROTOS
-void MR_break(void)
-#else
 void MR_break()
-#endif
 {
   return;
 }
 
 /* MR10 genTraceOut(Junction *)      */
 
-#ifdef __USE_PROTOS
 static void genTraceOut(Junction *q)
-#else
-static void genTraceOut(q)
-  Junction  *q;
-#endif
 {
   if ( TraceGen ) {
     if ( GenCC ) {gen1("zzTRACEOUT(\"%s\");\n", q->rname);}
@@ -197,12 +168,7 @@ static void genTraceOut(q)
   }
 }
 
-static void
-#ifdef __USE_PROTOS
-warn_about_using_gk_option(void)
-#else
-warn_about_using_gk_option()
-#endif
+static void warn_about_using_gk_option()
 {
   static int warned_already=0;
 
@@ -211,13 +177,7 @@ warn_about_using_gk_option()
   warnNoFL("-gk option could cause trouble for <<...>>? predicates");
 }
 
-void
-#ifdef __USE_PROTOS
-freeBlkFsets( Junction *q )
-#else
-freeBlkFsets( q )
-Junction *q;
-#endif
+void freeBlkFsets( Junction *q )
 {
   int i;
   Junction *alt;
@@ -229,17 +189,11 @@ Junction *q;
   }
 }
 
-/*
+/**
  * Generate a local variable allocation for each token references
  * in this block.
  */
-static void
-#ifdef __USE_PROTOS
-genTokenPointers( Junction *q )
-#else
-genTokenPointers( q )
-Junction *q;
-#endif
+static void genTokenPointers( Junction *q )
 {
   /* Rule refs are counted and can be referenced, but their
    * value is not set to anything useful ever.
@@ -268,13 +222,7 @@ Junction *q;
   set_free(a);
 }
 
-static int
-#ifdef __USE_PROTOS
-hasDefaultException(ExceptionGroup *eg)
-#else
-hasDefaultException(eg)
-ExceptionGroup *eg;
-#endif
+static int hasDefaultException(ExceptionGroup *eg)
 {
     ListNode *q;
 
@@ -287,14 +235,8 @@ ExceptionGroup *eg;
     }
     return 0;
 }
-static void
-#ifdef __USE_PROTOS
-dumpException(ExceptionGroup *eg, int no_default_case)
-#else
-dumpException(eg, no_default_case)
-ExceptionGroup *eg;
-int no_default_case;
-#endif
+
+static void dumpException(ExceptionGroup *eg, int no_default_case)
 {
     char    *outerLabel;                                             /* MR7 */
     int     altHandler=0;                                            /* MR7 */
@@ -309,13 +251,6 @@ int no_default_case;
     } else {                                                         /* MR7 */
       altHandler=1;                                                  /* MR7 */
     };                                                               /* MR7 */
-
-#if 0
-**     if (! eg->used) {                                             /* MR7 */
-**      warnFL("exception group never used",                         /* MR7 */
-**             FileStr[eg->altstart->file],eg->altstart->line);      /* MR7 */
-**     };                                                            /* MR7 */
-#endif
 
     if (namedHandler) {                                              /* MR7 */
     gen1("switch ( _signal ) {  /* [%s] */\n",eg->label);          /* MR7 */
@@ -379,13 +314,7 @@ int no_default_case;
 
 }
 
-static void
-#ifdef __USE_PROTOS
-dumpExceptions(ListNode *list)
-#else
-dumpExceptions(list)
-ListNode *list;
-#endif
+static void dumpExceptions(ListNode *list)
 {
   ListNode *p;
 
@@ -414,13 +343,7 @@ ListNode *list;
 /* For each element label that is found in a rule, generate a unique
  * Attribute (and AST pointer if GenAST) variable.
  */
-void
-#ifdef __USE_PROTOS
-genElementLabels(ListNode *list)
-#else
-genElementLabels(list)
-ListNode *list;
-#endif
+void genElementLabels(ListNode *list)
 {
   int first=1;
   ListNode *p;
@@ -455,13 +378,7 @@ ListNode *list;
  * Generate a local variable allocation for each token or rule reference
  * in this block.
  */
-static void
-#ifdef __USE_PROTOS
-genASTPointers( Junction *q )
-#else
-genASTPointers( q )
-Junction *q;
-#endif
+static void genASTPointers( Junction *q )
 {
   int first=1, t;
   set a;
@@ -482,24 +399,14 @@ Junction *q;
   _gen(";\n");
 }
 
-static void
-#ifdef __USE_PROTOS
-BLOCK_Head( void )
-#else
-BLOCK_Head( )
-#endif
+static void BLOCK_Head( )
 {
   gen("{\n");
   tabs++;
   if ( !GenCC ) gen1("zzBLOCK(zztasp%d);\n", BlkLevel);
 }
 
-static void
-#ifdef __USE_PROTOS
-BLOCK_Tail( void )
-#else
-BLOCK_Tail( )
-#endif
+static void BLOCK_Tail()
 {
   if ( !GenCC ) gen1("zzEXIT(zztasp%d);\n", BlkLevel);
   if ( !GenCC ) gen("}\n");
@@ -507,13 +414,7 @@ BLOCK_Tail( )
   gen("}\n");
 }
 
-static void
-#ifdef __USE_PROTOS
-BLOCK_Preamble( Junction *q )
-#else
-BLOCK_Preamble( q )
-Junction *q;
-#endif
+static void BLOCK_Preamble( Junction *q )
 {
   ActionNode *a;
   Junction *begin;
@@ -542,12 +443,7 @@ Junction *q;
 }
 
 void
-#ifdef __USE_PROTOS
 genCombinedPredTreeContextOrig( Predicate *p )
-#else
-genCombinedPredTreeContextOrig( p )
-Predicate *p;
-#endif
 {
   static set *ctx=NULL;   /* genExprSets() is destructive, make copy*/
   require(p!=NULL, "can't make context tree for NULL pred tree");
@@ -620,13 +516,7 @@ Predicate *p;
 
 /* [genCombinedPredTreeContext] */
 
-void
-#ifdef __USE_PROTOS
-genCombinedPredTreeContext( Predicate *p )
-#else
-genCombinedPredTreeContext( p )
-Predicate *p;
-#endif
+void genCombinedPredTreeContext( Predicate *p )
 {
   Tree  *t;
   int   predDepth=0;
@@ -665,14 +555,7 @@ Predicate *p;
 
 /* [genPredTreeGate] */
 
-void
-#ifdef __USE_PROTOS
-genPredTreeGate( Predicate *p, int in_and_expr )
-#else
-genPredTreeGate( p, in_and_expr )
-Predicate *p;
-int in_and_expr;
-#endif
+void genPredTreeGate( Predicate *p, int in_and_expr )
 {
   if ( in_and_expr )
   {
@@ -690,13 +573,7 @@ int in_and_expr;
   }
 }
 
-#ifdef __USE_PROTOS
 void genPredEntry(Predicate *p,int outer)
-#else
-void genPredEntry(p,outer)
-  Predicate     *p;
-  int           outer;
-#endif
 {
     int         inverted=0;
     Predicate   *q;
@@ -753,21 +630,8 @@ void genPredEntry(p,outer)
 }
 
 void
-#ifdef __USE_PROTOS
 dumpPredAction(ActionNode *anode,
                     char *s,FILE *output,int tabs,int file,int line,int final_newline)
-#else
-dumpPredAction(anode,
-                    s,output,tabs,file,line,final_newline)
-
-    ActionNode  *anode;
-    char        *s;
-    FILE        *output;
-    int         tabs;
-    int         file;
-    int         line;
-    int         final_newline;
-#endif
 {
     PredEntry   *predEntry=anode->predEntry;
     int         inverted=anode->inverted;
@@ -800,14 +664,7 @@ dumpPredAction(anode,
 /* [genPred] */
 
 void
-#ifdef __USE_PROTOS
 genPred(Predicate *p, Node *j,int suppress_sva)
-#else
-genPred(p,j,suppress_sva)
-    Predicate   *p;
-    Node        *j;
-    int         suppress_sva;
-#endif
 {
   if ( FoundException && !suppress_sva) {_gen("(_sva=(");}    /* MR11 suppress_sva */
   else {_gen("(");}
@@ -839,15 +696,7 @@ genPred(p,j,suppress_sva)
   else {_gen(")");}
 }
 
-void
-#ifdef __USE_PROTOS
-MR_distinctORcontextOpt(Predicate *p,Node *j,int in_and_expr)
-#else
-MR_distinctORcontextOpt(p,j,in_and_expr)
-    Predicate   *p;
-    Node        *j;
-    int         in_and_expr;
-#endif
+void MR_distinctORcontextOpt(Predicate *p,Node *j,int in_and_expr)
 {
     Predicate   *q;
 
@@ -866,30 +715,10 @@ MR_distinctORcontextOpt(p,j,in_and_expr)
     } else {
       require (0,
             "MR_distinctORcontextOpt: can't get here when using MR_predSimplify");
-#if 0
-**      for (q=p->down; q != NULL; q=q->right) {
-**        gen("(  ");
-**        genCombinedPredTreeContext(q);
-**        _gen(" && ");
-**        genPred(q,j);
-**        if (q->right != NULL) {
-**          _gen("  ) ||\n");
-**        };
-**      };
-**      gen(")");
-#endif
    };
 }
 
-void
-#ifdef __USE_PROTOS
-genPredTreeOrig( Predicate *p, Node *j, int in_and_expr )
-#else
-genPredTreeOrig( p, j, in_and_expr )
-Predicate *p;
-Node *j;
-int in_and_expr;
-#endif
+void genPredTreeOrig( Predicate *p, Node *j, int in_and_expr )
 {
 
 /* MR10 */  int     allHaveContext=1;
@@ -915,16 +744,7 @@ int in_and_expr;
   /* if AND list, do both preds (only two possible) */
   if ( p->expr == PRED_AND_LIST )
   {
-#if 0
-**    _gen("(");
-**    genPredTreeOrig(p->down, j, 1);
-**    _gen("&&");
-**    genPredTreeOrig(p->down->right, j, 1);
-**    _gen(")");
-**    if ( ! noneHaveContext ) _gen(")");    /* MR10 context guards ignored when -prc off */
-**    return;
-#endif
-        /* MR11 - make it work with AND with more than two children - like OR */
+    /* MR11 - make it work with AND with more than two children - like OR */
 
     Predicate *list;
     _gen("(");
@@ -957,23 +777,6 @@ int in_and_expr;
   fatal_internal("genPredTreeOrig: predicate tree is wacked");
 }
 
-#if 0
-**   Predicate member dummyPredDepth is no longer used in MR10
-**     but we might need it again in the future
-**
-**   if (MRhoisting) {
-**     if ( !noneHaveContext &&
-**          ! in_and_expr &&
-**          p->source != NULL &&
-**          p->source->dummyPredicateDepth > 0 &&
-**          p->down == NULL) {
-**    _gen("(");
-**    genCombinedPredTreeContext(p);
-**    _gen("  )\n");
-**    return;
-**     };
-**   };
-#endif
 
 /* [genPredTree] */
 
@@ -1000,16 +803,7 @@ int in_and_expr;
         the context is correct but the test is false.
 */
 
-void
-#ifdef __USE_PROTOS
-genPredTree( Predicate *p, Node *j, int in_and_expr, int suppress_sva )
-#else
-genPredTree( p, j, in_and_expr, suppress_sva)
-  Predicate     *p;
-  Node          *j;
-  int           in_and_expr;
-  int           suppress_sva;
-#endif
+void genPredTree( Predicate *p, Node *j, int in_and_expr, int suppress_sva )
 {
 
     int         allHaveContext=1;
@@ -1134,28 +928,11 @@ genPredTree( p, j, in_and_expr, suppress_sva)
 
 /* [genPredTreeMainXX] */
 
-Predicate *     /* MR10 */
-#ifdef __USE_PROTOS
-genPredTreeMainXX( Predicate *p, Node *j ,int in_and_expr)
-#else
-genPredTreeMainXX( p, j ,in_and_expr)
-    Predicate   *p;
-    Node        *j;
-    int         in_and_expr;
-#endif
+Predicate *genPredTreeMainXX( Predicate *p, Node *j ,int in_and_expr)
 {
 
     int     allHaveContext=1;
     int     noneHaveContext=1;
-
-#if 0
-    fprintf(stderr,"Pred before\n");
-    dumppred(p);
-    fprintf(stderr,"\n");
-    fprintf(stderr,"Pred after\n");
-    dumppred(p);
-    fprintf(stderr,"\n");
-#endif
 
     p=MR_predSimplifyALL(p);    /* MR10 */
 
@@ -1175,29 +952,15 @@ genPredTreeMainXX( p, j ,in_and_expr)
        _gen("#endif\n");
     };
   genPredTree(p,j,in_and_expr,0);
-    return p;
+  return p;
 }
 
-Predicate *     /* MR10 */
-#ifdef __USE_PROTOS
-genPredTreeMain( Predicate *p, Node *j)
-#else
-genPredTreeMain( p, j)
-    Predicate   *p;
-    Node        *j;
-#endif
+Predicate *genPredTreeMain( Predicate *p, Node *j)
 {
   return genPredTreeMainXX(p,j,1);
 }
 
-static void
-#ifdef __USE_PROTOS
-genExprTreeOriginal( Tree *t, int k )
-#else
-genExprTreeOriginal( t, k )
-Tree *t;
-int k;
-#endif
+static void genExprTreeOriginal( Tree *t, int k )
 {
   require(t!=NULL, "genExprTreeOriginal: NULL tree");
 
@@ -1234,13 +997,7 @@ int k;
   }
 }
 
-#ifdef __USE_PROTOS
 static void MR_LAtokenString(int k,int token)
-#else
-static void MR_LAtokenString(k,token)
-  int   k;
-  int   token;
-#endif
 {
     char    *ts;
 
@@ -1253,12 +1010,7 @@ static void MR_LAtokenString(k,token)
 }
 
 
-#ifdef __USE_PROTOS
 static int MR_countLeaves(Tree *t)
-#else
-static int MR_countLeaves(t)
-  Tree  *t;
-#endif
 {
   if (t == NULL) return 0;
   if (t->token == ALT) {
@@ -1268,13 +1020,7 @@ static int MR_countLeaves(t)
   };
 }
 
-#ifdef __USE_PROTOS
 static void MR_genOneLine(Tree *tree,int k)
-#else
-static void MR_genOneLine(tree,k)
-  Tree      *tree;
-  int       k;
-#endif
 {
     if (tree == NULL) return;
     if (tree->token == ALT) {
@@ -1301,13 +1047,7 @@ static int across;
 static int depth;
 static int lastkonline;
 
-#ifdef __USE_PROTOS
 static void MR_genMultiLine(Tree *tree,int k)
-#else
-static void MR_genMultiLine(tree,k)
-  Tree  *tree;
-  int   k;
-#endif
 {
     int     i;
 
@@ -1359,24 +1099,9 @@ static void MR_genMultiLine(tree,k)
     };
 }
 
-#ifdef __USE_PROTOS
 static void genExprTree(Tree *tree,int k)
-#else
-static void genExprTree(tree,k)
-  Tree  *tree;
-  int   k;
-#endif
 {
     int     count;
-
-#if 0
-    /* MR20 THM This was probably an error.
-            The routine should probably reference that static
-            "across" and this declaration hides it.
-    */
-
-    int     across;
-#endif
 
     require (tree != NULL,"genExprTree: tree is NULL");
     require (k > 0,"genExprTree: k <= 0");
@@ -1421,13 +1146,7 @@ static void genExprTree(tree,k)
 
 /*  [genExpr] */
 
-static int
-#ifdef __USE_PROTOS
-genExpr( Junction *j )
-#else
-genExpr( j )
-Junction *j;
-#endif
+static int genExpr( Junction *j )
 {
   int max_k;
 
@@ -1461,14 +1180,7 @@ Junction *j;
   return max_k;
 }
 
-static int
-#ifdef __USE_PROTOS
-genExprSets( set *fset, int limit )
-#else
-genExprSets( fset, limit )
-set *fset;
-int limit;
-#endif
+static int genExprSets( set *fset, int limit )
 {
   int k = 1;
   int max_k = 0;
@@ -1531,7 +1243,7 @@ int limit;
   return max_k;
 }
 
-/*
+/**
  * Generate code for any type of block.  If the last alternative in the block is
  * empty (not even an action) don't bother doing it.  This permits us to handle
  * optional and loop blocks as well.
@@ -1539,17 +1251,7 @@ int limit;
  * Only do this block, return after completing the block.
  * This routine is visible only to this file and cannot answer a TRANS message.
  */
-static set
-#ifdef __USE_PROTOS
-genBlk( Junction *q, int jtype, int *max_k, int *need_right_curly, int * lastAltEmpty /* MR23 */)
-#else
-genBlk( q, jtype, max_k, need_right_curly, lastAltEmpty /* MR23 */)
-Junction *q;
-int jtype;
-int *max_k;
-int *need_right_curly;
-int *lastAltEmpty; /* MR23 */
-#endif
+static set genBlk( Junction *q, int jtype, int *max_k, int *need_right_curly, int * lastAltEmpty /* MR23 */)
 {
   set f;
   Junction *alt;
@@ -1671,13 +1373,7 @@ int *lastAltEmpty; /* MR23 */
   return f;
 }
 
-static int
-#ifdef __USE_PROTOS
-has_guess_block_as_first_item( Junction *q )
-#else
-has_guess_block_as_first_item( q )
-Junction *q;
-#endif
+static int has_guess_block_as_first_item( Junction *q )
 {
   Junction *alt;
 
@@ -1688,13 +1384,7 @@ Junction *q;
   return 0;
 }
 
-static int
-#ifdef __USE_PROTOS
-has_guess_block_as_last_item( Junction *q )
-#else
-has_guess_block_as_last_item( q )
-Junction *q;
-#endif
+static int has_guess_block_as_last_item( Junction *q )
 {
   Junction *alt;
 
@@ -1705,13 +1395,7 @@ Junction *q;
 
 /* MR30 See description of first_item_is_guess_block for background */
 
-Junction *
-#ifdef __USE_PROTOS
-first_item_is_guess_block_extra(Junction *q )
-#else
-first_item_is_guess_block_extra(q)
-Junction *q;
-#endif
+Junction *first_item_is_guess_block_extra(Junction *q )
 {
   while ( q!=NULL &&
             (  ( q->ntype==nAction ) ||
@@ -1737,13 +1421,7 @@ Junction *q;
  * of (...)?;  This function ignores actions and predicates.
  */
 
-Junction *
-#ifdef __USE_PROTOS
-first_item_is_guess_block( Junction *q )
-#else
-first_item_is_guess_block( q )
-Junction *q;
-#endif
+Junction *first_item_is_guess_block( Junction *q )
 {
   Junction * qOriginal = q; /* DEBUG */
 
@@ -1819,14 +1497,8 @@ Junction *q;
 #define STRINGIZEBUFSIZE 1024
 
 static char stringizeBuf[STRINGIZEBUFSIZE];
-char *
-#ifdef __USE_PROTOS
-stringize(char * s)
-#else
-stringize(s)
-char *s;
-#endif
 
+char *stringize(char * s)
 {
   char    *p;
   char    *stop;
@@ -1900,12 +1572,7 @@ stringizeExit:
   return stringizeBuf;
 }
 
-#ifdef __USE_PROTOS
 int isNullAction(char *s)
-#else
-int isNullAction(s)
-  char  *s;
-#endif
 {
   char  *p;
   for (p=s; *p != '\0' ; p++) {
@@ -1917,16 +1584,11 @@ int isNullAction(s)
 /* MR1  End of Routine to stringize code for failed predicates msgs         */
 /* MR1                                                                */
 
-/* Generate an action.  Don't if action is NULL which means that it was already
+/**
+ * Generate an action.  Don't if action is NULL which means that it was already
  * handled as an init action.
  */
-void
-#ifdef __USE_PROTOS
-genAction( ActionNode *p )
-#else
-genAction( p )
-ActionNode *p;
-#endif
+void genAction( ActionNode *p )
 {
   require(p!=NULL,      "genAction: invalid node and/or rule");
   require(p->ntype==nAction,  "genAction: not action");
@@ -1998,13 +1660,7 @@ ActionNode *p;
  *    if ! modifies rule-ref, then never link it in and never pass zzSTR.
  *    Always pass address of temp root ptr.
  */
-void
-#ifdef __USE_PROTOS
-genRuleRef( RuleRefNode *p )
-#else
-genRuleRef( p )
-RuleRefNode *p;
-#endif
+void genRuleRef( RuleRefNode *p )
 {
   Junction *q;
   char *handler_id = "";
@@ -2238,19 +1894,13 @@ pointer after
   TRANS(p->next)
 }
 
-/*
+/**
  * Generate code to match a token.
  *
  * Getting the next token is tricky.  We want to ensure that any action
  * following a token is executed before the next GetToken();
  */
-void
-#ifdef __USE_PROTOS
-genToken( TokNode *p )
-#else
-genToken( p )
-TokNode *p;
-#endif
+void genToken( TokNode *p )
 {
   RuleEntry *r;
   char *handler_id = "";
@@ -2592,41 +2242,7 @@ TokNode *p;
     _gen("\n");
     if ( a->is_predicate)
     {
-#if 0
-/* Disabled in MR30 ************************************************************
-   And moved into genAction
-   *****************************************************************************
-*/
 
-          gen("if (!(");
-
-      /* make sure that '#line n' is on front of line */  /* MR14 */
-      if ( GenLineInfo && p->file != -1 ) _gen("\n");     /* MR14 */
-      dumpPredAction(a,a->action, output, 0, a->file, a->line, 0);
-
-/* MR23 Change failed predicate macro to have three arguments:
-
-        macro arg 1: The stringized predicate itself
-        macro arg 2: 0 => no user-defined error action
-                     1 => user-defined error action
-        macro arg 3: The user-defined error action
-
-   This gives the user more control of the error action.
-*/
-      _gen(")) \n");
-      tabs++;
-      gen3(" {zzfailed_pred(\"%s\",%s,{ %s } );}\n",           /* MR23 */
-          stringize(a->action),                          /* MR23 */
-                    (a->pred_fail == NULL ?                          /* MR23/MR27 */
-                        "0 /* report */" : "1 /* user action */"),   /* MR23/MR27 */
-                    (a->pred_fail == NULL ?                          /* MR23 */
-                        "0; /* no user action */" : a->pred_fail));  /* MR23 */
-      tabs--;
-/* Disabled in MR30 ************************************************************
-   And moved into genAction
-   *****************************************************************************
-*/
-#endif
     }
     else    /* MR9 a regular action - not a predicate action */
     {
@@ -2716,13 +2332,7 @@ TokNode *p;
  *  cosmetic changes.
  */
 
-void
-#ifdef __USE_PROTOS
-genOptBlk( Junction *q )
-#else
-genOptBlk( q )
-Junction *q;
-#endif
+void genOptBlk( Junction *q )
 {
   int max_k;
   set f;
@@ -2784,16 +2394,7 @@ Junction *q;
  *         v   |
  *         --o-G-o-->o--
  */
-void
-#ifdef __USE_PROTOS
-genLoopBlk( Junction *begin, Junction *q, Junction *start, int max_k )
-#else
-genLoopBlk( begin, q, start, max_k )
-Junction *begin;
-Junction *q;
-Junction *start;  /* where to start generating code from */
-int max_k;
-#endif
+void genLoopBlk( Junction *begin, Junction *q, Junction *start, int max_k )
 {
   set         f;
   int         need_right_curly;
@@ -2963,13 +2564,7 @@ int max_k;
  *    else break;
  *  } while ( 1 );
  */
-void
-#ifdef __USE_PROTOS
-genLoopBegin( Junction *q )
-#else
-genLoopBegin( q )
-Junction *q;
-#endif
+void genLoopBegin( Junction *q )
 {
   set f;
   int i;
@@ -3039,21 +2634,15 @@ Junction *q;
  *    else if not 1st time through, break;
  *  } while ( 1 );
  */
-void
-#ifdef __USE_PROTOS
-genPlusBlk( Junction *q )
-#else
-genPlusBlk( q )
-Junction *q;
-#endif
+void genPlusBlk( Junction *q )
 {
   int         max_k;
   set         f;
   int         need_right_curly;
   int     lastAltEmpty; /* MR23 */
   set         savetkref;
-    Junction    *guessBlock;    /* MR10 */
-    int         singleAlt;      /* MR10 */
+  Junction    *guessBlock;    /* MR10 */
+  int         singleAlt;      /* MR10 */
 
   savetkref = tokensRefdInBlock;
   require(q!=NULL,        "genPlusBlk: invalid node and/or rule");
@@ -3067,11 +2656,11 @@ Junction *q;
   BLOCK_Preamble(q);
   BlkLevel++;
 
-    BlockPreambleOption((Junction *)q, q->pFirstSetSymbol);       /* MR21 */
+  BlockPreambleOption((Junction *)q, q->pFirstSetSymbol);       /* MR21 */
 
-    /* first_item_is_guess_block  doesn't care what kind of node it is */
+  /* first_item_is_guess_block  doesn't care what kind of node it is */
 
-    guessBlock=first_item_is_guess_block( (Junction *)q->p1);   /* MR10 */
+  guessBlock=first_item_is_guess_block( (Junction *)q->p1);   /* MR10 */
 
   /* if the ignore flag is set on the 2nd alt and that alt is empty,
    * then it is the implied optional alternative that we added for (...)+
@@ -3084,10 +2673,10 @@ Junction *q;
  *       Force use of regular code rather than "optimized" code for that case
  */
 
-    singleAlt=( ( (Junction *) q->p2)->p2 == NULL) &&
+  singleAlt=( ( (Junction *) q->p2)->p2 == NULL) &&
             ( ( (Junction *) q->p2)->ignore );      /* only one alternative? */
 
-    if (singleAlt && !guessBlock)   /* MR10 */
+  if (singleAlt && !guessBlock)   /* MR10 */
   {
 
     Predicate *a=NULL;
@@ -3256,14 +2845,7 @@ Junction *q;
  *    ...code for Gn...
  *  }
  */
-
-void
-#ifdef __USE_PROTOS
-genSubBlk( Junction *q )
-#else
-genSubBlk( q )
-Junction *q;
-#endif
+void genSubBlk( Junction *q )
 {
   int max_k;
   set f;
@@ -3338,13 +2920,7 @@ static int TnodesAllocatedPrevRule=0;
  * and possible SubBlk.
  * Mark any init-action as generated so genBlk() does not regenerate it.
  */
-void
-#ifdef __USE_PROTOS
-genRule( Junction *q )
-#else
-genRule( q )
-Junction *q;
-#endif
+void genRule( Junction *q )
 {
 
   const char * returnValueInitializer;
@@ -3394,13 +2970,6 @@ do {    /* MR10     Change recursion into iteration         */
       fprintf(stderr,"    rule %s\n",q->rname);
       fflush(output);
     };
-
-#if 0
-    if (strcmp(q->rname,"***debug***") == 0) {
-      fprintf(stderr,"***debug*** %s reached\n",q->rname);
-      MR_break();
-    };
-#endif
 
   DumpFuncHeader(q,r);
   tabs++;
@@ -3636,9 +3205,6 @@ do {    /* MR10     Change recursion into iteration         */
         }
 /*  MR20 G. Gobbelt   The label "adios" is never referenced */
 
-#if 0
-  _gen("_adios:\n");
-#endif
     if ( q->ret!=NULL ) {
             genTraceOut(q);
             gen("return _retv;\n");
@@ -3696,14 +3262,7 @@ do {    /* MR10     Change recursion into iteration         */
 
 /* This is for the function definition, not the declaration. */
 
-static void
-#ifdef __USE_PROTOS
-DumpFuncHeader( Junction *q, RuleEntry *r )
-#else
-DumpFuncHeader( q, r )
-Junction *q;
-RuleEntry *r;
-#endif
+static void DumpFuncHeader( Junction *q, RuleEntry *r )
 {
 /*                                                            */
 /*  MR1 10-Apr-97  MR1  Simplify insertion of commas in function header     */
@@ -3777,15 +3336,7 @@ RuleEntry *r;
     gen("{\n");
 }
 
-void
-#ifdef __USE_PROTOS
-DumpANSIFunctionArgDef(FILE *f, Junction *q, int bInitializer)
-#else
-DumpANSIFunctionArgDef(f,q,bInitializer)
-FILE *f;
-Junction *q;
-int bInitializer;
-#endif
+void DumpANSIFunctionArgDef(FILE *f, Junction *q, int bInitializer)
 {
   if ( GenAST )
   {
@@ -3812,13 +3363,7 @@ int bInitializer;
   fprintf(f,")");
 }
 
-void
-#ifdef __USE_PROTOS
-genJunction( Junction *q )
-#else
-genJunction( q )
-Junction *q;
-#endif
+void genJunction( Junction *q )
 {
   require(q->ntype == nJunction,  "genJunction: not junction");
   require(q->jtype == Generic,  "genJunction: not generic junction");
@@ -3827,33 +3372,15 @@ Junction *q;
   if ( q->p2 != NULL ) TRANS(q->p2);
 }
 
-void
-#ifdef __USE_PROTOS
-genEndBlk( Junction *q )
-#else
-genEndBlk( q )
-Junction *q;
-#endif
+void genEndBlk( Junction *q )
 {
 }
 
-void
-#ifdef __USE_PROTOS
-genEndRule( Junction *q )
-#else
-genEndRule( q )
-Junction *q;
-#endif
+void genEndRule( Junction *q )
 {
 }
 
-void
-#ifdef __USE_PROTOS
-genHdr( int file )
-#else
-genHdr( file )
-int file;
-#endif
+void genHdr( int file )
 {
     int     i;
 
@@ -3948,13 +3475,7 @@ int file;
     }                                                                       /* MR23 */
 }
 
-void
-#ifdef __USE_PROTOS
-genHdr1( int file )
-#else
-genHdr1( file )
-int file;
-#endif
+void genHdr1( int file )
 {
   ListNode *p;
 
@@ -4020,14 +3541,7 @@ int file;
   _gen("}\n\n");
 }
 
-void
-#ifdef __USE_PROTOS
-genStdPCCTSIncludeFile( FILE *f,char *gate )    /* MR10 */
-#else
-genStdPCCTSIncludeFile( f , gate)               /* MR10 */
-FILE *f;
-char * gate;                                    /* MR10 */
-#endif
+void genStdPCCTSIncludeFile( FILE *f,char *gate )    /* MR10 */
 {
 /* MR10 Ramanathan Santhanam (ps@kumaran.com)           */
 /* MR10 Same preprocessor symbol use to gate stdpccts.h */
@@ -4155,19 +3669,8 @@ char * gate;                                    /* MR10 */
    June '93; changed so that empty lines are left alone so that
    line information is correct for the compiler/debuggers.
 */
-void
-#ifdef __USE_PROTOS
-dumpAction( char *s, FILE *output, int tabs, int file, int line,
+void dumpAction( char *s, FILE *output, int tabs, int file, int line,
 int final_newline )
-#else
-dumpAction( s, output, tabs, file, line, final_newline )
-char *s;
-FILE *output;
-int tabs;
-int file;
-int line;
-int final_newline;
-#endif
 {
     int inDQuote, inSQuote;
     require(s!=NULL,    "dumpAction: NULL action");
@@ -4230,13 +3733,7 @@ int final_newline;
     if ( final_newline ) fputc('\n', output);
 }
 
-static void
-#ifdef __USE_PROTOS
-dumpAfterActions( FILE *output )
-#else
-dumpAfterActions( output )
-FILE *output;
-#endif
+static void dumpAfterActions( FILE *output )
 {
   ListNode *p;
   require(output!=NULL, "dumpAfterActions: output file was NULL for some reason");
@@ -4251,22 +3748,16 @@ FILE *output;
   fclose( output );
 }
 
-/*
+/**
  * Find the next action in the stream of execution.  Do not pass
  * junctions with more than one path leaving them.
  * Only pass generic junctions.
  *
- *  Scan forward while (generic junction with p2==NULL)
- *  If we stop on an action, return ptr to the action
- *  else return NULL;
+ * Scan forward while (generic junction with p2==NULL)
+ * If we stop on an action, return ptr to the action
+ * else return NULL;
  */
-static ActionNode *
-#ifdef __USE_PROTOS
-findImmedAction( Node *q )
-#else
-findImmedAction( q )
-Node *q;
-#endif
+static ActionNode *findImmedAction( Node *q )
 {
   Junction *j;
   require(q!=NULL, "findImmedAction: NULL node");
@@ -4283,15 +3774,7 @@ Node *q;
   return NULL;
 }
 
-static void
-#ifdef __USE_PROTOS
-dumpRetValAssign( char *retval, char *ret_def, RuleRefNode * ruleRef /* MR30 */)
-#else
-dumpRetValAssign( retval, ret_def, ruleRef /* MR30 */)
-char *retval;
-char *ret_def;
-RuleRefNode *ruleRefNode;
-#endif
+static void dumpRetValAssign( char *retval, char *ret_def, RuleRefNode * ruleRef /* MR30 */)
 {
   char *q = ret_def;
 
@@ -4321,15 +3804,7 @@ RuleRefNode *ruleRefNode;
  * tokens in the future from point j
  */
 
-static set
-#ifdef __USE_PROTOS
-ComputeErrorSet( Junction *j, int k, int usePlusBlockBypass)
-#else
-ComputeErrorSet( j, k, usePlusBlockBypass )
-Junction *j;
-int k;
-int usePlusBlockBypass;
-#endif
+static set ComputeErrorSet( Junction *j, int k, int usePlusBlockBypass)
 {
   Junction *alt1;
   set a, rk, f;
@@ -4348,13 +3823,7 @@ int usePlusBlockBypass;
   return f;
 }
 
-static char *
-#ifdef __USE_PROTOS
-tokenFollowSet(TokNode *p)
-#else
-tokenFollowSet(p)
-TokNode *p;
-#endif
+static char *tokenFollowSet(TokNode *p)
 {
     static char buf[100];
     set rk, a;
@@ -4373,16 +3842,7 @@ TokNode *p;
     return buf;
 }
 
-static void
-#ifdef __USE_PROTOS
-makeErrorClause( Junction *q, set f, int max_k, int usePlusBlockBypass )
-#else
-makeErrorClause( q, f, max_k, usePlusBlockBypass )
-Junction *q;
-set f;
-int max_k;
-int usePlusBlockBypass;
-#endif
+static void makeErrorClause( Junction *q, set f, int max_k, int usePlusBlockBypass )
 {
     char *  handler_id="";                                           /* MR7 */
     int     nilf=0;                                                  /* MR13 */
@@ -4401,11 +3861,6 @@ int usePlusBlockBypass;
     gen("else _signal=NoSemViableAlt;\n");
         if (q->outerEG != NULL) {
           handler_id=q->outerEG->altID;
-#if 0
-        } else {
-          printf("q->curAltNum=%d q->exception_label=%s\n",q->curAltNum,q->exception_label);
-          gen("*** DEBUG *** outerEG==NULL\n");
-#endif
         };
     gen1("goto %s_handler;  /* MR7 */\n",handler_id);    /* MR7 */
     tabs--;
@@ -4454,13 +3909,7 @@ int usePlusBlockBypass;
 /* MR13 */  };
 }
 
-static                                                               /* MR7 */
-#ifdef __USE_PROTOS
-char * findOuterHandlerLabel(ExceptionGroup *eg)                     /* MR7 */
-#else
-char * findOuterHandlerLabel(eg)                                     /* MR7 */
-ExceptionGroup *eg;                                                  /* MR7 */
-#endif
+static char * findOuterHandlerLabel(ExceptionGroup *eg)                     /* MR7 */
 {
   char              *label=NULL;                                     /* MR7 */
   ExceptionGroup    *outerEG;                                        /* MR7 */
@@ -4481,35 +3930,8 @@ ExceptionGroup *eg;                                                  /* MR7 */
   return (label==NULL ? "" : label);                                 /* MR7 */
 }                                                                    /* MR7 */
 
-/*** debug ***/
-#if 0
-** static                                                               /* MR7 */
-** #ifdef __USE_PROTOS
-** char * findOuterAltHandlerLabel(Junction *startJ)                    /* MR7 */
-** #else
-** char * findOuterAltHandlerLabel(startJ)                              /* MR7 */
-** Junction *startJ;                                                    /* MR7 */
-** #endif
-** {                                                                    /* MR7 */
-**   char      *label=NULL;                                             /* MR7 */
-**   Junction  *alt;                                                    /* MR7 */
-**                                                                      /* MR7 */
-**   for (alt=startJ; alt != NULL; alt=alt->outerAltstart) {            /* MR7 */
-**     label=alt->exception_label;                                      /* MR7 */
-**     if (label != NULL) break;                                        /* MR7 */
-**   };                                                                 /* MR7 */
-**   return (label==NULL ? "" : label);                                 /* MR7 */
-** }                                                                    /* MR7 */
-#endif
 
-#ifdef __USE_PROTOS
 static void OutLineInfo(FILE *file,int line,char *fileName)
-#else
-static void OutLineInfo(file,line,fileName)
-  FILE *    file;
-  int       line;
-  char *    fileName;
-#endif
 {
     static  char * prevFileName=NULL;
     static  char * prevFileNameMS=NULL;
@@ -4539,37 +3961,10 @@ static void OutLineInfo(file,line,fileName)
     };
 }
 
-#if 0
 
 /* MR21 */
 
-#ifdef __USE_PROTOS
-void OutFirstSetSymbol(Junction *q, char * pSymbol)
-#else
-void OutFirstSetSymbol(q, pSymbol)
-    Junction* q;
-  char * pSymbol
-#endif
-{
-
-  set f;
-    if (pSymbol == NULL) return;
-  gen1("/** #FirstSetSymbol(%s) **/\n",pSymbol);
-    f = ComputeErrorSet(q, 1, 0 /* use plus block bypass ? */);
-    DefErrSetWithSuffix (0 /* nil ok */, &f,0 /* no substitute */, pSymbol, "");
-    set_free(f);
-}
-#endif
-
-/* MR21 */
-
-#ifdef __USE_PROTOS
 void BlockPreambleOption(Junction *q, char * pSymbol)
-#else
-void BlockPreambleOption(q, pSymbol)
-    Junction* q;
-  char * pSymbol;
-#endif
 {
   set f = empty;
     if (pSymbol != NULL) {
@@ -4582,68 +3977,14 @@ void BlockPreambleOption(q, pSymbol)
 
 /* MR21 */
 
-void
-#ifdef __USE_PROTOS
-dumpActionPlus(ActionNode *a, char *s, FILE *output, int tabs, int file, int line,
+void dumpActionPlus(ActionNode *a, char *s, FILE *output, int tabs, int file, int line,
 int final_newline )
-#else
-dumpActionPlus(a, s, output, tabs, file, line, final_newline )
-ActionNode *a;
-char *s;
-FILE *output;
-int tabs;
-int file;
-int line;
-int final_newline;
-#endif
 {
     dumpAction(s,output,tabs,file,line,final_newline);
 }
 
 
-#if 0
-** #ifdef __USE_PROTOS
-** void MR_ErrorSets(Junction *q, int max_k, int usePlusBlockBypass)
-** #else
-** void MR_ErrorSets(q, max_k, usePlusBlockBypass)
-** Junction *q;
-** int max_k;
-** int usePlusBlockBypass;
-** #endif
-** {
-**     int k;
-**     set setResult;
-**  Junction* alt1;
-**  Junction* p;
-**  set rk;
-**
-**     require (max_k <= CLL_k, "k > CLL_k");
-**
-**
-**     for (k = 1; k <= CLL_k; k++) {set_clr(q->fset[k]); }
-**
-**     for (k = 1; k <= max_k; k++) {
-**         for (alt1=q; alt1 != NULL; alt1 = (Junction *)alt1->p2)
-**      {
-**             if (alt1->ignore && ! usePlusBlockBypass) continue;
-**          p = analysis_point((Junction *)alt1->p1);
-**        REACH(p, k, &rk, setResult);
-**        require(set_nil(rk), "rk != nil");
-**             set_orin(&q->fset[k], setResult);
-**      }
-**     }
-** }
-#endif
-
-
-#ifdef __USE_PROTOS
 void DumpInitializers(FILE* output, RuleEntry *r, char * pReturn)
-#else
-void DumpInitializers(output, r, pReturn)
-FILE* output;
-RuleEntry *r;
-char * pReturn;
-#endif
 {
   char *p = pReturn;
   char *pDataType;
@@ -4652,7 +3993,7 @@ char * pReturn;
   char *pValue;
   char *pSeparator;
   int nest = 0;
-    char *q;
+  char *q;
 
   require(pReturn!=NULL, "DumpInitializer: invalid string");
 
@@ -4675,14 +4016,7 @@ char * pReturn;
     }
 }
 
-#ifdef __USE_PROTOS
 void DumpFormals(FILE* output, char * pReturn, int bInitializer)
-#else
-void DumpFormals(output, pReturn, bInitializer)
-FILE* output;
-char * pReturn;
-int bInitializer;
-#endif
 {
   char *p = pReturn;
   char *pDataType;
@@ -4739,13 +4073,7 @@ int bInitializer;
     work around it.
 */
 
-#ifdef __USE_PROTOS
 int isEmptyAlt(Node * alt, Node * endBlock)
-#else
-int isEmptyAlt(alt, endBlock)
-Node * alt;
-Node * endBlock;
-#endif
 {
   Node * n = alt;
   Junction * j;

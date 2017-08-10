@@ -61,12 +61,7 @@
 
 static int tsize=TSChunk;   /* size of token str arrays */
 
-static void
-#ifdef __USE_PROTOS
-RemapForcedTokensInSyntaxDiagram(Node *);
-#else
-RemapForcedTokensInSyntaxDiagram();
-#endif
+static void RemapForcedTokensInSyntaxDiagram(Node *);
 
         /* T o k e n  M a n i p u l a t i o n */
 
@@ -80,13 +75,7 @@ RemapForcedTokensInSyntaxDiagram();
  *
  * Also, there is a Texpr hash table for each automaton.
  */
-static void
-#ifdef __USE_PROTOS
-Ttrack( char *t )
-#else
-Ttrack( t )
-char *t;
-#endif
+static void Ttrack( char *t )
 {
   if ( TokenNum >= tsize )  /* terminal table overflow? */
   {
@@ -114,13 +103,7 @@ char *t;
   else TokenStr[TokenNum] = t;
 }
 
-static Expr *
-#ifdef __USE_PROTOS
-newExpr( char *e )
-#else
-newExpr( e )
-char *e;
-#endif
+static Expr *newExpr( char *e )
 {
   Expr *p = (Expr *) calloc(1, sizeof(Expr));
   require(p!=NULL, "newExpr: cannot alloc Expr node");
@@ -139,13 +122,7 @@ char *e;
  * We need to track an expr for each automaton.  If we disallowed this
  * feature, only one ExprStr would be required.
  */
-void
-#ifdef __USE_PROTOS
-lexclass( char *m )
-#else
-lexclass( m )
-char *m;
-#endif
+void lexclass( char *m )
 {
   int i;
   TermEntry *p;
@@ -180,13 +157,7 @@ char *m;
   ExprStr[EofToken] = EOFSTR;
 }
 
-void
-#ifdef __USE_PROTOS
-lexmode( int i )
-#else
-lexmode( i )
-int i;
-#endif
+void lexmode(int i)
 {
   require(i<NumLexClasses, "lexmode: invalid mode");
   ExprStr = lclass[i].exprs;
@@ -195,13 +166,7 @@ int i;
 }
 
 /* return index into lclass array of lexical class. return -1 if nonexistent */
-int
-#ifdef __USE_PROTOS
-LexClassIndex( char *cl )
-#else
-LexClassIndex( cl )
-char *cl;
-#endif
+int LexClassIndex( char *cl )
 {
   int i;
 
@@ -212,13 +177,7 @@ char *cl;
   return -1;
 }
 
-int
-#ifdef __USE_PROTOS
-hasAction( char *expr )
-#else
-hasAction( expr )
-char *expr;
-#endif
+int hasAction( char *expr )
 {
   TermEntry *p;
   require(expr!=NULL, "hasAction: invalid expr");
@@ -228,14 +187,7 @@ char *expr;
   return (p->action!=NULL);
 }
 
-void
-#ifdef __USE_PROTOS
-setHasAction( char *expr, char *action )
-#else
-setHasAction( expr, action )
-char *expr;
-char *action;
-#endif
+void setHasAction( char *expr, char *action )
 {
   TermEntry *p;
   require(expr!=NULL, "setHasAction: invalid expr");
@@ -245,14 +197,7 @@ char *action;
   p->action = action;
 }
 
-ForcedToken *
-#ifdef __USE_PROTOS
-newForcedToken(char *token, int tnum)
-#else
-newForcedToken(token, tnum)
-char *token;
-int tnum;
-#endif
+ForcedToken *newForcedToken(char *token, int tnum)
 {
   ForcedToken *ft = (ForcedToken *) calloc(1, sizeof(ForcedToken));
   require(ft!=NULL, "out of memory");
@@ -261,16 +206,11 @@ int tnum;
   return ft;
 }
 
-/*
+/**
  * Make a token indirection array that remaps token numbers and then walk
  * the appropriate symbol tables and SynDiag to change token numbers
  */
-void
-#ifdef __USE_PROTOS
-RemapForcedTokens(void)
-#else
-RemapForcedTokens()
-#endif
+void RemapForcedTokens()
 {
   ListNode *p;
   ForcedToken *q;
@@ -353,13 +293,7 @@ RemapForcedTokens()
   RemapForcedTokensInSyntaxDiagram((Node *)SynDiag);
 }
 
-static void
-#ifdef __USE_PROTOS
-RemapForcedTokensInSyntaxDiagram(Node *p)
-#else
-RemapForcedTokensInSyntaxDiagram(p)
-Node *p;
-#endif
+static void RemapForcedTokensInSyntaxDiagram(Node *p)
 {
   Junction *j = (Junction *) p;
   RuleRefNode *r = (RuleRefNode *) p;
@@ -402,13 +336,7 @@ Node *p;
  * Track the order in which tokens are found so that the DLG output maintains
  * that order.  It also lets us map token numbers to strings.
  */
-int
-#ifdef __USE_PROTOS
-addTname( char *token )
-#else
-addTname( token )
-char *token;
-#endif
+int addTname( char *token )
 {
   TermEntry *p;
   require(token!=NULL, "addTname: invalid token name");
@@ -426,14 +354,7 @@ char *token;
  * been defined with #tokens when this is called.  This is only called
  * when a #tokdefs meta-op is used.
  */
-int
-#ifdef __USE_PROTOS
-addForcedTname( char *token, int tnum )
-#else
-addForcedTname( token, tnum )
-char *token;
-int tnum;
-#endif
+int addForcedTname( char *token, int tnum )
 {
   TermEntry *p;
   require(token!=NULL, "addTname: invalid token name");
@@ -450,13 +371,7 @@ int tnum;
  * Add a token expr.  Return the token number associated with it.  If it already
  * exists, then return the token number assigned to it.
  */
-int
-#ifdef __USE_PROTOS
-addTexpr( char *expr )
-#else
-addTexpr( expr )
-char *expr;
-#endif
+int addTexpr( char *expr )
 {
   TermEntry *p;
   require(expr!=NULL, "addTexpr: invalid regular expression");
@@ -472,13 +387,7 @@ char *expr;
 }
 
 /* return the token number of 'term'.  Return 0 if no 'term' exists */
-int
-#ifdef __USE_PROTOS
-Tnum( char *term )
-#else
-Tnum( term )
-char *term;
-#endif
+int Tnum( char *term )
 {
   TermEntry *p;
   require(term!=NULL, "Tnum: invalid terminal");
@@ -495,14 +404,7 @@ char *term;
  * ANTLR pseudo-op.  If both have not been defined, define them both
  * linked to same token number.
  */
-void
-#ifdef __USE_PROTOS
-Tklink( char *token, char *expr )
-#else
-Tklink( token, expr )
-char *token;
-char *expr;
-#endif
+void Tklink( char *token, char *expr )
 {
   TermEntry *p, *q;
   require(token!=NULL && expr!=NULL, "Tklink: invalid token name and/or expr");
@@ -546,19 +448,12 @@ char *expr;
   }
 }
 
-/*
+/**
  * Given a string, this function allocates and returns a pointer to a
  * hash table record of size 'sz' whose "str" pointer is reset to a position
  * in the string table.
  */
-Entry *
-#ifdef __USE_PROTOS
-newEntry( char *text, int sz )
-#else
-newEntry( text, sz )
-char *text;
-int sz;
-#endif
+Entry *newEntry( char *text, int sz )
 {
   Entry *p;
   require(text!=NULL, "new: NULL terminal");
@@ -573,21 +468,14 @@ int sz;
   return(p);
 }
 
-/*
+/**
  * add an element to a list.
  *
  * Any non-empty list has a sentinel node whose 'elem' pointer is really
  * a pointer to the last element.  (i.e. length(list) = #elemIn(list)+1).
  * Elements are appended to the list.
  */
-void
-#ifdef __USE_PROTOS
-list_add( ListNode **list, void *e )
-#else
-list_add( list, e )
-ListNode **list;
-void *e;
-#endif
+void list_add( ListNode **list, void *e )
 {
   ListNode *p, *tail;
   require(e!=NULL, "list_add: attempting to add NULL list element");
@@ -614,38 +502,24 @@ void *e;
 /* MR10 list_free() frees the ListNode elements in the list       */
 /* MR10   if freeData then free the data elements of the list too */
 
-void
-#ifdef __USE_PROTOS
-list_free(ListNode **list,int freeData)
-#else
-list_free(list,freeData)
-  ListNode      **list;
-  int           freeData;
-#endif
+void list_free(ListNode **list,int freeData)
 {
   ListNode *p;
-    ListNode *next;
+  ListNode *next;
 
   if (list == NULL) return;
-    if (*list == NULL) return;
+  if (*list == NULL) return;
   for (p=*list; p != NULL; p=next) {
-      next=p->next;
-      if (freeData && p->elem != NULL) {
-        free( (char *) p->elem);
-      };
-      free( (char *) p);
+    next=p->next;
+    if (freeData && p->elem != NULL) {
+      free( (char *) p->elem);
     };
-    *list=NULL;
+    free( (char *) p);
+  };
+  *list=NULL;
 }
 
-void
-#ifdef __USE_PROTOS
-list_apply( ListNode *list, void (*f)(void *) )
-#else
-list_apply( list, f )
-ListNode *list;
-void (*f)();
-#endif
+void list_apply( ListNode *list, void (*f)(void *) )
 {
   ListNode *p;
   require(f!=NULL, "list_apply: NULL function to apply");
@@ -656,13 +530,7 @@ void (*f)();
 
 /* MR27 */
 
-#ifdef __USE_PROTOS
 int list_search_cstring(ListNode *list, char * cstring)
-#else
-int list_search_cstring(list, cstring)
-  ListNode * list;
-  char * cstring;
-#endif
 {
   ListNode *p;
   if (list == NULL ) return 0;
@@ -683,15 +551,7 @@ int list_search_cstring(list, cstring)
 /* MR10    by a simple dump program.  Also, separates           */
 /* MR10   'o' and 'i' from rule name                            */
 
-char *
-#ifdef __USE_PROTOS
-Fkey( char *rule, int computation, int k )
-#else
-Fkey( rule, computation, k )
-char *rule;
-int computation;
-int k;
-#endif
+char *Fkey( char *rule, int computation, int k )
 {
   static char key[MaxRuleName+2+2+1];                                 /* MR10 */
   int i;
@@ -716,15 +576,8 @@ int k;
   return key;
 }
 
-/* Push a rule onto the kth FOLLOW stack */
-void
-#ifdef __USE_PROTOS
-FoPush( char *rule, int k )
-#else
-FoPush( rule, k )
-char *rule;
-int k;
-#endif
+/** Push a rule onto the kth FOLLOW stack */
+void FoPush( char *rule, int k )
 {
   RuleEntry *r;
   require(rule!=NULL, "FoPush: tried to push NULL rule");
@@ -771,13 +624,7 @@ int k;
 }
 
 /* Pop one rule off of the FOLLOW stack.  TOS ptr is NULL if empty. */
-void
-#ifdef __USE_PROTOS
-FoPop( int k )
-#else
-FoPop( k )
-int k;
-#endif
+void FoPop( int k )
 {
   require(k<=CLL_k, "FoPop: tried to access non-existent stack");
   /*fprintf(stderr, "FoPop\n");*/
@@ -803,14 +650,7 @@ int k;
  * Fo(x) finishes.  Fo(a,b,c) however are not.  It turns out that all rules
  * in a FOLLOW cycle have the same FOLLOW set.
  */
-void
-#ifdef __USE_PROTOS
-RegisterCycle( char *rule, int k )
-#else
-RegisterCycle( rule, k )
-char *rule;
-int k;
-#endif
+void RegisterCycle( char *rule, int k )
 {
   CacheEntry *f;
   Cycle *c;
@@ -875,24 +715,17 @@ int k;
  *    endfor
  * endwhile
  */
-void
-#ifdef __USE_PROTOS
-ResolveFoCycles( int k )
-#else
-ResolveFoCycles( k )
-int k;
-#endif
+void ResolveFoCycles( int k )
 {
   ListNode *p, *q;
   Cycle *c;
   int changed = 1;
   CacheEntry *f,*g;
   int r;
-/*  int i;  */  /* MR10 not useful */
   unsigned d;
 
-    unsigned    *cursor;        /* MR10 */
-    unsigned    *origin;        /* MR10 */
+  unsigned    *cursor;        /* MR10 */
+  unsigned    *origin;        /* MR10 */
 
   /*fprintf(stderr, "Resolving following cycles for %d\n", k);*/
   while ( changed )
@@ -950,14 +783,7 @@ int k;
 
       /* P r i n t i n g  S y n t a x  D i a g r a m s */
 
-static void
-#ifdef __USE_PROTOS
-pBlk( Junction *q, int btype )
-#else
-pBlk( q, btype )
-Junction *q;
-int btype;
-#endif
+static void pBlk( Junction *q, int btype )
 {
   int k,a;
   Junction *alt, *p;
@@ -1043,13 +869,7 @@ int btype;
 }
 
 /* How to print out a junction */
-void
-#ifdef __USE_PROTOS
-pJunc( Junction *q )
-#else
-pJunc( q )
-Junction *q;
-#endif
+void pJunc( Junction *q )
 {
   int dum_k;
   int doing_rule;
@@ -1170,13 +990,7 @@ Junction *q;
 }
 
 /* How to print out a rule reference node */
-void
-#ifdef __USE_PROTOS
-pRuleRef( RuleRefNode *p )
-#else
-pRuleRef( p )
-RuleRefNode *p;
-#endif
+void pRuleRef( RuleRefNode *p )
 {
   require(p!=NULL, "pRuleRef: NULL node");
   require(p->ntype==nRuleRef, "pRuleRef: not rule ref node");
@@ -1186,13 +1000,7 @@ RuleRefNode *p;
 }
 
 /* How to print out a terminal node */
-void
-#ifdef __USE_PROTOS
-pToken( TokNode *p )
-#else
-pToken( p )
-TokNode *p;
-#endif
+void pToken( TokNode *p )
 {
   require(p!=NULL, "pToken: NULL node");
   require(p->ntype==nToken, "pToken: not token node");
@@ -1203,13 +1011,7 @@ TokNode *p;
 }
 
 /* How to print out a terminal node */
-void
-#ifdef __USE_PROTOS
-pAction( ActionNode *p )
-#else
-pAction( p )
-ActionNode *p;
-#endif
+void pAction( ActionNode *p )
 {
   require(p!=NULL, "pAction: NULL node");
   require(p->ntype==nAction, "pAction: not action node");
@@ -1250,13 +1052,7 @@ ActionNode *p;
  *  o-->Rn--o
  *
  */
-void
-#ifdef __USE_PROTOS
-FoLink( Node *p )
-#else
-FoLink( p )
-Node *p;
-#endif
+void FoLink( Node *p )
 {
   RuleEntry *q;
   Junction *j = (Junction *) p;
@@ -1354,15 +1150,7 @@ Node *p;
  * always points to the most recently added follow-link.  At the end, it should
  * point to the last reference found in the grammar (starting from the 1st rule).
  */
-void
-#ifdef __USE_PROTOS
-addFoLink( Node *p, char *rname, Junction *r )
-#else
-addFoLink( p, rname, r )
-Node *p;
-char *rname;
-Junction *r;
-#endif
+void addFoLink( Node *p, char *rname, Junction *r )
 {
   Junction *j;
   require(r!=NULL,        "addFoLink: incorrect rule graph");
@@ -1377,13 +1165,7 @@ Junction *r;
   r->end->p1 = (Node *) j;  /* reset head to point to new node */
 }
 
-void
-#ifdef __USE_PROTOS
-GenCrossRef( Junction *p )
-#else
-GenCrossRef( p )
-Junction *p;
-#endif
+void GenCrossRef( Junction *p )
 {
   set a;
   Junction *j;
@@ -1448,12 +1230,7 @@ Junction *p;
  *  Start with pointer to leading "\""
  */
 
-#ifdef __USE_PROTOS
 char * skipStringLiteral(char *pCurrent)
-#else
-char * skipStringLiteral(pCurrent)
-char *pCurrent;
-#endif
 {
   char *p = pCurrent;
   if (*p == 0) return p;
@@ -1478,12 +1255,7 @@ char *pCurrent;
  *  Start with pointer to leading "'"
  */
 
-#ifdef __USE_PROTOS
 char * skipCharLiteral(char *pStart)
-#else
-char * skipCharLiteral(pStart)
- char *pStart;
-#endif
 {
   char *p = pStart;
   if (*p == 0) return p;
@@ -1503,25 +1275,14 @@ char * skipCharLiteral(pStart)
   return p;
 }
 
-#ifdef __USE_PROTOS
 char * skipSpaces(char *pStart)
-#else
-char * skipSpaces(pStart)
-char * pStart;
-#endif
 {
   char *p = pStart;
   while (*p != 0 && isspace(*p)) p++;
   return p;
 }
 
-#ifdef __USE_PROTOS
 char * skipToSeparatorOrEqualSign(char *pStart, int *pNest)
-#else
-char * skipToSeparatorOrEqualSign(pStart, pNest)
-char *pStart;
-int *pNest;
-#endif
 {
   char *p = pStart;
 
@@ -1577,13 +1338,7 @@ EXIT:
   return p;
 }
 
-#ifdef __USE_PROTOS
 char * skipToSeparator(char *pStart, int *pNest)
-#else
-char * skipToSeparator(pStart, pNest)
-char *pStart;
-int *pNest;
-#endif
 {
   char * p = pStart;
   for ( ; ; ) {
@@ -1597,12 +1352,7 @@ int *pNest;
 
 /* skip to just past the "=" separating the declaration from the initialization value */
 
-#ifdef __USE_PROTOS
 char * getInitializer(char *pStart)
-#else
-char * getInitializer(pStart)
-char * pStart;
-#endif
 {
   char *p;
   char *pDataType;
@@ -1633,13 +1383,7 @@ char * pStart;
    returns 1.  Otherwise 0.
 */
 
-#ifdef __USE_PROTOS
 int isWhiteString(const char *pStart, const char *pEnd)
-#else
-int isWhiteString(pStart, pEnd)
-const char *pStart;
-const char *pEnd;
-#endif
 {
   const char *p;
   for (p = pStart; p < pEnd; p++) {
@@ -1659,12 +1403,7 @@ const char *pEnd;
 
 */
 
-#ifdef __USE_PROTOS
 int hasMultipleOperands(char *pStart)
-#else
-int hasMultipleOperands(pStart)
-char *pStart;
-#endif
 {
   char *p = pStart;
   int nest = 0;
@@ -1695,14 +1434,7 @@ static char strBetweenWorkArea[MAX_STR_BETWEEN_WORK_AREA];
   (is a null pointer).
 */
 
-#ifdef __USE_PROTOS
 char *strBetween(char *pStart, char *pNext, char *pStop)
-#else
-char *strBetween(pStart, pNext, pStop)
-char *pStart;
-char *pNext;
-char *pStop;
-#endif
 {
   char *p;
   char *q = strBetweenWorkArea;
@@ -1760,7 +1492,6 @@ char *pStop;
 
 */
 
-#ifdef __USE_PROTOS
 char * endFormal(char *pStart,
                  char **ppDataType,
                  char **ppSymbol,
@@ -1768,23 +1499,6 @@ char * endFormal(char *pStart,
                  char **ppValue,
                  char **ppSeparator,
                  int *pNest)
-#else
-char * endFormal(pStart,
-           ppDataType,
-         ppSymbol,
-         ppEqualSign,
-         ppValue,
-         ppSeparator,
-         pNest)
-char *pStart;
-char **ppDataType;
-char **ppSymbol;
-char **ppEqualSign;
-char **ppValue;
-char **ppSeparator;
-int *pNest;
-
-#endif
 {
   char *p = pStart;
   char *q;

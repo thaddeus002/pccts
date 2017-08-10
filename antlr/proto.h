@@ -558,10 +558,7 @@ extern void DumpInitializers(FILE*, RuleEntry*, char*);              /* MR23 */
 extern int isTermEntryTokClass(TermEntry *);             /* MR23 */
 extern int isEmptyAlt(Node *, Node *);                               /* MR23 */
 
-
-#ifdef __USE_PROTOS
 #include <stdlib.h>
-#endif
 
 /* MR20 G. Hobbelt  Create proper externs for dlg variables */
 

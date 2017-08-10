@@ -40,17 +40,9 @@ ANTLR_INFO
 #endif
 
 
-#ifdef __USE_PROTOS
 static void chkToken(char *, char *, char *, int);
-#else
-static void chkToken();
-#endif
 
-#ifdef __USE_PROTOS
 static int isDLGmaxToken(char *Token);             /* MR3 */
-#else
-static int isDLGmaxToken();                                    /* MR3 */
-#endif
 
 static int class_nest_level = 0;
 
@@ -58,12 +50,7 @@ static int class_nest_level = 0;
 
 
 
-void
-#ifdef __USE_PROTOS
-grammar(void)
-#else
-grammar()
-#endif
+void grammar()
 {
   zzRULE;
   zzBLOCK(zztasp1);
@@ -390,12 +377,7 @@ fail:
   }
 }
 
-void
-#ifdef __USE_PROTOS
-class_def(void)
-#else
-class_def()
-#endif
+void class_def()
 {
   zzRULE;
   zzBLOCK(zztasp1);
@@ -481,12 +463,7 @@ fail:
   }
 }
 
-void
-#ifdef __USE_PROTOS
-rule(void)
-#else
-rule()
-#endif
+void rule()
 {
   zzRULE;
   zzBLOCK(zztasp1);
@@ -730,12 +707,7 @@ fail:
   }
 }
 
-void
-#ifdef __USE_PROTOS
-laction(void)
-#else
-laction()
-#endif
+void laction()
 {
   zzRULE;
   zzBLOCK(zztasp1);
@@ -761,12 +733,7 @@ fail:
   }
 }
 
-void
-#ifdef __USE_PROTOS
-lmember(void)
-#else
-lmember()
-#endif
+void lmember()
 {
   zzRULE;
   zzBLOCK(zztasp1);
@@ -797,12 +764,7 @@ fail:
   }
 }
 
-void
-#ifdef __USE_PROTOS
-lprefix(void)
-#else
-lprefix()
-#endif
+void lprefix()
 {
   zzRULE;
   zzBLOCK(zztasp1);
@@ -833,12 +795,7 @@ fail:
   }
 }
 
-void
-#ifdef __USE_PROTOS
-aPred(void)
-#else
-aPred()
-#endif
+void aPred()
 {
   zzRULE;
   zzBLOCK(zztasp1);
@@ -976,12 +933,7 @@ fail:
   }
 }
 
-Predicate *
-#ifdef __USE_PROTOS
-predOrExpr(void)
-#else
-predOrExpr()
-#endif
+Predicate *predOrExpr()
 {
   Predicate *   _retv;
   zzRULE;
@@ -1033,12 +985,7 @@ fail:
   }
 }
 
-Predicate *
-#ifdef __USE_PROTOS
-predAndExpr(void)
-#else
-predAndExpr()
-#endif
+Predicate *predAndExpr()
 {
   Predicate *   _retv;
   zzRULE;
@@ -1090,12 +1037,7 @@ fail:
   }
 }
 
-Predicate *
-#ifdef __USE_PROTOS
-predPrimary(void)
-#else
-predPrimary()
-#endif
+Predicate *predPrimary()
 {
   Predicate *   _retv;
   zzRULE;
@@ -1160,12 +1102,7 @@ fail:
   }
 }
 
-void
-#ifdef __USE_PROTOS
-aLexclass(void)
-#else
-aLexclass()
-#endif
+void aLexclass()
 {
   zzRULE;
   zzBLOCK(zztasp1);
@@ -1186,12 +1123,7 @@ fail:
   }
 }
 
-void
-#ifdef __USE_PROTOS
-error(void)
-#else
-error()
-#endif
+void error()
 {
   zzRULE;
   zzBLOCK(zztasp1);
@@ -1326,12 +1258,7 @@ fail:
   }
 }
 
-void
-#ifdef __USE_PROTOS
-tclass(void)
-#else
-tclass()
-#endif
+void tclass()
 {
   zzRULE;
   zzBLOCK(zztasp1);
@@ -1343,7 +1270,7 @@ tclass()
   zzmatch(118); zzCONSUME;
   zzmatch(TokenTerm);
   t=mystrdup(LATEXT(1));
- zzCONSUME;
+  zzCONSUME;
 
   e = newTCnode;
   require(e!=NULL, "cannot allocate token class node");
@@ -1496,12 +1423,7 @@ fail:
   }
 }
 
-void
-#ifdef __USE_PROTOS
-token(void)
-#else
-token()
-#endif
+void token()
 {
   zzRULE;
   zzBLOCK(zztasp1);
@@ -1651,14 +1573,7 @@ fail:
   }
 }
 
-void
-#ifdef __USE_PROTOS
-block(set * toksrefd,set * rulesrefd)
-#else
-block(toksrefd,rulesrefd)
- set *toksrefd;
-set *rulesrefd ;
-#endif
+void block(set * toksrefd,set * rulesrefd)
 {
   zzRULE;
   zzBLOCK(zztasp1);
@@ -1765,14 +1680,7 @@ fail:
   }
 }
 
-void
-#ifdef __USE_PROTOS
-alt(set * toksrefd,set * rulesrefd)
-#else
-alt(toksrefd,rulesrefd)
- set *toksrefd;
-set *rulesrefd ;
-#endif
+void alt(set * toksrefd,set * rulesrefd)
 {
   zzRULE;
   zzBLOCK(zztasp1);
@@ -1891,12 +1799,7 @@ fail:
   }
 }
 
-LabelEntry *
-#ifdef __USE_PROTOS
-element_label(void)
-#else
-element_label()
-#endif
+LabelEntry *element_label()
 {
   LabelEntry *   _retv;
   zzRULE;
@@ -1951,15 +1854,7 @@ fail:
   }
 }
 
-Node *
-#ifdef __USE_PROTOS
-element(int old_not,int first_on_line,int use_def_MT_handler)
-#else
-element(old_not,first_on_line,use_def_MT_handler)
- int old_not;
-int first_on_line;
-int use_def_MT_handler ;
-#endif
+Node *element(int old_not,int first_on_line,int use_def_MT_handler)
 {
   Node *   _retv;
   zzRULE;
@@ -2791,12 +2686,7 @@ fail:
   }
 }
 
-void
-#ifdef __USE_PROTOS
-default_exception_handler(void)
-#else
-default_exception_handler()
-#endif
+void default_exception_handler()
 {
   zzRULE;
   zzBLOCK(zztasp1);
@@ -2813,12 +2703,7 @@ fail:
   }
 }
 
-ExceptionGroup *
-#ifdef __USE_PROTOS
-exception_group(void)
-#else
-exception_group()
-#endif
+ExceptionGroup *exception_group()
 {
   ExceptionGroup *   _retv;
   zzRULE;
@@ -2962,12 +2847,7 @@ fail:
   }
 }
 
-ExceptionHandler *
-#ifdef __USE_PROTOS
-exception_handler(void)
-#else
-exception_handler()
-#endif
+ExceptionHandler *exception_handler()
 {
   ExceptionHandler *   _retv;
   zzRULE;
@@ -3044,13 +2924,7 @@ fail:
   }
 }
 
-void
-#ifdef __USE_PROTOS
-enum_file(char * fname)
-#else
-enum_file(fname)
- char *fname ;
-#endif
+void enum_file(char * fname)
 {
   zzRULE;
   zzBLOCK(zztasp1);
@@ -3131,13 +3005,7 @@ fail:
   }
 }
 
-void
-#ifdef __USE_PROTOS
-defines(char * fname)
-#else
-defines(fname)
- char *fname ;
-#endif
+void defines(char * fname)
 {
   zzRULE;
   zzBLOCK(zztasp1);
@@ -3191,13 +3059,7 @@ fail:
   }
 }
 
-void
-#ifdef __USE_PROTOS
-enum_def(char * fname)
-#else
-enum_def(fname)
- char *fname ;
-#endif
+void enum_def(char * fname)
 {
   zzRULE;
   zzBLOCK(zztasp1);
@@ -3340,74 +3202,62 @@ fail:
 
 /* semantic check on DLGminToken and DLGmaxmaxToken in #tokdefs */
 
-#ifdef __USE_PROTOS
 static int isDLGmaxToken(char *Token)
-#else
-static int isDLGmaxToken(Token)
-char *  Token;
-#endif
 {
-static char checkStr1[] = "DLGmaxToken";
-static char checkStr2[] = "DLGminToken";
+    static char checkStr1[] = "DLGmaxToken";
+    static char checkStr2[] = "DLGminToken";
 
-   if (strcmp(Token, checkStr1) == 0)
-return 1;
-else if (strcmp(Token, checkStr2) == 0)
-return 1;
-else
-return 0;
+    if (strcmp(Token, checkStr1) == 0)
+        return 1;
+    else if (strcmp(Token, checkStr2) == 0)
+        return 1;
+    else
+        return 0;
 }
 
 /* semantics of #token */
-static void
-#ifdef __USE_PROTOS
-chkToken(char *t, char *e, char *a, int tnum)
-#else
-chkToken(t,e,a,tnum)
-char *t, *e, *a;
-int tnum;
-#endif
+static void chkToken(char *t, char *e, char *a, int tnum)
 {
-TermEntry *p;
+    TermEntry *p;
 
-  /* check to see that they don't try to redefine a token as a token class */
-if ( t!=NULL ) {
-p = (TermEntry *) hash_get(Tname, t);
-if ( p!=NULL && p->classname ) {
-  err(eMsg1("redefinition of #tokclass '%s' to #token not allowed; ignored",t));
-  if ( a!=NULL ) free((char *)a);
-  return;
-}
-}
+    /* check to see that they don't try to redefine a token as a token class */
+    if ( t!=NULL ) {
+        p = (TermEntry *) hash_get(Tname, t);
+        if ( p!=NULL && p->classname ) {
+            err(eMsg1("redefinition of #tokclass '%s' to #token not allowed; ignored",t));
+            if ( a!=NULL ) free((char *)a);
+            return;
+        }
+    }
 
-  if ( t==NULL && e==NULL ) {     /* none found */
-err("#token requires at least token name or rexpr");
-}
-else if ( t!=NULL && e!=NULL ) {  /* both found */
-if ( UserDefdTokens ) {     /* if #tokdefs, must not define new */
-  p = (TermEntry *) hash_get(Tname, t);
-  if ( p == NULL) {
-    err(eMsg1("new token definition '%s' not allowed - only #token with name already defined by #tokdefs file allowed",t));
-    return;
-  };
-}
-Tklink(t, e);
-if ( a!=NULL ) {
-  if ( hasAction(e) ) {
-    err(eMsg1("redefinition of action for %s; ignored",e));
-  }
-  else setHasAction(e, a);
-}
-}
-else if ( t!=NULL ) {       /* only one found */
-if ( UserDefdTokens ) {
-  p = (TermEntry *) hash_get(Tname, t);
-  if (p == NULL) {
-    err(eMsg1("new token definition '%s' not allowed - only #token with name already defined by #tokdefs file allowed",t));
-  };
-  return;
-}
-if ( Tnum( t ) == 0 ) addTname( t );
+    if ( t==NULL && e==NULL ) {     /* none found */
+        err("#token requires at least token name or rexpr");
+    }
+    else if ( t!=NULL && e!=NULL ) {  /* both found */
+        if ( UserDefdTokens ) {     /* if #tokdefs, must not define new */
+            p = (TermEntry *) hash_get(Tname, t);
+            if ( p == NULL) {
+                err(eMsg1("new token definition '%s' not allowed - only #token with name already defined by #tokdefs file allowed",t));
+                return;
+            };
+        }
+        Tklink(t, e);
+        if ( a!=NULL ) {
+            if ( hasAction(e) ) {
+                err(eMsg1("redefinition of action for %s; ignored",e));
+            }
+            else setHasAction(e, a);
+        }
+    }
+    else if ( t!=NULL ) {       /* only one found */
+        if ( UserDefdTokens ) {
+            p = (TermEntry *) hash_get(Tname, t);
+            if (p == NULL) {
+                err(eMsg1("new token definition '%s' not allowed - only #token with name already defined by #tokdefs file allowed",t));
+            };
+            return;
+        }
+        if ( Tnum( t ) == 0 ) addTname( t );
 else {
   err(eMsg1("redefinition of token %s; ignored",t));
 }
@@ -3446,14 +3296,7 @@ else
 }
 }
 
-static int
-#ifdef __USE_PROTOS
-match_token(char *s, char **nxt)
-#else
-match_token(s,nxt)
-char *s;
-char **nxt;
-#endif
+static int match_token(char *s, char **nxt)
 {
   if ( !(*s>='A' && *s<='Z') ) return 0;
   s++;
@@ -3469,14 +3312,7 @@ char **nxt;
   return 1;
 }
 
-static int
-#ifdef __USE_PROTOS
-match_rexpr(char *s, char **nxt)
-#else
-match_rexpr(s,nxt)
-char *s;
-char **nxt;
-#endif
+static int match_rexpr(char *s, char **nxt)
 {
   if ( *s!='"' ) return 0;
   s++;
@@ -3498,13 +3334,7 @@ char **nxt;
 * we pretend as if we had seen "#tokclass inlineX { A .. Z }"
 * on the input stream outside of an action.
 */
-char *
-#ifdef __USE_PROTOS
-inline_set(char *s)
-#else
-inline_set(s)
-char *s;
-#endif
+char *inline_set(char *s)
 {
   char *nxt;
   fprintf(stderr, "found consumeUntil( {...} )\n");
@@ -3533,18 +3363,8 @@ char *s;
 /* ANTLR-specific syntax error message generator
 * (define USER_ZZSYN when compiling so don't get 2 definitions)
 */
-void
-#ifdef __USE_PROTOS
-zzsyn(char *text, int tok, char *egroup, SetWordType *eset, int etok,
+void zzsyn(char *text, int tok, char *egroup, SetWordType *eset, int etok,
 int k, char *bad_text)
-#else
-zzsyn(text, tok, egroup, eset, etok, k, bad_text)
-char *text, *egroup, *bad_text;
-int tok;
-int etok;
-int k;
-SetWordType *eset;
-#endif
 {
 fprintf(stderr, ErrHdr, FileStr[CurFile]!=NULL?FileStr[CurFile]:"stdin", zzline);
 fprintf(stderr, " syntax error at \"%s\"", (tok==zzEOF_TOKEN)?"EOF":text);

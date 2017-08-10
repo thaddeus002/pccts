@@ -40,13 +40,8 @@
 #include "dlgdef.h"
 #include <ctype.h>
 
-#ifdef __USE_PROTOS
 static void complete_context_sets(RuleRefNode *, Predicate *);
 static void complete_context_trees(RuleRefNode *, Predicate *);
-#else
-static void complete_context_sets();
-static void complete_context_trees();
-#endif
 
 char *PRED_AND_LIST = "AND";
 char *PRED_OR_LIST = "OR";
@@ -59,20 +54,14 @@ char *PRED_OR_LIST = "OR";
  * sole argument to LT(i) given that the char before is nonalpha.
  */
 
-int
-#ifdef __USE_PROTOS
-predicateLookaheadDepth(ActionNode *a)
-#else
-predicateLookaheadDepth(a)
-ActionNode *a;
-#endif
+int predicateLookaheadDepth(ActionNode *a)
 {
-  int     max_k=0;
+  int max_k=0;
 
-    if (a->predEntry != NULL) {
-       MR_pred_depth(a->predEntry->pred,&max_k);
-       goto PREDENTRY_EXIT;
-    }
+  if (a->predEntry != NULL) {
+    MR_pred_depth(a->predEntry->pred,&max_k);
+    goto PREDENTRY_EXIT;
+  }
 
   if ( GenCC )
   {
@@ -141,29 +130,23 @@ ActionNode *a;
 /* MR10 */        max_k= CLL_k;
 /* MR10 */    };
 
-PREDENTRY_EXIT:
+  PREDENTRY_EXIT:
   return max_k;
 }
 
-/* Find all predicates in a block of alternatives.  DO NOT find predicates
+/**
+ * Find all predicates in a block of alternatives.  DO NOT find predicates
  * behind the block because that predicate could depend on things set in
  * one of the nonoptional blocks
  */
-
-Predicate *
-#ifdef __USE_PROTOS
-find_in_aSubBlk( Junction *alt )
-#else
-find_in_aSubBlk( alt )
-Junction *alt;
-#endif
+Predicate *find_in_aSubBlk( Junction *alt )
 {
   Predicate *a, *head=NULL, *tail=NULL, *root=NULL;
   Junction *p = alt;
 
-    if (MRhoisting) {
-      return MR_find_in_aSubBlk(alt);
-    };
+  if (MRhoisting) {
+    return MR_find_in_aSubBlk(alt);
+  };
   for (; p!=NULL; p=(Junction *)p->p2)
   {
     /* ignore empty alts */
@@ -201,41 +184,24 @@ Junction *alt;
   return root;
 }
 
-Predicate *
-#ifdef __USE_PROTOS
-find_in_aOptBlk( Junction *alt )
-#else
-find_in_aOptBlk( alt )
-Junction *alt;
-#endif
+Predicate *find_in_aOptBlk( Junction *alt )
 {
   return find_in_aSubBlk( alt );
 }
 
-Predicate *
-#ifdef __USE_PROTOS
-find_in_aLoopBegin( Junction *alt )
-#else
-find_in_aLoopBegin( alt )
-Junction *alt;
-#endif
+Predicate *find_in_aLoopBegin( Junction *alt )
 {
   return find_in_aSubBlk( (Junction *) alt->p1 ); /* get preds in alts */
 }
 
-Predicate *
-#ifdef __USE_PROTOS
-find_in_aPlusBlk( Junction *alt )
-#else
-find_in_aPlusBlk( alt )
-Junction *alt;
-#endif
+Predicate *find_in_aPlusBlk( Junction *alt )
 {
   require(alt!=NULL&&alt->p2!=NULL, "invalid aPlusBlk");
   return find_in_aSubBlk( alt );
 }
 
-/* Look for a predicate;
+/**
+ * Look for a predicate;
  *
  * Do not pass anything but Junction nodes; no Actions, Tokens, RuleRefs.
  * This means that a "hoisting distance" of zero is the only distance
@@ -248,15 +214,7 @@ Junction *alt;
  *
  * Return the predicate found if any.
  */
-
-
-Predicate *
-#ifdef __USE_PROTOS
-find_predicates( Node *alt )
-#else
-find_predicates( alt )
-Node *alt;
-#endif
+Predicate *find_predicates( Node *alt )
 {
 #ifdef DBG_PRED
   Junction *j;
@@ -570,12 +528,7 @@ Node *alt;
   return NULL;
 }
 
-#ifdef __USE_PROTOS
 Predicate *MR_find_predicates_and_supp(Node *alt)
-#else
-Predicate *MR_find_predicates_and_supp(alt)
-  Node      *alt;
-#endif
 {
     Predicate   *p;
 
@@ -584,31 +537,19 @@ Predicate *MR_find_predicates_and_supp(alt)
     return p;
 }
 
-Predicate *
-#ifdef __USE_PROTOS
-new_pred( void )
-#else
-new_pred( )
-#endif
+Predicate *new_pred( )
 {
   Predicate *p = (Predicate *) calloc(1,sizeof(Predicate)); /* MR10 */
   require(p!=NULL, "new_pred: cannot alloc predicate");
-    p->scontext[0]=empty;
-    p->scontext[1]=empty;
-    p->completionTree=empty;
-    p->completionSet=empty;
-    p->plainSet=empty;
+  p->scontext[0]=empty;
+  p->scontext[1]=empty;
+  p->completionTree=empty;
+  p->completionSet=empty;
+  p->plainSet=empty;
   return p;
 }
 
-static void
-#ifdef __USE_PROTOS
-complete_context_sets( RuleRefNode *p, Predicate *a )
-#else
-complete_context_sets( p, a )
-RuleRefNode *p;
-Predicate *a;
-#endif
+static void complete_context_sets(RuleRefNode *p, Predicate *a)
 {
   set rk2, b;
   int k2;
@@ -649,13 +590,7 @@ Predicate *a;
 }
 
 static void
-#ifdef __USE_PROTOS
-complete_context_trees( RuleRefNode *p, Predicate *a )
-#else
-complete_context_trees( p, a )
-RuleRefNode *p;
-Predicate *a;
-#endif
+complete_context_trees(RuleRefNode *p, Predicate *a)
 {
   set rk2;
   int k2;
@@ -700,14 +635,8 @@ Predicate *a;
 #endif
 }
 
-/* Walk a list of predicates and return the set of all tokens in scontext[1]'s */
-set
-#ifdef __USE_PROTOS
-covered_set( Predicate *p )
-#else
-covered_set( p )
-Predicate *p;
-#endif
+/** Walk a list of predicates and return the set of all tokens in scontext[1]'s */
+set covered_set(Predicate *p)
 {
   set a;
 
@@ -729,12 +658,7 @@ Predicate *p;
    MR10 Don't free the leaf nodes since they are part of the action node
 */
 
-#ifdef __USE_PROTOS
 void predicate_free(Predicate *p)
-#else
-void predicate_free(p)
-  Predicate     *p;
-#endif
 {
   if (p == NULL) return;
   predicate_free(p->right);
@@ -758,13 +682,7 @@ void predicate_free(p)
 
 /* MR10 predicate_dup() */
 
-#ifdef __USE_PROTOS
-Predicate * predicate_dup_xxx(Predicate *p,int contextToo)
-#else
-Predicate * predicate_dup_xxx(p,contextToo)
-  Predicate     *p;
-  int           contextToo;
-#endif
+Predicate * predicate_dup_xxx(Predicate *p, int contextToo)
 {
   Predicate     *q;
 
@@ -802,23 +720,13 @@ Predicate * predicate_dup_xxx(p,contextToo)
 
 }
 
-#ifdef __USE_PROTOS
+
 Predicate * predicate_dup_without_context(Predicate *p)
-#else
-Predicate * predicate_dup_without_context(p)
-  Predicate     *p;
-#endif
 {
   return predicate_dup_xxx(p,0);
 }
 
-#ifdef __USE_PROTOS
 Predicate * predicate_dup(Predicate *p)
-#else
-Predicate * predicate_dup(p)
-  Predicate     *p;
-#endif
 {
   return predicate_dup_xxx(p,1);
 }
-
