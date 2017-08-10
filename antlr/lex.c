@@ -34,9 +34,6 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
-/* MR1                                                            */
-/* MR1  10-Apr-97  MR1  Replace use of __STDC__ with __USE_PROTOS     */
-/* MR1                                                                */
 #include "pcctscfg.h"
 #include "set.h"
 #include "syn.h"
@@ -108,12 +105,7 @@ void genLexDescr()
     fprintf(dlgFile, "#include \"dlgdef.h\"\n");
     fprintf(dlgFile, "LOOKAHEAD\n");
     fprintf(dlgFile, "\n");
-    fprintf(dlgFile, "void\n");
-    fprintf(dlgFile, "#ifdef __USE_PROTOS\n");
-    fprintf(dlgFile, "zzerraction(void)\n");
-    fprintf(dlgFile, "#else\n");
-    fprintf(dlgFile, "zzerraction()\n");
-    fprintf(dlgFile, "#endif\n");
+    fprintf(dlgFile, "void zzerraction()\n");
     fprintf(dlgFile, "{\n");
     fprintf(dlgFile, "\t(*zzerr)(\"%s\");\n", DLGErrorString);
     fprintf(dlgFile, "\tzzadvance();\n");
@@ -436,8 +428,7 @@ void GenRulePrototypes( FILE *f, Junction *p )
       {
         DumpRetValStruct(f, p->ret, i);
       }
-      fprintf(f, "\n#ifdef __USE_PROTOS\n");
-/* MR23 */  if ( hasMultipleOperands(p->ret) )
+      /* MR23 */  if ( hasMultipleOperands(p->ret) )
       {
         fprintf(f, "extern struct _rv%d", i);
       }
@@ -449,22 +440,9 @@ void GenRulePrototypes( FILE *f, Junction *p )
       fprintf(f, " %s%s(", RulePrefix, p->rname);
       DumpANSIFunctionArgDef(f,p,1 /* emit initializers ? */);
       fprintf(f, ";\n");
-      fprintf(f, "#else\n");
-/* MR23 */  if ( hasMultipleOperands(p->ret) )
-      {
-        fprintf(f, "extern struct _rv%d", i);
-      }
-      else
-      {
-        fprintf(f, "extern ");
-        DumpType(p->ret, f);
-      }
-      fprintf(f, " %s%s();\n", RulePrefix, p->rname);
-      fprintf(f, "#endif\n");
     }
     else
     {
-      fprintf(f, "\n#ifdef __USE_PROTOS\n");
       fprintf(f, "void %s%s(", RulePrefix, p->rname);
       DumpANSIFunctionArgDef(f,p, 1 /* emit initializers ? */ );
       fprintf(f, ";\n");
@@ -479,9 +457,6 @@ void GenRulePrototypes( FILE *f, Junction *p )
       else fprintf(f, "void");
       fprintf(f, ");\n");
 #endif
-      fprintf(f, "#else\n");
-      fprintf(f, "extern void %s%s();\n", RulePrefix, p->rname);
-      fprintf(f, "#endif\n");
     }
     i++;
     p = (Junction *)p->p2;

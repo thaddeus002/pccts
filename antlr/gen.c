@@ -3289,10 +3289,7 @@ static void DumpFuncHeader( Junction *q, RuleEntry *r )
   {
     _gen("void\n");
   }
-/*  MR1                                                                 */
-/*  MR1 10-Apr-97  133MR1 Replace __STDC__ with __USE_PROTOS              */
-/*  MR1                                                       */
-  if ( !GenCC ) _gen("#ifdef __USE_PROTOS\n");         /* MR1 */
+
   if ( !GenCC ) gen2("%s%s(", RulePrefix, q->rname)
   else gen3("%s::%s%s(", CurrentClassName, RulePrefix,q->rname);
 
@@ -3305,35 +3302,7 @@ static void DumpFuncHeader( Junction *q, RuleEntry *r )
 
   DumpANSIFunctionArgDef(output,q, 0 /* emit initializers ? */);
   _gen("\n");
-
-  if ( GenCC ) {
-      gen("{\n");
-      return;
-    }
-
-  /* K & R */
-  gen("#else\n");
-  gen2("%s%s(", RulePrefix, q->rname);
-  needComma=0;                                         /* MR1 */
-  if ( GenAST )                                        /* MR1 */
-  {                                                  /* MR1 */
-    _gen("_root");                                       /* MR1 */
-    needComma=1;                                       /* MR1 */
-  }                                                  /* MR1 */
-  if ( FoundException )                                  /* MR1 */
-  {                                                  /* MR1 */
-    if (needComma) {_gen(",");needComma=0;};                   /* MR1 */
-    _gen("_retsignal");                                    /* MR1 */
-    needComma=1;                                       /* MR1 */
-  }                                                  /* MR1 */
-/* MR5  Change below by Jan Mikkelsen (janm@zeta.org.au) 26-May-97      MR5 */
-  DumpListOfParmNames( q->pdecl, output, needComma );              /* MR5 */
-  gen(")\n");
-  if ( GenAST ) gen("AST **_root;\n");
-  if ( FoundException ) gen("int *_retsignal;\n");
-  DumpOldStyleParms( q->pdecl, output );
-  gen("#endif\n");
-    gen("{\n");
+  gen("{\n");
 }
 
 void DumpANSIFunctionArgDef(FILE *f, Junction *q, int bInitializer)
@@ -3508,16 +3477,7 @@ void genHdr1( int file )
   else
   {
     _gen("\nvoid\n");
-/*  MR1                                                               */
-/*  MR1 10-Apr-97  133MR1 Replace __STDC__ with __USE_PROTOS              */
-/*  MR1                                                                     */
-      _gen("#ifdef __USE_PROTOS\n");                               /* MR1 */
     _gen("zzdflthandlers( int _signal, int *_retsignal )\n");
-    _gen("#else\n");
-    _gen("zzdflthandlers( _signal, _retsignal )\n");
-    _gen("int _signal;\n");
-    _gen("int *_retsignal;\n");
-    _gen("#endif\n");
     _gen("{\n");
   }
   tabs++;
