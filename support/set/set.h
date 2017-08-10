@@ -133,15 +133,6 @@ set set_dif(set, set);
 /** Fast singleton set constructor operation */
 set set_of(unsigned b);
 
-/**
- * Extend (or shrink) the set passed in to have n words.
- *
- * if n is smaller than the minimum, boost n to have the minimum.
- * if the new set size is the same as the old one, do nothing.
- *
- * TJP 4-27-92 Fixed so won't try to alloc 0 bytes
- */
-void set_ext(set *a, unsigned int n);
 
 /**
  * Fast not of set a (assumes all bits used)

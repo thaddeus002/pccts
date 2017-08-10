@@ -141,6 +141,55 @@ unsigned int set_deg(set a)
     return(degree);
 }
 
+
+/**
+ * Extend (or shrink) the set passed in to have n words.
+ *
+ * if n is smaller than the minimum, boost n to have the minimum.
+ * if the new set size is the same as the old one, do nothing.
+ *
+ * TJP 4-27-92 Fixed so won't try to alloc 0 bytes
+ */
+static void set_ext(set *a, unsigned int n)
+{
+    register unsigned *p;
+    register unsigned *endp;
+    unsigned int size;
+
+    if ( a->n == 0 )
+    {
+        if ( n == 0 ) return;
+        if (a->setword != NULL) {
+            free (a->setword);  /* MR20 */
+        }
+        a->setword = (unsigned *) calloc(n, BytesPerWord);
+        if ( a->setword == NULL )
+        {
+            fprintf(stderr, "set_ext(%d words): cannot allocate set\n", n);
+            exit(-1);
+        }
+        a->n = n;
+        return;
+    }
+    if ( n < min ) n = min;
+    if ( a->n == n || n == 0 ) return;
+    size = a->n;
+    a->n = n;
+    a->setword = (unsigned *) realloc( (char *)a->setword, (n*BytesPerWord) );
+    if ( a->setword == NULL )
+    {
+        fprintf(stderr, "set_ext(%d words): cannot allocate set\n", n);
+        exit(-1);
+    }
+
+    p    = &(a->setword[size]);     /* clear from old size to new size */
+    endp = &(a->setword[a->n]);
+    do {
+        *p++ = 0;
+    } while ( p < endp );
+}
+
+
 /**
  * Fast set union operation
  * resultant set size is max(b, c);
@@ -240,53 +289,6 @@ set set_of(unsigned b)
     a.setword[DIVWORD(b)] = bitmask[MODWORD(b)];
 
     return(a);
-}
-
-/**
- * Extend (or shrink) the set passed in to have n words.
- *
- * if n is smaller than the minimum, boost n to have the minimum.
- * if the new set size is the same as the old one, do nothing.
- *
- * TJP 4-27-92 Fixed so won't try to alloc 0 bytes
- */
-void set_ext(set *a, unsigned int n)
-{
-    register unsigned *p;
-    register unsigned *endp;
-    unsigned int size;
-
-    if ( a->n == 0 )
-    {
-        if ( n == 0 ) return;
-        if (a->setword != NULL) {
-            free (a->setword);  /* MR20 */
-        }
-        a->setword = (unsigned *) calloc(n, BytesPerWord);
-        if ( a->setword == NULL )
-        {
-            fprintf(stderr, "set_ext(%d words): cannot allocate set\n", n);
-            exit(-1);
-        }
-        a->n = n;
-        return;
-    }
-    if ( n < min ) n = min;
-    if ( a->n == n || n == 0 ) return;
-    size = a->n;
-    a->n = n;
-    a->setword = (unsigned *) realloc( (char *)a->setword, (n*BytesPerWord) );
-    if ( a->setword == NULL )
-    {
-        fprintf(stderr, "set_ext(%d words): cannot allocate set\n", n);
-        exit(-1);
-    }
-
-    p    = &(a->setword[size]);     /* clear from old size to new size */
-    endp = &(a->setword[a->n]);
-    do {
-        *p++ = 0;
-    } while ( p < endp );
 }
 
 
@@ -583,7 +585,7 @@ set set_dup(set a)
                       *endq; /* MR20 */
 
     b = empty;
-    f ( a.n == 0 ) return( empty );
+    if ( a.n == 0 ) return( empty );
     endq = &(a.setword[a.n]);   /* MR20 */
     set_ext(&b, a.n);
     p = b.setword;
