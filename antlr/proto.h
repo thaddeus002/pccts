@@ -1,6 +1,4 @@
 /*
- * proto.h -- function prototypes
- *
  * SOFTWARE RIGHTS
  *
  * We reserve no LEGAL rights to the Purdue Compiler Construction Tool
@@ -28,47 +26,25 @@
  * 1989-2001
  */
 
+/**
+ * \file proto.h
+ * function prototypes
+ */
+
+
                            /* V a r i a b l e s */
 
 extern int tp;
 extern Junction *SynDiag;
 extern char Version[];
 extern char VersionDef[];
-#ifdef __cplusplus
-extern void (*fpPrint[])(...);
-#else
 extern void (*fpPrint[])();
-#endif
-#ifdef __cplusplus
-extern struct _set (*fpReach[])(...);
-#else
 extern struct _set (*fpReach[])();
-#endif
-#ifdef __cplusplus
-extern struct _tree *(*fpTraverse[])(...);
-#else
 extern struct _tree *(*fpTraverse[])();
-#endif
-#ifdef __cplusplus
-extern void (**fpTrans)(...);
-#else
 extern void (**fpTrans)();
-#endif
-#ifdef __cplusplus
-extern void (**fpJTrans)(...);
-#else
 extern void (**fpJTrans)();
-#endif
-#ifdef __cplusplus
-extern void (*C_Trans[NumNodeTypes+1])(...);
-#else
 extern void (*C_Trans[])();
-#endif
-#ifdef __cplusplus
-extern void (*C_JTrans[NumJuncTypes+1])(...);
-#else
 extern void (*C_JTrans[])();
-#endif
 extern int BlkLevel;
 extern int CurFile;
 extern char *CurPredName;

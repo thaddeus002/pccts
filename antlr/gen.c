@@ -47,16 +47,6 @@ static set tokensRefdInBlock;
           /* T r a n s l a t i o n  T a b l e s */
 
 /* C_Trans[node type] == pointer to function that knows how to translate that node. */
-#ifdef __cplusplus
-void (*C_Trans[NumNodeTypes+1])(...) = {
-  NULL,
-  NULL,         /* See next table.
-Junctions have many types */
-  (void (*)(...)) genRuleRef,
-  (void (*)(...)) genToken,
-  (void (*)(...)) genAction
- };
-#else
 void (*C_Trans[NumNodeTypes+1])() = {
   NULL,
   NULL,         /* See next table.
@@ -65,25 +55,10 @@ Junctions have many types */
   genToken,
   genAction
  };
-#endif
 
 /* C_JTrans[Junction type] == pointer to function that knows how to translate that
  * kind of junction node.
  */
-#ifdef __cplusplus
-void (*C_JTrans[NumJuncTypes+1])(...) = {
-  NULL,
-  (void (*)(...)) genSubBlk,
-  (void (*)(...)) genOptBlk,
-  (void (*)(...)) genLoopBlk,
-  (void (*)(...)) genEndBlk,
-  (void (*)(...)) genRule,
-  (void (*)(...)) genJunction,
-  (void (*)(...)) genEndRule,
-  (void (*)(...)) genPlusBlk,
-  (void (*)(...)) genLoopBegin
- };
-#else
 void (*C_JTrans[NumJuncTypes+1])() = {
   NULL,
   genSubBlk,
@@ -96,7 +71,6 @@ void (*C_JTrans[NumJuncTypes+1])() = {
   genPlusBlk,
   genLoopBegin
  };
-#endif
 
 #define PastWhiteSpace(s) while (*(s) == ' ' || *(s) == '\t') {s++;}
 
@@ -112,8 +86,7 @@ static int tabs = 0;
         };                              \
       }
 
-static void
-tab( )
+static void tab( )
 TAB
 
 static char *tokenFollowSet(TokNode *);

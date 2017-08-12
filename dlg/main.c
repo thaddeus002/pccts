@@ -76,11 +76,7 @@ void p_warn_ambig() { warn_ambig = TRUE; }
 void p_cpp()    { gen_cpp = TRUE; }
 
 
-#ifdef __cplusplus
-typedef void (*WildFunc)(...);
-#else
 typedef void (*WildFunc)();
-#endif
 
 typedef struct {
   char *option;

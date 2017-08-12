@@ -29,8 +29,8 @@
  */
 #include "stdpccts.h"
 
-char	*VersionNumber = "13333";   /* mrxxx */
-char	*VersionText = "13333";     /* mrxxx */
+char  *VersionNumber = "13333";   /* mrxxx */
+char  *VersionText = "13333";     /* mrxxx */
 char    *FileStr[MaxNumFiles];/* Ptr to array of file names on command-line */
 int     NumFiles=0;         /* current grammar file number */
 int     action_file;        /* used to track start of action */
@@ -39,50 +39,45 @@ int     CurFile= -1;        /* Index into FileStr table */
 char    *CurRule=NULL;      /* Pointer to current rule name */
 char    *CurRetDef=NULL;    /* Pointer to current return type definition */
 char    *CurParmDef=NULL;   /* Pointer to current parameter definition */
-FILE    *output=NULL;	    /* current parser output file */
+FILE    *output=NULL;     /* current parser output file */
 FILE    *input=NULL;        /* current grammar input file */
-Entry	**symbols;			/* both tokens and nonterminals */
-int		token_table_size = 1000;
-char	**token_dict=NULL;
-int		token_type = 1;		/* used only if #tokdefs it not used */
-int		end_of_input = 0;
-int		epsilon = 0;
-int		last_valid_token = 0;
-int		DumpIR = 0;
-char	*OutputDirectory = TopDirectory;
+Entry **symbols;      /* both tokens and nonterminals */
+int   token_table_size = 1000;
+char  **token_dict=NULL;
+int   token_type = 1;   /* used only if #tokdefs it not used */
+int   end_of_input = 0;
+int   epsilon = 0;
+int   last_valid_token = 0;
+int   DumpIR = 0;
+char  *OutputDirectory = TopDirectory;
 ListNode *before_actions = NULL,
-		 *after_actions = NULL,
-		 *class_actions = NULL;
-char	translator[MaxFileName+1];
-char	tokdefs_file[MaxFileName+1];
-char	*header_action = NULL;
-AST		*rules=NULL;
-int		print_guts = 0;
-int		transform = 0;		/* Don't assume a transformation */
-int		found_guess_block = 0;
-char	*def_token_file=NULL;
-int		def_tokens=0;
+     *after_actions = NULL,
+     *class_actions = NULL;
+char  translator[MaxFileName+1];
+char  tokdefs_file[MaxFileName+1];
+char  *header_action = NULL;
+AST   *rules=NULL;
+int   print_guts = 0;
+int   transform = 0;    /* Don't assume a transformation */
+int   found_guess_block = 0;
+char  *def_token_file=NULL;
+int   def_tokens=0;
 ListNode *token_list = NULL;
-int		found_error=0;
-set		referenced_tokens = set_init;
-int		wild_card = 0;
-int		UserDefdTokens=0;
-int		Inline = 0;
-char	*Prefix="";
-FILE	*ProtoFILE = NULL;
-char	*GenProtoFile = NULL;
+int   found_error=0;
+set   referenced_tokens = set_init;
+int   wild_card = 0;
+int   UserDefdTokens=0;
+int   Inline = 0;
+char  *Prefix="";
+FILE  *ProtoFILE = NULL;
+char  *GenProtoFile = NULL;
 ListNode *RefVars = NULL;
 ListNode *AllRefVars = NULL;
-char	CurRefVarType[MaxAtom+1];
-char	CurRefVarLabel[MaxAtom+1];
-char	CurClassName[MaxAtom+1]="";
-int		GenCPP = 0;
-int		NoCtor = 0;	/* MR23 */
+char  CurRefVarType[MaxAtom+1];
+char  CurRefVarLabel[MaxAtom+1];
+char  CurClassName[MaxAtom+1]="";
+int   GenCPP = 0;
+int   NoCtor = 0; /* MR23 */
 
-#if defined(__STDC__) || defined(__cplusplus) || defined(__USE_PROTOS)
-int		GenAnsiProtos=1;	/* Gen both if both Protos are on */
-int		GenKRProtos=0;
-#else
-int		GenAnsiProtos=0;
-int		GenKRProtos=1;
-#endif
+int   GenAnsiProtos=1;  /* Gen both if both Protos are on */
+int   GenKRProtos=0;

@@ -98,14 +98,14 @@ char *StandardSymbols[] = {
   "_zzsetmatch",
   "_zzmatch",
   "_inf_zzgettok",
-    "zzconsumeUntil",
-    "zzconsumeUntilToken",
-    "_zzmatch_wsig",
-    "_zzsetmatch_wsig",
-    "_zzmatch_wdfltsig",
-    "_zzsetmatch_wdfltsig",
+  "zzconsumeUntil",
+  "zzconsumeUntilToken",
+  "_zzmatch_wsig",
+  "_zzsetmatch_wsig",
+  "_zzmatch_wdfltsig",
+  "_zzsetmatch_wdfltsig",
   "zzdflthandlers",
-/* DLG stuff */
+  /* DLG stuff */
   "zzreal_line",
   "zzcharfull",
   "zzerr",
@@ -140,20 +140,20 @@ char *StandardSymbols[] = {
   "dfa",
   "accepts",
   "actions",
-    "zzTraceOptionValue",       /* MR10 */
-    "zzTraceGuessOptionValue",  /* MR10 */
-    "zzTraceCurrentRuleName",   /* MR10 */
-    "zzTraceDepth",             /* MR10 */
-    "zzGuessSeq",               /* MR10 */
-    "zzSyntaxErrCount",         /* MR11 */
-    "zzLexErrCount",            /* MR11 */
-    "zzTraceGuessDone",         /* MR13 - BJS */
-    "zzTraceGuessFail",         /* MR13 - BJS */
-    "zzTraceGuessOption",       /* MR13 - BJS */
-    "zzTraceIn",                /* MR13 - BJS */
-    "zzTraceOption",            /* MR13 - BJS */
-    "zzTraceOut",               /* MR13 - BJS */
-    "zzTraceReset",             /* MR13 - BJS */
+  "zzTraceOptionValue",       /* MR10 */
+  "zzTraceGuessOptionValue",  /* MR10 */
+  "zzTraceCurrentRuleName",   /* MR10 */
+  "zzTraceDepth",             /* MR10 */
+  "zzGuessSeq",               /* MR10 */
+  "zzSyntaxErrCount",         /* MR11 */
+  "zzLexErrCount",            /* MR11 */
+  "zzTraceGuessDone",         /* MR13 - BJS */
+  "zzTraceGuessFail",         /* MR13 - BJS */
+  "zzTraceGuessOption",       /* MR13 - BJS */
+  "zzTraceIn",                /* MR13 - BJS */
+  "zzTraceOption",            /* MR13 - BJS */
+  "zzTraceOut",               /* MR13 - BJS */
+  "zzTraceReset",             /* MR13 - BJS */
   NULL    /* must be present */
 };
 
@@ -192,15 +192,6 @@ char *CurAmbigbtype;
  * representing the FIRST sets for that node (maintains spatial info).
  * We use 'struct _tree' not 'tree' due to a g++ 2.4.3 bug.
  */
-#ifdef __cplusplus
-struct _tree *(*fpTraverse[NumNodeTypes+1])(... /* Node *, int, set * */) = {
-  NULL,
-  (struct _tree *(*)(...)) tJunc,
-  (struct _tree *(*)(...)) tRuleRef,
-  (struct _tree *(*)(...)) tToken,
-  (struct _tree *(*)(...)) tAction
-};
-#else
 Tree *(*fpTraverse[NumNodeTypes+1])() = {
   NULL,
   tJunc,
@@ -208,21 +199,12 @@ Tree *(*fpTraverse[NumNodeTypes+1])() = {
   tToken,
   tAction
 };
-#endif
+
 
 /* fpReach[node type] == pointer to function that calculates FIRST set for
  * that node. (r stands for reach).  We use 'struct _set' not 'set'
  * due to a g++ 2.4.3 bug.
  */
-#ifdef __cplusplus
-struct _set (*fpReach[NumNodeTypes+1])(... /* Node *, int, set * */) = {
-  NULL,
-  (struct _set (*)(...)) rJunc,
-  (struct _set (*)(...)) rRuleRef,
-  (struct _set (*)(...)) rToken,
-  (struct _set (*)(...)) rAction
-};
-#else
 set (*fpReach[NumNodeTypes+1])() = {
   NULL,
   rJunc,
@@ -230,18 +212,8 @@ set (*fpReach[NumNodeTypes+1])() = {
   rToken,
   rAction
 };
-#endif
 
 /* fpPrint[node type] == pointer to function that knows how to print that node. */
-#ifdef __cplusplus
-void (*fpPrint[NumNodeTypes+1])(... /* Node * */) = {
-  NULL,
-  (void (*)(...)) pJunc,
-  (void (*)(...)) pRuleRef,
-  (void (*)(...)) pToken,
-  (void (*)(...)) pAction
-};
-#else
 void (*fpPrint[NumNodeTypes+1])() = {
   NULL,
   pJunc,
@@ -249,7 +221,6 @@ void (*fpPrint[NumNodeTypes+1])() = {
   pToken,
   pAction
 };
-#endif
 
 char *decodeJType[] = {
   "invalid",
@@ -314,13 +285,8 @@ FILE  *output=NULL;   /* current parser output file */
 FILE  *input=NULL;    /* current grammar input file */
 char  *FileStr[MaxNumFiles];/* Ptr to array of file names on command-line */
 int   NumFiles=0;     /* current grammar file number */
-#ifdef __cplusplus
-void  (**fpTrans)(...), /* array of ptrs to funcs that translate nodes */
-    (**fpJTrans)(...);  /*  ... that translate junctions */
-#else
 void  (**fpTrans)(),    /* array of ptrs to funcs that translate nodes */
     (**fpJTrans)();   /*  ... that translate junctions */
-#endif
 int   **FoStack;      /* Array of LL_k ptrs to stacks of rule numbers */
 int   **FoTOS;      /* FOLLOW stack top-of-stack pointers */
 Junction *SynDiag = NULL; /* Pointer to start of syntax diagram */

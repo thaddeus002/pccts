@@ -55,11 +55,7 @@ static int tnodes_used_in_guard_predicates_etc;     /* MR10 */
 typedef struct _Opt {
       char *option;
       int  arg;
-#ifdef __cplusplus
-      void (*process)(...);
-#else
       void (*process)();
-#endif
       char *descr;
     } Opt;
 
@@ -330,71 +326,6 @@ static void pTRes(char *s, char *t)
 }
 
 Opt options[] = {
-#ifdef __cplusplus
-    { "-CC", 0, (void (*)(...)) pCC,  "Generate C++ output (default=FALSE)"},
-    { "-ck", 1, (void (*)(...)) pCk,  "Set compressed lookahead depth; fast approximate lookahead"},
-    { "-cr", 0, (void (*)(...)) pCr,  "Generate cross reference (default=FALSE)"},
-    { "-e1", 0, (void (*)(...)) pE1,  "Ambiguities/errors shown in low detail (default)"},
-    { "-e2", 0, (void (*)(...)) pE2,  "Ambiguities/errors shown in more detail"},
-    { "-e3", 0, (void (*)(...)) pE3,
-      "Ambiguities for k>1 grammars shown with exact tuples (not lookahead sets)"},
-    { "-f",  1, (void (*)(...)) pFileList,"Read names of grammar files from specified file"}, /* MR14 */
-    { "-fe", 1, (void (*)(...)) pFe,  "Rename err.c"},
-    { "-fh", 1, (void (*)(...)) pFHdr,  "Rename stdpccts.h header (turns on -gh)"},
-    { "-fl", 1, (void (*)(...)) pFl,  "Rename lexical output--parser.dlg"},
-    { "-fm", 1, (void (*)(...)) pFm,  "Rename mode.h"},
-    { "-fr", 1, (void (*)(...)) pFr,  "Rename remap.h"},
-    { "-ft", 1, (void (*)(...)) pFt,  "Rename tokens.h"},
-    { "-ga", 0, (void (*)(...)) pANSI,  "Generate ANSI-compatible code (default=FALSE)"},
-    { "-gc", 0, (void (*)(...)) pCGen,  "Do not generate output parser code (default=FALSE)"},
-    { "-gd", 0, (void (*)(...)) pTGen,  "Generate code to trace rule invocation (default=FALSE)"},
-    { "-ge", 0, (void (*)(...)) pEGen,  "Generate an error class for each non-terminal (default=FALSE)"},
-    { "-gh", 0, (void (*)(...)) pGHdr,  "Generate stdpccts.h for non-ANTLR-generated-files to include"},
-    { "-gk", 0, (void (*)(...)) pDL,  "Generate parsers that delay lookahead fetches until needed"},
-    { "-gl", 0, (void (*)(...)) pLI,  "Generate line info about grammar actions in parser"},
-    { "-glms", 0, (void (*)(...)) pLIms,"Like -gl but replace '\\' with '/' in #line filenames for MS C/C++ systems"},
-    { "-gp", 1, (void (*)(...)) pPre, "Prefix all generated rule functions with a string"},
-    { "-gs", 0, (void (*)(...)) pSGen,  "Do not generate sets for token expression lists (default=FALSE)"},
-    { "-gt", 0, (void (*)(...)) pAst, "Generate code for Abstract-Syntax-Trees (default=FALSE)"},
-    { "-gx", 0, (void (*)(...)) pLGen,  "Do not generate lexical (dlg-related) files (default=FALSE)"},
-    { "-gxt",0, (void (*)(...)) pXTGen, "Do not generate tokens.h (default=FALSE)"},
-    { "-k",  1, (void (*)(...)) pLLK, "Set full LL(k) lookahead depth (default==1)"},
-    { "-o",  1, (void (*)(...)) pOut, OutputDirectoryOption},
-    { "-p",  0, (void (*)(...)) pPrt, "Print out the grammar w/o actions (default=no)"},
-    { "-pa", 0, (void (*)(...)) pPrtA,  "Print out the grammar w/o actions & w/FIRST sets (default=no)"},
-    { "-pr",0, (void (*)(...)) pPred, "no longer used; predicates employed if present"},
-    { "-prc", 1, (void (*)(...)) pPredCtx,"Turn on/off computation of context for hoisted predicates"},
-    { "-rl", 1, (void (*)(...)) pTRes,  "Limit max # of tree nodes used by grammar analysis"},
-    { "-stdout",0,  (void (*)(...)) pStdout,"Send grammar.c/grammar.cpp to stdout"},           /* MR6 */
-  { "-tab", 1, (void (*)(...)) pTab,  "Width of tabs (1 to 8) for grammar.c/grammar.cpp files"}, /* MR6 */
-  { "-w1", 0, (void (*)(...)) pW1,  "Set the warning level to 1 (default)"},
-  { "-w2", 0, (void (*)(...)) pW2,  "Ambiguities yield warnings even if predicates or (...)? block"},
-  { "-",   0, (void (*)(...)) pStdin, "Read grammar from stdin" },
-    { "-mrhoist",1, (void (*)(...)) pMRhoist,                                                  /* MR9 */
-                                        "Turn on/off k=1 Maintenance Release style hoisting"},  /* MR9 */
-    { "-mrhoistk",1, (void (*)(...)) pMRhoistk,                                                  /* MR9 */
-                                        "Turn on/off EXPERIMENTAL k>1 Maintenance Release style hoisting"},  /* MR13 */
-    { "-aa"  , 1, (void (*)(...)) pAA,  "Ambiguity aid for a rule (rule name or line number)"},          /* MR11 */
-    { "-aam" , 0, (void (*)(...)) pAAm,
-                                         "Lookahead token may appear multiple times in -aa listing"},    /* MR11 */
-    { "-aad" , 1, (void (*)(...)) pAAd,
-                                         "Limits exp growth of -aa listing - default=1 (max=ck value)"}, /* MR11 */
-  { "-info", 1, (void (*)(...)) pInfo,
-      "Extra info: p=pred t=tnodes f=first/follow m=monitor o=orphans 0=noop"},                          /* MR12 */
-    { "-treport",1,(void (*)(...)) pTreport,
-                        "Report when tnode usage exceeds value during ambiguity resolution"},            /* MR11 */
-  { "-newAST", 0, (void (*)(...)) pNewAST,
-                 "In C++ mode use \"newAST(...)\" rather than \"new AST(...)\""},                        /* MR13 */
-  { "-tmake", 0, (void (*)(...)) ptmakeInParser,
-                 "In C++ mode use parser's tmake method rather than \"ASTBase::tmake(...)\""},       /* MR23 */
-    { "-alpha",0,(void (*)(...)) pAlpha,
-                 "Provide additional information for \"(alpha)? beta\" error messages"},                 /* MR14 */
-    { "-mrblkerr",0,(void (*)(...)) pMR_BlkErr,                                        /* MR21 */
-                 "EXPERIMENTAL change to (...)* and (...)+ syntax error sets"},        /* MR21 */
-  { "-nopurify",0,(void (*)(...)) pNOPURIFY,
-    "Don't use the notorious PURIFY macro (replaced by MR23 initial value syntax) to zero return arguments of rules"},   /* MR23 */
-    { "*",   0, (void (*)(...)) pFile,  "" }, /* anything else is a file */
-#else
     { "-CC", 0, pCC,  "Generate C++ output (default=FALSE)"},
     { "-cr", 0, pCr,  "Generate cross reference (default=FALSE)"},
     { "-ck", 1, pCk,  "Set compressed lookahead depth; fast approximate lookahead"},
@@ -457,7 +388,6 @@ Opt options[] = {
     "Don't use the notorious PURIFY macro (replaced by MR23 initial value syntax) to zero return arguments of rules"},   /* MR23 */
   { "-",   0, pStdin, "Read grammar from stdin" },
   { "*",   0, pFile,  "" }, /* anything else is a file */
-#endif
   { NULL,  0, NULL }
  };
 

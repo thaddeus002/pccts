@@ -64,10 +64,6 @@ typedef int NodeType;
 #define RRefBlockAllocSize    100
 #define TokenBlockAllocSize   100
 
-#ifdef __cplusplus
-class ActionNode;
-class Junction;
-#endif
 
 /* note that 'right' is used by the tree node allocator as a ptr for linked list */
 typedef struct _tree {
@@ -115,11 +111,7 @@ typedef struct _Predicate {
     set completionSet;  /* MR10 separate completion set for sets and trees           */
     struct _PredEntry *predEntry;         /* MR11 */
 
-#ifdef __cplusplus
-  ActionNode *source; /* where did this predicate come from? */
-#else
   struct _anode *source;  /* where did this predicate come from? */
-#endif
 
     char             cloned;               /* MR10 don't want to free original guard pred */
     char             redundant;            /* MR10 predicate tree simplification          */
@@ -138,7 +130,7 @@ typedef struct _Predicate {
 typedef struct _ExceptionHandler {
       char *signalname;
       char *action;
-    } ExceptionHandler;
+} ExceptionHandler;
 
 typedef struct _ExceptionGroup {
       struct _ListNode *handlers; /* list of ExceptionHandler's */
@@ -147,12 +139,12 @@ typedef struct _ExceptionGroup {
                  */
       char *altID;    /* which alt did it come from (blk#:alt#) */
 
-            struct _ExceptionGroup  *pendingLink; /* for alternative EG MR7 */
-            struct _ExceptionGroup  *outerEG;     /* for alternative EG MR7 */
-            struct _LabelEntry      *labelEntry;  /* for alternative EG MR7 */
-            int                     forRule;                         /* MR7 */
-            int                     used;                            /* MR7 */
-    } ExceptionGroup ;
+      struct _ExceptionGroup  *pendingLink; /* for alternative EG MR7 */
+      struct _ExceptionGroup  *outerEG;     /* for alternative EG MR7 */
+      struct _LabelEntry      *labelEntry;  /* for alternative EG MR7 */
+      int                     forRule;                         /* MR7 */
+      int                     used;                            /* MR7 */
+} ExceptionGroup ;
 
 
 #define TokenString(_i)     ((TokenInd!=NULL)?TokenStr[TokenInd[_i]]:TokenStr[_i])
@@ -182,40 +174,21 @@ typedef struct _ExceptionGroup {
             } \
           else (a) = (*(fpTraverse[(p)->ntype]))( p, k, rk );}
 
-/**
-*** #define TRAV(p,k,rk,a) {if ( (p)==NULL ) fatal("TRAV: NULL object");\
-***         (a) = (*(fpTraverse[(p)->ntype]))( p, k, rk );}
-**/
 
 /* All syntax diagram nodes derive from Node -- superclass
  */
-#ifdef __cplusplus
-class Node {
-public:
-      NodeType ntype;
-      char *rname;    /* what rule does this element live in? */
-      int file;     /* index in FileStr */
-      int line;     /* line number that element occurs on */
-    };
-#else
 typedef struct _node {
       NodeType ntype;
       char *rname;    /* what rule does this element live in? */
       int file;     /* index in FileStr */
       int line;     /* line number that element occurs on */
     } Node;
-#endif
 
-#ifdef __cplusplus
-class ActionNode : public Node {
-public:
-#else
 typedef struct _anode {
       NodeType ntype;
       char *rname;    /* what rule does this action live in? */
       int file;     /* index in FileStr (name of file with action) */
       int line;     /* line number that action occurs on */
-#endif
       Node *next;
       char *action;
       int is_predicate; /* true if action is a <<...>>? predicate action */
@@ -225,32 +198,19 @@ typedef struct _anode {
       Predicate  *guardpred;  /* if '(context)? =>' was present, already done */
       unsigned char frmwarned;/* have we dumped a warning for pred yet? */
       unsigned char ctxwarned;/* have we dumped a warning for pred yet? */
-            unsigned char predTooLong;     /* MR10 have we dumped warning for pred yet */
-            unsigned char noHoist;         /* MR12 literally "noHoist" */
-            Predicate         *ampersandPred;     /* MR10   (g)? && <<p>>? expr   */
-#ifdef __cplusplus
-            Junction          *guardNodes;        /* MR11 */
-#else
-            struct _junct     *guardNodes;        /* MR11 */
-#endif
-            struct _PredEntry *predEntry;         /* MR11 */
-            int               inverted;           /* MR11 <<!predSymbol>>? */
-#ifdef __cplusplus
-    };
-#else
-    } ActionNode;
-#endif
+      unsigned char predTooLong;     /* MR10 have we dumped warning for pred yet */
+      unsigned char noHoist;         /* MR12 literally "noHoist" */
+      Predicate         *ampersandPred;     /* MR10   (g)? && <<p>>? expr   */
+      struct _junct     *guardNodes;        /* MR11 */
+      struct _PredEntry *predEntry;         /* MR11 */
+      int               inverted;           /* MR11 <<!predSymbol>>? */
+} ActionNode;
 
-#ifdef __cplusplus
-class TokNode : public Node {
-public:
-#else
 typedef struct _toknode {
       NodeType ntype;
       char *rname;    /* name of rule it's in */
       int file;     /* index in FileStr (name of file with rule) */
       int line;     /* line number that token occurs on */
-#endif
       Node *next;
       int token;
       int astnode;    /* leaf/root/excluded (used to build AST's) */
@@ -267,11 +227,7 @@ typedef struct _toknode {
                  * field token is ignored if wild_card is set
                  */
       unsigned int elnum; /* element number within the alternative */
-#ifdef __cplusplus
-      Junction *altstart; /* pointer to node that starts alt */
-#else
       struct _junct *altstart;  /* pointer to node that starts alt */
-#endif
       struct _TCnode *tclass;   /* token class if tokclass ref */
       set tset;     /* set of tokens represented by meta token */
       char *el_label;   /* el_label:toknode */
@@ -279,23 +235,14 @@ typedef struct _toknode {
       ExceptionGroup *ex_group; /* any exception[el_label] attached? */
             unsigned char use_def_MT_handler;
             unsigned char label_used_in_semantic_pred;  /* MR10 */
-#ifdef __cplusplus
-    };
-#else
     } TokNode;
-#endif
 
-#ifdef __cplusplus
-class RuleRefNode : public Node {
-public:
-#else
 typedef struct _rrnode {
       NodeType ntype;
       char *rname;    /* name of rule it's in */
       int file;     /* index in FileStr (name of file with rule)
                    it's in */
       int line;     /* line number that rule ref occurs on */
-#endif
       Node *next;
       char *text;     /* reference to which rule */
       char *parms;    /* point to parameters of rule invocation
@@ -305,31 +252,18 @@ typedef struct _rrnode {
       int linked;     /* Has a FoLink already been established? */
       int astnode;    /* excluded? (used to build AST's) */
       unsigned int elnum; /* element number within the alternative */
-#ifdef __cplusplus
-      Junction *altstart;
-#else
       struct _junct *altstart;
-#endif
       char *el_label;   /* el_label:rrnode */
       ExceptionGroup *ex_group; /* any exception[el_label] attached? */
-#ifdef __cplusplus
-    };
-#else
     } RuleRefNode;
-#endif
 
-#ifdef __cplusplus
-class Junction : public Node {
-public:
-#else
 typedef struct _junct {
       NodeType ntype;
       char *rname;    /* name of rule junction is in */
       int file;     /* index in FileStr (name of file with rule)
                    if blk == RuleBlk */
       int line;     /* line number that rule occurs on */
-#endif
-            int seq;            /* MR10 sequence number */
+      int seq;            /* MR10 sequence number */
       char ignore;    /* used by FIRST computation to ignore
                    empty alt added for the (...)+ blks */
       char visited;   /* used by recursive routines to avoid
@@ -344,13 +278,8 @@ typedef struct _junct {
                    alt of subrule */
       int jtype;      /* annotation for code-gen/FIRST/FOLLOW.
                    Junction type */
-#ifdef __cplusplus
-      Junction *end;    /* pointer to node with EndBlk in it
-                   if blk == a block type */
-#else
       struct _junct *end; /* pointer to node with EndBlk in it
                    if blk == a block type */
-#endif
       Node *p1, *p2;
       char  halt;     /* never move past a junction with halt==TRUE */ /* MR10 was int */
       char *pdecl;    /* point to declaration of parameters on rule
@@ -368,27 +297,19 @@ typedef struct _junct {
       Tree *ftree;    /* used for code generation */
       Predicate *predicate;/* predicate that can be used to disambiguate */
       char guess;     /* true if (...)? block */
-            char alpha_beta_guess_end;      /* MR14 1 => end block of guess sub block  */
-            Node *guess_analysis_point;     /* MR14 */
+      char alpha_beta_guess_end;      /* MR14 1 => end block of guess sub block  */
+      Node *guess_analysis_point;     /* MR14 */
       char approx;    /* limit block to use linear approx lookahead? */
       set tokrefs;    /* if ith element of alt is tokref then i is member */
       set rulerefs;   /* if ith element of alt is rule ref then i is member */
       struct _ListNode *exceptions; /* list of exceptions groups for rule */
       struct _ListNode *el_labels;  /* list of element labels for rule */
-            ExceptionGroup   *outerEG;                               /* MR7 */
-            int              curAltNum;                              /* MR7 */
-            char* pFirstSetSymbol;   /* #pragma FirstSetSymbol(Foo)     MR21 */
-#ifdef __cplusplus
-            Junction         *pendingLink;                           /* MR7 */
-#else
-            struct _junct    *pendingLink;                           /* MR7 */
-#endif
-            char             overlap_warning;                        /* MR10 */
-#ifdef __cplusplus
-    };
-#else
-    } Junction;
-#endif
+      ExceptionGroup   *outerEG;                               /* MR7 */
+      int              curAltNum;                              /* MR7 */
+      char* pFirstSetSymbol;   /* #pragma FirstSetSymbol(Foo)     MR21 */
+      struct _junct    *pendingLink;                           /* MR7 */
+      char             overlap_warning;                        /* MR10 */
+} Junction;
 
 typedef struct { Node *left, *right;} Graph;
 

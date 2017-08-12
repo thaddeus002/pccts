@@ -40,23 +40,13 @@ static int DontAcceptStdin = 0;
 static int DontAcceptFiles = 0;
 
 typedef struct _Opt {
-			char *option;
-			int  arg;
-#ifdef __cplusplus
-			void (*process)(...);
-#else
-			void (*process)();
-#endif
-			char *descr;
-		} Opt;
+      char *option;
+      int  arg;
+      void (*process)();
+      char *descr;
+    } Opt;
 
-#ifdef __USE_PROTOS
 static int cistrequ(char *a,char *b)
-#else
-static int cistrequ(a,b)
-  char  *a;
-  char  *b;
-#endif
 {
   for ( ;*a != 0 && *b != 0; a++, b++) {
     if (toupper(*a) != toupper(*b)) return 0;
@@ -64,11 +54,7 @@ static int cistrequ(a,b)
   return (*a == *b);
 }
 
-#ifdef __USE_PROTOS
 static void ProcessArgs(int, char **, Opt *);
-#else
-static void ProcessArgs();
-#endif
 
 static void
 #ifdef __USE_PROTOS
@@ -79,7 +65,7 @@ char *s;
 char *t;
 #endif
 {
-	OutputDirectory = t;
+  OutputDirectory = t;
 }
 
 static void
@@ -90,16 +76,16 @@ pFile( s )
 char *s;
 #endif
 {
-	if ( *s=='-' ) { warnNoFL( eMsg1("invalid option: '%s'",s) ); return; }
-	if ( DontAcceptFiles )
-	{
-		warnNoFL(eMsg1("file '%s' ignored as '-' (stdin option) was specified first",s));
-		return;
-	}
+  if ( *s=='-' ) { warnNoFL( eMsg1("invalid option: '%s'",s) ); return; }
+  if ( DontAcceptFiles )
+  {
+    warnNoFL(eMsg1("file '%s' ignored as '-' (stdin option) was specified first",s));
+    return;
+  }
 
-	require(NumFiles<MaxNumFiles,"exceeded max # of input files");
-	FileStr[NumFiles++] = s;
-	DontAcceptStdin = 1;
+  require(NumFiles<MaxNumFiles,"exceeded max # of input files");
+  FileStr[NumFiles++] = s;
+  DontAcceptStdin = 1;
 }
 
 static void
@@ -110,14 +96,14 @@ pDToks( s, t )
 char *s, *t;
 #endif
 {
-	if ( !GenCPP )
-	{
-		warnNoFL("-def-tokens valid with C++ interface only; ignored");
-		return;
-	}
-	else {
-		def_tokens = 1;
-	}
+  if ( !GenCPP )
+  {
+    warnNoFL("-def-tokens valid with C++ interface only; ignored");
+    return;
+  }
+  else {
+    def_tokens = 1;
+  }
 }
 
 static void
@@ -128,22 +114,22 @@ pDToksFile( s, t )
 char *s, *t;
 #endif
 {
-	if ( GenCPP )
-	{
-		warnNoFL("-def-tokens-file not valid with C++ interface; ignored");
-		return;
-	}
-	if ( Inline )
-	{
-		warnNoFL("-def-tokens-file conflicts with -inline; ignored");
-	}
-	else {
-		def_token_file = t;
-		if ( def_token_file == NULL )
-		{
-			warnNoFL("don't you want filename with that -def-tokens-file?; ignored");
-		}
-	}
+  if ( GenCPP )
+  {
+    warnNoFL("-def-tokens-file not valid with C++ interface; ignored");
+    return;
+  }
+  if ( Inline )
+  {
+    warnNoFL("-def-tokens-file conflicts with -inline; ignored");
+  }
+  else {
+    def_token_file = t;
+    if ( def_token_file == NULL )
+    {
+      warnNoFL("don't you want filename with that -def-tokens-file?; ignored");
+    }
+  }
 }
 
 static void
@@ -154,18 +140,18 @@ pPrefix( s, t )
 char *s, *t;
 #endif
 {
-	Prefix = t;
-	if ( GenCPP ) {
-		warnNoFL("-prefix conflicts with C++ interface; ignored");
-		Prefix = "";
-		return;
-	}
+  Prefix = t;
+  if ( GenCPP ) {
+    warnNoFL("-prefix conflicts with C++ interface; ignored");
+    Prefix = "";
+    return;
+  }
 
-	if ( Prefix == NULL )
-	{
-		warnNoFL("don't you want string with that -prefix?; ignored");
-		Prefix = "";
-	}
+  if ( Prefix == NULL )
+  {
+    warnNoFL("don't you want string with that -prefix?; ignored");
+    Prefix = "";
+  }
 }
 
 static void
@@ -176,15 +162,15 @@ pFuncs( s, t )
 char *s, *t;
 #endif
 {
-	if ( GenCPP ) { errNoFL("-funcs option makes no sense in C++ mode; ignored"); return; }
-	GenKRProtos = GenAnsiProtos = 0;
-	if ( cistrequ(t, "kr")) GenKRProtos = 1;
-	else if ( cistrequ(t, "ansi")) GenAnsiProtos = 1;
-	else if ( cistrequ(t, "both")) {GenAnsiProtos = 1; GenKRProtos = 1;}
-	else {
-		warnNoFL(eMsg1("don't know how to generate '%s' style functions; assuming ANSI",t));
-		GenAnsiProtos = 1;
-	}
+  if ( GenCPP ) { errNoFL("-funcs option makes no sense in C++ mode; ignored"); return; }
+  GenKRProtos = GenAnsiProtos = 0;
+  if ( cistrequ(t, "kr")) GenKRProtos = 1;
+  else if ( cistrequ(t, "ansi")) GenAnsiProtos = 1;
+  else if ( cistrequ(t, "both")) {GenAnsiProtos = 1; GenKRProtos = 1;}
+  else {
+    warnNoFL(eMsg1("don't know how to generate '%s' style functions; assuming ANSI",t));
+    GenAnsiProtos = 1;
+  }
 }
 
 static void
@@ -195,61 +181,61 @@ pProtoFile( s, t )
 char *s, *t;
 #endif
 {
-	if ( GenCPP )
-		{warnNoFL("-proto-file not valid with C++ interface; ignored");}
-	if ( t==NULL )
-		{warnNoFL("don't you want filename with that -proto-file?; ignored");}
-	else {
-		GenProtoFile = t;
-	}
+  if ( GenCPP )
+    {warnNoFL("-proto-file not valid with C++ interface; ignored");}
+  if ( t==NULL )
+    {warnNoFL("don't you want filename with that -proto-file?; ignored");}
+  else {
+    GenProtoFile = t;
+  }
 }
 
 static void
 pstdin()
 {
-	if ( DontAcceptStdin )
-	{
-		warnNoFL("'-' (stdin) ignored as files were specified first");
-		return;
-	}
-	if ( GenCPP )
-		{warnNoFL("'-' (stdin) cannot be used with C++ interface; ignored");}
+  if ( DontAcceptStdin )
+  {
+    warnNoFL("'-' (stdin) ignored as files were specified first");
+    return;
+  }
+  if ( GenCPP )
+    {warnNoFL("'-' (stdin) cannot be used with C++ interface; ignored");}
 
-	require(NumFiles<MaxNumFiles,"exceeded max # of input files");
-	FileStr[NumFiles++] = "stdin";
-	DontAcceptFiles = 1;
+  require(NumFiles<MaxNumFiles,"exceeded max # of input files");
+  FileStr[NumFiles++] = "stdin";
+  DontAcceptFiles = 1;
 }
 
 static void
 pGuts()
 {
-	print_guts = 1;
+  print_guts = 1;
 }
 
 static void
 pTrans()
 {
-	transform = 1;
+  transform = 1;
 }
 
 static void
 pInline()
 {
-	if ( def_token_file!=NULL )
-	{
-		warnNoFL("-inline conflicts with -def-tokens; ignored");
-	}
-	else if ( GenCPP )
-	{
-		warnNoFL("-inline conflicts with C++ interface; ignored");
-	}
-	else Inline = 1;
+  if ( def_token_file!=NULL )
+  {
+    warnNoFL("-inline conflicts with -def-tokens; ignored");
+  }
+  else if ( GenCPP )
+  {
+    warnNoFL("-inline conflicts with C++ interface; ignored");
+  }
+  else Inline = 1;
 }
 
 static void
 pCPP()
 {
-	GenCPP = 1;
+  GenCPP = 1;
 }
 
 /* MR23 */
@@ -257,112 +243,95 @@ pCPP()
 static void
 pNoCtor()
 {
-	NoCtor = 1;
-	if ( ! GenCPP )
-		{warnNoFL("-noctor needs -CPP option; ignored");}
-} 
+  NoCtor = 1;
+  if ( ! GenCPP )
+    {warnNoFL("-noctor needs -CPP option; ignored");}
+}
 
 Opt options[] = {
-#ifdef __cplusplus
-    { "-CPP",		 0, (void (*)(...)) pCPP,"Generate C++ output"},
-    { "-def-tokens", 0, (void (*)(...)) pDToks,"Define ref'd tokens w/unique integer (C++ interface)"},
-    { "-def-tokens-file", 1, (void (*)(...)) pDToksFile,"Define ref'd tokens w/unique integer (put in file)"},
-    { "-funcs", 1,		(void (*)(...)) pFuncs,"Gen 'ANSI', 'KR', or 'both' style function headers"},
-    { "-guts", 0,		(void (*)(...)) pGuts,"Print out a bunch of internal data structures"},
-    { "-inline", 0,		(void (*)(...)) pInline, "Gen only actions and functions for given rules"},
-    { "-noctor", 0,		(void (*)(...)) pNoCtor, "Do not generate a blank constructor"}, /* MR23 */
-    { "-prefix", 1,		(void (*)(...)) pPrefix, "Prefix all globally visible symbols"},
-    { "-proto-file", 1, (void (*)(...)) pProtoFile, "Put all prototypes for rule functions in this file"},
-    { "-out-dir", 1,	(void (*)(...)) pOut,	"Directory where all output files go (default=\".\")"},
-    { "-transform", 0,	(void (*)(...)) pTrans, "Transformation mode; read/write to different pointers"},
-    { "-",	0,			(void (*)(...)) pstdin,	"take input from stdin"},
-	{ "*",  0,			(void (*)(...)) pFile, 	"" },	/* anything else is a file */
-#else
-    { "-CPP",		 0, pCPP,  "Generate C++ output"},
+    { "-CPP",    0, pCPP,  "Generate C++ output"},
     { "-def-tokens", 0, pDToks,"Define ref'd tokens w/unique integer (C++ interface)"},
     { "-def-tokens-file", 1, pDToksFile,"Define ref'd tokens w/unique integer (put in file)"},
-    { "-funcs", 1,		pFuncs,"Gen 'ANSI', 'KR', or 'both' style function headers"},
-    { "-guts", 0,		pGuts,"Print out a bunch of internal data structures"},
-    { "-inline", 0,		pInline, "Gen only actions and functions for given rules"},
-    { "-noctor", 0,		pNoCtor, "Do not generate a blank constructor"}, /* MR23 */
-    { "-prefix", 1,		pPrefix, "Prefix all globally visible symbols"},
+    { "-funcs", 1,    pFuncs,"Gen 'ANSI', 'KR', or 'both' style function headers"},
+    { "-guts", 0,   pGuts,"Print out a bunch of internal data structures"},
+    { "-inline", 0,   pInline, "Gen only actions and functions for given rules"},
+    { "-noctor", 0,   pNoCtor, "Do not generate a blank constructor"}, /* MR23 */
+    { "-prefix", 1,   pPrefix, "Prefix all globally visible symbols"},
     { "-proto-file", 1, pProtoFile, "Put all prototypes for rule functions in this file"},
-    { "-out-dir", 1,	pOut,	"Directory where all output files go (default=\".\")"},
-    { "-transform", 0,	pTrans, "Transformation mode; read/write to different pointers"},
-    { "-",	0,			pstdin,	"take input from stdin"},
-	{ "*",  0,			pFile, 	"" },	/* anything else is a file */
-#endif
-	{ NULL, 0, NULL, NULL }
+    { "-out-dir", 1,  pOut, "Directory where all output files go (default=\".\")"},
+    { "-transform", 0,  pTrans, "Transformation mode; read/write to different pointers"},
+    { "-",  0,      pstdin, "take input from stdin"},
+    { "*",  0,      pFile,  "" }, /* anything else is a file */
+    { NULL, 0, NULL, NULL }
 };
 
 int
 #ifdef __USE_PROTOS
 main(int argc, char *argv[])
-
 #else
 main(argc, argv)
 int argc;
 char *argv[];
 #endif
 {
-	AST *root;
+  AST *root;
 #ifdef THINK_C
 #include <console.h>
-	argc = ccommand (&argv);
+  argc = ccommand (&argv);
 #endif
 
-	fprintf(stderr,
-		"Sorcerer -  A simple tree-parser generator  Version %s  1992-2001\n",
-		VersionText);
+  fprintf(stderr,
+    "Sorcerer -  A simple tree-parser generator  Version %s  1992-2001\n",
+    VersionText);
 
-	if ( argc == 1 ) { help(); zzDONE; }
-	ProcessArgs(argc-1, &(argv[1]), options);
+  if ( argc == 1 ) { help(); zzDONE; }
+  ProcessArgs(argc-1, &(argv[1]), options);
 
-	symbols = newHashTable();
-	token_dict = (char **) calloc(token_table_size, sizeof(char *));
-	require(token_dict != NULL, "main: can't create token_dict");
+  symbols = newHashTable();
+  token_dict = (char **) calloc(token_table_size, sizeof(char *));
+  require(token_dict != NULL, "main: can't create token_dict");
 
-	output = stdout;
-	input = NextFile();
-	require(input!=NULL, "No grammar description found (exiting...)");
-	root = read_sor_desc(input);
+  output = stdout;
+  input = NextFile();
+  require(input!=NULL, "No grammar description found (exiting...)");
+  root = read_sor_desc(input);
 
-	if ( root!=NULL ) gen(root);
-		
-	if ( found_error )
-	{
-		fprintf(stderr, "no parser generated due to parsing errors; exiting...\n");
-		zzDIE;
-	}
+  if ( root!=NULL ) gen(root);
 
-	if ( GenCPP ) {
-		GenCPPClassHeader();
-		GenCPPClassCode();
-	}
+  if ( found_error )
+  {
+    fprintf(stderr, "no parser generated due to parsing errors; exiting...\n");
+    zzDIE;
+  }
 
-	if ( !UserDefdTokens ) gen_tokens_file();
-	else if ( def_token_file!=NULL ) {
-		warnNoFL("tokens file not generated; it conflicts with use of #tokdefs");
-	}
+  if ( GenCPP ) {
+    GenCPPClassHeader();
+    GenCPPClassCode();
+  }
 
-	if ( GenProtoFile!=NULL )
-	{
-		FILE *ProtoFILE;
-		ProtoFILE = fopen(OutMetaName(GenProtoFile), "w");
-		if ( ProtoFILE==NULL ) {warnNoFL(eMsg1("Can't open prototype file '%s'; ignored",GenProtoFile));}
-		else {
-#ifdef SPECIAL_FOPEN									
+  if ( !UserDefdTokens ) gen_tokens_file();
+  else if ( def_token_file!=NULL ) {
+    warnNoFL("tokens file not generated; it conflicts with use of #tokdefs");
+  }
+
+  if ( GenProtoFile!=NULL )
+  {
+    FILE *ProtoFILE;
+    ProtoFILE = fopen(OutMetaName(GenProtoFile), "w");
+    if ( ProtoFILE==NULL ) {warnNoFL(eMsg1("Can't open prototype file '%s'; ignored",GenProtoFile));}
+    else {
+#ifdef SPECIAL_FOPEN
                         special_fopen_actions(OutMetaName(GenProtoFile));
-#endif													
-			gen_info_hdr( ProtoFILE );
-			if ( header_action!=NULL )
-				dumpAction(header_action, ProtoFILE, 0, -1, 0, 1);
-			GenRulePrototypes( ProtoFILE, 0 );
-			fclose(ProtoFILE);
-		}
-	}
-	if ( found_error ) {zzDIE;}
-	else zzDONE;
+#endif
+      gen_info_hdr( ProtoFILE );
+      if ( header_action!=NULL )
+        dumpAction(header_action, ProtoFILE, 0, -1, 0, 1);
+      GenRulePrototypes( ProtoFILE, 0 );
+      fclose(ProtoFILE);
+    }
+  }
+  if ( found_error ) {zzDIE;}
+  else zzDONE;
 }
 
 void
@@ -372,18 +341,18 @@ help(void)
 help()
 #endif
 {
-	Opt *p = options;
-	static char buf[MaxRuleName+1];
+  Opt *p = options;
+  static char buf[MaxRuleName+1];
 
-	fprintf(stderr, "sor [options] f1.sor ... fn.sor\n");
-	while ( p->option!=NULL && *(p->option) != '*' )
-	{
-		buf[0]='\0';
-		if ( p->arg ) sprintf(buf, "%s ___", p->option);
-		else strcpy(buf, p->option);
-		fprintf(stderr, "    %-20s   %s\n", buf, p->descr);
-		p++;
-	}
+  fprintf(stderr, "sor [options] f1.sor ... fn.sor\n");
+  while ( p->option!=NULL && *(p->option) != '*' )
+  {
+    buf[0]='\0';
+    if ( p->arg ) sprintf(buf, "%s ___", p->option);
+    else strcpy(buf, p->option);
+    fprintf(stderr, "    %-20s   %s\n", buf, p->descr);
+    p++;
+  }
 }
 
 FILE *
@@ -393,23 +362,23 @@ NextFile( void )
 NextFile( )
 #endif
 {
-	FILE *f;
+  FILE *f;
 
-	for (;;)
-	{
-		if ( CurFile+1 >= NumFiles ) return(NULL);
-		CurFile++;
-		if ( cistrequ(FileStr[CurFile],"stdin")) return stdin;
-		f = fopen(FileStr[CurFile], "r");
-		if ( f == NULL )
-		{
-			warnNoFL( eMsg1("file %s doesn't exist; ignored", FileStr[CurFile]) );
-		}
-		else
-		{
-			return(f);
-		}
-	}
+  for (;;)
+  {
+    if ( CurFile+1 >= NumFiles ) return(NULL);
+    CurFile++;
+    if ( cistrequ(FileStr[CurFile],"stdin")) return stdin;
+    f = fopen(FileStr[CurFile], "r");
+    if ( f == NULL )
+    {
+      warnNoFL( eMsg1("file %s doesn't exist; ignored", FileStr[CurFile]) );
+    }
+    else
+    {
+      return(f);
+    }
+  }
 }
 
 void
@@ -540,26 +509,26 @@ ListNode **list;
 void *e;
 #endif
 {
-	ListNode *p, *tail;
-	require(e!=NULL, "list_add: attempting to add NULL list element");
+  ListNode *p, *tail;
+  require(e!=NULL, "list_add: attempting to add NULL list element");
 
-	p = newListNode;
-	require(p!=NULL, "list_add: cannot alloc new list node");
-	p->elem = e;
-	if ( *list == NULL )
-	{
-		ListNode *sentinel = newListNode;
-		require(sentinel!=NULL, "list_add: cannot alloc sentinel node");
-		*list=sentinel;
-		sentinel->next = p;
-		sentinel->elem = (char *)p;		/* set tail pointer */
-	}
-	else								/* find end of list */
-	{
-		tail = (ListNode *) (*list)->elem;	/* get tail pointer */
-		tail->next = p;
-		(*list)->elem = (char *) p;		/* reset tail */
-	}
+  p = newListNode;
+  require(p!=NULL, "list_add: cannot alloc new list node");
+  p->elem = e;
+  if ( *list == NULL )
+  {
+    ListNode *sentinel = newListNode;
+    require(sentinel!=NULL, "list_add: cannot alloc sentinel node");
+    *list=sentinel;
+    sentinel->next = p;
+    sentinel->elem = (char *)p;   /* set tail pointer */
+  }
+  else                /* find end of list */
+  {
+    tail = (ListNode *) (*list)->elem;  /* get tail pointer */
+    tail->next = p;
+    (*list)->elem = (char *) p;   /* reset tail */
+  }
 }
 
 static void
@@ -572,31 +541,31 @@ char **argv;
 Opt *options;
 #endif
 {
-	Opt *p;
-	require(argv!=NULL, "ProcessArgs: command line NULL");
+  Opt *p;
+  require(argv!=NULL, "ProcessArgs: command line NULL");
 
-	while ( argc-- > 0 )
-	{
-		p = options;
-		while ( p->option != NULL )
-		{
-			if ( strcmp(p->option, "*") == 0 ||
-				 cistrequ(p->option, *argv))
-			{
-				if ( p->arg )
-				{
-					(*p->process)( *argv, *(argv+1) );
-					argv++;
-					argc--;
-				}
-				else
-					(*p->process)( *argv );
-				break;
-			}
-			p++;
-		}
-		argv++;
-	}
+  while ( argc-- > 0 )
+  {
+    p = options;
+    while ( p->option != NULL )
+    {
+      if ( strcmp(p->option, "*") == 0 ||
+         cistrequ(p->option, *argv))
+      {
+        if ( p->arg )
+        {
+          (*p->process)( *argv, *(argv+1) );
+          argv++;
+          argc--;
+        }
+        else
+          (*p->process)( *argv );
+        break;
+      }
+      p++;
+    }
+    argv++;
+  }
 }
 
 /*
@@ -613,17 +582,17 @@ char *text;
 int sz;
 #endif
 {
-	Entry *p;
-	require(text!=NULL, "new: NULL terminal");
-	
-	if ( (p = (Entry *) calloc(1,sz)) == 0 )
-	{
-		fatal("newEntry: out of memory for terminals\n");
-		exit(1);
-	}
-	p->str = mystrdup(text);
-	
-	return(p);
+  Entry *p;
+  require(text!=NULL, "new: NULL terminal");
+
+  if ( (p = (Entry *) calloc(1,sz)) == 0 )
+  {
+    fatal("newEntry: out of memory for terminals\n");
+    exit(1);
+  }
+  p->str = mystrdup(text);
+
+  return(p);
 }
 
 void
@@ -635,18 +604,18 @@ int token_type;
 char *text;
 #endif
 {
-	if ( token_type >= token_table_size )	/* overflow? */
-	{
-		char **p;
-		int i, more;
+  if ( token_type >= token_table_size ) /* overflow? */
+  {
+    char **p;
+    int i, more;
 
-		more = 100;
-		token_table_size += more;
-		token_dict = (char **) realloc(token_dict, token_table_size*sizeof(char *));
-		require(token_dict != NULL, "token_association: can't extend token_dict");
-		for (p= &token_dict[token_table_size-more],i=1; i<=more; i++) *p++ = NULL;
-	}
-	token_dict[token_type] = text;
+    more = 100;
+    token_table_size += more;
+    token_dict = (char **) realloc(token_dict, token_table_size*sizeof(char *));
+    require(token_dict != NULL, "token_association: can't extend token_dict");
+    for (p= &token_dict[token_table_size-more],i=1; i<=more; i++) *p++ = NULL;
+  }
+  token_dict[token_type] = text;
 }
 
 /*
@@ -655,10 +624,10 @@ char *text;
  *
  * Observe the following rules:
  *
- *		f.e		--> f".c"
- *		f		--> f".c"
- *		f.		--> f".c"
- *		f.e.t	--> f.e".c"
+ *    f.e   --> f".c"
+ *    f   --> f".c"
+ *    f.    --> f".c"
+ *    f.e.t --> f.e".c"
  *
  * Where f,e,t are arbitrarily long sequences of characters in a file
  * name.
@@ -676,18 +645,18 @@ outname( fs )
 char *fs;
 #endif
 {
-	static char buf[MaxFileName+1];
-	char *p;
+  static char buf[MaxFileName+1];
+  char *p;
 
-	p = buf;
-	strcpy(buf, fs);
-	while ( *p != '\0' )  {p++;}			/* Stop on '\0' */
-	while ( *p != '.' && p != buf ) {--p;}	/* Find '.' */
-	if ( p != buf ) *p = '\0';				/* Found '.' */
-	require(strlen(buf) + 2 < (size_t)MaxFileName, "outname: filename too big");
-	if ( GenCPP ) strcat(buf, CPP_FILE_SUFFIX);
-	else strcat(buf, ".c");
-	return( buf );
+  p = buf;
+  strcpy(buf, fs);
+  while ( *p != '\0' )  {p++;}      /* Stop on '\0' */
+  while ( *p != '.' && p != buf ) {--p;}  /* Find '.' */
+  if ( p != buf ) *p = '\0';        /* Found '.' */
+  require(strlen(buf) + 2 < (size_t)MaxFileName, "outname: filename too big");
+  if ( GenCPP ) strcat(buf, CPP_FILE_SUFFIX);
+  else strcat(buf, ".c");
+  return( buf );
 }
 
 void
@@ -698,21 +667,21 @@ ensure_no_C_file_collisions(class_c_file)
 char *class_c_file;
 #endif
 {
-	int i;
+  int i;
 
-	for (i=0; i<NumFiles; i++)
-	{
+  for (i=0; i<NumFiles; i++)
+  {
 #ifdef PCCTS_CASE_INSENSITIVE_FILE_NAME
-		/* assume that file names are case insensitive */
-		if ( STRICMP(outname(FileStr[i]), class_c_file)==0 )
+    /* assume that file names are case insensitive */
+    if ( STRICMP(outname(FileStr[i]), class_c_file)==0 )
 #else
-		if ( strcmp(outname(FileStr[i]), class_c_file)==0 )
+    if ( strcmp(outname(FileStr[i]), class_c_file)==0 )
 #endif
-		{
-			fatal(eMsg1("class def output file conflicts with parser output file: %s",
-						outname(FileStr[i])));
-		}
-	}
+    {
+      fatal(eMsg1("class def output file conflicts with parser output file: %s",
+            outname(FileStr[i])));
+    }
+  }
 }
 
 /* MR10: Jeff Vincent
@@ -726,32 +695,32 @@ OutMetaName(char *n)
 OutMetaName(n)
 char *n;
 #endif
-{	
+{
     static char *dir_sym = DirectorySymbol;
     static char newname[MaxFileName+1];
     char *p;
 
-	/* If OutputDirectory is same as TopDirectory (platform default) then leave n alone. */
+  /* If OutputDirectory is same as TopDirectory (platform default) then leave n alone. */
     if (strcmp(OutputDirectory, TopDirectory) == 0)
-		return n;
+    return n;
 
-	/* p will point to filename without path information */
-	if ((p = strrchr(n, *dir_sym)) != NULL)
-		p++;
-	else
-		p = n;
+  /* p will point to filename without path information */
+  if ((p = strrchr(n, *dir_sym)) != NULL)
+    p++;
+  else
+    p = n;
 
-	/* Copy new output directory into newname[] */
-	strcpy(newname, OutputDirectory);
+  /* Copy new output directory into newname[] */
+  strcpy(newname, OutputDirectory);
 
-	/* if new output directory does not have trailing dir_sym, add it! */
-	if (newname[strlen(newname)-1] != *dir_sym)
-		strcat(newname, dir_sym);
+  /* if new output directory does not have trailing dir_sym, add it! */
+  if (newname[strlen(newname)-1] != *dir_sym)
+    strcat(newname, dir_sym);
 
-	/* contatenate FILE NAME ONLY to new output directory */
-	strcat(newname, p);
+  /* contatenate FILE NAME ONLY to new output directory */
+  strcat(newname, p);
 
-	return newname;
+  return newname;
 }
 
 void
@@ -763,17 +732,17 @@ FILE *f;
 set e;
 #endif
 {
-	int t;
+  int t;
 
-	if ( set_nil(e) ) return;
-	fprintf(f, "{");
-	while ( !set_nil(e) )
-	{
-		t = set_int(e);
-		set_rm(t, e);
-		fprintf(f, " %s", token_dict[t]);
-	}
-	fprintf(f, " }");
+  if ( set_nil(e) ) return;
+  fprintf(f, "{");
+  while ( !set_nil(e) )
+  {
+    t = set_int(e);
+    set_rm(t, e);
+    fprintf(f, " %s", token_dict[t]);
+  }
+  fprintf(f, " }");
 }
 
 /* Given a list of ANSI-style parameter declarations, print out a
@@ -791,16 +760,16 @@ char *pdecl;
 FILE *output;
 #endif
 {
-	int firstTime = 1, done = 0;
-	require(output!=NULL, "DumpListOfParmNames: NULL parm");
+  int firstTime = 1, done = 0;
+  require(output!=NULL, "DumpListOfParmNames: NULL parm");
 
-	if ( pdecl == NULL ) return;
-	while ( !done )
-	{
-		if ( !firstTime ) putc(',', output);
-		done = DumpNextNameInDef(&pdecl, output);
-		firstTime = 0;
-	}
+  if ( pdecl == NULL ) return;
+  while ( !done )
+  {
+    if ( !firstTime ) putc(',', output);
+    done = DumpNextNameInDef(&pdecl, output);
+    firstTime = 0;
+  }
 }
 
 /* given a list of parameters or return values, dump the next
@@ -815,20 +784,20 @@ char **q;
 FILE *output;
 #endif
 {
-	char *p = *q;		/* where did we leave off? */
-	int done=0;
+  char *p = *q;   /* where did we leave off? */
+  int done=0;
 
-	while ( *p!='\0' && *p!=',' ) p++;		/* find end of decl */
-	if ( *p == '\0' ) done = 1;
-	while ( !isalnum(*p) && *p!='_' ) --p;	/* scan back until valid var character */
-	while ( isalnum(*p) || *p=='_' ) --p;	/* scan back until beginning of variable */
-	p++;						/* move to start of variable */
-	while ( isalnum(*p) || *p=='_'  ) {putc(*p, output); p++;}
-	while ( *p!='\0' && *p!=',' ) p++;		/* find end of decl */
-	p++;				/* move past this parameter */
+  while ( *p!='\0' && *p!=',' ) p++;    /* find end of decl */
+  if ( *p == '\0' ) done = 1;
+  while ( !isalnum(*p) && *p!='_' ) --p;  /* scan back until valid var character */
+  while ( isalnum(*p) || *p=='_' ) --p; /* scan back until beginning of variable */
+  p++;            /* move to start of variable */
+  while ( isalnum(*p) || *p=='_'  ) {putc(*p, output); p++;}
+  while ( *p!='\0' && *p!=',' ) p++;    /* find end of decl */
+  p++;        /* move past this parameter */
 
-	*q = p;				/* record where we left off */
-	return done;
+  *q = p;       /* record where we left off */
+  return done;
 }
 
 /* Given a list of ANSI-style parameter declarations, dump K&R-style
@@ -844,21 +813,21 @@ char *pdecl;
 FILE *output;
 #endif
 {
-	require(output!=NULL, "DumpOldStyleParms: NULL parm");
+  require(output!=NULL, "DumpOldStyleParms: NULL parm");
 
-	if ( pdecl == NULL ) return;
-	while ( *pdecl != '\0' )
-	{
-		if ( *pdecl == ',' )
-		{
-			pdecl++;
-			putc(';', output); putc('\n', output);
-			while ( *pdecl==' ' || *pdecl=='\t' || *pdecl=='\n' ) pdecl++;
-		}
-		else {putc(*pdecl, output); pdecl++;}
-	}
-	putc(';', output);
-	putc('\n', output);
+  if ( pdecl == NULL ) return;
+  while ( *pdecl != '\0' )
+  {
+    if ( *pdecl == ',' )
+    {
+      pdecl++;
+      putc(';', output); putc('\n', output);
+      while ( *pdecl==' ' || *pdecl=='\t' || *pdecl=='\n' ) pdecl++;
+    }
+    else {putc(*pdecl, output); pdecl++;}
+  }
+  putc(';', output);
+  putc('\n', output);
 }
 
 /* Take in a type definition (type + symbol) and print out type only */
@@ -873,27 +842,27 @@ char *file;
 int line;
 #endif
 {
-	char *p, *end;
-	require(s!=NULL, "DumpType: invalid type string");
+  char *p, *end;
+  require(s!=NULL, "DumpType: invalid type string");
 
-	p = &s[strlen(s)-1];		/* start at end of string and work back */
-	/* scan back until valid variable character */
-	while ( !isalnum(*p) && *p!='_' ) --p;
-	/* scan back until beginning of variable */
-	while ( isalnum(*p) || *p=='_' ) --p;
-	if ( p<=s )
-	{
-		warnFL(eMsg1("invalid parameter/return value: '%s'",s), file, line);
-		return;
-	}
-	end = p;					/* here is where we stop printing alnum */
-	p = s;
-	while ( p!=end ) {putc(*p, f); p++;} /* dump until just before variable */
-	while ( *p!='\0' )					 /* dump rest w/o variable */
-	{
-		if ( !isalnum(*p) && *p!='_' ) putc(*p, f);
-		p++;
-	}
+  p = &s[strlen(s)-1];    /* start at end of string and work back */
+  /* scan back until valid variable character */
+  while ( !isalnum(*p) && *p!='_' ) --p;
+  /* scan back until beginning of variable */
+  while ( isalnum(*p) || *p=='_' ) --p;
+  if ( p<=s )
+  {
+    warnFL(eMsg1("invalid parameter/return value: '%s'",s), file, line);
+    return;
+  }
+  end = p;          /* here is where we stop printing alnum */
+  p = s;
+  while ( p!=end ) {putc(*p, f); p++;} /* dump until just before variable */
+  while ( *p!='\0' )           /* dump rest w/o variable */
+  {
+    if ( !isalnum(*p) && *p!='_' ) putc(*p, f);
+    p++;
+  }
 }
 
 char *
@@ -904,10 +873,10 @@ actiondup(s)
 char *s;
 #endif
 {
-	char *p = (char *) malloc(strlen(s)+1);
-	require(p!=NULL, "actiondup: no memory");
-	strcpy(p, s);
-	return p;
+  char *p = (char *) malloc(strlen(s)+1);
+  require(p!=NULL, "actiondup: no memory");
+  strcpy(p, s);
+  return p;
 }
 
 #ifdef OLD
@@ -919,33 +888,33 @@ newRefVarRec(t,lab,init)
 char *t,*lab,*init;
 #endif
 {
-	RefVarRec *p;
-	SymEntry *q;
+  RefVarRec *p;
+  SymEntry *q;
 
-	q = (SymEntry *) hash_get(symbols, lab);
-	if ( q==NULL )
-	{
-		q = (SymEntry *) hash_add(symbols, lab, (Entry *) newSymEntry(lab));
-		q->token = REFVAR;
-		q->defined = 1;
-	}
-	else err(eMsg2("Reference variable clashes with %s: '%s'", zztokens[q->token], lab));
+  q = (SymEntry *) hash_get(symbols, lab);
+  if ( q==NULL )
+  {
+    q = (SymEntry *) hash_add(symbols, lab, (Entry *) newSymEntry(lab));
+    q->token = REFVAR;
+    q->defined = 1;
+  }
+  else err(eMsg2("Reference variable clashes with %s: '%s'", zztokens[q->token], lab));
 
-	p = (RefVarRec *) calloc(1, sizeof(RefVarRec));
-	require(p!=NULL, "newRefVarRec: no memory");
-	strcpy(p->type, t);
-	strcpy(p->label, lab);
-	strcpy(p->init, init);
-	return p;
+  p = (RefVarRec *) calloc(1, sizeof(RefVarRec));
+  require(p!=NULL, "newRefVarRec: no memory");
+  strcpy(p->type, t);
+  strcpy(p->label, lab);
+  strcpy(p->init, init);
+  return p;
 }
 #endif
 
 /* From one of the following ref var defs, create a record to track
  * the info:
  *
- *	    @(int *p);
- *	    @(int *p=NULL);		-- initialized
- *	    @(static int *p);	-- global
+ *      @(int *p);
+ *      @(int *p=NULL);   -- initialized
+ *      @(static int *p); -- global
  *
  * The 'def' pointer should point to the first char after the '('
  */
@@ -957,29 +926,29 @@ refVarRec(def)
 char *def;
 #endif
 {
-	RefVarRec *p;
-	char *s,*decl;
+  RefVarRec *p;
+  char *s,*decl;
 
-	p = (RefVarRec *) calloc(1, sizeof(RefVarRec));
-	require(p!=NULL, "newRefVarRec: no memory");
+  p = (RefVarRec *) calloc(1, sizeof(RefVarRec));
+  require(p!=NULL, "newRefVarRec: no memory");
 
-	/* find first word; must be type or "static" */
-	s = def;
-	while ( isalpha(*s) ) s++;
-	if ( strncmp(def, "static", s-def)==0 ) p->global = 1;
-	else s = def;
+  /* find first word; must be type or "static" */
+  s = def;
+  while ( isalpha(*s) ) s++;
+  if ( strncmp(def, "static", s-def)==0 ) p->global = 1;
+  else s = def;
 
-	/* now get type from s position until '=' or ')' */
-	decl = s;
-	while ( *s!='=' && *s!='\0' ) s++;
-	if ( *s=='=' ) {
-		/* there is an initializer */
-		strcpy(p->init, s+1);
-		*s='\0';
-	}
-	strcpy(p->decl, decl);
-	strcpy(p->var, id_in_decl(decl));
-	return p;
+  /* now get type from s position until '=' or ')' */
+  decl = s;
+  while ( *s!='=' && *s!='\0' ) s++;
+  if ( *s=='=' ) {
+    /* there is an initializer */
+    strcpy(p->init, s+1);
+    *s='\0';
+  }
+  strcpy(p->decl, decl);
+  strcpy(p->var, id_in_decl(decl));
+  return p;
 }
 
 /* given a decl (type + id) return a ptr to the id; nondestructive to 'decl'.
@@ -993,22 +962,22 @@ id_in_decl( decl )
 char *decl;
 #endif
 {
-	static char id[MaxAtom+1];
-	char *p = &(decl[strlen(decl)-1]);
-	char *end, *start;
-	require(decl!=NULL, "id_in_decl: NULL decl");
-	require(strlen(decl)>(size_t)0, "id_in_decl: empty decl");
+  static char id[MaxAtom+1];
+  char *p = &(decl[strlen(decl)-1]);
+  char *end, *start;
+  require(decl!=NULL, "id_in_decl: NULL decl");
+  require(strlen(decl)>(size_t)0, "id_in_decl: empty decl");
 
-	/* scan back until valid var character */
+  /* scan back until valid var character */
     while ( !isalnum(*p) || *p=='_' ) --p;
-	end = p+1;
-	/* scan back until beginning of variable */
+  end = p+1;
+  /* scan back until beginning of variable */
     while ( isalnum(*p) || *p=='_' ) --p;
     p++;                        /* move to start of variable */
-	start = p;
-	strncpy(id, start, end-start);
-	id[end-start] = '\0';
-	return id;
+  start = p;
+  strncpy(id, start, end-start);
+  id[end-start] = '\0';
+  return id;
 }
 
 /* Take in a decl (type + id) and print it out with a prefix on id */
@@ -1030,18 +999,18 @@ FILE *f;
     while ( !isalnum(*p) && *p!='_' ) --p;
     /* scan back until beginning of variable */
     while ( isalnum(*p) || *p=='_' ) --p;
-	require(p>s, "invalid decl");
-	p++;
+  require(p>s, "invalid decl");
+  p++;
     id = p;                    /* here is where id is */
     p = s;
     while ( p!=id ) {fputc(*p, f); p++;} /* dump until just before variable */
-	fprintf(f, prefix);
+  fprintf(f, prefix);
     while ( isspace(*p) ) p++;
     while ( *p!='\0' )                   /* dump rest */
     {
         fputc(*p, f);
         p++;
-	}
+  }
 }
 
 /*
@@ -1052,7 +1021,7 @@ FILE *f;
  *
  * to
  *
- *	0, "#( 6 #(5 %1:4 %2:3) #(1 %3:3 %4:3) )",
+ *  0, "#( 6 #(5 %1:4 %2:3) #(1 %3:3 %4:3) )",
  *           t, &w, &x, &y, &z);
  */
 char *
@@ -1063,52 +1032,52 @@ cvt_token_str(prefix, s)
 char *prefix, *s;
 #endif
 {
-	SymEntry *q;
-	char *b, *e, *p;
-	char tname[MaxRuleName+1];
-	char duh[MaxRuleName+1];
-	static char call[MaxAtom+1];
-	require(prefix!=NULL&&s!=NULL, "cvt_token_str: NULL string");
-	require(s[0]!='\0', "cvt_token_str: empty string");
+  SymEntry *q;
+  char *b, *e, *p;
+  char tname[MaxRuleName+1];
+  char duh[MaxRuleName+1];
+  static char call[MaxAtom+1];
+  require(prefix!=NULL&&s!=NULL, "cvt_token_str: NULL string");
+  require(s[0]!='\0', "cvt_token_str: empty string");
 
-/*	printf("cvt incoming: '%s'\n", s);*/
+/*  printf("cvt incoming: '%s'\n", s);*/
 
-	strcpy(call, prefix);
-	p = &call[strlen(prefix)];
+  strcpy(call, prefix);
+  p = &call[strlen(prefix)];
 
-	while ( *s!='"' ) *p++ = *s++;	/* ignore until string start */
-	*p++ = *s++;
+  while ( *s!='"' ) *p++ = *s++;  /* ignore until string start */
+  *p++ = *s++;
 
-	do
-	{
-		while ( !isalpha(*s) )
-		{
-			if ( *s=='"' ) { *p='\0'; goto done; }
-			*p++ = *s++;	/* ignore until a token name */
-		}
-		*p='\0';
-		b = s;
-		while ( isalpha(*s) ) s++;	/* ignore until end of token name */
-		e = s-1;
-		strncpy(tname, b, e-b+1);
-		tname[e-b+1] = '\0';
+  do
+  {
+    while ( !isalpha(*s) )
+    {
+      if ( *s=='"' ) { *p='\0'; goto done; }
+      *p++ = *s++;  /* ignore until a token name */
+    }
+    *p='\0';
+    b = s;
+    while ( isalpha(*s) ) s++;  /* ignore until end of token name */
+    e = s-1;
+    strncpy(tname, b, e-b+1);
+    tname[e-b+1] = '\0';
 
-/*		printf("looking up %s\n", tname);*/
-		q = (SymEntry *) hash_get(symbols, tname);
-		if ( q==NULL )
-		{
-			warnNoFL(eMsg1("call to ast_scan() has reference to unknown token: '%s'",tname));
-		}
-		else
-		{
-			sprintf(duh, "%d", q->token_type);
-			strcpy(p, duh);
-			p += strlen(duh);
-			*p='\0';
-		}
-	} while ( *s!='\0' && *s!='"' );
+/*    printf("looking up %s\n", tname);*/
+    q = (SymEntry *) hash_get(symbols, tname);
+    if ( q==NULL )
+    {
+      warnNoFL(eMsg1("call to ast_scan() has reference to unknown token: '%s'",tname));
+    }
+    else
+    {
+      sprintf(duh, "%d", q->token_type);
+      strcpy(p, duh);
+      p += strlen(duh);
+      *p='\0';
+    }
+  } while ( *s!='\0' && *s!='"' );
 done:
-	strcat(call, s);
-/*	printf("cvt: result is '%s'\n", call);*/
-	return call;
+  strcat(call, s);
+/*  printf("cvt: result is '%s'\n", call);*/
+  return call;
 }
