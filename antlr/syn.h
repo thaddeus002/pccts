@@ -54,7 +54,7 @@
 #define Generic     6 /* just a junction--no unusual characteristics */
 #define EndRule     7
 #define aPlusBlk    8
-#define aLoopBegin    9
+#define aLoopBegin  9
 
 typedef int NodeType;
 
@@ -76,9 +76,9 @@ typedef struct _tree {
       } v;
 #ifdef TREE_DEBUG
       int in_use;
-            int seq;
+      int seq;
 #endif
-    } Tree;
+} Tree;
 
 
 /* a predicate is defined to be a predicate action and a token tree with
@@ -255,7 +255,7 @@ typedef struct _rrnode {
       struct _junct *altstart;
       char *el_label;   /* el_label:rrnode */
       ExceptionGroup *ex_group; /* any exception[el_label] attached? */
-    } RuleRefNode;
+} RuleRefNode;
 
 typedef struct _junct {
       NodeType ntype;

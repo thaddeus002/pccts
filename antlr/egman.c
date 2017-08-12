@@ -31,7 +31,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "syn.h"
 #include "hash.h"
 #include "generic.h"
 

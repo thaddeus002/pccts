@@ -35,7 +35,6 @@
 #include <stdio.h>
 
 #include "pcctscfg.h"
-#include "syn.h"
 #include "hash.h"
 #include "generic.h"
 

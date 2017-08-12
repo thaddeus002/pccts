@@ -34,7 +34,6 @@
 #include <ctype.h>
 #include <string.h>
 #include "pcctscfg.h"
-#include "syn.h"
 #include "hash.h"
 #include "generic.h"
 

@@ -37,7 +37,6 @@
 
 #include <stdarg.h>
 
-#include "syn.h"
 #include "hash.h"
 #include "generic.h"
 

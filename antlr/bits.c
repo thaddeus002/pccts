@@ -37,7 +37,6 @@
 #include <ctype.h>
 #include <assert.h>
 #include <string.h>
-#include "syn.h"
 #include "hash.h"
 #include "generic.h"
 #include "dlgdef.h"

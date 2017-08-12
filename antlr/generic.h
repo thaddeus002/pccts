@@ -1,6 +1,4 @@
 /*
- * generic.h -- generic include stuff for new PCCTS ANTLR.
- *
  * SOFTWARE RIGHTS
  *
  * We reserve no LEGAL rights to the Purdue Compiler Construction Tool
@@ -33,6 +31,7 @@
  * \brief define types and macros for antlr.
  */
 
+#include "syn.h"
 
 #define StrSame     0
 
