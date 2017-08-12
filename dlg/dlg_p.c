@@ -10,9 +10,9 @@
  *
  */
 
-#define ANTLR_VERSION	13333
+#define ANTLR_VERSION 13333
 #include "pcctscfg.h"
-#include "pccts_stdio.h"
+#include <stdio.h>
 
 #include <ctype.h>
 #include "dlg.h"
@@ -39,17 +39,17 @@ Fix for Borland C++ 4.x & 5.x compiling with ALL warnings enabled
 #pragma warn -aus  /* unused assignment of 'xxx' */
 #endif
 
-int	action_no = 0;	   /* keep track of actions outputed */
-int	nfa_allocated = 0; /* keeps track of number of nfa nodes */
+int action_no = 0;     /* keep track of actions outputed */
+int nfa_allocated = 0; /* keeps track of number of nfa nodes */
 nfa_node **nfa_array = NULL;/* root of binary tree that stores nfa array */
 nfa_node nfa_model_node;   /* model to initialize new nodes */
-set	used_chars;	   /* used to label trans. arcs */
-set	used_classes;	   /* classes or chars used to label trans. arcs */
-set	normal_chars;	   /* mask to get rid elements that aren't used
+set used_chars;    /* used to label trans. arcs */
+set used_classes;    /* classes or chars used to label trans. arcs */
+set normal_chars;    /* mask to get rid elements that aren't used
 in set */
-int	flag_paren = FALSE;
-int	flag_brace = FALSE;
-int	mode_counter = 0;  /* keep track of number of %%names */
+int flag_paren = FALSE;
+int flag_brace = FALSE;
+int mode_counter = 0;  /* keep track of number of %%names */
 
 
 
@@ -301,7 +301,7 @@ void reg_expr()
         t1 = new_nfa_node(); t2 = new_nfa_node();
         (t1)->trans[0]=zzaRet.l;
         (t1)->trans[1]=zzaArg(zztasp2,2 ).l;
-        /* MR23 */		   if (zzaRet.r != NULL) (zzaRet.r)->trans[1]=t2;
+        /* MR23 */       if (zzaRet.r != NULL) (zzaRet.r)->trans[1]=t2;
         if (zzaArg(zztasp2,2 ).r) {
           (zzaArg(zztasp2,2 ).r)->trans[1]=t2;     /* MR20 */
         }
@@ -369,12 +369,12 @@ void repeat_expr()
       {
       if ( (LA(1)==ZERO_MORE) ) {
         zzmatch(ZERO_MORE);
-        {	nfa_node *t1,*t2;
-          /* MR23 */		if (zzaRet.r != NULL) (zzaRet.r)->trans[0] = zzaRet.l;
+        { nfa_node *t1,*t2;
+          /* MR23 */    if (zzaRet.r != NULL) (zzaRet.r)->trans[0] = zzaRet.l;
           t1 = new_nfa_node(); t2 = new_nfa_node();
           t1->trans[0]=zzaRet.l;
           t1->trans[1]=t2;
-          /* MR23 */		if (zzaRet.r != NULL) (zzaRet.r)->trans[1]=t2;
+          /* MR23 */    if (zzaRet.r != NULL) (zzaRet.r)->trans[1]=t2;
           zzaRet.l=t1;zzaRet.r=t2;
         }
  zzCONSUME;
@@ -436,7 +436,7 @@ void expr()
     atom_list();
     zzmatch(R_BRACK);
 
-    /* MR23 */		if (zzaRet.l != NULL) {
+    /* MR23 */    if (zzaRet.l != NULL) {
       (zzaRet.l)->trans[0] = zzaRet.r;
       (zzaRet.l)->label = set_dup(zzaArg(zztasp1,2 ).label);
       set_orin(&used_chars,(zzaRet.l)->label);
@@ -451,7 +451,7 @@ void expr()
       atom_list();
       zzmatch(R_BRACK);
 
-      /* MR23 */		if (zzaRet.l != NULL) {
+      /* MR23 */    if (zzaRet.l != NULL) {
         (zzaRet.l)->trans[0] = zzaRet.r;
         (zzaRet.l)->label = set_dif(normal_chars,zzaArg(zztasp1,3 ).label);
         set_orin(&used_chars,(zzaRet.l)->label);
@@ -465,7 +465,7 @@ void expr()
         reg_expr();
         zzmatch(R_PAR);
 
-        /* MR23 */		if (zzaRet.l != NULL) {
+        /* MR23 */    if (zzaRet.l != NULL) {
           (zzaRet.l)->trans[0] = zzaArg(zztasp1,2 ).l;
           if (zzaArg(zztasp1,2 ).r) {
             (zzaArg(zztasp1,2 ).r)->trans[1] = zzaRet.r;    /* MR20 */
@@ -480,7 +480,7 @@ void expr()
           reg_expr();
           zzmatch(R_BRACE);
 
-          /* MR23 */		if (zzaRet.l != NULL) {
+          /* MR23 */    if (zzaRet.l != NULL) {
             (zzaRet.l)->trans[0] = zzaArg(zztasp1,2 ).l;
             (zzaRet.l)->trans[1] = zzaRet.r;
             if (zzaArg(zztasp1,2 ).r) {
@@ -494,7 +494,7 @@ void expr()
           if ( (setwd3[LA(1)]&0x1) ) {
             atom();
 
-            /* MR23 */		if (zzaRet.l != NULL) {
+            /* MR23 */    if (zzaRet.l != NULL) {
               (zzaRet.l)->trans[0] = zzaRet.r;
               (zzaRet.l)->label = set_dup(zzaArg(zztasp1,1 ).label);
               set_orin(&used_chars,(zzaRet.l)->label);
@@ -735,9 +735,9 @@ fail:
 nfa_node * new_nfa_node()
 {
   register nfa_node *t;
-  static int nfa_size=0;	/* elements nfa_array[] can hold */
+  static int nfa_size=0;  /* elements nfa_array[] can hold */
 
-	++nfa_allocated;
+  ++nfa_allocated;
   if (nfa_size<=nfa_allocated){
     /* need to redo array */
     if (!nfa_array){
@@ -789,7 +789,7 @@ void fprint_set(FILE *f, set s)
 {
   unsigned int *x;
 
-	fprintf(f, "n = %d,", s.n);
+  fprintf(f, "n = %d,", s.n);
   if (s.setword){
     fprintf(f, "setword = %x,   ", s.setword);
     /* print out all the elements in the set */
@@ -812,7 +812,7 @@ int dump_nfas(int first_node, int last_node)
   register int i;
   nfa_node *t;
 
-	for (i=first_node; i<=last_node; ++i){
+  for (i=first_node; i<=last_node; ++i){
     t = NFA(i);
     if (!t) break;
     fprintf(stderr, "nfa_node %d {\n", t->node_no);

@@ -15,7 +15,7 @@
 #define ANTLR_VERSION 13333
 #endif
 
-#include "pccts_stdio.h"
+#include <stdio.h>
 
 #include <ctype.h>
 #define zzcr_attr(attr,tok,t)

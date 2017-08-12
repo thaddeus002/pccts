@@ -10,7 +10,7 @@
  */
 
 #define ANTLR_VERSION 13333
-#include "pccts_stdio.h"
+#include <stdio.h>
 
 #include "set.h"
 #include <ctype.h>
