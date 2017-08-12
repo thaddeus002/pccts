@@ -35,8 +35,8 @@ CC=gcc
 pccts: welcome antlr dlg fini
 
 pre:
-	@[ ! -d $(BINDIR) ] && mkdir -p $(BINDIR) || true
-	@[ ! -d $(MANDIR)/man$(MANEXT) ] && mkdir -p $(MANDIR)/man$(MANEXT) || true
+	@[ ! -d $(BINDIR) ] && install -d $(BINDIR) || true
+	@[ ! -d $(MANDIR)/man$(MANEXT) ] && install -d $(MANDIR)/man$(MANEXT) || true
 
 welcome	:
 	@echo " "
@@ -91,10 +91,10 @@ scrub:
 	$(MAKE) -C dlg scrub
 
 manpages: pre
-	cp -p $(MANFILES) $(MANDIR)/man$(MANEXT)
+	install -m 644 $(MANFILES) $(MANDIR)/man$(MANEXT)
 
 install: manpages
 	$(MAKE) -C antlr PREFIX=$(PREFIX) install
 	$(MAKE) -C dlg PREFIX=$(PREFIX) install
-	install -d $(INCDIR)
-	install h/* $(INCDIR)
+	[ ! -d $(INCDIR) ] && install -d $(INCDIR)
+	install -m 644 h/* $(INCDIR)
