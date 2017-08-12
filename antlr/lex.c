@@ -31,11 +31,9 @@
  * \brief Generate all of the lexical type files: parser.dlg tokens.h
  */
 
-#include <stdio.h>
 #include <ctype.h>
 #include <string.h>
 #include "pcctscfg.h"
-#include "set.h"
 #include "syn.h"
 #include "hash.h"
 #include "generic.h"

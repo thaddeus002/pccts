@@ -43,7 +43,7 @@
  *    void  setHasAction(expr);   Indicate that expr now has an action
  *    Entry *newEntry(char *,int);  Create new table entry with certain size
  *    void  list_add(ListNode **list, char *e)
- *      void    list_free(ListNode **list, int freeData);   *** MR10 ***
+ *    void    list_free(ListNode **list, int freeData);   *** MR10 ***
  *    void  list_apply(ListNode *list, void (*f)())
  *    void  lexclass(char *m);    switch to new/old lexical class
  *    void  lexmode(int i);     switch to old lexical class i
@@ -52,7 +52,6 @@
 
 #include <stdio.h>
 #include <string.h>
-#include "set.h"
 #include "syn.h"
 #include "hash.h"
 #include "generic.h"

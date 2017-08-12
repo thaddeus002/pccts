@@ -11,11 +11,9 @@
  */
 
 #define ANTLR_VERSION 13333
+
 #include <stdio.h>
 
-#include "pcctscfg.h"
-#include "set.h"
-#include <ctype.h>
 #include "syn.h"
 #include "hash.h"
 #include "generic.h"

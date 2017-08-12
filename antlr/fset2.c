@@ -33,16 +33,13 @@
 
 #include <stdio.h>
 #include "pcctscfg.h"
-#include <stdlib.h>
 #include <string.h>
 
 #include <stdarg.h>
 
-#include "set.h"
 #include "syn.h"
 #include "hash.h"
 #include "generic.h"
-#include "dlgdef.h"
 
 /* ick! globals.  Used by permute() to track which elements of a set have been used */
 

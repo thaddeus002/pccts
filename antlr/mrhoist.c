@@ -31,24 +31,20 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "set.h"
 #include "syn.h"
 #include "hash.h"
 #include "generic.h"
 #include "dlgdef.h"
-#include <ctype.h>
 
 void dumppred(Predicate *);
 
-/*
-  Try to determine whether predicate "first" is true for
-    all cases where "second" is true.  Comparison takes place
-    without regard to context.
-  Assumes that predicate symbols have been expanded.
-  Assumes that there are no NAND or NOR nodes
-
-*/
-
+/**
+ * Try to determine whether predicate "first" is true for
+ * all cases where "second" is true.  Comparison takes place
+ * without regard to context.
+ * Assumes that predicate symbols have been expanded.
+ * Assumes that there are no NAND or NOR nodes
+ */
 int MR_secondPredicateUnreachable(Predicate *first,Predicate *second)
 {
   Predicate     *f;
@@ -408,7 +404,7 @@ void MR_check_pred_too_long(Predicate *p,set completion)
       ! p->source->predTooLong) {
     if ( !set_nil(completion)) {
       p->source->predTooLong=1;
-warnFL("It is unusual (but ok) for a semantic predicate to test context past the end of its own rule",
+      warnFL("It is unusual (but ok) for a semantic predicate to test context past the end of its own rule",
                                 FileStr[p->source->file],p->source->line);
     };
   };
@@ -452,15 +448,13 @@ Junction * MR_find_endRule(Node *n)
     return (Junction *)next;
 }
 
-/*
-   Intersection:  a branch which is shorter is chosen
-   over one which is longer: (A B C) intersect (A B) yields (A B).
-
-   AND: a branch which is longer is chosen over the one
-   which is shorter: (A B C) AND (A B) yields (A B C)
-
-*/
-
+/**
+ * Intersection:  a branch which is shorter is chosen
+ * over one which is longer: (A B C) intersect (A B) yields (A B).
+ *
+ * AND: a branch which is longer is chosen over the one
+ * which is shorter: (A B C) AND (A B) yields (A B C)
+ */
 Tree *MR_computeTreeIntersection(Tree *l,Tree *r)
 {
     Tree    *result=NULL;
@@ -514,8 +508,7 @@ Tree *MR_computeTreeIntersection(Tree *l,Tree *r)
    the context.
 */
 
-/* requires input trees to be in "canonical" format */
-
+/** requires input trees to be in "canonical" format */
 Tree *MR_computeTreeAND(Tree *l,Tree *r)
 {
     Tree    *result=NULL;

@@ -33,10 +33,8 @@
 
 
 #include <stdio.h>
-#include <stdlib.h>
 #include <limits.h> // knows LONG_MAX
 
-#include "set.h"
 #include "syn.h"
 #include "hash.h"
 #include "generic.h"

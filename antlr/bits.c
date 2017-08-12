@@ -55,9 +55,10 @@ int wordnum = 0;
 
 int esetnum = 0;
 
-/* Used to convert native wordsize, which ANTLR uses (via set.c) to manipulate sets,
-   to bytes that are most portable size-wise.
-   */
+/**
+ * Used to convert native wordsize, which ANTLR uses (via set.c) to manipulate sets,
+ * to bytes that are most portable size-wise.
+ */
 void DumpIntAsChars( FILE *f, char *format, unsigned wd )
 {
   int i;
