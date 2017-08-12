@@ -28,11 +28,8 @@
 #include <stdio.h>
 #include <string.h>
 #include "dlg.h"
-#ifdef __STDC__
 #include <stdlib.h>
-#else
-#include <malloc.h>
-#endif /* __STDC__ */
+#include "constants.h"
 
 int err_found = 0;      /* indicates whether problem found */
 

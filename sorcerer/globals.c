@@ -1,6 +1,4 @@
 /*
- * globals.c
- *
  * SOFTWARE RIGHTS
  *
  * We reserve no LEGAL rights to SORCERER -- SORCERER is in the public
@@ -27,7 +25,14 @@
  * With AHPCRC, University of Minnesota
  * 1992-2001
  */
+
+/**
+ * \file globals.c
+ */
+
+
 #include "stdpccts.h"
+#include "constants.h"
 
 char  *VersionNumber = "13333";   /* mrxxx */
 char  *VersionText = "13333";     /* mrxxx */

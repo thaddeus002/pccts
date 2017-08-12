@@ -35,20 +35,17 @@
 #
 SET=../support/set
 PCCTS_H=../h
+COMMON_H=../common
 
 CC ?= gcc
 ANTLR = ../bin/antlr
 DLG = ../bin/dlg
-CPPFLAGS += -I. -I$(SET) -I$(PCCTS_H) -DUSER_ZZSYN -DZZLEXBUFSIZE=32000
+CPPFLAGS += -I. -I$(SET) -I$(PCCTS_H) -I$(COMMON_H) -DUSER_ZZSYN -DZZLEXBUFSIZE=32000
 
 #ifndef PREFIX
 PREFIX=/usr/local
 #endif
 
-#
-# SGI Users, use this CFLAGS
-#
-#CFLAGS= -O -I. -I$(SET) -I$(PCCTS_H) -DUSER_ZZSYN -woff 3262
 
 OBJ=antlr.o scan.o err.o bits.o build.o fset2.o fset.o gen.o \
         globals.o hash.o lex.o main.o misc.o set.o pred.o egman.o mrhoist.o fcache.o

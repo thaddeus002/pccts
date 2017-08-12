@@ -30,94 +30,90 @@
 #include "pcctscfg.h"
 
 #define MaxNumFiles     20
-
-/**** MR9 JVincent@novell.com      Move to pcctscfg.h */
-/**** #define MaxFileName     300  ****/ /* MR9 */ /* largest file name size */
-
 #define MaxRuleName     100     /* largest rule name size */
-#define MaxAtom			300
+#define MaxAtom     300
 
-#define fatal(err)		fatalFL(err, __FILE__, __LINE__)
-#define warnNoFL(err)	fprintf(stderr, "warning: %s\n", err);
-#define warnFL(err,f,l)															\
-			{fprintf(stderr, ErrHdr, f, l);										\
-			fprintf(stderr, " warning: %s\n", err);}
-#define warn(err)																\
-			{fprintf(stderr, ErrHdr, FileStr[CurFile], zzline);				\
-			fprintf(stderr, " warning: %s\n", err);}
-#define warnNoCR( err )															\
-			{fprintf(stderr, ErrHdr, FileStr[CurFile], zzline);				\
-			fprintf(stderr, " warning: %s", err);}
-#define errNoFL(err)	{found_error=1; fprintf(stderr, "error: %s\n", err);}
-#define errFL(err,f,l)															\
-			{found_error=1; fprintf(stderr, ErrHdr, f, l);										\
-			fprintf(stderr, " error: %s\n", err);}
-#define err(err)																\
-			{found_error=1; fprintf(stderr, ErrHdr, FileStr[CurFile], zzline);				\
-			fprintf(stderr, " error: %s\n", err);}
-#define errNoCR( err )															\
-			{found_error=1; fprintf(stderr, ErrHdr, FileStr[CurFile], zzline);				\
-			fprintf(stderr, " error: %s", err);}
-#define eMsg1(s,a)	eMsg3(s,a,NULL,NULL)
-#define eMsg2(s,a,b)	eMsg3(s,a,b,NULL)
+#define fatal(err)    fatalFL(err, __FILE__, __LINE__)
+#define warnNoFL(err) fprintf(stderr, "warning: %s\n", err);
+#define warnFL(err,f,l)                             \
+      {fprintf(stderr, ErrHdr, f, l);                   \
+      fprintf(stderr, " warning: %s\n", err);}
+#define warn(err)                               \
+      {fprintf(stderr, ErrHdr, FileStr[CurFile], zzline);       \
+      fprintf(stderr, " warning: %s\n", err);}
+#define warnNoCR( err )                             \
+      {fprintf(stderr, ErrHdr, FileStr[CurFile], zzline);       \
+      fprintf(stderr, " warning: %s", err);}
+#define errNoFL(err)  {found_error=1; fprintf(stderr, "error: %s\n", err);}
+#define errFL(err,f,l)                              \
+      {found_error=1; fprintf(stderr, ErrHdr, f, l);                    \
+      fprintf(stderr, " error: %s\n", err);}
+#define err(err)                                \
+      {found_error=1; fprintf(stderr, ErrHdr, FileStr[CurFile], zzline);        \
+      fprintf(stderr, " error: %s\n", err);}
+#define errNoCR( err )                              \
+      {found_error=1; fprintf(stderr, ErrHdr, FileStr[CurFile], zzline);        \
+      fprintf(stderr, " error: %s", err);}
+#define eMsg1(s,a)  eMsg3(s,a,NULL,NULL)
+#define eMsg2(s,a,b)  eMsg3(s,a,b,NULL)
 
 
 #if 0
 
-	/* Removed in 1.33MR19
-	   Don't understand why this never caused problems before
-	*/
+  /* Removed in 1.33MR19
+     Don't understand why this never caused problems before
+  */
 
     /********************************************************
-	#ifndef ANTLRm
-	#define ANTLRm(st, f, _m)	zzbufsize = ZZLEXBUFSIZE;	\
-					zzmode(_m);				\
-					zzenterANTLR(f);			\
-					st; ++zzasp;				\
-					zzleaveANTLR(f);
-	#endif						
+  #ifndef ANTLRm
+  #define ANTLRm(st, f, _m) zzbufsize = ZZLEXBUFSIZE; \
+          zzmode(_m);       \
+          zzenterANTLR(f);      \
+          st; ++zzasp;        \
+          zzleaveANTLR(f);
+  #endif
     ********************************************************/
 
 #endif
-					/* L i s t  N o d e s */
+          /* L i s t  N o d e s */
 
 typedef struct _ListNode {
-			void *elem;			/* pointer to any kind of element */
-			struct _ListNode *next;
-		} ListNode;
+      void *elem;     /* pointer to any kind of element */
+      struct _ListNode *next;
+    } ListNode;
 
 typedef struct {
-			char *token;
-			int tnum;
-		} TokenDef;
+      char *token;
+      int tnum;
+    } TokenDef;
 
 typedef struct {
-			char decl[MaxAtom+1];
-			char var[MaxAtom+1];
-			char init[MaxAtom+1];
-			int global;
-		} RefVarRec;
+      char decl[MaxAtom+1];
+      char var[MaxAtom+1];
+      char init[MaxAtom+1];
+      int global;
+    } RefVarRec;
 
-#define newListNode	(ListNode *) calloc(1, sizeof(ListNode));
-#define newTokenDef	(TokenDef *) calloc(1, sizeof(TokenDef));
+#define newListNode (ListNode *) calloc(1, sizeof(ListNode));
+#define newTokenDef (TokenDef *) calloc(1, sizeof(TokenDef));
 
          /* Grammar Lookahead Automata (GLA) S t u f f */
 
 typedef struct _nfa {
-			struct _nfa *p1, *p2;
-			int label1, label2;
-			struct _nfa *next;	/* used only following rule ref and blkstart nodes
-								 * of (...)+ to detect what follows the loop. */
-			set lookahead;
-			char visited;
-			char is_rule_ref,
-				 is_rule_entry;
-			char *in_rule;		/* which rule am I in */
-			int upper_range;	/* used for range operator; this will be non-zero */
-		} GLA;
+      struct _nfa *p1, *p2;
+      int label1, label2;
+      struct _nfa *next;  /* used only following rule ref and blkstart nodes
+                 * of (...)+ to detect what follows the loop. */
+      set lookahead;
+      char visited;
+      char is_rule_ref,
+         is_rule_entry;
+      char *in_rule;    /* which rule am I in */
+      int upper_range;  /* used for range operator; this will be non-zero */
+    } GLA;
 
 
-				/* S a n i t y  C h e c k i n g */
+        /* S a n i t y  C h e c k i n g */
 
 #ifndef require
 #define require(expr, err) {if ( !(expr) ) fatal(err);}

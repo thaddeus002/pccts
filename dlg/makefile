@@ -11,9 +11,10 @@
 #
 SET=../support/set
 PCCTS_H=../h
+COMMON_H=../common
 
 CC ?= gcc
-CPPFLAGS += -I. -I$(SET) -I$(PCCTS_H) -DUSER_ZZSYN -DZZLEXBUFSIZE=32000
+CPPFLAGS += -I. -I$(SET) -I$(PCCTS_H) -I$(COMMON_H) -DUSER_ZZSYN -DZZLEXBUFSIZE=32000
 OBJ = dlg_p.o dlg_a.o main.o err.o set.o support.o output.o \
         relabel.o automata.o
 

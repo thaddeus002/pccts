@@ -58,14 +58,6 @@
 #include "pccts_stdio.h"
 #include "pccts_stdlib.h"
 
-/* largest file name size */
-
-#ifdef _MAX_PATH
-#define MaxFileName   _MAX_PATH /* MR9 RJV: MAX_PATH defined in stdlib.h (MSVC++ 5.0) */
-#else
-#define MaxFileName   300
-#endif
-
 
 #define ATOKEN_H      "AToken.h"
 #define ATOKPTR_H     "ATokPtr.h"

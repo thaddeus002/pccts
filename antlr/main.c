@@ -38,6 +38,7 @@
 #include <stdio.h>
 #include "hash.h"
 #include "generic.h"
+#include "constants.h"
 #include "stdpccts.h"
 
 #define MAX_INT_STACK 50

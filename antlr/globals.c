@@ -37,6 +37,7 @@
 #include "pcctscfg.h"
 #include "hash.h"
 #include "generic.h"
+#include "constants.h"
 
 char Version[] = "1.33MR33" ; /* PCCTS version number */                     /* MRXXX */
 char VersionDef[] = "13333";    /* same (except int equiv for preproc symbol) */ /* MRXXX */

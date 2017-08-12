@@ -13,10 +13,13 @@
 
 #include "hash.h"
 #include "generic.h"
+#include "constants.h"
 #define zzcr_attr(attr,tok,t)
 #include "antlr.h"
 #include "tokens.h"
 #include "dlgdef.h"
+#include "mode.h"
+
 LOOKAHEAD
 
 void zzerraction()
@@ -35,15 +38,11 @@ void zzerraction()
  * DLG Version 1.33MR33
  */
 
-#include "mode.h"
 
 
-
-
-/* maintained, but not used for now */
 set AST_nodes_refd_in_actions = set_init;
 int inAlt = 0;
-set attribsRefdFromAction = set_init; /* MR20 */
+set attribsRefdFromAction = set_init;
 int UsedOldStyleAttrib = 0;
 int UsedNewStyleLabel = 0;
 char *inline_set(char *);
@@ -54,7 +53,9 @@ char *inline_set(char *);
 int tokenActionActive=0;                                            /* MR1 */
 
 
-
+/**
+ * \return toStr
+ */
 static char *getFileNameFromTheLineInfo(char *toStr, char *fromStr)
 {
   int i, j, k;
@@ -73,37 +74,37 @@ static char *getFileNameFromTheLineInfo(char *toStr, char *fromStr)
   if ( (i == MaxFileName) ||
   (fromStr[i] == '\n') ||
   (fromStr[i] == '\r') ) {
-  return toStr;
-}
+    return toStr;
+  }
 
   /* find the second " */
 
   for (j=i+1;
-(j<MaxFileName) &&
-(fromStr[j] != '\n') &&
-(fromStr[j] != '\r') &&
-(fromStr[j] != '\"');
-j++) /* nothing */ ;
+  (j<MaxFileName) &&
+  (fromStr[j] != '\n') &&
+  (fromStr[j] != '\r') &&
+  (fromStr[j] != '\"');
+  j++) /* nothing */ ;
 
   if ((j == MaxFileName) ||
-(fromStr[j] == '\n') ||
-(fromStr[j] == '\r') ) {
-  return toStr;
-}
+      (fromStr[j] == '\n') ||
+      (fromStr[j] == '\r') ) {
+    return toStr;
+  }
 
   /* go back until the last / or \ */
 
   for (k=j-1;
-(fromStr[k] != '\"') &&
-(fromStr[k] != '/') &&
-(fromStr[k] != '\\');
-k--) /* nothing */ ;
+  (fromStr[k] != '\"') &&
+  (fromStr[k] != '/') &&
+  (fromStr[k] != '\\');
+  k--) /* nothing */ ;
 
   /* copy the string after " / or \ into toStr */
 
   for (i=k+1; fromStr[i] != '\"'; i++) {
-toStr[i-k-1] = fromStr[i];
-}
+    toStr[i-k-1] = fromStr[i];
+  }
 
   toStr[i-k-1] = '\0';
 

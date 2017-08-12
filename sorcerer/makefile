@@ -7,11 +7,12 @@ BIN = $(PCCTS)/bin
 ANTLR = $(BIN)/antlr
 DLG = $(BIN)/dlg
 PCCTS_H = $(PCCTS)/h
+COMMON_H=../common
 SET = $(PCCTS)/support/set
 
 CC=cc
 COPT=-g
-CFLAGS = $(COPT) -Ih -I. -I$(PCCTS_H) -I$(SET) -DZZLEXBUFSIZE=32000
+CFLAGS = $(COPT) -Ih -I. -I$(PCCTS_H) -I$(COMMON_H) -I$(SET) -DZZLEXBUFSIZE=32000
 AFLAGS = -gh -k 2 -gt
 DFLAGS = -C2
 GRM = sor.g

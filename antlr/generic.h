@@ -242,9 +242,6 @@ typedef Graph Attrib;
 #define MaxNumFiles   99
 #endif
 
-/**** MR9 JVincent@novell.com  Move to pcctscfg.h */
-/**** #define MaxFileName   300 ****/ /* MR9  Move to pcctscfg.h */ /* largest file name size */
-
 #define MaxRuleName   100   /* largest rule name size */
 #define TSChunk     100   /* how much to expand TokenStr/ExprStr each time */
 #define TIChunk     TSChunk /* expand TokenInd by same as TokenStr to mirror them */

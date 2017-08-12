@@ -41,6 +41,7 @@
   #include <ctype.h>
   #include "hash.h"
   #include "generic.h"
+  #include "constants.h"
   #define zzcr_attr(attr,tok,t)
   >>
 
