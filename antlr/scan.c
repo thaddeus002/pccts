@@ -790,8 +790,8 @@ static void act79()
 static void act80()
 {
     NLA = 18;
-    zzline++; zzmore(); DAWDLE;
-  }
+    zzline++; zzmore();
+}
 
 
 static void act81()
@@ -833,7 +833,7 @@ static unsigned char shift4[257] = {
 static void act82()
 {
     NLA = Eof;
-  }
+}
 
 
 static void act83()
@@ -841,21 +841,21 @@ static void act83()
     NLA = 20;
     zzmode(PARSE_ENUM_FILE);
     zzmore();
-  }
+}
 
 
 static void act84()
 {
     NLA = 21;
     zzmore();
-  }
+}
 
 
 static void act85()
 {
     NLA = 22;
-    zzline++; zzmore(); DAWDLE;
-  }
+    zzline++; zzmore();
+}
 
 
 static void act86()
@@ -903,15 +903,15 @@ static void act87()
 static void act88()
 {
     NLA = 24;
-    zzline++; zzmode(PARSE_ENUM_FILE); zzskip(); DAWDLE;
-  }
+    zzline++; zzmode(PARSE_ENUM_FILE); zzskip();
+}
 
 
 static void act89()
 {
     NLA = 25;
     zzskip();
-  }
+}
 
 static unsigned char shift6[257] = {
   0, 3, 3, 3, 3, 3, 3, 3, 3, 3,
@@ -946,21 +946,21 @@ static unsigned char shift6[257] = {
 static void act90()
 {
     NLA = Eof;
-  }
+}
 
 
 static void act91()
 {
     NLA = 26;
-    zzline++; zzmode(ACTIONS); zzmore(); DAWDLE;
-  }
+    zzline++; zzmode(ACTIONS); zzmore();
+}
 
 
 static void act92()
 {
     NLA = 27;
     zzmore();
-  }
+}
 
 static unsigned char shift7[257] = {
   0, 3, 3, 3, 3, 3, 3, 3, 3, 3,
@@ -995,21 +995,21 @@ static unsigned char shift7[257] = {
 static void act93()
 {
     NLA = Eof;
-  }
+}
 
 
 static void act94()
 {
     NLA = 28;
-    zzline++; zzmode(START); zzskip(); DAWDLE;
-  }
+    zzline++; zzmode(START); zzskip();
+}
 
 
 static void act95()
 {
     NLA = 29;
     zzskip();
-  }
+}
 
 static unsigned char shift8[257] = {
   0, 3, 3, 3, 3, 3, 3, 3, 3, 3,
@@ -1044,7 +1044,7 @@ static unsigned char shift8[257] = {
 static void act96()
 {
     NLA = Eof;
-  }
+}
 
 
 static void act97()
@@ -1058,21 +1058,21 @@ static void act98()
 {
     NLA = 31;
     zzskip();
-  }
+}
 
 
 static void act99()
 {
     NLA = 32;
-    zzline++; zzskip(); DAWDLE;
-  }
+    zzline++; zzskip();
+}
 
 
 static void act100()
 {
     NLA = 33;
     zzskip();
-  }
+}
 
 static unsigned char shift9[257] = {
   0, 5, 5, 5, 5, 5, 5, 5, 5, 5,
@@ -1107,7 +1107,7 @@ static unsigned char shift9[257] = {
 static void act101()
 {
     NLA = Eof;
-  }
+}
 
 
 static void act102()
@@ -1123,12 +1123,12 @@ static void act102()
       err( eMsgd("action buffer overflow; size %d",ZZLEXBUFSIZE));
     }
 
-/* MR1  10-Apr-97  MR1  Previously unable to put right shift operator */
+    /* MR1  10-Apr-97  MR1  Previously unable to put right shift operator */
     /* MR1          in DLG action     */
     /* MR1      Doesn't matter what kind of action it is - reset*/
 
-            tokenActionActive=0;     /* MR1 */
-  }
+    tokenActionActive=0;     /* MR1 */
+}
 
 
 static void act103()
@@ -1183,35 +1183,35 @@ static void act105()
     zzmore();
     zzreplstr(inline_set(zzbegexpr+
     strlen("consumeUntil(")));
-  }
+}
 
 
 static void act106()
 {
     NLA = 38;
     zzmore();
-  }
+}
 
 
 static void act107()
 {
     NLA = 39;
-    zzline++; zzmore(); DAWDLE;
-  }
+    zzline++; zzmore();
+}
 
 
 static void act108()
 {
     NLA = 40;
     zzmore();
-  }
+}
 
 
 static void act109()
 {
     NLA = 41;
     zzmore();
-  }
+}
 
 
 static void act110()
@@ -1219,7 +1219,7 @@ static void act110()
     NLA = 42;
     if ( !GenCC ) {zzreplstr("zzaRet"); zzmore();}
     else err("$$ use invalid in C++ mode");
-  }
+}
 
 
 static void act111()
@@ -1227,7 +1227,7 @@ static void act111()
     NLA = 43;
     if ( !GenCC ) {zzreplstr("zzempty_attr"); zzmore();}
     else err("$[] use invalid in C++ mode");
-  }
+}
 
 
 static void act112()
@@ -1238,7 +1238,7 @@ static void act112()
     if ( !GenCC ) zzreplstr("zzconstr_attr(");
     else err("$[..] use invalid in C++ mode");
     zzmore();
-  }
+}
 
 
 static void act113()
@@ -1260,7 +1260,7 @@ static void act113()
       if ( UsedNewStyleLabel )
       err("cannot mix old-style $i with new-style labels");
     }
-  }
+}
 
 
 static void act114()
@@ -1283,7 +1283,7 @@ static void act114()
       if ( UsedNewStyleLabel )
       err("cannot mix old-style $i with new-style labels");
     }
-  }
+}
 
 
 static void act115()
@@ -1317,7 +1317,7 @@ static void act115()
       if ( UsedNewStyleLabel )
       err("cannot mix old-style $i with new-style labels");
     }
-  }
+}
 
 
 static void act116()

@@ -115,32 +115,32 @@ int tokenActionActive=0;                                            /* MR1 */
 #lexclass ACTION_COMMENTS
 #token "\*/"        << zzmode(ACTIONS); zzmore(); >>
 #token "\*"         << zzmore(); >>
-#token "\n|\r|\r\n"     << zzline++; zzmore(); DAWDLE; >>
+#token "\n|\r|\r\n"     << zzline++; zzmore(); >>
 #token "~[\n\r\*]+"     << zzmore(); >>
 
 #lexclass TOK_DEF_COMMENTS
 #token "\*/"        << zzmode(PARSE_ENUM_FILE);
                               zzmore(); >>
 #token "\*"         << zzmore(); >>
-#token "\n|\r|\r\n"     << zzline++; zzmore(); DAWDLE; >>
+#token "\n|\r|\r\n"     << zzline++; zzmore(); >>
 #token "~[\n\r\*]+"     << zzmore(); >>
 
 #lexclass TOK_DEF_CPP_COMMENTS
-#token "\n|\r|\r\n"     << zzline++; zzmode(PARSE_ENUM_FILE); zzskip(); DAWDLE; >>
+#token "\n|\r|\r\n"     << zzline++; zzmode(PARSE_ENUM_FILE); zzskip(); >>
 #token "~[\n\r]+"     << zzskip(); >>
 
 #lexclass ACTION_CPP_COMMENTS
-#token "\n|\r|\r\n"     << zzline++; zzmode(ACTIONS); zzmore(); DAWDLE; >>
+#token "\n|\r|\r\n"     << zzline++; zzmode(ACTIONS); zzmore(); >>
 #token "~[\n\r]+"     << zzmore(); >>
 
 #lexclass CPP_COMMENTS
-#token "\n|\r|\r\n"     << zzline++; zzmode(START); zzskip(); DAWDLE; >>
+#token "\n|\r|\r\n"     << zzline++; zzmode(START); zzskip(); >>
 #token "~[\n\r]+"     << zzskip(); >>
 
 #lexclass COMMENTS
 #token "\*/"        << zzmode(START); zzskip(); >>
 #token "\*"         << zzskip(); >>
-#token "\n|\r|\r\n"     << zzline++; zzskip(); DAWDLE; >>
+#token "\n|\r|\r\n"     << zzline++; zzskip(); >>
 #token "~[\n\r\*]+"     << zzskip(); >>
 
 /*
@@ -263,7 +263,7 @@ int tokenActionActive=0;                                            /* MR1 */
               >>
 #token "consumeUntil\( ~[\)]+ \)"
               << zzmore(); >>
-#token "\n|\r|\r\n"     << zzline++; zzmore(); DAWDLE; >>
+#token "\n|\r|\r\n"     << zzline++; zzmore(); >>
 #token "\>"         << zzmore(); >>
 #token "$"          << zzmore(); >>
 #token "$$"         << if ( !GenCC ) {zzreplstr("zzaRet"); zzmore();}

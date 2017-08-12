@@ -100,7 +100,7 @@ void  xxputc(int c) {           /* MR1 */
 \n
   <<
     NLA = 3;
-    zzline++; zzskip(); DAWDLE;
+    zzline++; zzskip();
   >>
 
 \@

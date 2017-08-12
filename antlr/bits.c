@@ -107,7 +107,6 @@ void DumpSetWdForC( )
       "SetWordType setwd%d[%d] = {", wordnum, TokenNum-1);
   for (i=0; i<TokenNum-1; i++)
   {
-    DAWDLE;
     if ( i!=0 ) fprintf(ErrFile, ",");
     if ( c == 8 ) {fprintf(ErrFile, "\n\t"); c=1;} else c++;
     fprintf(ErrFile, "0x%x", setwd[i]);
@@ -130,7 +129,6 @@ void DumpSetWdForCC( )
       TokenNum-1);
   for (i=0; i<TokenNum-1; i++)
   {
-    DAWDLE;
     if ( i!=0 ) fprintf(Parser_c, ",");
     if ( c == 8 ) {fprintf(Parser_c, "\n\t"); c=1;} else c++;
     fprintf(Parser_c, "0x%x", setwd[i]);
@@ -484,7 +482,6 @@ int DefErrSetForC1(int nilOK, set *f, int subst, char * name, const char * suffi
     DumpIntAsChars(ErrFile, "0x%x", *p++);
     if ( e == 3 )
     {
-      DAWDLE;
       if ( p < endp ) fprintf(ErrFile, ",");
       fprintf(ErrFile, "\n\t");
       e=1;
@@ -606,7 +603,6 @@ void GenParser_c_Hdr()
 
   for (i=1; i<TokenNum-1; i++)
   {
-    DAWDLE;
     if ( i == EpToken ) continue;
     /* remapped to invalid token? */
     if ( TokenInd!=NULL && TokenInd[i]>=LastTokenCounted )
@@ -788,7 +784,6 @@ void GenErrHdr( )
   fprintf(ErrFile, "\t/* 00 */\t\"Invalid\"");
   for (i=1; i<TokenNum-1; i++)
   {
-    DAWDLE;
     if ( i == EpToken ) continue;
     /* remapped to invalid token? */
     if ( TokenInd!=NULL && TokenInd[i]>=LastTokenCounted )

@@ -610,7 +610,7 @@ catch
 \n|\r|\r\n
   <<
     NLA = 18;
-    zzline++; zzmore(); DAWDLE;
+    zzline++; zzmore();
   >>
 
 ~[\n\r\*]+
@@ -643,7 +643,7 @@ catch
 \n|\r|\r\n
   <<
     NLA = 22;
-    zzline++; zzmore(); DAWDLE;
+    zzline++; zzmore();
   >>
 
 ~[\n\r\*]+
@@ -663,7 +663,7 @@ catch
 \n|\r|\r\n
   <<
     NLA = 24;
-    zzline++; zzmode(PARSE_ENUM_FILE); zzskip(); DAWDLE;
+    zzline++; zzmode(PARSE_ENUM_FILE); zzskip();
   >>
 
 ~[\n\r]+
@@ -683,7 +683,7 @@ catch
 \n|\r|\r\n
   <<
     NLA = 26;
-    zzline++; zzmode(ACTIONS); zzmore(); DAWDLE;
+    zzline++; zzmode(ACTIONS); zzmore();
   >>
 
 ~[\n\r]+
@@ -703,7 +703,7 @@ catch
 \n|\r|\r\n
   <<
     NLA = 28;
-    zzline++; zzmode(START); zzskip(); DAWDLE;
+    zzline++; zzmode(START); zzskip();
   >>
 
 ~[\n\r]+
@@ -735,7 +735,7 @@ catch
 \n|\r|\r\n
   <<
     NLA = 32;
-    zzline++; zzskip(); DAWDLE;
+    zzline++; zzskip();
   >>
 
 ~[\n\r\*]+
@@ -832,7 +832,7 @@ consumeUntil\( ~[\)]+ \)
 \n|\r|\r\n
   <<
     NLA = 39;
-    zzline++; zzmore(); DAWDLE;
+    zzline++; zzmore();
   >>
 
 \>

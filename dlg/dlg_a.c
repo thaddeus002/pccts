@@ -93,7 +93,7 @@ static void act2()
 static void act3()
 {
     NLA = 3;
-    zzline++; zzskip(); DAWDLE;
+    zzline++; zzskip();
 }
 
 

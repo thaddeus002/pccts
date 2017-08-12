@@ -352,7 +352,6 @@ void p_single_node(int i, int classes)
 #endif
   items_on_line = MAX_ON_LINE;
   for(j=0; j<classes; ++j){
-    DAWDLE;
     trans = DFA(i)->trans[j];
     if (trans == NIL_INDEX)
       trans = dfa_allocated+1;
@@ -476,20 +475,16 @@ void p_action_table()
   else
     fprintf(OUT, "void (*actions[%d])() = {\n", action_no+1);
   if ( gen_cpp )
-/*    fprintf(OUT, "\t(Ptr%sMemberFunc)&%s::erraction,\n", theClassName, theClassName);*/
     fprintf(OUT, "\t&%s::erraction,\n", theClassName);
   else
     fprintf(OUT, "\tzzerraction,\n");
   for (i=1; i<action_no; ++i) {
     if ( gen_cpp )
-/*      fprintf(OUT,"\t(Ptr%sMemberFunc)&%s::act%d,\n", theClassName, theClassName, i);*/
       fprintf(OUT,"\t&%s::act%d,\n", theClassName, i);
     else
       fprintf(OUT,"\tact%d,\n", i);
-    DAWDLE;
   }
   if ( gen_cpp )
-/*    fprintf(OUT,"\t(Ptr%sMemberFunc)&%s::act%d\n", theClassName, theClassName, i);*/
     fprintf(OUT,"\t&%s::act%d\n", theClassName, i);
   else
     fprintf(OUT,"\tact%d\n", i);
@@ -677,10 +672,9 @@ void p_dfa_node(dfa_node *p)
     }
 }
 
+/** prints out all the dfa nodes actually allocated */
 void p_dfa()
 {
-/* prints out all the dfa nodes actually allocated */
-
   int i;
 
   for (i = 1; i<=dfa_allocated; i++)

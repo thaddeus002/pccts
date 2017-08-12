@@ -33,14 +33,6 @@
  * in it, but it's a start.
  */
 
-/* This file knows about the following ``environments''
-  UNIX    (default)
-  DOS     (use #define PC)
-  MAC     (use #define MPW; has a few things for THINK C, Metrowerks)
-    MS/C++  (MR14 Microsoft Visual C++ environment uses symbol _MSC_VER)
-
- */
-
 /* should test __STDC__ for 1, but some compilers don't set value, just def */
 
 #ifndef PCCTS_CONFIG_H
@@ -48,6 +40,7 @@
 
 
 #ifndef __USE_PROTOS
+
 #ifdef __STDC__
 #define __USE_PROTOS
 #endif
@@ -107,27 +100,13 @@
 #define LineInfoFormatStr "#line %d \"%s\"\n"
 #endif
 
-#ifdef MPW                      /* Macintosh Programmer's Workshop */
-#define ErrHdr "File \"%s\"; Line %d #"
-#else
-#ifdef _MSC_VER                 /* MR14 Microsoft Visual C++ environment */
-#define ErrHdr "%s(%d) :"
-#else
-#define ErrHdr "%s, line %d:"   /* default */
-#endif
-#endif
+#define ErrHdr "%s, line %d:"
 
 /* must assume old K&R cpp here, can't use #if defined(..)... */
 
 #define TopDirectory  "."
 #define DirectorySymbol "/"
 #define OutputDirectoryOption "Directory where all output files should go (default=\".\")"
-
-#ifdef MPW
-#define DAWDLE  SpinCursor(1)
-#else
-#define DAWDLE
-#endif
 
 
 #ifndef TRUE
@@ -137,21 +116,10 @@
 #define FALSE 0
 #endif
 
-#if defined(VAXC) || defined(__VMS)
-#include <ssdef.h>
-#define PCCTS_EXIT_SUCCESS 1
-#define PCCTS_EXIT_FAILURE SS$_ABORT
-#define zzDIE   return SS$_ABORT;
-#define zzDONE  return 1;
-
-#else /* !VAXC and !__VMS */
-
 #define PCCTS_EXIT_SUCCESS 0
 #define PCCTS_EXIT_FAILURE 1
 #define zzDIE   return 1;
 #define zzDONE  return 0;
-
-#endif
 
 #ifdef USER_ZZMODE_STACK
 # ifndef ZZSTACK_MAX_MODE
@@ -180,15 +148,6 @@
 #ifndef PCCTS_USE_STDARG
 #define PCCTS_USE_STDARG
 #endif
-#endif
-
-#ifdef _MSC_VER
-/*Turn off the warnings for:
-  unreferenced inline/local function has been removed
-*/
-#pragma warning(disable : 4514)
-/* function not expanded */
-#pragma warning(disable : 4710)
 #endif
 
 #endif
