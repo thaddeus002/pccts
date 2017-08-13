@@ -22,6 +22,7 @@
 #include "tokens.h"
 #include "dlgdef.h"
 #include "mode.h"
+#include "constants.h"
 
 /* MR23 In order to remove calls to PURIFY use the antlr -nopurify option */
 

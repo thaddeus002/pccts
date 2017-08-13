@@ -28,8 +28,21 @@
 #define __CONSTANTS_H
 
 
+#define PCCTS_USE_STDARG
+
 /* largest file name size */
 #define MaxFileName   300
+
+
+#define ErrHdr "%s, line %d:"
+
+
+#ifndef TRUE
+#define TRUE 1
+#endif
+#ifndef FALSE
+#define FALSE 0
+#endif
 
 
 

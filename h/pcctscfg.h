@@ -92,21 +92,12 @@
 #define LineInfoFormatStr "#line %d \"%s\"\n"
 #endif
 
-#define ErrHdr "%s, line %d:"
-
 /* must assume old K&R cpp here, can't use #if defined(..)... */
 
 #define TopDirectory  "."
 #define DirectorySymbol "/"
 #define OutputDirectoryOption "Directory where all output files should go (default=\".\")"
 
-
-#ifndef TRUE
-#define TRUE 1
-#endif
-#ifndef FALSE
-#define FALSE 0
-#endif
 
 #define PCCTS_EXIT_SUCCESS 0
 #define PCCTS_EXIT_FAILURE 1

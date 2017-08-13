@@ -33,6 +33,8 @@
 
 #include <stdio.h>
 #include "pcctscfg.h"
+#include "constants.h"
+
 #include <string.h>
 
 #include <stdarg.h>

@@ -35,6 +35,7 @@
 #include <stdio.h>
 #include <limits.h> // knows LONG_MAX
 
+#include "constants.h"
 #include "hash.h"
 #include "generic.h"
 #include "dlgdef.h"

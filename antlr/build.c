@@ -35,6 +35,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
+#include "constants.h"
 #include "hash.h"
 #include "generic.h"
 #include "dlgdef.h"

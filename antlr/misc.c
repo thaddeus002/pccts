@@ -52,6 +52,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include "constants.h"
 #include "hash.h"
 #include "generic.h"
 #include "dlgdef.h"
@@ -664,15 +665,6 @@ void RegisterCycle( char *rule, int k )
   require(FoTOS[k]>=FoStack[k]&&FoTOS[k]<=&(FoStack[k][FoStackSize-1]),
       eMsg1("RegisterCycle(%s): FoStack stack-ptr is playing out of its sandbox",
           rule));
-/***  if ( FoTOS[k]<FoStack[k]||FoTOS[k]>&(FoStack[k][FoStackSize-1]) )
-****  {
-****    fprintf(stderr, "RegisterCycle(%s): FoStack stack-ptr is playing out of its sandbox\n",
-****            rule);
-****    fprintf(stderr, "RegisterCycle: sp==0x%x out of bounds 0x%x...0x%x\n",
-****            FoTOS[k], FoStack[k], &(FoStack[k][FoStackSize-1]));
-****    exit(PCCTS_EXIT_FAILURE);
-****  }
-****/
 
 #ifdef MEMCHK
   require(valid(FoStack[k]), "RegisterCycle: invalid FoStack");
