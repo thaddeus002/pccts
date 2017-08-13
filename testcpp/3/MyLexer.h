@@ -1,11 +1,11 @@
 /* MyTokenBuffer.h */
 
-#include ATOKENBUFFER_H
+#include "ATokenBuffer.h"
 
 class MyLexer : public ANTLRTokenStream {
 private:
-	int c;
+  int c;
 public:
-	MyLexer();
-	virtual ANTLRAbstractToken *getToken();
+  MyLexer();
+  virtual ANTLRAbstractToken *getToken();
 };

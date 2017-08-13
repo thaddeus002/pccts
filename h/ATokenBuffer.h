@@ -31,13 +31,12 @@
 #define ATOKENBUFFER_H_GATE
 
 #include "pcctscfg.h"
-
 #include "pccts_stdlib.h"
 
 PCCTS_NAMESPACE_STD
 
-#include ATOKEN_H
-#include ATOKENSTREAM_H
+#include "AToken.h"
+#include "ATokenStream.h"
 
 /*
  * The parser is "attached" to an ANTLRTokenBuffer via interface
@@ -50,58 +49,58 @@ PCCTS_NAMESPACE_STD
  * the "behavior" of ANTLRTokenStream.
  */
 
-class ANTLRParser;					// MR1
+class ANTLRParser;          // MR1
 
 class DllExportPCCTS ANTLRTokenBuffer {
 protected:
-	ANTLRTokenStream *input;        // where do I get tokens
-	int buffer_size;
-	int chunk_size;
-	int num_markers;
-	int k;                          // Need at least this many tokens in buffer
-	_ANTLRTokenPtr *buffer;	// buffer used for arbitrary lookahead
-	_ANTLRTokenPtr *tp;        // pts into buffer; current token ptr
-	_ANTLRTokenPtr *last;      // pts to last valid token in buffer
-	_ANTLRTokenPtr *next;      // place to put token from getANTLRToken()
-	_ANTLRTokenPtr *end_of_buffer;
-	/* when you try to write a token past this and there are no markers
-	   set, then move k-1 tokens back to the beginning of the buffer.
-	   We want to stay away from the end of the buffer because we have
-	   to extend it if a marker is set and we reach the end (we cannot
-	   move tokens to the beginning of the buffer in this case).
-	 */
-	_ANTLRTokenPtr *threshold;
-	unsigned char _deleteTokens;
+  ANTLRTokenStream *input;        // where do I get tokens
+  int buffer_size;
+  int chunk_size;
+  int num_markers;
+  int k;                          // Need at least this many tokens in buffer
+  _ANTLRTokenPtr *buffer; // buffer used for arbitrary lookahead
+  _ANTLRTokenPtr *tp;        // pts into buffer; current token ptr
+  _ANTLRTokenPtr *last;      // pts to last valid token in buffer
+  _ANTLRTokenPtr *next;      // place to put token from getANTLRToken()
+  _ANTLRTokenPtr *end_of_buffer;
+  /* when you try to write a token past this and there are no markers
+     set, then move k-1 tokens back to the beginning of the buffer.
+     We want to stay away from the end of the buffer because we have
+     to extend it if a marker is set and we reach the end (we cannot
+     move tokens to the beginning of the buffer in this case).
+   */
+  _ANTLRTokenPtr *threshold;
+  unsigned char _deleteTokens;
 
-	// This function is filled in by the subclass; it initiates fetch of input
-	virtual _ANTLRTokenPtr getANTLRToken() { return input->getToken(); }
-	void makeRoom();
-	void extendBuffer();
+  // This function is filled in by the subclass; it initiates fetch of input
+  virtual _ANTLRTokenPtr getANTLRToken() { return input->getToken(); }
+  void makeRoom();
+  void extendBuffer();
 
 public:
-	ANTLRTokenBuffer(ANTLRTokenStream *in, int k=1, int chksz=50);
-	virtual ~ANTLRTokenBuffer();
-	virtual _ANTLRTokenPtr getToken();
-	virtual void rewind(int pos);
-	virtual int mark();
-	virtual _ANTLRTokenPtr bufferedToken(int i);
+  ANTLRTokenBuffer(ANTLRTokenStream *in, int k=1, int chksz=50);
+  virtual ~ANTLRTokenBuffer();
+  virtual _ANTLRTokenPtr getToken();
+  virtual void rewind(int pos);
+  virtual int mark();
+  virtual _ANTLRTokenPtr bufferedToken(int i);
 
-	void noGarbageCollectTokens()	{ _deleteTokens=0; }
-	void garbageCollectTokens()		{ _deleteTokens=1; }
+  void noGarbageCollectTokens() { _deleteTokens=0; }
+  void garbageCollectTokens()   { _deleteTokens=1; }
 
-	virtual int bufferSize() { return buffer_size; }
-	virtual int minTokens() { return k; }
-	virtual void setMinTokens(int k_new) { k = k_new; }
+  virtual int bufferSize() { return buffer_size; }
+  virtual int minTokens() { return k; }
+  virtual void setMinTokens(int k_new) { k = k_new; }
 
-	virtual void panic(const char *msg); /* MR20 const */
+  virtual void panic(const char *msg); /* MR20 const */
 
-	virtual int printMessage(FILE* pFile, const char* pFormat, ...); // MR23
+  virtual int printMessage(FILE* pFile, const char* pFormat, ...); // MR23
 
-protected:						// MR1
-	ANTLRParser	*parser;			// MR1
-public:							// MR1
-	ANTLRParser	*setParser(ANTLRParser *p);	// MR1
-	ANTLRParser	*getParser();			    // MR1
+protected:            // MR1
+  ANTLRParser *parser;      // MR1
+public:             // MR1
+  ANTLRParser *setParser(ANTLRParser *p); // MR1
+  ANTLRParser *getParser();         // MR1
     ANTLRTokenStream *getLexer() const {    // MR12
       return input;}                        // MR12
 };

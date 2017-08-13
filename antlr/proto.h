@@ -31,6 +31,7 @@
  * function prototypes
  */
 
+#include <stdio.h>
 
                            /* V a r i a b l e s */
 

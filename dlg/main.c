@@ -33,6 +33,8 @@
 
 #include <libgen.h> /* for basename() */
 #include <stdio.h>
+#include <ctype.h>
+#include <string.h>
 #include "dlg.h"
 #include "stdpccts.h"
 #include "constants.h"

@@ -50,4 +50,23 @@
 #define zzDONE  return 0;
 
 
+#define TopDirectory  "."
+#define DirectorySymbol "/"
+
+
+#define ATOKEN_H      "AToken.h"
+#define ATOKPTR_H     "ATokPtr.h"
+#define ATOKPTR_IMPL_H    "ATokPtrImpl.h"
+#define ATOKENBUFFER_H    "ATokenBuffer.h"
+#define ATOKENSTREAM_H    "ATokenStream.h"
+#define APARSER_H     "AParser.h"
+#define ASTBASE_H     "ASTBase.h"
+#define DLEXERBASE_H    "DLexerBase.h"
+#define DLEXER_H      "DLexer.h"
+
+/* SORCERER Stuff */
+#define STPARSER_H      "STreeParser.h"
+
+
+
 #endif

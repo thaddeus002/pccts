@@ -7,10 +7,10 @@
 #include <stdlib.h>
 #include <iostream>
 
-#include "config.h"					/* include token defs */
-#include "mytokens.h"				/* include token defs */
-#include APARSER_H					/* include all the ANTLR yuck */
-#include "MyLexer.h"				/* define your lexer */
+#include "config.h"         /* include token defs */
+#include "mytokens.h"       /* include token defs */
+#include "AParser.h"        /* include all the ANTLR yuck */
+#include "MyLexer.h"        /* define your lexer */
 typedef ANTLRCommonToken ANTLRToken;/* use a predefined Token class */
 
 void panic(std::string s) {
@@ -20,20 +20,20 @@ void panic(std::string s) {
 
 MyLexer::MyLexer()
 {
-	c = getchar();
+  c = getchar();
 }
 
 /* Recognizes Tokens IDENTIFIER and NUMBER */
 ANTLRAbstractToken *MyLexer::
 getToken()
 {
-	/* we will return a pointer to this next guy */
-	ANTLRToken *resultToken = new ANTLRToken;
+  /* we will return a pointer to this next guy */
+  ANTLRToken *resultToken = new ANTLRToken;
 
-	ANTLRChar TokenBuffer[100];
-						/* This routine will just crash if tokens become
+  ANTLRChar TokenBuffer[100];
+            /* This routine will just crash if tokens become
                            more than 99 chars; your code must of course
-						   gracefully recover/adapt */
+               gracefully recover/adapt */
    int  index=0;
 
    while ( c==' ' || c=='\n' ) c=getchar();
@@ -44,8 +44,8 @@ getToken()
       /* Looks like we have ourselves a number token */
       while (isdigit(c)) {
          TokenBuffer[index++]=c;
-		 c = getchar();
-	  }
+         c = getchar();
+      }
       TokenBuffer[index]='\0';
 
       resultToken->setType(NUMBER);
@@ -58,8 +58,8 @@ getToken()
       /* We have ourselves an IDENTIFIER token */
       while (isalpha(c)) {
          TokenBuffer[index++]=c;
-		 c = getchar();
-	  }
+         c = getchar();
+      }
       TokenBuffer[index]='\0';
 
       resultToken->setType(IDENTIFIER);

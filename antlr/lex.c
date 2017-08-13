@@ -33,7 +33,7 @@
 
 #include <ctype.h>
 #include <string.h>
-#include "pcctscfg.h"
+#include "constants.h"
 #include "hash.h"
 #include "generic.h"
 

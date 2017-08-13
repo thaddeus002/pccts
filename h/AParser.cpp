@@ -43,16 +43,16 @@ PCCTS_NAMESPACE_STD
  */
 // MR1
 // MR1  10-Apr-97  133MR1  Prevent use of varying sizes for the
-// MR1  			ANTLRTokenType enum
+// MR1        ANTLRTokenType enum
 // MR1
 
-enum ANTLRTokenType { TER_HATES_CPP=0, ITS_TOO_COMPLICATED=9999};	    // MR1
+enum ANTLRTokenType { TER_HATES_CPP=0, ITS_TOO_COMPLICATED=9999};     // MR1
 
 #define ANTLR_SUPPORT_CODE
 
-#include ATOKEN_H
-#include ATOKENBUFFER_H
-#include APARSER_H
+#include "AToken.h"
+#include "ATokenBuffer.h"
+#include "AParser.h"
 
 static const int zzINF_DEF_TOKEN_BUFFER_SIZE = 2000;    /* MR14 */
 static const int zzINF_BUFFER_TOKEN_CHUNK_SIZE = 1000;  /* MR14 */
@@ -63,8 +63,8 @@ static const int zzINF_BUFFER_TOKEN_CHUNK_SIZE = 1000;  /* MR14 */
  * we only use 8 bits of it.
  */
 SetWordType ANTLRParser::bitmask[sizeof(SetWordType)*8] = {
-	0x00000001, 0x00000002, 0x00000004, 0x00000008,
-	0x00000010, 0x00000020, 0x00000040, 0x00000080
+  0x00000001, 0x00000002, 0x00000004, 0x00000008,
+  0x00000010, 0x00000020, 0x00000040, 0x00000080
 };
 
 char ANTLRParser::eMsgBuffer[500] = "";
@@ -72,43 +72,43 @@ char ANTLRParser::eMsgBuffer[500] = "";
 ANTLRParser::
 ~ANTLRParser()
 {
-	delete [] token_type;
+  delete [] token_type;
     delete [] zzFAILtext;       // MR16 Manfred Kogler
 }
 
 ANTLRParser::
 ANTLRParser(ANTLRTokenBuffer *_inputTokens,
-			int k,
-			int use_inf_look,
-			int dlook,
-			int ssize)
+      int k,
+      int use_inf_look,
+      int dlook,
+      int ssize)
 {
-	LLk = k;
-	can_use_inf_look = use_inf_look;
+  LLk = k;
+  can_use_inf_look = use_inf_look;
 /* MR14 */    if (dlook != 0) {
 /* MR14 */      panic("ANTLRParser::ANTLRParser - Demand lookahead not supported in C++ mode");
 /* MR14 */
 /* MR14 */    };
     demand_look = 0;    /* demand_look = dlook; */
     bsetsize = ssize;
-	guessing = 0;
-	token_tbl = NULL;
-	eofToken = (ANTLRTokenType)1;
+  guessing = 0;
+  token_tbl = NULL;
+  eofToken = (ANTLRTokenType)1;
 
-	// allocate lookahead buffer
-	token_type = new ANTLRTokenType[LLk];
-	lap = 0;
-	labase = 0;
+  // allocate lookahead buffer
+  token_type = new ANTLRTokenType[LLk];
+  lap = 0;
+  labase = 0;
 #ifdef ZZDEFER_FETCH
-	stillToFetch = 0;                                                   // MR19
+  stillToFetch = 0;                                                   // MR19
 #endif
-	dirty = 0;
+  dirty = 0;
     inf_labase = 0;                                                     // MR7
     inf_last = 0;                                                       // MR7
-	/* prime lookahead buffer, point to inputTokens */
-	this->inputTokens = _inputTokens;
-	this->inputTokens->setMinTokens(k);
-	_inputTokens->setParser(this);					                    // MR1
+  /* prime lookahead buffer, point to inputTokens */
+  this->inputTokens = _inputTokens;
+  this->inputTokens->setMinTokens(k);
+  _inputTokens->setParser(this);
     resynchConsumed=1;                                                  // MR8
     zzFAILtext=NULL;                                                    // MR9
     traceOptionValueDefault=0;                                          // MR10
@@ -141,9 +141,9 @@ void ANTLRParser::traceReset()
 int ANTLRParser::
 guess(ANTLRParserState *st)
 {
-	saveState(st);
-	guessing = 1;
-	return setjmp(guess_start.state);
+  saveState(st);
+  guessing = 1;
+  return setjmp(guess_start.state);
 }
 #ifdef _MSC_VER  // MR23
 #pragma warning(default: 4611)
@@ -152,11 +152,11 @@ guess(ANTLRParserState *st)
 void ANTLRParser::
 saveState(ANTLRParserState *buf)
 {
-	buf->guess_start = guess_start;
-	buf->guessing = guessing;
-	buf->inf_labase = inf_labase;
-	buf->inf_last = inf_last;
-	buf->dirty = dirty;
+  buf->guess_start = guess_start;
+  buf->guessing = guessing;
+  buf->inf_labase = inf_labase;
+  buf->inf_last = inf_last;
+  buf->dirty = dirty;
     buf->traceOptionValue=traceOptionValue;            /* MR10 */
     buf->traceGuessOptionValue=traceGuessOptionValue;  /* MR10 */
     buf->traceCurrentRuleName=traceCurrentRuleName;    /* MR10 */
@@ -166,21 +166,21 @@ saveState(ANTLRParserState *buf)
 void ANTLRParser::
 restoreState(ANTLRParserState *buf)
 {
-	int     i;
+  int     i;
     int     prevTraceOptionValue;
 
-	guess_start = buf->guess_start;
-	guessing = buf->guessing;
-	inf_labase = buf->inf_labase;
-	inf_last = buf->inf_last;
-	dirty = buf->dirty;
+  guess_start = buf->guess_start;
+  guessing = buf->guessing;
+  inf_labase = buf->inf_labase;
+  inf_last = buf->inf_last;
+  dirty = buf->dirty;
 
-	// restore lookahead buffer from k tokens before restored TokenBuffer position
-	// if demand_look, then I guess we don't look backwards for these tokens.
-	for (i=1; i<=LLk; i++) token_type[i-1] =
-		inputTokens->bufferedToken(i-LLk)->getType();
-	lap = 0;
-	labase = 0;
+  // restore lookahead buffer from k tokens before restored TokenBuffer position
+  // if demand_look, then I guess we don't look backwards for these tokens.
+  for (i=1; i<=LLk; i++) token_type[i-1] =
+    inputTokens->bufferedToken(i-LLk)->getType();
+  lap = 0;
+  labase = 0;
 
     /* MR10 */
 
@@ -248,22 +248,22 @@ LT(int i)
 #endif
 
 #ifdef DEBUG_TOKENBUFFER
-	if ( i >= inputTokens->bufferSize() || inputTokens->minTokens() < LLk )     /* MR20 Was "<=" */
-	{
-		char buf[2000];                 /* MR20 Was "static" */
+  if ( i >= inputTokens->bufferSize() || inputTokens->minTokens() < LLk )     /* MR20 Was "<=" */
+  {
+    char buf[2000];                 /* MR20 Was "static" */
         sprintf(buf, "The minimum number of tokens you requested that the\nANTLRTokenBuffer buffer is not enough to satisfy your\nLT(%d) request; increase 'k' argument to constructor for ANTLRTokenBuffer\n", i);
-		panic(buf);
-	}
+    panic(buf);
+  }
 #endif
-	return inputTokens->bufferedToken(i-LLk);
+  return inputTokens->bufferedToken(i-LLk);
 }
 
 void
 ANTLRParser::
 look(int k)
 {
-	int i, c = k - (LLk-dirty);
-	for (i=1; i<=c; i++) consume();
+  int i, c = k - (LLk-dirty);
+  for (i=1; i<=c; i++) consume();
 }
 
 /* fill the lookahead buffer up with k symbols (even if DEMAND_LOOK);
@@ -272,11 +272,11 @@ void
 ANTLRParser::
 prime_lookahead()
 {
-	int i;
-	for(i=1;i<=LLk; i++) consume();
-	dirty=0;
-	// lap = 0;     // MR14 Sinan Karasu (sinan.karasu@boeing.com)
-	// labase = 0;  // MR14
+  int i;
+  for(i=1;i<=LLk; i++) consume();
+  dirty=0;
+  // lap = 0;     // MR14 Sinan Karasu (sinan.karasu@boeing.com)
+  // labase = 0;  // MR14
     labase=lap;     // MR14
 }
 
@@ -287,22 +287,22 @@ prime_lookahead()
  */
 int ANTLRParser::
 _match(ANTLRTokenType _t, ANTLRChar **MissText,
-	   ANTLRTokenType *MissTok, _ANTLRTokenPtr *BadTok,
-	   SetWordType **MissSet)
+     ANTLRTokenType *MissTok, _ANTLRTokenPtr *BadTok,
+     SetWordType **MissSet)
 {
-	if ( dirty==LLk ) {
-		consume();
-	}
-	if ( LA(1)!=_t ) {
-		*MissText=NULL;
-		*MissTok= _t;
-		*BadTok = LT(1);
-		*MissSet=NULL;
-		return 0;
-	}
-	dirty++;
-	labase = (labase+1)&(LLk-1);	// labase maintained even if !demand look
-	return 1;
+  if ( dirty==LLk ) {
+    consume();
+  }
+  if ( LA(1)!=_t ) {
+    *MissText=NULL;
+    *MissTok= _t;
+    *BadTok = LT(1);
+    *MissSet=NULL;
+    return 0;
+  }
+  dirty++;
+  labase = (labase+1)&(LLk-1);  // labase maintained even if !demand look
+  return 1;
 }
 
 /* check to see if the current input symbol matches '_t'.
@@ -311,13 +311,13 @@ _match(ANTLRTokenType _t, ANTLRChar **MissText,
 int ANTLRParser::
 _match_wsig(ANTLRTokenType _t)
 {
-	if ( dirty==LLk ) {
-		consume();
-	}
-	if ( LA(1)!=_t ) return 0;
-	dirty++;
-	labase = (labase+1)&(LLk-1);	// labase maintained even if !demand look
-	return 1;
+  if ( dirty==LLk ) {
+    consume();
+  }
+  if ( LA(1)!=_t ) return 0;
+  dirty++;
+  labase = (labase+1)&(LLk-1);  // labase maintained even if !demand look
+  return 1;
 }
 
 /* check to see if the current input symbol matches any token in a set.
@@ -327,59 +327,59 @@ _match_wsig(ANTLRTokenType _t)
  */
 int ANTLRParser::
 _setmatch(SetWordType *tset, ANTLRChar **MissText,
-	   ANTLRTokenType *MissTok, _ANTLRTokenPtr *BadTok,
-	   SetWordType **MissSet, SetWordType *tokclassErrset)
+     ANTLRTokenType *MissTok, _ANTLRTokenPtr *BadTok,
+     SetWordType **MissSet, SetWordType *tokclassErrset)
 {
-	if ( dirty==LLk ) {
-		consume();
-	}
-	if ( !set_el(LA(1), tset) ) {
-		*MissText=NULL;										/* MR23 */
-		*MissTok=(ANTLRTokenType) 0;						/* MR23 */
-		*BadTok=LT(1);										/* MR23 */
-		*MissSet=tokclassErrset;							/* MR23 */
-		return 0;
-	}
-	dirty++;
-	labase = (labase+1)&(LLk-1);	// labase maintained even if !demand look
-	return 1;
+  if ( dirty==LLk ) {
+    consume();
+  }
+  if ( !set_el(LA(1), tset) ) {
+    *MissText=NULL;                   /* MR23 */
+    *MissTok=(ANTLRTokenType) 0;            /* MR23 */
+    *BadTok=LT(1);                    /* MR23 */
+    *MissSet=tokclassErrset;              /* MR23 */
+    return 0;
+  }
+  dirty++;
+  labase = (labase+1)&(LLk-1);  // labase maintained even if !demand look
+  return 1;
 }
 
 int ANTLRParser::
 _setmatch_wsig(SetWordType *tset)
 {
-	if ( dirty==LLk ) {
-		consume();
-	}
-	if ( !set_el(LA(1), tset) ) return 0;
-	dirty++;
-	labase = (labase+1)&(LLk-1);	// labase maintained even if !demand look
-	return 1;
+  if ( dirty==LLk ) {
+    consume();
+  }
+  if ( !set_el(LA(1), tset) ) return 0;
+  dirty++;
+  labase = (labase+1)&(LLk-1);  // labase maintained even if !demand look
+  return 1;
 }
 
                    /* Exception handling routines */
 //
 //  7-Apr-97 133MR1
-//   	     Change suggested by Eli Sternheim (eli@interhdl.com)
+//         Change suggested by Eli Sternheim (eli@interhdl.com)
 //
 void ANTLRParser::
 consumeUntil(SetWordType *st)
 {
-	ANTLRTokenType		tmp;	                        				// MR1
-	const			int Eof=1;                                          // MR1
-	while ( !set_el( (tmp=LA(1)), st) && tmp!=Eof) { consume(); }       // MR1
+  ANTLRTokenType    tmp;                                  // MR1
+  const     int Eof=1;                                          // MR1
+  while ( !set_el( (tmp=LA(1)), st) && tmp!=Eof) { consume(); }       // MR1
 }
 
 //
 //  7-Apr-97 133MR1
-//   	     Change suggested by Eli Sternheim (eli@interhdl.com)
+//         Change suggested by Eli Sternheim (eli@interhdl.com)
 //
 void ANTLRParser::
 consumeUntilToken(int t)
 {
-	int	tmp;                                                            // MR1
-	const	int Eof=1;                                                  // MR1
-	while ( (tmp=LA(1)) !=t && tmp!=Eof) { consume(); }                 // MR1
+  int tmp;                                                            // MR1
+  const int Eof=1;                                                  // MR1
+  while ( (tmp=LA(1)) !=t && tmp!=Eof) { consume(); }                 // MR1
 }
 
 
@@ -392,20 +392,20 @@ resynch(SetWordType *wd,SetWordType mask)
 /* MR8              S.Bochnak@microtool.com.pl                          */
 /* MR8              Change file scope static "consumed" to instance var */
 
-	/* if you enter here without having consumed a token from last resynch
-	 * force a token consumption.
-	 */
-/* MR8 */  	if ( !resynchConsumed ) {consume(); resynchConsumed=1; return;}
+  /* if you enter here without having consumed a token from last resynch
+   * force a token consumption.
+   */
+/* MR8 */   if ( !resynchConsumed ) {consume(); resynchConsumed=1; return;}
 
-   	/* if current token is in resynch set, we've got what we wanted */
+    /* if current token is in resynch set, we've got what we wanted */
 
-/* MR8 */  	if ( wd[LA(1)]&mask || LA(1) == eofToken ) {resynchConsumed=0; return;}
-	
-   	/* scan until we find something in the resynch set */
+/* MR8 */   if ( wd[LA(1)]&mask || LA(1) == eofToken ) {resynchConsumed=0; return;}
 
-        	while ( !(wd[LA(1)]&mask) && LA(1) != eofToken ) {consume();}
+    /* scan until we find something in the resynch set */
 
-/* MR8 */	resynchConsumed=1;
+          while ( !(wd[LA(1)]&mask) && LA(1) != eofToken ) {consume();}
+
+/* MR8 */ resynchConsumed=1;
 }
 
 /* standard error reporting function that assumes DLG-based scanners;
@@ -419,94 +419,94 @@ resynch(SetWordType *wd,SetWordType mask)
             returns the text, so the text representation of the token
             must be passed explicitly.  I think.
 */
-           
+
 void ANTLRParser::
 syn(_ANTLRTokenPtr /*tok MR23*/, ANTLRChar *egroup, SetWordType *eset,
-	ANTLRTokenType etok, int k)
+  ANTLRTokenType etok, int k)
 {
-	int line;
+  int line;
 
-	line = LT(1)->getLine();
+  line = LT(1)->getLine();
 
     syntaxErrCount++;                                   /* MR11 */
 
     /* MR23  If the token is not an EOF token, then use the ->getText() value.
 
-             If the token is the EOF token the text returned by ->getText() 
+             If the token is the EOF token the text returned by ->getText()
              may be garbage.  If the text from the token table is "@" use
              "<eof>" instead, because end-users don't know what "@" means.
              If the text is not "@" then use that text, which must have been
              supplied by the grammar writer.
      */
-	const char * errorAt = LT(1)->getText();
-	if (LA(1) == eofToken) {
-  	  errorAt = parserTokenName(LA(1));
-  	  if (errorAt[0] == '@') errorAt = "<eof>";
-	}
-	/* MR23 */ printMessage(stderr, "line %d: syntax error at \"%s\"",
-					line, errorAt);
-	if ( !etok && !eset ) {/* MR23 */ printMessage(stderr, "\n"); return;}
-	if ( k==1 ) /* MR23 */ printMessage(stderr, " missing");
-	else
-	{
-		/* MR23 */ printMessage(stderr, "; \"%s\" not", LT(k)->getText()); // MR23 use LT(k) since k>1
-		if ( set_deg(eset)>1 ) /* MR23 */ printMessage(stderr, " in");
-	}
-	if ( set_deg(eset)>0 ) edecode(eset);
-	else /* MR23 */ printMessage(stderr, " %s", token_tbl[etok]);
-	if ( strlen(egroup) > 0 ) /* MR23 */ printMessage(stderr, " in %s", egroup);
-	/* MR23 */ printMessage(stderr, "\n");
+  const char * errorAt = LT(1)->getText();
+  if (LA(1) == eofToken) {
+      errorAt = parserTokenName(LA(1));
+      if (errorAt[0] == '@') errorAt = "<eof>";
+  }
+  /* MR23 */ printMessage(stderr, "line %d: syntax error at \"%s\"",
+          line, errorAt);
+  if ( !etok && !eset ) {/* MR23 */ printMessage(stderr, "\n"); return;}
+  if ( k==1 ) /* MR23 */ printMessage(stderr, " missing");
+  else
+  {
+    /* MR23 */ printMessage(stderr, "; \"%s\" not", LT(k)->getText()); // MR23 use LT(k) since k>1
+    if ( set_deg(eset)>1 ) /* MR23 */ printMessage(stderr, " in");
+  }
+  if ( set_deg(eset)>0 ) edecode(eset);
+  else /* MR23 */ printMessage(stderr, " %s", token_tbl[etok]);
+  if ( strlen(egroup) > 0 ) /* MR23 */ printMessage(stderr, " in %s", egroup);
+  /* MR23 */ printMessage(stderr, "\n");
 }
 
 /* is b an element of set p? */
 int ANTLRParser::
 set_el(ANTLRTokenType b, SetWordType *p)
 {
-	return( p[DIVWORD(b)] & bitmask[MODWORD(b)] );
+  return( p[DIVWORD(b)] & bitmask[MODWORD(b)] );
 }
 
 int ANTLRParser::
 set_deg(SetWordType *a)
 {
-	/* Fast compute degree of a set... the number
-	   of elements present in the set.  Assumes
-	   that all word bits are used in the set
-	*/
-	register SetWordType *p = a;
-	register SetWordType *endp = &(a[bsetsize]);
-	register int degree = 0;
+  /* Fast compute degree of a set... the number
+     of elements present in the set.  Assumes
+     that all word bits are used in the set
+  */
+  register SetWordType *p = a;
+  register SetWordType *endp = &(a[bsetsize]);
+  register int degree = 0;
 
-	if ( a == NULL ) return 0;
-	while ( p < endp )
-	{
-		register SetWordType t = *p;
-		register SetWordType *b = &(bitmask[0]);
-		do {
-			if (t & *b) ++degree;
-		} while (++b < &(bitmask[sizeof(SetWordType)*8]));
-		p++;
-	}
+  if ( a == NULL ) return 0;
+  while ( p < endp )
+  {
+    register SetWordType t = *p;
+    register SetWordType *b = &(bitmask[0]);
+    do {
+      if (t & *b) ++degree;
+    } while (++b < &(bitmask[sizeof(SetWordType)*8]));
+    p++;
+  }
 
-	return(degree);
+  return(degree);
 }
 
 void ANTLRParser::
 edecode(SetWordType *a)
 {
-	register SetWordType *p = a;
-	register SetWordType *endp = &(p[bsetsize]);
-	register unsigned e = 0;
+  register SetWordType *p = a;
+  register SetWordType *endp = &(p[bsetsize]);
+  register unsigned e = 0;
 
-	if ( set_deg(a)>1 ) /* MR23 */ printMessage(stderr, " {");
-	do {
-		register SetWordType t = *p;
-		register SetWordType *b = &(bitmask[0]);
-		do {
-			if ( t & *b ) /* MR23 */ printMessage(stderr, " %s", token_tbl[e]);
-			e++;
-		} while (++b < &(bitmask[sizeof(SetWordType)*8]));
-	} while (++p < endp);
-	if ( set_deg(a)>1 ) /* MR23 */ printMessage(stderr, " }");
+  if ( set_deg(a)>1 ) /* MR23 */ printMessage(stderr, " {");
+  do {
+    register SetWordType t = *p;
+    register SetWordType *b = &(bitmask[0]);
+    do {
+      if ( t & *b ) /* MR23 */ printMessage(stderr, " %s", token_tbl[e]);
+      e++;
+    } while (++b < &(bitmask[sizeof(SetWordType)*8]));
+  } while (++p < endp);
+  if ( set_deg(a)>1 ) /* MR23 */ printMessage(stderr, " }");
 }
 
 /* input looks like:
@@ -526,7 +526,7 @@ void
 ANTLRParser::FAIL(int k, ...)
 {
 //
-//  MR1 10-Apr-97	
+//  MR1 10-Apr-97
 //
 
     if (zzFAILtext == NULL) zzFAILtext=new char [1000];          // MR9
@@ -537,16 +537,16 @@ ANTLRParser::FAIL(int k, ...)
     ANTLRChar **bad_text;
 //
 //  7-Apr-97 133MR1
-//  		err_k is passed as a "int *", not "unsigned *"
+//      err_k is passed as a "int *", not "unsigned *"
 //
-    int	*err_k;                                                         // MR1
+    int *err_k;                                                         // MR1
     int i;
     va_list ap;
 
     va_start(ap, k);
 
     zzFAILtext[0] = '\0';
-	if ( k > SETWORDCOUNT ) panic("FAIL: overflowed buffer");
+    if ( k > SETWORDCOUNT ) panic("FAIL: overflowed buffer");
     for (i=1; i<=k; i++)    /* collect all lookahead sets */
     {
         f[i-1] = va_arg(ap, SetWordType *);
@@ -561,7 +561,7 @@ ANTLRParser::FAIL(int k, ...)
     miss_text = va_arg(ap, ANTLRChar **);
     bad_tok = va_arg(ap, _ANTLRTokenPtr *);
     bad_text = va_arg(ap, ANTLRChar **);
-    err_k = va_arg(ap, int *);                      					// MR1
+    err_k = va_arg(ap, int *);                                // MR1
     if ( i>k )
     {
         /* bad; lookahead is permutation that cannot be matched,
@@ -574,9 +574,9 @@ ANTLRParser::FAIL(int k, ...)
         *bad_text = (*bad_tok)->getText();
         *err_k = k;
 //
-//  MR4 20-May-97	erroneously deleted contents of f[]
-//  MR4			        reported by Bruce Guenter (bruceg@qcc.sk.ca)
-//  MR1 10-Apr-97	release temporary storage
+//  MR4 20-May-97 erroneously deleted contents of f[]
+//  MR4             reported by Bruce Guenter (bruceg@qcc.sk.ca)
+//  MR1 10-Apr-97 release temporary storage
 //
       delete [] f;                                                      // MR1
       return;                                                           // MR1
@@ -589,9 +589,9 @@ ANTLRParser::FAIL(int k, ...)
     if ( i==1 ) *err_k = 1;
     else *err_k = k;
 //
-//  MR4 20-May-97	erroneously deleted contents of f[]
-//  MR4			      reported by Bruce Guenter (bruceg@qcc.sk.ca)
-//  MR1 10-Apr-97	release temporary storage
+//  MR4 20-May-97 erroneously deleted contents of f[]
+//  MR4           reported by Bruce Guenter (bruceg@qcc.sk.ca)
+//  MR1 10-Apr-97 release temporary storage
 //
     delete [] f;                                                        // MR1
     return;                                                             // MR1
@@ -600,84 +600,84 @@ ANTLRParser::FAIL(int k, ...)
 int ANTLRParser::
 _match_wdfltsig(ANTLRTokenType tokenWanted, SetWordType *whatFollows)
 {
-	if ( dirty==LLk ) consume();
+  if ( dirty==LLk ) consume();
 
-	if ( LA(1)!=tokenWanted )
-	{
+  if ( LA(1)!=tokenWanted )
+  {
         syntaxErrCount++;                                   /* MR11 */
-		/* MR23 */ printMessage(stderr,
-				"line %d: syntax error at \"%s\" missing %s\n",
-				LT(1)->getLine(),
-				(LA(1)==eofToken && LT(1)->getText()[0] == '@')?"<eof>":LT(1)->getText(), /* MR21a */
-				token_tbl[tokenWanted]);
-		consumeUntil( whatFollows );
-		return 0;
-	}
-	else {
-		dirty++;
-		labase = (labase+1)&(LLk-1); // labase maintained even if !demand look
-/*		if ( !demand_look ) consume(); */
-		return 1;
-	}
+    /* MR23 */ printMessage(stderr,
+        "line %d: syntax error at \"%s\" missing %s\n",
+        LT(1)->getLine(),
+        (LA(1)==eofToken && LT(1)->getText()[0] == '@')?"<eof>":LT(1)->getText(), /* MR21a */
+        token_tbl[tokenWanted]);
+    consumeUntil( whatFollows );
+    return 0;
+  }
+  else {
+    dirty++;
+    labase = (labase+1)&(LLk-1); // labase maintained even if !demand look
+/*    if ( !demand_look ) consume(); */
+    return 1;
+  }
 }
 
 
 int ANTLRParser::
 _setmatch_wdfltsig(SetWordType *tokensWanted,
-					ANTLRTokenType tokenTypeOfSet,
-					SetWordType *whatFollows)
+          ANTLRTokenType tokenTypeOfSet,
+          SetWordType *whatFollows)
 {
-	if ( dirty==LLk ) consume();
-	if ( !set_el(LA(1), tokensWanted) )
-	{
+  if ( dirty==LLk ) consume();
+  if ( !set_el(LA(1), tokensWanted) )
+  {
         syntaxErrCount++;                                   /* MR11 */
-		/* MR23 */ printMessage(stderr,
-				"line %d: syntax error at \"%s\" missing %s\n",
-				LT(1)->getLine(),
-				(LA(1)==eofToken && LT(1)->getText()[0] == '@')?"<eof>":LT(1)->getText(), /* MR21a */
-				token_tbl[tokenTypeOfSet]);
-		consumeUntil( whatFollows );
-		return 0;
-	}
-	else {
-		dirty++;
-		labase = (labase+1)&(LLk-1); // labase maintained even if !demand look
-/*		if ( !demand_look ) consume(); */
-		return 1;
-	}
+    /* MR23 */ printMessage(stderr,
+        "line %d: syntax error at \"%s\" missing %s\n",
+        LT(1)->getLine(),
+        (LA(1)==eofToken && LT(1)->getText()[0] == '@')?"<eof>":LT(1)->getText(), /* MR21a */
+        token_tbl[tokenTypeOfSet]);
+    consumeUntil( whatFollows );
+    return 0;
+  }
+  else {
+    dirty++;
+    labase = (labase+1)&(LLk-1); // labase maintained even if !demand look
+/*    if ( !demand_look ) consume(); */
+    return 1;
+  }
 }
 
 char *ANTLRParser::
 eMsgd(char *err,int d)
 {
-	sprintf(eMsgBuffer, err, d);	// dangerous, but I don't care
-	return eMsgBuffer;
+  sprintf(eMsgBuffer, err, d);  // dangerous, but I don't care
+  return eMsgBuffer;
 }
 
 char *ANTLRParser::
 eMsg(char *err, char *s)
 {
-	sprintf(eMsgBuffer, err, s);
-	return eMsgBuffer;
+  sprintf(eMsgBuffer, err, s);
+  return eMsgBuffer;
 }
 
 char *ANTLRParser::
 eMsg2(char *err,char *s, char *t)
 {
-	sprintf(eMsgBuffer, err, s, t);
-	return eMsgBuffer;
+  sprintf(eMsgBuffer, err, s, t);
+  return eMsgBuffer;
 }
 
 void ANTLRParser::
 panic(const char *msg)  // MR20 const
 {
-	/* MR23 */ printMessage(stderr, "ANTLR panic: %s\n", msg);
-	exit(PCCTS_EXIT_FAILURE);           // MR1
+  printMessage(stderr, "ANTLR panic: %s\n", msg);
+  exit(1);
 }
 
 const ANTLRChar *ANTLRParser::          // MR1
 parserTokenName(int tok) {              // MR1
-	return token_tbl[tok];              // MR1
+  return token_tbl[tok];              // MR1
 }                                       // MR1
 
 void ANTLRParser::traceGuessDone(const ANTLRParserState *state) {
@@ -824,9 +824,9 @@ void ANTLRParser::undeferFetch()
 #ifdef ZZDEFER_FETCH
     if (stillToFetch) {
         for (int stillToFetch_x = 0; stillToFetch_x < stillToFetch; ++stillToFetch_x) {
-    		NLA = inputTokens->getToken()->getType();
-    		dirty--;
-    		lap = (lap+1)&(LLk-1);
+            NLA = inputTokens->getToken()->getType();
+            dirty--;
+            lap = (lap+1)&(LLk-1);
         }
         stillToFetch = 0;
     }
@@ -848,16 +848,16 @@ int ANTLRParser::isDeferFetchEnabled()
 //MR23
 int ANTLRParser::printMessage(FILE* pFile, const char* pFormat, ...)
 {
-	va_list marker;
-	va_start( marker, pFormat );
-  	int iRet = printMessageV(pFile, pFormat, marker);
-	va_end( marker );
-	return iRet;
+    va_list marker;
+    va_start( marker, pFormat );
+    int iRet = printMessageV(pFile, pFormat, marker);
+    va_end( marker );
+    return iRet;
 }
 
 int ANTLRParser::printMessageV(FILE* pFile, const char* pFormat, va_list arglist) // MR23
 {
-  	return vfprintf(pFile, pFormat, arglist);
+    return vfprintf(pFile, pFormat, arglist);
 }
 
 // MR23 Move semantic predicate error handling from macro to virtual function
@@ -867,5 +867,5 @@ int ANTLRParser::printMessageV(FILE* pFile, const char* pFormat, va_list arglist
 void ANTLRParser::failedSemanticPredicate(const char* predicate)
 {
     printMessage(stdout,"line %d: semantic error; failed predicate: '%s'\n",
-    	LT(1)->getLine(), predicate);
+      LT(1)->getLine(), predicate);
 }

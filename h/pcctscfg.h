@@ -40,13 +40,7 @@
 
 
 #ifndef __USE_PROTOS
-
-#ifdef __STDC__
 #define __USE_PROTOS
-#endif
-#ifdef __cplusplus
-#define __USE_PROTOS
-#endif
 #endif
 
 #ifdef PCCTS_USE_NAMESPACE_STD
@@ -59,18 +53,6 @@
 #include "pccts_stdlib.h"
 
 
-#define ATOKEN_H      "AToken.h"
-#define ATOKPTR_H     "ATokPtr.h"
-#define ATOKPTR_IMPL_H    "ATokPtrImpl.h"
-#define ATOKENBUFFER_H    "ATokenBuffer.h"
-#define ATOKENSTREAM_H    "ATokenStream.h"
-#define APARSER_H     "AParser.h"
-#define ASTBASE_H     "ASTBase.h"
-#define DLEXERBASE_H    "DLexerBase.h"
-#define DLEXER_H      "DLexer.h"
-
-/* SORCERER Stuff */
-#define STPARSER_H      "STreeParser.h"
 
 #define CPP_FILE_SUFFIX   ".cpp"
 
@@ -83,8 +65,6 @@
 
 /* must assume old K&R cpp here, can't use #if defined(..)... */
 
-#define TopDirectory  "."
-#define DirectorySymbol "/"
 #define OutputDirectoryOption "Directory where all output files should go (default=\".\")"
 
 
@@ -92,22 +72,8 @@
 #define DllExportPCCTS
 #endif
 
-#ifdef __USE_PROTOS
 #ifndef PCCTS_USE_STDARG
 #define PCCTS_USE_STDARG
-#endif
-#endif
-
-#ifdef __STDC__
-#ifndef PCCTS_USE_STDARG
-#define PCCTS_USE_STDARG
-#endif
-#endif
-
-#ifdef __cplusplus
-#ifndef PCCTS_USE_STDARG
-#define PCCTS_USE_STDARG
-#endif
 #endif
 
 #endif

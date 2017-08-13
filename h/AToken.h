@@ -42,7 +42,7 @@ PCCTS_NAMESPACE_STD
 // MR9      RJV (JVincent@novell.com) Not needed for variable length strings
 
 //// MR9 #ifndef ANTLRCommonTokenTEXTSIZE
-//// MR9 #define ANTLRCommonTokenTEXTSIZE        	100
+//// MR9 #define ANTLRCommonTokenTEXTSIZE         100
 //// MR9 #endif
 
 
@@ -51,7 +51,6 @@ typedef char ANTLRChar;
 
 /* D E F I N E  S M A R T  P O I N T E R S */
 
-//#include ATOKPTR_H   not tested yet, leave out
 class ANTLRAbstractToken;
 typedef ANTLRAbstractToken *_ANTLRTokenPtr;
 
@@ -66,36 +65,36 @@ public:
     virtual void setText(const ANTLRChar *) = 0;
 
     /* This function will disappear when I can use templates */
-	virtual ANTLRAbstractToken *makeToken(ANTLRTokenType tt,
-										  ANTLRChar *text,
-										  int line) = 0;
+  virtual ANTLRAbstractToken *makeToken(ANTLRTokenType tt,
+                      ANTLRChar *text,
+                      int line) = 0;
 
-	/* define to satisfy ANTLRTokenBuffer's need to determine whether or
-	   not a token object can be destroyed.  If nref()==0, no one has
-	   a reference, and the object may be destroyed.  This function defaults
-	   to 1, hence, if you use deleteTokens() message with a token object
-	   not derived from ANTLRCommonRefCountToken, the parser will compile
-	   but will not delete objects after they leave the token buffer.
+  /* define to satisfy ANTLRTokenBuffer's need to determine whether or
+     not a token object can be destroyed.  If nref()==0, no one has
+     a reference, and the object may be destroyed.  This function defaults
+     to 1, hence, if you use deleteTokens() message with a token object
+     not derived from ANTLRCommonRefCountToken, the parser will compile
+     but will not delete objects after they leave the token buffer.
     */
 
-	virtual unsigned nref() const { return 1; }     // MR11
-	virtual void ref() {;}
-	virtual void deref() {;}
+  virtual unsigned nref() const { return 1; }     // MR11
+  virtual void ref() {;}
+  virtual void deref() {;}
 
-	virtual void panic(const char *msg)             // MR20 const
-		{
-			/* MR23 */ printMessage(stderr, "ANTLRAbstractToken panic: %s\n", msg);
-			exit(PCCTS_EXIT_FAILURE);
-		}
+  virtual void panic(const char *msg)             // MR20 const
+    {
+      printMessage(stderr, "ANTLRAbstractToken panic: %s\n", msg);
+      exit(1);
+    }
 
-	virtual int printMessage(FILE* pFile, const char* pFormat, ...) // MR23
-		{
-			va_list marker;
-			va_start( marker, pFormat );
-  			int iRet = vfprintf(pFile, pFormat, marker);
-			va_end( marker );
-			return iRet;
-		}
+  virtual int printMessage(FILE* pFile, const char* pFormat, ...) // MR23
+    {
+      va_list marker;
+      va_start( marker, pFormat );
+        int iRet = vfprintf(pFile, pFormat, marker);
+      va_end( marker );
+      return iRet;
+    }
 };
 
 /* This class should be subclassed.  It cannot store token type or text */
@@ -103,129 +102,129 @@ public:
 class ANTLRRefCountToken : public ANTLRAbstractToken {
 public:
 #ifdef DBG_REFCOUNTTOKEN
-	static int ctor;
-	static int dtor;
+  static int ctor;
+  static int dtor;
 #endif
 protected:
     unsigned refcnt_;
 #ifdef DBG_REFCOUNTTOKEN
-	char object[200];
+  char object[200];
 #endif
 
 public:
 
-	// MR23 - No matter what you do, you're hammered.
-	//        Don't give names to formals something breaks.
-	//		  Give names to formals and don't use them it breaks.
+  // MR23 - No matter what you do, you're hammered.
+  //        Don't give names to formals something breaks.
+  //      Give names to formals and don't use them it breaks.
 
 #ifndef DBG_REFCOUNTTOKEN
-	ANTLRRefCountToken(ANTLRTokenType /* t MR23 */, const ANTLRChar * /* s MR23 */)
+  ANTLRRefCountToken(ANTLRTokenType /* t MR23 */, const ANTLRChar * /* s MR23 */)
 #else
-	ANTLRRefCountToken(ANTLRTokenType t, const ANTLRChar * s)
+  ANTLRRefCountToken(ANTLRTokenType t, const ANTLRChar * s)
 #endif
 
 #ifndef DBG_REFCOUNTTOKEN
-		{
-			refcnt_ = 0;
-		}
+    {
+      refcnt_ = 0;
+    }
 #else
-	{
-		ctor++;
-		refcnt_ = 0;
-		if ( t==1 ) sprintf(object,"tok_EOF");
-		else sprintf(object,"tok_%s",s);
-		/* MR23 */ printMessage(stderr, "ctor %s #%d\n",object,ctor);
-	}
+  {
+    ctor++;
+    refcnt_ = 0;
+    if ( t==1 ) sprintf(object,"tok_EOF");
+    else sprintf(object,"tok_%s",s);
+    /* MR23 */ printMessage(stderr, "ctor %s #%d\n",object,ctor);
+  }
 #endif
-	ANTLRRefCountToken()
+  ANTLRRefCountToken()
 #ifndef DBG_REFCOUNTTOKEN
-		{ refcnt_ = 0; }
+    { refcnt_ = 0; }
 #else
-		{
-			ctor++;
-			refcnt_ = 0;
-			sprintf(object,"tok_blank");
-			/* MR23 */ printMessage(stderr, "ctor %s #%d\n",object,ctor);
-		}
-	virtual ~ANTLRRefCountToken()
-		{
-			dtor++;
-			if ( dtor>ctor ) /* MR23 */ printMessage(stderr, "WARNING: dtor>ctor\n");
-			/* MR23 */ printMessage(stderr, "dtor %s #%d\n", object, dtor);
-			object[0]='\0';
-		}
+    {
+      ctor++;
+      refcnt_ = 0;
+      sprintf(object,"tok_blank");
+      /* MR23 */ printMessage(stderr, "ctor %s #%d\n",object,ctor);
+    }
+  virtual ~ANTLRRefCountToken()
+    {
+      dtor++;
+      if ( dtor>ctor ) /* MR23 */ printMessage(stderr, "WARNING: dtor>ctor\n");
+      /* MR23 */ printMessage(stderr, "dtor %s #%d\n", object, dtor);
+      object[0]='\0';
+    }
 #endif
 
-	// reference counting stuff needed by ANTLRTokenPtr.
-	// User should not access these; for C++ language reasons, we had
-	// to make these public.  Yuck.
+  // reference counting stuff needed by ANTLRTokenPtr.
+  // User should not access these; for C++ language reasons, we had
+  // to make these public.  Yuck.
 
-	void ref()		      { refcnt_++; }
-	void deref()	      { refcnt_--; }
-	unsigned nref()	const { return refcnt_; }   // MR11
+  void ref()          { refcnt_++; }
+  void deref()        { refcnt_--; }
+  unsigned nref() const { return refcnt_; }   // MR11
 
-	virtual ANTLRAbstractToken *makeToken(ANTLRTokenType /*tt MR23*/,
-										  ANTLRChar * /*txt MR23*/,
-										  int /*line MR23*/)
-	{
-		panic("call to ANTLRRefCountToken::makeToken()\n");
-		return NULL;
-	}
+  virtual ANTLRAbstractToken *makeToken(ANTLRTokenType /*tt MR23*/,
+                      ANTLRChar * /*txt MR23*/,
+                      int /*line MR23*/)
+  {
+    panic("call to ANTLRRefCountToken::makeToken()\n");
+    return NULL;
+  }
 };
 
 class ANTLRCommonNoRefCountToken : public ANTLRAbstractToken {
 protected:
-	ANTLRTokenType _type;
-	int _line;
-	ANTLRChar *_text;               // MR9 RJV
+  ANTLRTokenType _type;
+  int _line;
+  ANTLRChar *_text;               // MR9 RJV
 
 public:
-	ANTLRCommonNoRefCountToken(ANTLRTokenType t, const ANTLRChar *s)
-	{ setType(t); _line = 0; _text = NULL; setText(s); }
-	ANTLRCommonNoRefCountToken()
-	{ setType((ANTLRTokenType)0); _line = 0; _text = NULL; setText(""); }
+  ANTLRCommonNoRefCountToken(ANTLRTokenType t, const ANTLRChar *s)
+  { setType(t); _line = 0; _text = NULL; setText(s); }
+  ANTLRCommonNoRefCountToken()
+  { setType((ANTLRTokenType)0); _line = 0; _text = NULL; setText(""); }
 
-	~ANTLRCommonNoRefCountToken() { if (_text) delete [] _text; }  // MR9 RJV: Added Destructor to remove string
+  ~ANTLRCommonNoRefCountToken() { if (_text) delete [] _text; }  // MR9 RJV: Added Destructor to remove string
 
-	ANTLRTokenType getType() const 	{ return _type; }
-	void setType(ANTLRTokenType t)	{ _type = t; }
-	virtual int getLine() const		{ return _line; }
-	void setLine(int line)	    	{ _line = line; }
-	ANTLRChar *getText() const   	{ return _text; }
+  ANTLRTokenType getType() const  { return _type; }
+  void setType(ANTLRTokenType t)  { _type = t; }
+  virtual int getLine() const   { return _line; }
+  void setLine(int line)        { _line = line; }
+  ANTLRChar *getText() const    { return _text; }
     int getLength() const           { return strlen(getText()); }       // MR11
 
 // MR9 RJV: Added code for variable length strings to setText()
 
-	void setText(const ANTLRChar *s)
-	{	if (s != _text) {
+  void setText(const ANTLRChar *s)
+  { if (s != _text) {
           if (_text) delete [] _text;
           if (s != NULL) {
-         	_text = new ANTLRChar[strlen(s)+1];
+          _text = new ANTLRChar[strlen(s)+1];
             if (_text == NULL) panic("ANTLRCommonNoRefCountToken::setText new failed");
             strcpy(_text,s);
-    	  } else {
+        } else {
             _text = new ANTLRChar[1];
             if (_text == NULL) panic("ANTLRCommonNoRefCountToken::setText new failed");
             strcpy(_text,"");
           };
         };
-	}
+  }
 
-	virtual ANTLRAbstractToken *makeToken(ANTLRTokenType tt,
-										  ANTLRChar *txt,
-										  int line)
-		{
-			ANTLRAbstractToken *t = new ANTLRCommonNoRefCountToken;
-			t->setType(tt); t->setText(txt); t->setLine(line);
-			return t;
-		}
+  virtual ANTLRAbstractToken *makeToken(ANTLRTokenType tt,
+                      ANTLRChar *txt,
+                      int line)
+    {
+      ANTLRAbstractToken *t = new ANTLRCommonNoRefCountToken;
+      t->setType(tt); t->setText(txt); t->setLine(line);
+      return t;
+    }
 
 // MR9 THM Copy constructor required when heap allocated string is used with copy semantics
 
    ANTLRCommonNoRefCountToken (const ANTLRCommonNoRefCountToken& from) :
          ANTLRAbstractToken(from) {
- 	 setType(from._type);
-	 setLine(from._line);
+   setType(from._type);
+   setLine(from._line);
      _text=NULL;
      setText(from._text);
   };
@@ -239,8 +238,8 @@ public:
 
      *( (ANTLRAbstractToken *) this ) = rhs;
 
-  	 setType(rhs._type);
- 	 setLine(rhs._line);
+     setType(rhs._type);
+   setLine(rhs._line);
      setText(rhs._text);
      return *this;
    };
@@ -248,57 +247,57 @@ public:
 
 class ANTLRCommonToken : public ANTLRRefCountToken {
 protected:
-	ANTLRTokenType       _type;
-	int                  _line;
-	ANTLRChar           *_text;               // MR9 RJV:Added
+  ANTLRTokenType       _type;
+  int                  _line;
+  ANTLRChar           *_text;               // MR9 RJV:Added
 
 public:
-	ANTLRCommonToken(ANTLRTokenType t, const ANTLRChar *s) : ANTLRRefCountToken(t,s)
-		{ setType(t); _line = 0; _text = NULL; setText(s); }                    // MR9
-	ANTLRCommonToken()
-		{ setType((ANTLRTokenType)0); _line = 0; _text = NULL; setText(""); }   // MR9
+  ANTLRCommonToken(ANTLRTokenType t, const ANTLRChar *s) : ANTLRRefCountToken(t,s)
+    { setType(t); _line = 0; _text = NULL; setText(s); }                    // MR9
+  ANTLRCommonToken()
+    { setType((ANTLRTokenType)0); _line = 0; _text = NULL; setText(""); }   // MR9
 
-	virtual ~ANTLRCommonToken() { if (_text) delete [] _text; } // MR9 RJV: Added Destructor to remove string
+  virtual ~ANTLRCommonToken() { if (_text) delete [] _text; } // MR9 RJV: Added Destructor to remove string
 
-	ANTLRTokenType getType() const 	{ return _type; }
-	void setType(ANTLRTokenType t)	{ _type = t; }
-	virtual int getLine() const		{ return _line; }
-	void setLine(int line)	    	{ _line = line; }
-	ANTLRChar *getText() const		{ return _text; }
+  ANTLRTokenType getType() const  { return _type; }
+  void setType(ANTLRTokenType t)  { _type = t; }
+  virtual int getLine() const   { return _line; }
+  void setLine(int line)        { _line = line; }
+  ANTLRChar *getText() const    { return _text; }
     int getLength() const           { return strlen(getText()); }       // MR11
 
 // MR9 RJV: Added code for variable length strings to setText()
 
-	void setText(const ANTLRChar *s)
-	{	if (s != _text) {
+  void setText(const ANTLRChar *s)
+  { if (s != _text) {
           if (_text) delete [] _text;
           if (s != NULL) {
-         	_text = new ANTLRChar[strlen(s)+1];
+          _text = new ANTLRChar[strlen(s)+1];
             if (_text == NULL) panic("ANTLRCommonToken::setText new failed");
             strcpy(_text,s);
-    	  } else {
+        } else {
             _text = new ANTLRChar[1];
             if (_text == NULL) panic("ANTLRCommonToken::setText new failed");
             strcpy(_text,"");
           };
         };
-	}
+  }
 
-	virtual ANTLRAbstractToken *makeToken(ANTLRTokenType tt,
-										  ANTLRChar *txt,
-										  int line)
-	{
-		ANTLRAbstractToken *t = new ANTLRCommonToken(tt,txt);
-		t->setLine(line);
-		return t;
-	}
+  virtual ANTLRAbstractToken *makeToken(ANTLRTokenType tt,
+                      ANTLRChar *txt,
+                      int line)
+  {
+    ANTLRAbstractToken *t = new ANTLRCommonToken(tt,txt);
+    t->setLine(line);
+    return t;
+  }
 
 // MR9 THM Copy constructor required when heap allocated string is used with copy semantics
 
    ANTLRCommonToken (const ANTLRCommonToken& from) :
          ANTLRRefCountToken(from) {
- 	 setType(from._type);
-	 setLine(from._line);
+   setType(from._type);
+   setLine(from._line);
      _text=NULL;
      setText(from._text);
   };
@@ -312,8 +311,8 @@ public:
 
      *( (ANTLRRefCountToken *) this) = rhs;
 
-  	 setType(rhs._type);
- 	 setLine(rhs._line);
+     setType(rhs._type);
+   setLine(rhs._line);
      setText(rhs._text);
      return *this;
    };

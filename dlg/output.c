@@ -71,13 +71,9 @@
 
 #include <stdio.h>
 #include <string.h>
-#include "dlg.h"
-
-#ifdef __STDC__
 #include <stdlib.h>
-#else
-#include <malloc.h>
-#endif /* __STDC__ */
+#include "dlg.h"
+#include "constants.h"
 
 static char *mode_name[MAX_MODES];
 static int mode_number[MAX_MODES];

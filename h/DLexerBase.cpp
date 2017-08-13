@@ -41,147 +41,149 @@ PCCTS_NAMESPACE_STD
 
 // MR1
 // MR1  10-Apr-97  133MR1  Prevent use of varying sizes for the
-// MR1  			ANTLRTokenType enum
+// MR1        ANTLRTokenType enum
 // MR1
 
-enum ANTLRTokenType { TER_HATES_CPP=0, ITS_UTTER_GARBAGE,		// MR1
-					 WITH_SOME_GOOD_IDEAS=9999};	// MR1
+enum ANTLRTokenType {
+  TER_HATES_CPP=0,
+  ITS_UTTER_GARBAGE,
+  WITH_SOME_GOOD_IDEAS=9999
+};
 
 #define ANTLR_SUPPORT_CODE
 
-#include "pcctscfg.h"
-#include DLEXERBASE_H
-#include APARSER_H		// MR23
+#include "DLexerBase.h"
+#include "AParser.h"
 
 DLGLexerBase::
 DLGLexerBase(DLGInputStream *in,
-	     unsigned bufsize,
-	     int _interactive,
-	     int _track_columns)
+       unsigned bufsize,
+       int _interactive,
+       int _track_columns)
 {
-	this->_bufsize = bufsize;
-	this->_lextext = new DLGChar[_bufsize];
-	if ( this->_lextext==NULL ) {
-	    panic("text buffer is NULL");
-	}
-	this->_begexpr = this->_endexpr = NULL;
-	this->ch = this->bufovf = 0;
-	this->nextpos = NULL;
-	this->cl = 0;
-	this->add_erase = 0;
-	this->input = in;
-	this->_begcol = 0;
-	this->_endcol = 0;
-	this->_line = 1;
-	this->charfull = 0;
-	this->automaton = 0;
-	this->token_to_fill = NULL;
-	this->interactive = _interactive;
-	this->track_columns = _track_columns;
-	this->debugLexerFlag = 0;					// MR1
-	this->parser = NULL;						// MR1
+  this->_bufsize = bufsize;
+  this->_lextext = new DLGChar[_bufsize];
+  if ( this->_lextext==NULL ) {
+      panic("text buffer is NULL");
+  }
+  this->_begexpr = this->_endexpr = NULL;
+  this->ch = this->bufovf = 0;
+  this->nextpos = NULL;
+  this->cl = 0;
+  this->add_erase = 0;
+  this->input = in;
+  this->_begcol = 0;
+  this->_endcol = 0;
+  this->_line = 1;
+  this->charfull = 0;
+  this->automaton = 0;
+  this->token_to_fill = NULL;
+  this->interactive = _interactive;
+  this->track_columns = _track_columns;
+  this->debugLexerFlag = 0;         // MR1
+  this->parser = NULL;            // MR1
     this->lexErrCount=0;                        // MR11
 }
 
-// MR19  THM 
+// MR19  THM
 
 void DLGLexerBase::reset()
 {
-	this->charfull = 0;
-	this->_begcol = 0;
-	this->_endcol = 0;
-	this->automaton = 0;
-	this->_line=1;
-	this->lexErrCount=0;
+  this->charfull = 0;
+  this->_begcol = 0;
+  this->_endcol = 0;
+  this->automaton = 0;
+  this->_line=1;
+  this->lexErrCount=0;
 }
 
 void DLGLexerBase::
 setInputStream( DLGInputStream *in )
 {
-	this->input = in;
-	_line = 1;
-	charfull = 0;
+  this->input = in;
+  _line = 1;
+  charfull = 0;
 }
 
 /* saves dlg state, but not what feeds dlg (such as file position) */
 void DLGLexerBase::
 saveState(DLGState *state)
 {
-	state->input = input;
-	state->interactive = interactive;
-	state->track_columns = track_columns;
-	state->auto_num = automaton;
-	state->add_erase = add_erase;
-	state->lookc = ch;
-	state->char_full = charfull;
-	state->begcol = _begcol;
-	state->endcol = _endcol;
-	state->line = _line;
-	state->lextext = _lextext;
-	state->begexpr = _begexpr;
-	state->endexpr = _endexpr;
-	state->bufsize = _bufsize;
-	state->bufovf = bufovf;
-	state->nextpos = nextpos;
-	state->class_num = cl;
-	state->debugLexerFlag = debugLexerFlag;				// MR1
-	state->parser = parser;						// MR1
+  state->input = input;
+  state->interactive = interactive;
+  state->track_columns = track_columns;
+  state->auto_num = automaton;
+  state->add_erase = add_erase;
+  state->lookc = ch;
+  state->char_full = charfull;
+  state->begcol = _begcol;
+  state->endcol = _endcol;
+  state->line = _line;
+  state->lextext = _lextext;
+  state->begexpr = _begexpr;
+  state->endexpr = _endexpr;
+  state->bufsize = _bufsize;
+  state->bufovf = bufovf;
+  state->nextpos = nextpos;
+  state->class_num = cl;
+  state->debugLexerFlag = debugLexerFlag;       // MR1
+  state->parser = parser;           // MR1
 }
 
 void DLGLexerBase::
 restoreState(DLGState *state)
 {
-	input = state->input;
-	interactive = state->interactive;
-	track_columns = state->track_columns;
-	automaton = state->auto_num;
-	add_erase = state->add_erase;
-	ch = state->lookc;
-	charfull = state->char_full;
-	_begcol = state->begcol;
-	_endcol = state->endcol;
-	_line = state->line;
-	_lextext = state->lextext;
-	_begexpr = state->begexpr;
-	_endexpr = state->endexpr;
-	_bufsize = state->bufsize;
-	bufovf = state->bufovf;
-	nextpos = state->nextpos;
-	cl = state->class_num;
-	debugLexerFlag = state->debugLexerFlag;				// MR1
-	parser = state->parser;						// MR1
+  input = state->input;
+  interactive = state->interactive;
+  track_columns = state->track_columns;
+  automaton = state->auto_num;
+  add_erase = state->add_erase;
+  ch = state->lookc;
+  charfull = state->char_full;
+  _begcol = state->begcol;
+  _endcol = state->endcol;
+  _line = state->line;
+  _lextext = state->lextext;
+  _begexpr = state->begexpr;
+  _endexpr = state->endexpr;
+  _bufsize = state->bufsize;
+  bufovf = state->bufovf;
+  nextpos = state->nextpos;
+  cl = state->class_num;
+  debugLexerFlag = state->debugLexerFlag;       // MR1
+  parser = state->parser;           // MR1
 }
 
 /* erase what is currently in the buffer, and get a new reg. expr */
 void DLGLexerBase::
 skip()
 {
-	add_erase = 1;
+  add_erase = 1;
 }
 
 /* don't erase what is in the lextext buffer, add on to it */
 void DLGLexerBase::
 more()
 {
-	add_erase = 2;
+  add_erase = 2;
 }
 
 /* substitute c for the reg. expr last matched and is in the buffer */
 void DLGLexerBase::
 replchar(DLGChar c)
 {
-	/* can't allow overwriting null at end of string */
-	if (_begexpr < &_lextext[_bufsize-1]){
-		*_begexpr = c;
-		*(_begexpr+1) = '\0';
-	}
-	_endexpr = _begexpr;
-	if (c != '\0') {
-		nextpos = _begexpr + 1;
-	}
-	else {
-		nextpos = _begexpr;	/* MR30 Zero terminates string. */
-	}
+  /* can't allow overwriting null at end of string */
+  if (_begexpr < &_lextext[_bufsize-1]){
+    *_begexpr = c;
+    *(_begexpr+1) = '\0';
+  }
+  _endexpr = _begexpr;
+  if (c != '\0') {
+    nextpos = _begexpr + 1;
+  }
+  else {
+    nextpos = _begexpr; /* MR30 Zero terminates string. */
+  }
 }
 
 /* replace the string s for the reg. expr last matched and in the buffer */
@@ -193,23 +195,23 @@ replchar(DLGChar c)
 void DLGLexerBase::
 replstr(const DLGChar *s) /* MR20 const */
 {
-	register DLGChar *l= &_lextext[_bufsize -1];
+  register DLGChar *l= &_lextext[_bufsize -1];
 
-	nextpos = _begexpr;
-	if (s){
-		while ((nextpos <= l) && (*(nextpos++) = *(s++))){
-			/* empty */
-		}
-		/* correct for NULL at end of string */
-		nextpos--;
-	}
-	if ((nextpos <= l) && (*(--s) == 0)){
-		bufovf = 0;
-	}else{
-		bufovf = 1;
-	}
-	*(nextpos) = '\0';
-	_endexpr = nextpos - 1;
+  nextpos = _begexpr;
+  if (s){
+    while ((nextpos <= l) && (*(nextpos++) = *(s++))){
+      /* empty */
+    }
+    /* correct for NULL at end of string */
+    nextpos--;
+  }
+  if ((nextpos <= l) && (*(--s) == 0)){
+    bufovf = 0;
+  }else{
+    bufovf = 1;
+  }
+  *(nextpos) = '\0';
+  _endexpr = nextpos - 1;
 }
 #ifdef _MSC_VER  // MR23
 #pragma warning(default: 4706)
@@ -228,75 +230,72 @@ errstd(const char *s)                               /* MR20 const */
 int DLGLexerBase::
 err_in()
 {
-	/* MR23 */ printMessage(stderr,"No input stream, function, or string\n");
-	/* return eof to get out gracefully */
-	return EOF;
+  /* MR23 */ printMessage(stderr,"No input stream, function, or string\n");
+  /* return eof to get out gracefully */
+  return EOF;
 }
 
 ANTLRTokenType DLGLexerBase::
 erraction()
 {
-	errstd("invalid token");
-	advance();
-	skip();
-	return (ANTLRTokenType) 0;	// bogus, but satisfies compiler
+  errstd("invalid token");
+  advance();
+  skip();
+  return (ANTLRTokenType) 0;  // bogus, but satisfies compiler
 }
 
 _ANTLRTokenPtr DLGLexerBase::
 getToken()
 {
-	if ( token_to_fill==NULL ) panic("NULL token_to_fill");
-	ANTLRTokenType tt = nextTokenType();
-	_ANTLRTokenPtr tk = token_to_fill->makeToken(tt, _lextext,_line);
-	return tk;
+  if ( token_to_fill==NULL ) panic("NULL token_to_fill");
+  ANTLRTokenType tt = nextTokenType();
+  _ANTLRTokenPtr tk = token_to_fill->makeToken(tt, _lextext,_line);
+  return tk;
 }
 
 void DLGLexerBase::
 panic(const char *msg)      /* MR20 const */
 {
-	if (parser)				//MR23
-		parser->panic(msg);	//MR23
-	else					//MR23
-	{
-		/* MR23 */ printMessage(stderr, "DLG panic: %s\n", msg);
-	//
-	//  7-Apr-97 133MR1
-	//
-		exit(PCCTS_EXIT_FAILURE);					// MR1
-	}
+  if (parser)       //MR23
+    parser->panic(msg); //MR23
+  else          //MR23
+  {
+    printMessage(stderr, "DLG panic: %s\n", msg);
+    exit(1);
+  }
 }
 
-ANTLRParser * DLGLexerBase::						// MR1
-setParser(ANTLRParser *p) {						// MR1
-  ANTLRParser	*oldValue=parser;					// MR1
-  parser=p;								// MR1
-  return oldValue;							// MR1
-}									// MR1
-									// MR1
-ANTLRParser * DLGLexerBase::						// MR1
-getParser() {								// MR1
-  return parser;							// MR1
-}									// MR1
-									// MR1
-int DLGLexerBase::							// MR1
-debugLexer(int newValue) {						// MR1
-  int	oldValue=debugLexerFlag;					// MR1
-  debugLexerFlag=newValue;						// MR1
-  return oldValue;							// MR1
-}									// MR1
+ANTLRParser * DLGLexerBase::            // MR1
+setParser(ANTLRParser *p) {           // MR1
+  ANTLRParser *oldValue=parser;         // MR1
+  parser=p;               // MR1
+  return oldValue;              // MR1
+}                 // MR1
+                  // MR1
+ANTLRParser * DLGLexerBase::            // MR1
+getParser() {               // MR1
+  return parser;              // MR1
+}                 // MR1
+                  // MR1
+int DLGLexerBase::              // MR1
+debugLexer(int newValue) {            // MR1
+  int oldValue=debugLexerFlag;          // MR1
+  debugLexerFlag=newValue;            // MR1
+  return oldValue;              // MR1
+}                 // MR1
 
 //MR23
 int DLGLexerBase::printMessage(FILE* pFile, const char* pFormat, ...)
 {
-	va_list marker;
-	va_start( marker, pFormat );
+  va_list marker;
+  va_start( marker, pFormat );
 
-	int iRet = 0;
-	if (parser)
-		parser->printMessageV(pFile, pFormat, marker);
-	else
-  		iRet = vfprintf(pFile, pFormat, marker);
+  int iRet = 0;
+  if (parser)
+    parser->printMessageV(pFile, pFormat, marker);
+  else
+      iRet = vfprintf(pFile, pFormat, marker);
 
-	va_end( marker );
-	return iRet;
+  va_end( marker );
+  return iRet;
 }

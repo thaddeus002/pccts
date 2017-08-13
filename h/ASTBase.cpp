@@ -44,24 +44,24 @@ PCCTS_NAMESPACE_STD
 void
 ASTBase::link(ASTBase **_root, ASTBase **_sibling, ASTBase **_tail)
 {
-	if ( *_sibling == NULL ) return;
-	if ( *_root == NULL ) *_root = *_sibling;
-	else if ( *_root != *_sibling ) (*_root)->_down = *_sibling;
-	if ( *_tail==NULL ) *_tail = *_sibling;
-	while ( (*_tail)->_right != NULL ) *_tail = (*_tail)->_right;
+  if ( *_sibling == NULL ) return;
+  if ( *_root == NULL ) *_root = *_sibling;
+  else if ( *_root != *_sibling ) (*_root)->_down = *_sibling;
+  if ( *_tail==NULL ) *_tail = *_sibling;
+  while ( (*_tail)->_right != NULL ) *_tail = (*_tail)->_right;
 }
 
 /* add a child node to the current sibling list */
 void
 ASTBase::subchild(ASTBase **_root, ASTBase **_sibling, ASTBase **_tail)
 {
-	if ( *_tail != NULL ) (*_tail)->_right = this;
-	else {
-		*_sibling = this;
-		if ( *_root != NULL ) (*_root)->_down = *_sibling;
-	}
-	*_tail = this;
-	if ( *_root == NULL ) *_root = *_sibling;
+  if ( *_tail != NULL ) (*_tail)->_right = this;
+  else {
+    *_sibling = this;
+    if ( *_root != NULL ) (*_root)->_down = *_sibling;
+  }
+  *_tail = this;
+  if ( *_root == NULL ) *_root = *_sibling;
 }
 
 /* make a new AST node.  Make the newly-created
@@ -71,35 +71,35 @@ ASTBase::subchild(ASTBase **_root, ASTBase **_sibling, ASTBase **_tail)
 void
 ASTBase::subroot(ASTBase **_root, ASTBase **_sibling, ASTBase **_tail)
 {
-	if ( *_root != NULL )
-		if ( (*_root)->_down == *_sibling ) *_sibling = *_tail = *_root;
-	*_root = this;
-	(*_root)->_down = *_sibling;
+  if ( *_root != NULL )
+    if ( (*_root)->_down == *_sibling ) *_sibling = *_tail = *_root;
+  *_root = this;
+  (*_root)->_down = *_sibling;
 }
 
 /* Apply preorder_action(), etc.. to root then each sibling */
 //
 //  7-Apr-97 133MR1
-//	Fix suggested by Ron House (house@helios.usq.edu.au)
+//  Fix suggested by Ron House (house@helios.usq.edu.au)
 //
 void
 ASTBase::preorder(void* pData /*= NULL*/ /* MR23 */)
 {
-	ASTBase *tree = this;
+  ASTBase *tree = this;
 
-	while ( tree!= NULL )
-	{
-		if ( tree->_down != NULL ) {
-			tree->preorder_before_action(pData); 		// MR1	
-		};
-		tree->preorder_action(pData);
-		if ( tree->_down!=NULL )
-		{
-			tree->_down->preorder(pData);
-			tree->preorder_after_action(pData);			// MR1
-		}
-		tree = tree->_right;
-	}
+  while ( tree!= NULL )
+  {
+    if ( tree->_down != NULL ) {
+      tree->preorder_before_action(pData);    // MR1
+    };
+    tree->preorder_action(pData);
+    if ( tree->_down!=NULL )
+    {
+      tree->_down->preorder(pData);
+      tree->preorder_after_action(pData);     // MR1
+    }
+    tree = tree->_right;
+  }
 }
 
 /* free all AST nodes in tree; apply func to each before freeing */
@@ -130,28 +130,28 @@ ASTBase::destroy()
 ASTBase *
 ASTBase::tmake(ASTBase *root, ...)
 {
-	va_list ap;
-	register ASTBase *child, *sibling=NULL, *tail=NULL /*MR23*/, *w;
+  va_list ap;
+  register ASTBase *child, *sibling=NULL, *tail=NULL /*MR23*/, *w;
 
-	va_start(ap, root);
+  va_start(ap, root);
 
-	if ( root != NULL )
-		if ( root->_down != NULL ) {  
+  if ( root != NULL )
+    if ( root->_down != NULL ) {
             root->reportOverwriteOfDownPointer();  /* MR21 Report problem which almost always an error */
             return NULL;
         }
-	child = va_arg(ap, ASTBase *);
-	while ( child != NULL )
-	{
-		for (w=child; w->_right!=NULL; w=w->_right) {;} /* find end of child */
-		if ( sibling == NULL ) {sibling = child; tail = w;}
-		else {tail->_right = child; tail = w;}
-		child = va_arg(ap, ASTBase *);
-	}
-	if ( root==NULL ) root = sibling;
-	else root->_down = sibling;
-	va_end(ap);
-	return root;
+  child = va_arg(ap, ASTBase *);
+  while ( child != NULL )
+  {
+    for (w=child; w->_right!=NULL; w=w->_right) {;} /* find end of child */
+    if ( sibling == NULL ) {sibling = child; tail = w;}
+    else {tail->_right = child; tail = w;}
+    child = va_arg(ap, ASTBase *);
+  }
+  if ( root==NULL ) root = sibling;
+  else root->_down = sibling;
+  va_end(ap);
+  return root;
 }
 
 #ifndef PCCTS_NOT_USING_SOR
@@ -161,25 +161,25 @@ ASTBase::tmake(ASTBase *root, ...)
 ASTBase *
 ASTBase::dup()
 {
-	ASTBase *u, *t=this;
-	
-	if ( t == NULL ) return NULL;
+  ASTBase *u, *t=this;
+
+  if ( t == NULL ) return NULL;
 /*
-	u = new ASTBase;
-	*u = *t;
+  u = new ASTBase;
+  *u = *t;
 */
-	u = (ASTBase *)this->shallowCopy();
-	if ( t->_right!=NULL ) u->_right = t->_right->dup();
-	else u->_right = NULL;
-	if ( t->_down!=NULL ) u->_down = t->_down->dup();
-	else u->_down = NULL;
-	return u;
+  u = (ASTBase *)this->shallowCopy();
+  if ( t->_right!=NULL ) u->_right = t->_right->dup();
+  else u->_right = NULL;
+  if ( t->_down!=NULL ) u->_down = t->_down->dup();
+  else u->_down = NULL;
+  return u;
 }
 #endif
 
 //
 //  7-Apr-97 133MR1
-//  	     Fix suggested by Asgeir Olafsson (olafsson@cstar.ac.com)
+//         Fix suggested by Asgeir Olafsson (olafsson@cstar.ac.com)
 //
 /* tree duplicate */
 
@@ -188,25 +188,25 @@ ASTBase::dup()
 ASTBase *
 ASTDoublyLinkedBase::dup()
 {
-	ASTDoublyLinkedBase *u, *t=this;
-	
-	if ( t == NULL ) return NULL;
-	u = (ASTDoublyLinkedBase *)this->shallowCopy();
-	u->_up = NULL;		/* set by calling invocation */
-	u->_left = NULL;
-	if (t->_right!=NULL) {						// MR1
-          u->_right=t->_right->dup();					// MR1
-	  ((ASTDoublyLinkedBase *)u->_right)->_left = u;		// MR1
-        } else {							// MR1
-	  u->_right = NULL;						// MR1
-        };								// MR1
-	if (t->_down!=NULL) {						// MR1
-  	  u->_down = t->_down->dup();					// MR1
-          ((ASTDoublyLinkedBase *)u->_down)->_up = u;			// MR1
-        } else {							// MR1
-	  u->_down = NULL;						// MR1
-        };								// MR1
-	return u;
+  ASTDoublyLinkedBase *u, *t=this;
+
+  if ( t == NULL ) return NULL;
+  u = (ASTDoublyLinkedBase *)this->shallowCopy();
+  u->_up = NULL;    /* set by calling invocation */
+  u->_left = NULL;
+  if (t->_right!=NULL) {            // MR1
+          u->_right=t->_right->dup();         // MR1
+    ((ASTDoublyLinkedBase *)u->_right)->_left = u;    // MR1
+        } else {              // MR1
+    u->_right = NULL;           // MR1
+        };                // MR1
+  if (t->_down!=NULL) {           // MR1
+      u->_down = t->_down->dup();         // MR1
+          ((ASTDoublyLinkedBase *)u->_down)->_up = u;     // MR1
+        } else {              // MR1
+    u->_down = NULL;            // MR1
+        };                // MR1
+  return u;
 }
 
 #endif
@@ -223,9 +223,9 @@ ASTDoublyLinkedBase::double_link(ASTBase *left, ASTBase *up)
     t->_left = (ASTDoublyLinkedBase *) left;
     t->_up = (ASTDoublyLinkedBase *) up;
     if (t->_down != NULL)
-		((ASTDoublyLinkedBase *)t->_down)->double_link(NULL, t);
+    ((ASTDoublyLinkedBase *)t->_down)->double_link(NULL, t);
     if (t->_right != NULL)
-		((ASTDoublyLinkedBase *)t->_right)->double_link(t, up);
+    ((ASTDoublyLinkedBase *)t->_right)->double_link(t, up);
 }
 
 // MR21 ASTBase::reportOverwriteOfDownPointer
@@ -239,18 +239,18 @@ void ASTBase::reportOverwriteOfDownPointer()
 
 void ASTBase::panic(const char *msg)
 {
-	/* MR23 */ printMessage(stderr,"ASTBase panic: %s\n", msg);
-	exit(PCCTS_EXIT_FAILURE);
+  printMessage(stderr,"ASTBase panic: %s\n", msg);
+  exit(1);
 }
 
 #ifdef PCCTS_NOT_USING_SOR
 //MR23
 int ASTBase::printMessage(FILE* pFile, const char* pFormat, ...)
 {
-	va_list marker;
-	va_start( marker, pFormat );
-  	int iRet = vfprintf(pFile, pFormat, marker);
-	va_end( marker );
-	return iRet;
+  va_list marker;
+  va_start( marker, pFormat );
+    int iRet = vfprintf(pFile, pFormat, marker);
+  va_end( marker );
+  return iRet;
 }
 #endif

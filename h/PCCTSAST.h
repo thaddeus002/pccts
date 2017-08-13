@@ -39,105 +39,104 @@ PCCTS_NAMESPACE_STD
 
 //class SList;
 
-#define StringScanMaxText	50
-#define MaxTreeStackDepth	400
+#define StringScanMaxText 50
+#define MaxTreeStackDepth 400
 
 //
-//  7-Apr-97 133MR1	signed int not accepted by AT&T cfront
+//  7-Apr-97 133MR1 signed int not accepted by AT&T cfront
 //
 typedef struct stringlexer {
-			int c;						// MR1
-			char *input;
-			char *p;
-			char text[StringScanMaxText];
-		} StringLexer;
+      int c;            // MR1
+      char *input;
+      char *p;
+      char text[StringScanMaxText];
+    } StringLexer;
 
 /* Define the structures needed for ast_scan() */
 typedef struct stringparser {
-			int token;
-			StringLexer *lexer;
-			int num_labels;
-		} StringParser;
+      int token;
+      StringLexer *lexer;
+      int num_labels;
+    } StringParser;
 
 typedef struct _scanast {
             struct _scanast *_right, *_down;
             int _token;
-			int label_num;
-			int type() { return _token; }
-			struct _scanast *right() { return _right; }
-			struct _scanast *down() { return _down; }
+      int label_num;
+      int type() { return _token; }
+      struct _scanast *right() { return _right; }
+      struct _scanast *down() { return _down; }
         } ScanAST;
 
-#define VALID_SCAN_TOKEN(t)		(t>=__LPAREN && t<=__PERIOD)
+#define VALID_SCAN_TOKEN(t)   (t>=__LPAREN && t<=__PERIOD)
 
 class DllExportPCCTS PCCTS_AST {
 protected:
-	static const char *scan_token_tbl[];    /* MR20 const */
-	enum {
-	__LPAREN=1,
-	__RPAREN=2,
-	__PERCENT=3,
-	__INT=4,
-	__COLON=5,
-	__POUND=6,
-	__PERIOD=7,
-	__StringScanEOF=-1};
+  static const char *scan_token_tbl[];    /* MR20 const */
+  enum {
+  __LPAREN=1,
+  __RPAREN=2,
+  __PERCENT=3,
+  __INT=4,
+  __COLON=5,
+  __POUND=6,
+  __PERIOD=7,
+  __StringScanEOF=-1};
 
 protected:
-	const char *scan_token_str(int t);  /* MR20 const */
-	void stringlexer_init(StringLexer *scanner, char *input);
-	void stringparser_init(StringParser *, StringLexer *);
-	ScanAST *stringparser_parse_scanast(char *templ, int *n);
-	ScanAST *stringparser_parse_tree(StringParser *parser);
-	ScanAST *stringparser_parse_element(StringParser *parser);
-	void stringscan_advance(StringLexer *scanner);
-	int stringscan_gettok(StringLexer *scanner);
-	void _push(PCCTS_AST **st, int *sp, PCCTS_AST *e);
-	PCCTS_AST *_pop(PCCTS_AST **st, int *sp);
-	int match_partial(PCCTS_AST *t, PCCTS_AST *u);
-	int scanmatch(ScanAST *t, PCCTS_AST **labels[], int *n);
-	void scanast_free(ScanAST *t);
-	ScanAST *new_scanast(int tok);
-	void stringparser_match(StringParser *parser, int type);
-	virtual PCCTS_AST *deepCopyBushy();
+  const char *scan_token_str(int t);  /* MR20 const */
+  void stringlexer_init(StringLexer *scanner, char *input);
+  void stringparser_init(StringParser *, StringLexer *);
+  ScanAST *stringparser_parse_scanast(char *templ, int *n);
+  ScanAST *stringparser_parse_tree(StringParser *parser);
+  ScanAST *stringparser_parse_element(StringParser *parser);
+  void stringscan_advance(StringLexer *scanner);
+  int stringscan_gettok(StringLexer *scanner);
+  void _push(PCCTS_AST **st, int *sp, PCCTS_AST *e);
+  PCCTS_AST *_pop(PCCTS_AST **st, int *sp);
+  int match_partial(PCCTS_AST *t, PCCTS_AST *u);
+  int scanmatch(ScanAST *t, PCCTS_AST **labels[], int *n);
+  void scanast_free(ScanAST *t);
+  ScanAST *new_scanast(int tok);
+  void stringparser_match(StringParser *parser, int type);
+  virtual PCCTS_AST *deepCopyBushy();
 
 public:
-	PCCTS_AST()	{;}
-	virtual ~PCCTS_AST() {;}
+  PCCTS_AST() {;}
+  virtual ~PCCTS_AST() {;}
 
-	/* This group must be defined for SORCERER to work correctly */
-	virtual PCCTS_AST *right() = 0;
-	virtual PCCTS_AST *down() = 0;
-	virtual void setRight(PCCTS_AST *t) = 0;
-	virtual void setDown(PCCTS_AST *t) = 0;
+  /* This group must be defined for SORCERER to work correctly */
+  virtual PCCTS_AST *right() = 0;
+  virtual PCCTS_AST *down() = 0;
+  virtual void setRight(PCCTS_AST *t) = 0;
+  virtual void setDown(PCCTS_AST *t) = 0;
 // we define these so ANTLR doesn't have to
-	virtual int type() { return 0; }
-	virtual void setType(int /*t MR23 */) {;}
-	virtual PCCTS_AST *shallowCopy() {panic("no shallowCopy() defined"); return NULL;}
+  virtual int type() { return 0; }
+  virtual void setType(int /*t MR23 */) {;}
+  virtual PCCTS_AST *shallowCopy() {panic("no shallowCopy() defined"); return NULL;}
 
-	/* These are not needed by ANTLR, but are support functions */
-	virtual PCCTS_AST *deepCopy();	// used by SORCERER in transform mode
-	virtual void addChild(PCCTS_AST *t);
-	virtual void lisp_action(FILE * /*f MR23 */) {;}
-	virtual void lisp(FILE *f);
-	static PCCTS_AST *make(PCCTS_AST *rt, ...);
-	virtual PCCTS_AST *ast_find_all(PCCTS_AST *u, PCCTS_AST **cursor);
-	virtual int match(PCCTS_AST *u);
-	virtual void insert_after(PCCTS_AST *b);
-	virtual void append(PCCTS_AST *b);
-	virtual PCCTS_AST *tail();
-	virtual PCCTS_AST *bottom();
-	static  PCCTS_AST *cut_between(PCCTS_AST *a, PCCTS_AST *b);
-//	virtual SList *to_slist();
-	virtual void tfree();
-	int ast_scan(char *templ, ...);
-	virtual int nsiblings();
-	virtual PCCTS_AST *sibling_index(int i);
+  /* These are not needed by ANTLR, but are support functions */
+  virtual PCCTS_AST *deepCopy();  // used by SORCERER in transform mode
+  virtual void addChild(PCCTS_AST *t);
+  virtual void lisp_action(FILE * /*f MR23 */) {;}
+  virtual void lisp(FILE *f);
+  static PCCTS_AST *make(PCCTS_AST *rt, ...);
+  virtual PCCTS_AST *ast_find_all(PCCTS_AST *u, PCCTS_AST **cursor);
+  virtual int match(PCCTS_AST *u);
+  virtual void insert_after(PCCTS_AST *b);
+  virtual void append(PCCTS_AST *b);
+  virtual PCCTS_AST *tail();
+  virtual PCCTS_AST *bottom();
+  static  PCCTS_AST *cut_between(PCCTS_AST *a, PCCTS_AST *b);
+  virtual void tfree();
+  int ast_scan(char *templ, ...);
+  virtual int nsiblings();
+  virtual PCCTS_AST *sibling_index(int i);
 
-	void require(int e,const char *err){ if ( !e ) panic(err); } /* MR20 const */
-	virtual void panic(const char *err)     // MR20 const
-		{ /* MR23 */ printMessage(stderr, "PCCTS_AST: %s\n", err); exit(PCCTS_EXIT_FAILURE); }
-	virtual int printMessage(FILE* pFile, const char* pFormat, ...); // MR23
+  void require(int e,const char *err){ if ( !e ) panic(err); } /* MR20 const */
+  virtual void panic(const char *err)     // MR20 const
+    { printMessage(stderr, "PCCTS_AST: %s\n", err); exit(1); }
+  virtual int printMessage(FILE* pFile, const char* pFormat, ...); // MR23
 };
 
 #endif /* PCCTSAST_H */
