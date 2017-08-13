@@ -28,6 +28,7 @@
  */
 
 #include "pcctscfg.h"
+#include "constants.h"
 
 #define MaxNumFiles     20
 #define MaxRuleName     100     /* largest rule name size */

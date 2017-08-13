@@ -35,6 +35,7 @@
 #include <stdio.h>
 #include "dlg.h"
 #include "stdpccts.h"
+#include "constants.h"
 
 char *version = "1.33MR33";
 int numfiles = 0;

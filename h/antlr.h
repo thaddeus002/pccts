@@ -79,7 +79,7 @@ typedef struct _zzjmp_buf {
     if ( zzasp <= 0 )                                           \
     {                                                           \
         fprintf(stderr, zzStackOvfMsg, __FILE__, __LINE__);   \
-        exit(PCCTS_EXIT_FAILURE);                                               \
+        exit(1);                                               \
     }
 
 #ifndef ZZA_STACKSIZE

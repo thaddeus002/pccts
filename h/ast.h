@@ -32,11 +32,11 @@
 #ifndef ZZAST_H
 #define ZZAST_H
 
-#define zzastOvfChk														\
-			if ( zzast_sp <= 0 )                                        \
+#define zzastOvfChk                           \
+      if ( zzast_sp <= 0 )                                        \
             {                                                           \
-                fprintf(stderr, zzStackOvfMsg, __FILE__, __LINE__);    	\
-                exit(PCCTS_EXIT_FAILURE);                                               \
+                fprintf(stderr, zzStackOvfMsg, __FILE__, __LINE__);     \
+                exit(1);                                               \
             }
 
 #ifndef USER_DEFINED_AST
@@ -64,24 +64,24 @@ typedef struct _ast {
 
 
 /* N o d e  a c c e s s  m a c r o s */
-#define zzchild(t)		(((t)==NULL)? (AST *) NULL:(t->down))   /* MR19 */
-#define zzsibling(t)	(((t)==NULL)? (AST *) NULL:(t->right))  /* MR19 */
+#define zzchild(t)    (((t)==NULL)? (AST *) NULL:(t->down))   /* MR19 */
+#define zzsibling(t)  (((t)==NULL)? (AST *) NULL:(t->right))  /* MR19 */
 
 
 /* define global variables needed by #i stack */
-#define zzASTgvars												\
-	AST *zzastStack[ZZAST_STACKSIZE];							\
-	int zzast_sp = ZZAST_STACKSIZE;
+#define zzASTgvars                        \
+  AST *zzastStack[ZZAST_STACKSIZE];             \
+  int zzast_sp = ZZAST_STACKSIZE;
 
-#define zzASTVars	AST *_ast = NULL, *_sibling = NULL, *_tail = NULL
-#define zzSTR		( (_tail==NULL)?(&_sibling):(&(_tail->right)) )
-#define zzastCur	(zzastStack[zzast_sp])
-#define zzastArg(i)	(zzastStack[zztsp-i])
+#define zzASTVars AST *_ast = NULL, *_sibling = NULL, *_tail = NULL
+#define zzSTR   ( (_tail==NULL)?(&_sibling):(&(_tail->right)) )
+#define zzastCur  (zzastStack[zzast_sp])
+#define zzastArg(i) (zzastStack[zztsp-i])
 #define zzastPush(p) zzastOvfChk; zzastStack[--zzast_sp] = p;
-#define zzastDPush	--zzast_sp
-#define zzastMARK	zztsp=zzast_sp;		/* Save state of stack */
-#define zzastREL	zzast_sp=zztsp;		/* Return state of stack */
-#define zzrm_ast	{zzfree_ast(*_root); _tail = _sibling = (*_root)=NULL;}
+#define zzastDPush  --zzast_sp
+#define zzastMARK zztsp=zzast_sp;   /* Save state of stack */
+#define zzastREL  zzast_sp=zztsp;   /* Return state of stack */
+#define zzrm_ast  {zzfree_ast(*_root); _tail = _sibling = (*_root)=NULL;}
 
 extern int zzast_sp;
 extern AST *zzastStack[];

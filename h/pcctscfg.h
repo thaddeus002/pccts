@@ -63,27 +63,16 @@
 #define ATOKPTR_H     "ATokPtr.h"
 #define ATOKPTR_IMPL_H    "ATokPtrImpl.h"
 #define ATOKENBUFFER_H    "ATokenBuffer.h"
-#define ATOKENBUFFER_C    "ATokenBuffer.cpp"
 #define ATOKENSTREAM_H    "ATokenStream.h"
 #define APARSER_H     "AParser.h"
-#define APARSER_C     "AParser.cpp"
 #define ASTBASE_H     "ASTBase.h"
-#define ASTBASE_C       "ASTBase.cpp"
-#define PCCTSAST_C      "PCCTSAST.cpp"
-#define LIST_C        "List.cpp"
 #define DLEXERBASE_H    "DLexerBase.h"
-#define DLEXERBASE_C    "DLexerBase.cpp"
 #define DLEXER_H      "DLexer.h"
-#define STREESUPPORT_C    "STreeSupport.cpp"
 
 /* SORCERER Stuff */
-
 #define STPARSER_H      "STreeParser.h"
-#define STPARSER_C      "STreeParser.cpp"
 
 #define CPP_FILE_SUFFIX   ".cpp"
-#define CPP_FILE_SUFFIX_NO_DOT  "cpp"
-#define OBJ_FILE_SUFFIX   ".o"
 
 /* User may redefine how line information looks */     /* make it #line MR7 */
 /* MR21 Use #ifndef */
@@ -98,18 +87,6 @@
 #define DirectorySymbol "/"
 #define OutputDirectoryOption "Directory where all output files should go (default=\".\")"
 
-
-#define PCCTS_EXIT_SUCCESS 0
-#define PCCTS_EXIT_FAILURE 1
-#define zzDIE   return 1;
-#define zzDONE  return 0;
-
-#ifdef USER_ZZMODE_STACK
-# ifndef ZZSTACK_MAX_MODE
-#  define  ZZSTACK_MAX_MODE 32
-# endif
-# define  ZZMAXSTK (ZZSTACK_MAX_MODE * 2)
-#endif
 
 #ifndef DllExportPCCTS
 #define DllExportPCCTS

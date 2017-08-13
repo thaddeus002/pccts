@@ -204,11 +204,8 @@ gen_hdr1( )
     gen_hdr();
   }
 
-  if ( GenCPP )
+  if ( ! GenCPP )
   {
-/*    fprintf(output, "#include \"%s\"\n", STREESUPPORT_C); */
-  }
-  else {
     /* make a func to init the ref vars with inits */
     fprintf(output, "\nvoid\n");
     fprintf(output, "#ifdef __USE_PROTOS\n");
