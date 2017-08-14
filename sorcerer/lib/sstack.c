@@ -27,52 +27,35 @@
  * 1992-1994
  */
 
-#include "pcctscfg.h"
+#include "constants.h"
 #include <stdio.h>
 #include <setjmp.h>
 
-#ifdef PCCTS_USE_STDARG
 #include <stdarg.h>
-#else
-#include <varargs.h>
-#endif
 
 #include "CASTBase.h"
 #include "sstack.h"
 
-void
-#ifdef __USE_PROTOS
-sstack_push( SStack **st, void *e )
-#else
-sstack_push( st, e )
-SStack **st;
-void *e;
-#endif
+void sstack_push( SStack **st, void *e )
 {
-	SStack *p;
-	require(e!=NULL, "sstack_push: attempting to add NULL list element");
+  SStack *p;
+  require(e!=NULL, "sstack_push: attempting to add NULL list element");
 
-	p = newSStack;
-	require(p!=NULL, "sstack_push: cannot alloc new list node");
-	p->elem = e;
-	p->next = *st;
-	*st = p;
+  p = newSStack;
+  require(p!=NULL, "sstack_push: cannot alloc new list node");
+  p->elem = e;
+  p->next = *st;
+  *st = p;
 }
 
-void *
-#ifdef __USE_PROTOS
-sstack_pop( SStack **st )
-#else
-sstack_pop( st )
-SStack **st;
-#endif
+void *sstack_pop( SStack **st )
 {
-	SStack *p = *st;
-	void *r;
+  SStack *p = *st;
+  void *r;
 
-	*st = (*st)->next;
-	r = p->elem;
-	free(p);
-	return r;
+  *st = (*st)->next;
+  r = p->elem;
+  free(p);
+  return r;
 }
 

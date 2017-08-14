@@ -27,38 +27,38 @@
  * 1992-2001
  */
 
-				/* H a s h  T a b l e  S t u f f */
+        /* H a s h  T a b l e  S t u f f */
 #ifndef __sorcerer_hash_h__
 #define __sorcerer_hash_h__
 
-#include "pcctscfg.h" /* MR20 G. Hobbelt - Use __USE_PROTOS */
+#include "constants.h"
 
 #ifndef HashTableSize
-#define HashTableSize	553
+#define HashTableSize 553
 #endif
 #ifndef StrTableSize
-#define StrTableSize	40000
+#define StrTableSize  40000
 #endif
 
-typedef struct _entry {		/* Minimum hash table entry -- superclass */
-			char *str;
-			struct _entry *next;
-		} Entry;
+typedef struct _entry {   /* Minimum hash table entry -- superclass */
+      char *str;
+      struct _entry *next;
+    } Entry;
 
 /* Hash 's' using 'size', place into h (s is modified) */
-#define Hash(s,h,size)								\
-	{while ( *s != '\0' ) h = (h<<1) + *s++;		\
-	h %= size;}
+#define Hash(s,h,size)                \
+  {while ( *s != '\0' ) h = (h<<1) + *s++;    \
+  h %= size;}
 
 #ifdef __USE_PROTOS
-Entry	*hash_get(Entry **, char *),
-		**newHashTable(void),
-		*hash_add(Entry **, char *, Entry *);
-char	*mystrdup(char *);
+Entry *hash_get(Entry **, char *),
+    **newHashTable(void),
+    *hash_add(Entry **, char *, Entry *);
+char  *mystrdup(char *);
 void hashStat( Entry ** );
 #else
 Entry *hash_get(), **newHashTable(), *hash_add();
-char	*mystrdup();
+char  *mystrdup();
 void hashStat();
 #endif
 

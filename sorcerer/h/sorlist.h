@@ -33,20 +33,14 @@
 #include "sorcerer.h"
 
 typedef struct _SList {
-			void *elem;			/* pointer to any kind of element */
-			struct _SList *next;
-		} SList;
+    void *elem;     /* pointer to any kind of element */
+    struct _SList *next;
+} SList;
 
-#define newSList	(SList *) calloc(1, sizeof(SList));
+#define newSList  (SList *) calloc(1, sizeof(SList));
 
-#ifdef __USE_PROTOS
 extern void *slist_iterate(SList *list, SList **);
 extern void slist_add( SList **list, void *e );
 extern void slist_free(SList *list);
-#else
-extern void *slist_iterate();
-extern void slist_add();
-extern void slist_free();
-#endif
 
 #endif

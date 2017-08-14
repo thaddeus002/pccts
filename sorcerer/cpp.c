@@ -28,7 +28,6 @@
  */
 #include "stdpccts.h"
 #include "sym.h"
-#include "pcctscfg.h"
 #include "constants.h"
 #include "proto.h"
 

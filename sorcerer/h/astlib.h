@@ -29,23 +29,21 @@
  * AHPCRC, University of Minnesota
  * 1992-1994
  */
+
 #include <setjmp.h>
 #include "sorcerer.h"
 #include "sorlist.h"
 
-#define MaxTreeStackDepth	400
+#define MaxTreeStackDepth 400
 
-/* MR26 */
 
 #ifdef PCCTS_USE_STDARG
 extern SORAST *ast_make(SORAST *rt, ...);
-extern int ast_scan(char *_template /* MR32 */, SORAST *tree, ...);
+extern int ast_scan(char *_template, SORAST *tree, ...);
 #else
 extern SORAST *ast_make();
 extern int ast_scan();
 #endif
-
-#ifdef __USE_PROTOS
 
 extern SORAST *ast_find_all(SORAST *t, SORAST *u, SORAST **cursor);
 extern int ast_match(SORAST *t, SORAST *u);
@@ -60,20 +58,5 @@ extern void ast_free(SORAST *t);
 extern int ast_nsiblings(SORAST *t);
 extern SORAST *ast_sibling_index(SORAST *t, int i);
 extern int ast_match_partial(SORAST *t, SORAST *u);
-#else
-extern SORAST *ast_find_all();
-extern int ast_match();
-extern void ast_insert_after();
-extern void ast_append();
-extern SORAST *ast_tail();
-extern SORAST *ast_bottom();
-extern SORAST *ast_cut_between();
-extern SList *ast_to_slist();
-extern SORAST *slist_to_ast();
-extern void ast_free();
-extern int ast_nsiblings();
-extern SORAST *ast_sibling_index();
-extern int ast_match_partial();
-#endif
 
 #endif

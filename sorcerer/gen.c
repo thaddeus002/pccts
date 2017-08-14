@@ -52,7 +52,6 @@
  *    o rules or alts with nocopy set don't construct trees.
  */
 
-#include "pcctscfg.h"
 #include "stdpccts.h"
 #include "constants.h"
 #include "sym.h"

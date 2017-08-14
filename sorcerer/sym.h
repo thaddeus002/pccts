@@ -27,18 +27,21 @@
  * 1992-2001
  */
 
-typedef struct _s {
-			char *str;
-			struct _s *next;
-			int token;			/* token number in {Token, NonTerm} */
-			int token_type;		/* if Token, what's its type */
-			ListNode *refs;		/* list of nodes that ref this rule */
-			AST *definition;	/* ptr into internal repr. of rule */
-			GLA *start_state;	/* ptr into internal repr. of rule */
-			GLA *end_rule;		/* ptr into internal repr. of rule */
-			char *args;			/* text of arguments */
-			char *rt;			/* text for return type */
-			char defined;		/* is this rule or label defined? */
-		} SymEntry;
+#include "ast.h"
+#include "sor.h"
 
-#define newSymEntry(s)		(SymEntry *) newEntry(s, sizeof(SymEntry))
+typedef struct _s {
+      char *str;
+      struct _s *next;
+      int token;      /* token number in {Token, NonTerm} */
+      int token_type;   /* if Token, what's its type */
+      ListNode *refs;   /* list of nodes that ref this rule */
+      AST *definition;  /* ptr into internal repr. of rule */
+      GLA *start_state; /* ptr into internal repr. of rule */
+      GLA *end_rule;    /* ptr into internal repr. of rule */
+      char *args;     /* text of arguments */
+      char *rt;     /* text for return type */
+      char defined;   /* is this rule or label defined? */
+    } SymEntry;
+
+#define newSymEntry(s)    (SymEntry *) newEntry(s, sizeof(SymEntry))

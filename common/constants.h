@@ -52,6 +52,7 @@
 
 #define TopDirectory  "."
 #define DirectorySymbol "/"
+#define CPP_FILE_SUFFIX   ".cpp"
 
 
 #define ATOKEN_H      "AToken.h"

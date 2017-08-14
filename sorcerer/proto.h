@@ -27,10 +27,13 @@
  * 1992-2001
  */
 
-				/* G l o b a l s */
+#include <stdio.h>
+#include "hash.h"
 
-extern char	*VersionNumber;
-extern char	*VersionText;
+        /* G l o b a l s */
+
+extern char *VersionNumber;
+extern char *VersionText;
 extern char *FileStr[];
 extern int  NumFiles;
 extern int  action_file;
@@ -50,22 +53,22 @@ extern int epsilon;
 extern int last_valid_token;
 extern char *OutputDirectory;
 extern ListNode *before_actions, *after_actions, *class_actions;
-extern char	translator[];
-extern char	tokdefs_file[];
+extern char translator[];
+extern char tokdefs_file[];
 extern char *header_action;
 extern struct _ast *rules;
 extern int print_guts;
 extern int transform;
 extern int found_guess_block;
 extern ListNode *token_list;
-extern char	*def_token_file;
+extern char *def_token_file;
 extern int def_tokens;
 extern int found_error;
 extern set referenced_tokens;
 extern int wild_card;
 extern int UserDefdTokens;
 extern int Inline;
-extern char	*Prefix;
+extern char *Prefix;
 extern int GenAnsiProtos;
 extern int GenKRProtos;
 extern FILE *ProtoFILE;
@@ -73,9 +76,9 @@ extern char *GenProtoFile;
 extern ListNode *RefVars;
 extern ListNode *AllRefVars;
 extern ListNode *AllGlobVars;
-extern char	CurRefVarType[];
-extern char	CurRefVarLabel[];
-extern char	CurClassName[];
+extern char CurRefVarType[];
+extern char CurRefVarLabel[];
+extern char CurClassName[];
 extern int GenCPP;
 extern int NoCtor; /* MR23 */
 

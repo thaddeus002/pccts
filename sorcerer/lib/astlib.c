@@ -28,7 +28,7 @@
  */
 
 #include <stdio.h>
-#include "pcctscfg.h"
+#include "constants.h"
 #include <ctype.h>
 
 #define SORCERER_TRANSFORM
@@ -44,68 +44,61 @@
 
                /* String Scanning/Parsing Stuff */
 
-#define StringScanMaxText	50
+#define StringScanMaxText 50
 
 typedef struct stringlexer {
 #ifdef __USE_PROTOS
-			signed int c;
+      signed int c;
 #else
-			int c;
+      int c;
 #endif
-			char *input;
-			char *p;
-			char text[StringScanMaxText];
-		} StringLexer;
+      char *input;
+      char *p;
+      char text[StringScanMaxText];
+    } StringLexer;
 
-#define LPAREN			1
-#define RPAREN			2
-#define PERCENT			3
-#define INT				4
-#define COLON			5
-#define POUND			6
-#define PERIOD			7
-#define StringScanEOF	-1
-#define VALID_SCAN_TOKEN(t)		(t>=LPAREN && t<=PERIOD)
+#define LPAREN      1
+#define RPAREN      2
+#define PERCENT     3
+#define INT       4
+#define COLON     5
+#define POUND     6
+#define PERIOD      7
+#define StringScanEOF -1
+#define VALID_SCAN_TOKEN(t)   (t>=LPAREN && t<=PERIOD)
 
 static char *scan_token_tbl[] = {
-	"invalid",	/*	0 */
-	"LPAREN",	/*	1 */
-	"RPAREN",	/*	2 */
-	"PERCENT",	/*	3 */
-	"INT",		/*	4 */
-	"COLON",	/*	5 */
-	"POUND",	/*	6 */
-	"PERIOD",	/*	7 */
+  "invalid",  /*  0 */
+  "LPAREN", /*  1 */
+  "RPAREN", /*  2 */
+  "PERCENT",  /*  3 */
+  "INT",    /*  4 */
+  "COLON",  /*  5 */
+  "POUND",  /*  6 */
+  "PERIOD", /*  7 */
 };
 
-char *
-#ifdef __USE_PROTOS
-scan_token_str(int t)
-#else
-scan_token_str(t)
-int t;
-#endif
+char *scan_token_str(int t)
 {
-	if ( VALID_SCAN_TOKEN(t) ) return scan_token_tbl[t];
-	else if ( t==StringScanEOF ) return "<end-of-string>";
-	else return "<invalid-token>";
+    if ( VALID_SCAN_TOKEN(t) ) return scan_token_tbl[t];
+    else if ( t==StringScanEOF ) return "<end-of-string>";
+    else return "<invalid-token>";
 }
 
 typedef struct stringparser {
-			int token;
-			StringLexer *lexer;
-			int num_labels;
-		} StringParser;
+    int token;
+    StringLexer *lexer;
+    int num_labels;
+} StringParser;
 
           /* This type ONLY USED by ast_scan() */
 
 typedef struct _scanast {
-            struct _scanast *right, *down;
-            int token;
-			int label_num;
-        } ScanAST;
+    struct _scanast *right, *down;
+    int token;
+    int label_num;
+} ScanAST;
 
-#ifdef __USE_PROTOS
 static void stringlexer_init(StringLexer *scanner, char *input);
 static void stringparser_init(StringParser *, StringLexer *);
 static ScanAST *stringparser_parse_scanast(char *templ, int *n);
@@ -113,15 +106,6 @@ static ScanAST *stringparser_parse_tree(StringParser *parser);
 static ScanAST *stringparser_parse_element(StringParser *parser);
 static void stringscan_advance(StringLexer *scanner);
 static int stringscan_gettok(StringLexer *scanner);
-#else
-static void stringlexer_init();
-static void stringparser_init();
-static ScanAST *stringparser_parse_scanast();
-static ScanAST *stringparser_parse_tree();
-static ScanAST *stringparser_parse_element();
-static void stringscan_advance();
-static int stringscan_gettok();
-#endif
 
 /* build a tree (root child1 child2 ... NULL)
  * If root is NULL, simply make the children siblings and return ptr
@@ -144,33 +128,33 @@ ast_make(va_alist)
 va_dcl
 #endif
 {
-	va_list ap;
-	register SORAST *child, *sibling=NULL, *tail = NULL, *w;
-	SORAST *root;
+  va_list ap;
+  register SORAST *child, *sibling=NULL, *tail = NULL, *w;
+  SORAST *root;
 
 #ifdef PCCTS_USE_STDARG
-	va_start(ap, rt);
-	root = rt;
+  va_start(ap, rt);
+  root = rt;
 #else
-	va_start(ap);
-	root = va_arg(ap, SORAST *);
+  va_start(ap);
+  root = va_arg(ap, SORAST *);
 #endif
 
-	if ( root != NULL )
-		if ( root->ast_down != NULL ) return NULL;
-	child = va_arg(ap, SORAST *);
-	while ( child != NULL )
-	{
-		/* find end of child */
-		for (w=child; w->ast_right!=NULL; w=w->ast_right) {;}
-		if ( sibling == NULL ) {sibling = child; tail = w;}
-		else {tail->ast_right = child; tail = w;}
-		child = va_arg(ap, SORAST *);
-	}
-	if ( root==NULL ) root = sibling;
-	else root->ast_down = sibling;
-	va_end(ap);
-	return root;
+  if ( root != NULL )
+    if ( root->ast_down != NULL ) return NULL;
+  child = va_arg(ap, SORAST *);
+  while ( child != NULL )
+  {
+    /* find end of child */
+    for (w=child; w->ast_right!=NULL; w=w->ast_right) {;}
+    if ( sibling == NULL ) {sibling = child; tail = w;}
+    else {tail->ast_right = child; tail = w;}
+    child = va_arg(ap, SORAST *);
+  }
+  if ( root==NULL ) root = sibling;
+  else root->ast_down = sibling;
+  va_end(ap);
+  return root;
 }
 
 /* The following push and pop routines are only used by ast_find_all() */
@@ -185,9 +169,9 @@ int *sp;
 SORAST *e;
 #endif
 {
-	(*sp)--;
-	require((*sp)>=0, "stack overflow");
-	st[(*sp)] = e;
+  (*sp)--;
+  require((*sp)>=0, "stack overflow");
+  st[(*sp)] = e;
 }
 
 static SORAST *
@@ -199,10 +183,10 @@ SORAST **st;
 int *sp;
 #endif
 {
-	SORAST *e = st[*sp];
-	(*sp)++;
-	require((*sp)<=MaxTreeStackDepth, "stack underflow");
-	return e;
+  SORAST *e = st[*sp];
+  (*sp)++;
+  require((*sp)<=MaxTreeStackDepth, "stack underflow");
+  return e;
 }
 
 /* Is 'u' a subtree of 't' beginning at the root? */
@@ -214,18 +198,18 @@ ast_match_partial(t, u)
 SORAST *t, *u;
 #endif
 {
-	SORAST *sib;
+  SORAST *sib;
 
-	if ( u==NULL ) return 1;
-	if ( t==NULL ) if ( u!=NULL ) return 0; else return 1;
+  if ( u==NULL ) return 1;
+  if ( t==NULL ) if ( u!=NULL ) return 0; else return 1;
 
-	for (sib=t; sib!=NULL&&u!=NULL; sib=sib->ast_right, u=u->ast_right)
-	{
-		if ( sib->token != u->token ) return 0;
-		if ( sib->ast_down!=NULL )
-			if ( !ast_match_partial(sib->ast_down, u->ast_down) ) return 0;
-	}
-	return 1;
+  for (sib=t; sib!=NULL&&u!=NULL; sib=sib->ast_right, u=u->ast_right)
+  {
+    if ( sib->token != u->token ) return 0;
+    if ( sib->ast_down!=NULL )
+      if ( !ast_match_partial(sib->ast_down, u->ast_down) ) return 0;
+  }
+  return 1;
 }
 
 /* Find all occurrences of u in t.
@@ -240,63 +224,63 @@ ast_find_all(t, u, cursor)
 SORAST *t, *u, **cursor;
 #endif
 {
-	SORAST *sib;
-	static SORAST *template_stack[MaxTreeStackDepth];
-	static int tsp = MaxTreeStackDepth;
+  SORAST *sib;
+  static SORAST *template_stack[MaxTreeStackDepth];
+  static int tsp = MaxTreeStackDepth;
 
-	if ( *cursor == NULL ) return NULL;
-	if ( *cursor!=t ) sib = *cursor;
-	else {
-		/* else, first time--start at top of template 't' */
-		tsp = MaxTreeStackDepth;
-		sib = t;
-		/* bottom of stack is always a NULL--"cookie" indicates "done" */
-		_push(template_stack, &tsp, NULL);
-	}
+  if ( *cursor == NULL ) return NULL;
+  if ( *cursor!=t ) sib = *cursor;
+  else {
+    /* else, first time--start at top of template 't' */
+    tsp = MaxTreeStackDepth;
+    sib = t;
+    /* bottom of stack is always a NULL--"cookie" indicates "done" */
+    _push(template_stack, &tsp, NULL);
+  }
 
 keep_looking:
-	if ( sib==NULL )	/* hit end of sibling list */
-	{
-		sib = _pop(template_stack, &tsp);
-		if ( sib == NULL ) { *cursor = NULL; return NULL; }
-	}
+  if ( sib==NULL )  /* hit end of sibling list */
+  {
+    sib = _pop(template_stack, &tsp);
+    if ( sib == NULL ) { *cursor = NULL; return NULL; }
+  }
 
-	if ( sib->token != u->token )
-	{
-		/* look for another match */
-		if ( sib->ast_down!=NULL )
-		{
-			if ( sib->ast_right!=NULL ) _push(template_stack, &tsp, sib->ast_right);
-			sib=sib->ast_down;
-			goto keep_looking;
-		}
-		/* nothing below to try, try next sibling */
-		sib=sib->ast_right;
-		goto keep_looking;
-	}
+  if ( sib->token != u->token )
+  {
+    /* look for another match */
+    if ( sib->ast_down!=NULL )
+    {
+      if ( sib->ast_right!=NULL ) _push(template_stack, &tsp, sib->ast_right);
+      sib=sib->ast_down;
+      goto keep_looking;
+    }
+    /* nothing below to try, try next sibling */
+    sib=sib->ast_right;
+    goto keep_looking;
+  }
 
-	/* found a matching root node, try to match what's below */
-	if ( ast_match_partial(sib, u) )
-	{
-		/* record sibling cursor so we can pick up next from there */
-		if ( sib->ast_down!=NULL )
-		{
-			if ( sib->ast_right!=NULL ) _push(template_stack, &tsp, sib->ast_right);
-			*cursor = sib->ast_down;
-		}
-		else if ( sib->ast_right!=NULL ) *cursor = sib->ast_right;
-		else *cursor = _pop(template_stack, &tsp);
-		return sib;
-	}
+  /* found a matching root node, try to match what's below */
+  if ( ast_match_partial(sib, u) )
+  {
+    /* record sibling cursor so we can pick up next from there */
+    if ( sib->ast_down!=NULL )
+    {
+      if ( sib->ast_right!=NULL ) _push(template_stack, &tsp, sib->ast_right);
+      *cursor = sib->ast_down;
+    }
+    else if ( sib->ast_right!=NULL ) *cursor = sib->ast_right;
+    else *cursor = _pop(template_stack, &tsp);
+    return sib;
+  }
 
-	/* no match, keep searching */
-	if ( sib->ast_down!=NULL )
-	{
-		if ( sib->ast_right!=NULL ) _push(template_stack, &tsp, sib->ast_right);
-		sib=sib->ast_down;
-	}
-	else sib = sib->ast_right;	/* else, try to right if zip below */
-	goto keep_looking;
+  /* no match, keep searching */
+  if ( sib->ast_down!=NULL )
+  {
+    if ( sib->ast_right!=NULL ) _push(template_stack, &tsp, sib->ast_right);
+    sib=sib->ast_down;
+  }
+  else sib = sib->ast_right;  /* else, try to right if zip below */
+  goto keep_looking;
 }
 
 /* are two trees exactly alike? */
@@ -308,18 +292,18 @@ ast_match(t, u)
 SORAST *t, *u;
 #endif
 {
-	SORAST *sib;
+  SORAST *sib;
 
-	if ( t==NULL ) if ( u!=NULL ) return 0; else return 1;
-	if ( u==NULL ) return 0;
+  if ( t==NULL ) if ( u!=NULL ) return 0; else return 1;
+  if ( u==NULL ) return 0;
 
-	for (sib=t; sib!=NULL&&u!=NULL; sib=sib->ast_right, u=u->ast_right)
-	{
-		if ( sib->token != u->token ) return 0;
-		if ( sib->ast_down!=NULL )
-			if ( !ast_match(sib->ast_down, u->ast_down) ) return 0;
-	}
-	return 1;
+  for (sib=t; sib!=NULL&&u!=NULL; sib=sib->ast_right, u=u->ast_right)
+  {
+    if ( sib->token != u->token ) return 0;
+    if ( sib->ast_down!=NULL )
+      if ( !ast_match(sib->ast_down, u->ast_down) ) return 0;
+  }
+  return 1;
 }
 
 static int
@@ -333,27 +317,27 @@ SORAST **labels[];
 int *n;
 #endif
 {
-	ScanAST *sib;
+  ScanAST *sib;
 
-	if ( t==NULL ) if ( u!=NULL ) return 0; else return 1;
-	if ( u==NULL ) return 0;
+  if ( t==NULL ) if ( u!=NULL ) return 0; else return 1;
+  if ( u==NULL ) return 0;
 
-	for (sib=t; sib!=NULL&&u!=NULL; sib=sib->right, u=u->ast_right)
-	{
-		/* make sure tokens match; token of '0' means wildcard match */
-		if ( sib->token != u->token && sib->token!=0 ) return 0;
-		/* we have a matched token here; set label pointers if exists */
-		if ( sib->label_num>0 )
-		{
-			require(labels!=NULL, "label found in template, but no array of labels");
-			(*n)++;
-			*(labels[sib->label_num-1]) = u;
-		}
-		/* match what's below if something there and current node is not wildcard */
-		if ( sib->down!=NULL && sib->token!=0 )
-			if ( !ast_scanmatch(sib->down, u->ast_down, labels, n) ) return 0;
-	}
-	return 1;
+  for (sib=t; sib!=NULL&&u!=NULL; sib=sib->right, u=u->ast_right)
+  {
+    /* make sure tokens match; token of '0' means wildcard match */
+    if ( sib->token != u->token && sib->token!=0 ) return 0;
+    /* we have a matched token here; set label pointers if exists */
+    if ( sib->label_num>0 )
+    {
+      require(labels!=NULL, "label found in template, but no array of labels");
+      (*n)++;
+      *(labels[sib->label_num-1]) = u;
+    }
+    /* match what's below if something there and current node is not wildcard */
+    if ( sib->down!=NULL && sib->token!=0 )
+      if ( !ast_scanmatch(sib->down, u->ast_down, labels, n) ) return 0;
+  }
+  return 1;
 }
 
 void
@@ -364,13 +348,13 @@ ast_insert_after(a, b)
 SORAST *a,*b;
 #endif
 {
-	SORAST *end;
-	require(a!=NULL, "ast_insert_after: NULL input tree");
-	if ( b==NULL ) return;
-	/* find end of b's child list */
-	for (end=b; end->ast_right!=NULL; end=end->ast_right) {;}
-	end->ast_right = a->ast_right;
-	a->ast_right = b;
+  SORAST *end;
+  require(a!=NULL, "ast_insert_after: NULL input tree");
+  if ( b==NULL ) return;
+  /* find end of b's child list */
+  for (end=b; end->ast_right!=NULL; end=end->ast_right) {;}
+  end->ast_right = a->ast_right;
+  a->ast_right = b;
 }
 
 void
@@ -381,11 +365,11 @@ ast_append(a, b)
 SORAST *a,*b;
 #endif
 {
-	SORAST *end;
-	require(a!=NULL&&b!=NULL, "ast_append: NULL input tree");
-	/* find end of child list */
-	for (end=a; end->ast_right!=NULL; end=end->ast_right) {;}
-	end->ast_right = b;
+  SORAST *end;
+  require(a!=NULL&&b!=NULL, "ast_append: NULL input tree");
+  /* find end of child list */
+  for (end=a; end->ast_right!=NULL; end=end->ast_right) {;}
+  end->ast_right = b;
 }
 
 SORAST *
@@ -396,11 +380,11 @@ ast_tail(a)
 SORAST *a;
 #endif
 {
-	SORAST *end;
-	require(a!=NULL, "ast_tail: NULL input tree");
-	/* find end of child list */
-	for (end=a; end->ast_right!=NULL; end=end->ast_right) {;}
-	return end;
+  SORAST *end;
+  require(a!=NULL, "ast_tail: NULL input tree");
+  /* find end of child list */
+  for (end=a; end->ast_right!=NULL; end=end->ast_right) {;}
+  return end;
 }
 
 SORAST *
@@ -411,11 +395,11 @@ ast_bottom(a)
 SORAST *a;
 #endif
 {
-	SORAST *end;
-	require(a!=NULL, "ast_bottom: NULL input tree");
-	/* find end of child list */
-	for (end=a; end->ast_down!=NULL; end=end->ast_down) {;}
-	return end;
+  SORAST *end;
+  require(a!=NULL, "ast_bottom: NULL input tree");
+  /* find end of child list */
+  for (end=a; end->ast_down!=NULL; end=end->ast_down) {;}
+  return end;
 }
 
 SORAST *
@@ -426,16 +410,16 @@ ast_cut_between(a, b)
 SORAST *a,*b;
 #endif
 {
-	SORAST *end, *ret;
-	require(a!=NULL&&b!=NULL, "ast_cut_between: NULL input tree");
-	/* find node pointing to b */
-	for (end=a; end->ast_right!=NULL&&end->ast_right!=b; end=end->ast_right)
-		{;}
-	require(end->ast_right!=NULL, "ast_cut_between: a,b not connected");
-	end->ast_right = NULL;	/* don't want it point to 'b' anymore */
-	ret = a->ast_right;
-	a->ast_right = b;
-	return ret;
+  SORAST *end, *ret;
+  require(a!=NULL&&b!=NULL, "ast_cut_between: NULL input tree");
+  /* find node pointing to b */
+  for (end=a; end->ast_right!=NULL&&end->ast_right!=b; end=end->ast_right)
+    {;}
+  require(end->ast_right!=NULL, "ast_cut_between: a,b not connected");
+  end->ast_right = NULL;  /* don't want it point to 'b' anymore */
+  ret = a->ast_right;
+  a->ast_right = b;
+  return ret;
 }
 
 SList *
@@ -446,14 +430,14 @@ ast_to_slist(t)
 SORAST *t;
 #endif
 {
-	SList *list=NULL;
-	SORAST *p;
+  SList *list=NULL;
+  SORAST *p;
 
-	for (p=t; p!=NULL; p=p->ast_right)
-	{
-		slist_add(&list, p);
-	}
-	return list;
+  for (p=t; p!=NULL; p=p->ast_right)
+  {
+    slist_add(&list, p);
+  }
+  return list;
 }
 
 SORAST *
@@ -464,16 +448,16 @@ slist_to_ast(list)
 SList *list;
 #endif
 {
-	SORAST *t=NULL, *last=NULL;
-	SList *p;
+  SORAST *t=NULL, *last=NULL;
+  SList *p;
 
-	for (p = list->next; p!=NULL; p=p->next)
-	{
-		SORAST *u = (SORAST *)p->elem;
-		if ( last==NULL ) last = t = u;
-		else { last->ast_right = u; last = u; }
-	}
-	return t;
+  for (p = list->next; p!=NULL; p=p->next)
+  {
+    SORAST *u = (SORAST *)p->elem;
+    if ( last==NULL ) last = t = u;
+    else { last->ast_right = u; last = u; }
+  }
+  return t;
 }
 
 void
@@ -498,14 +482,14 @@ ast_nsiblings(t)
 SORAST *t;
 #endif
 {
-	int n=0;
+  int n=0;
 
-	while ( t!=NULL )
-	{
-		n++;
-		t = t->ast_right;
-	}
-	return n;
+  while ( t!=NULL )
+  {
+    n++;
+    t = t->ast_right;
+  }
+  return n;
 }
 
 SORAST *
@@ -517,16 +501,16 @@ SORAST *t;
 int i;
 #endif
 {
-	int j=1;
-	require(i>0, "ast_sibling_index: i<=0");
+  int j=1;
+  require(i>0, "ast_sibling_index: i<=0");
 
-	while ( t!=NULL )
-	{
-		if ( j==i ) return t;
-		j++;
-		t = t->ast_right;
-	}
-	return NULL;
+  while ( t!=NULL )
+  {
+    if ( j==i ) return t;
+    j++;
+    t = t->ast_right;
+  }
+  return NULL;
 }
 
 static void
@@ -556,8 +540,8 @@ ScanAST *t;
  *
  * Naturally, you'd want this converted from
  *
- *	 ast_scan("#( RangeOp #(Minus %1:IConst %2:Var) #(Plus %3:Var %4Var) )",
- *			  t, &w, &x, &y, &z);
+ *   ast_scan("#( RangeOp #(Minus %1:IConst %2:Var) #(Plus %3:Var %4Var) )",
+ *        t, &w, &x, &y, &z);
  *
  * by SORCERER.
  *
@@ -580,44 +564,44 @@ ast_scan(va_alist)
 va_dcl
 #endif
 {
-	va_list ap;
-	ScanAST *t;
-	int n, i, found=0;
-	SORAST ***label_ptrs=NULL;
+  va_list ap;
+  ScanAST *t;
+  int n, i, found=0;
+  SORAST ***label_ptrs=NULL;
 
 #ifdef PCCTS_USE_STDARG
-	va_start(ap, tree);
+  va_start(ap, tree);
 #else
-	char *templ;
-	SORAST *tree;
+  char *templ;
+  SORAST *tree;
 
-	va_start(ap);
-	templ = va_arg(ap, char *);
-	tree = va_arg(ap, SORAST *);
+  va_start(ap);
+  templ = va_arg(ap, char *);
+  tree = va_arg(ap, SORAST *);
 #endif
 
-	/* make a ScanAST tree out of the template */
-	t = stringparser_parse_scanast(templ, &n);
+  /* make a ScanAST tree out of the template */
+  t = stringparser_parse_scanast(templ, &n);
 
-	/* make an array out of the labels */
-	if ( n>0 )
-	{
-		label_ptrs = (SORAST ***) calloc(n, sizeof(SORAST **));
-		require(label_ptrs!=NULL, "ast_scan: out of memory");
-		for (i=1; i<=n; i++)
-		{
-			label_ptrs[i-1] = va_arg(ap, SORAST **);
-			*(label_ptrs[i-1]) = NULL;
-		}
-	}
+  /* make an array out of the labels */
+  if ( n>0 )
+  {
+    label_ptrs = (SORAST ***) calloc(n, sizeof(SORAST **));
+    require(label_ptrs!=NULL, "ast_scan: out of memory");
+    for (i=1; i<=n; i++)
+    {
+      label_ptrs[i-1] = va_arg(ap, SORAST **);
+      *(label_ptrs[i-1]) = NULL;
+    }
+  }
 
-	/* match the input tree against the template */
-	ast_scanmatch(t, tree, label_ptrs, &found);
+  /* match the input tree against the template */
+  ast_scanmatch(t, tree, label_ptrs, &found);
 
-	scanast_free(t);
-	free(label_ptrs);
+  scanast_free(t);
+  free(label_ptrs);
 
-	return found;
+  return found;
 }
 
 static ScanAST *
@@ -630,8 +614,8 @@ int tok;
 {
     ScanAST *p = (ScanAST *) calloc(1, sizeof(ScanAST));
     if ( p == NULL ) {fprintf(stderr, "out of mem\n"); exit(-1);}
-	p->token = tok;
-	return p;
+  p->token = tok;
+  return p;
 }
 
 static ScanAST *
@@ -643,15 +627,15 @@ char *templ;
 int *num_labels;
 #endif
 {
-	StringLexer lex;
-	StringParser parser;
-	ScanAST *t;
+  StringLexer lex;
+  StringParser parser;
+  ScanAST *t;
 
-	stringlexer_init(&lex, templ);
-	stringparser_init(&parser, &lex);
-	t = stringparser_parse_tree(&parser);
-	*num_labels = parser.num_labels;
-	return t;
+  stringlexer_init(&lex, templ);
+  stringparser_init(&parser, &lex);
+  t = stringparser_parse_tree(&parser);
+  *num_labels = parser.num_labels;
+  return t;
 }
 
 static void
@@ -663,14 +647,14 @@ StringParser *parser;
 int token;
 #endif
 {
-	if ( parser->token != token ) sorcerer_panic("bad tree in ast_scan()");
+  if ( parser->token != token ) sorcerer_panic("bad tree in ast_scan()");
 }
 
 /*
  * Match a tree of the form:
- *		(root child1 child2 ... childn)
+ *    (root child1 child2 ... childn)
  * or,
- *		node
+ *    node
  *
  * where the elements are integers or labeled integers.
  */
@@ -682,27 +666,27 @@ stringparser_parse_tree(parser)
 StringParser *parser;
 #endif
 {
-	ScanAST *t=NULL, *root, *child, *last = NULL;
+  ScanAST *t=NULL, *root, *child, *last = NULL;
 
-	if ( parser->token != POUND )
-	{
-		return stringparser_parse_element(parser);
-	}
-	stringparser_match(parser,POUND);
-	parser->token = stringscan_gettok(parser->lexer);
-	stringparser_match(parser,LPAREN);
-	parser->token = stringscan_gettok(parser->lexer);
-	root = stringparser_parse_element(parser);
-	while ( parser->token != RPAREN )
-	{
-		child = stringparser_parse_element(parser);
-		if ( t==NULL ) { t = child; last = t; }
-		else { last->right = child; last = child; }
-	}
-	stringparser_match(parser,RPAREN);
-	parser->token = stringscan_gettok(parser->lexer);
-	root->down = t;
-	return root;
+  if ( parser->token != POUND )
+  {
+    return stringparser_parse_element(parser);
+  }
+  stringparser_match(parser,POUND);
+  parser->token = stringscan_gettok(parser->lexer);
+  stringparser_match(parser,LPAREN);
+  parser->token = stringscan_gettok(parser->lexer);
+  root = stringparser_parse_element(parser);
+  while ( parser->token != RPAREN )
+  {
+    child = stringparser_parse_element(parser);
+    if ( t==NULL ) { t = child; last = t; }
+    else { last->right = child; last = child; }
+  }
+  stringparser_match(parser,RPAREN);
+  parser->token = stringscan_gettok(parser->lexer);
+  root->down = t;
+  return root;
 }
 
 static ScanAST *
@@ -713,43 +697,43 @@ stringparser_parse_element(parser)
 StringParser *parser;
 #endif
 {
-	static char ebuf[100];
-	int label = 0;
+  static char ebuf[100];
+  int label = 0;
 
-	if ( parser->token == POUND )
-	{
-		return stringparser_parse_tree(parser);
-	}
-	if ( parser->token == PERCENT )
-	{
-		parser->token = stringscan_gettok(parser->lexer);
-		stringparser_match(parser,INT);
-		label = atoi(parser->lexer->text);
-		parser->num_labels++;
-		if ( label==0 ) sorcerer_panic("%%0 is an invalid label");
-		parser->token = stringscan_gettok(parser->lexer);
-		stringparser_match(parser,COLON);
-		parser->token = stringscan_gettok(parser->lexer);
-		/* can label tokens and wildcards */
-		if ( parser->token != INT && parser->token != PERIOD )
-			sorcerer_panic("can only label tokens");
-	}
-	if ( parser->token == INT )
-	{
-		ScanAST *p = new_scanast(atoi(parser->lexer->text));
-		parser->token = stringscan_gettok(parser->lexer);
-		p->label_num = label;
-		return p;
-	}
-	if ( parser->token == PERIOD )
-	{
-		ScanAST *p = new_scanast(0);	/* token of 0 is wildcard */
-		parser->token = stringscan_gettok(parser->lexer);
-		p->label_num = label;
-		return p;
-	}
-	sprintf(ebuf, "mismatch token in ast_scan(): %s", scan_token_str(parser->token));
-	sorcerer_panic(ebuf);
+  if ( parser->token == POUND )
+  {
+    return stringparser_parse_tree(parser);
+  }
+  if ( parser->token == PERCENT )
+  {
+    parser->token = stringscan_gettok(parser->lexer);
+    stringparser_match(parser,INT);
+    label = atoi(parser->lexer->text);
+    parser->num_labels++;
+    if ( label==0 ) sorcerer_panic("%%0 is an invalid label");
+    parser->token = stringscan_gettok(parser->lexer);
+    stringparser_match(parser,COLON);
+    parser->token = stringscan_gettok(parser->lexer);
+    /* can label tokens and wildcards */
+    if ( parser->token != INT && parser->token != PERIOD )
+      sorcerer_panic("can only label tokens");
+  }
+  if ( parser->token == INT )
+  {
+    ScanAST *p = new_scanast(atoi(parser->lexer->text));
+    parser->token = stringscan_gettok(parser->lexer);
+    p->label_num = label;
+    return p;
+  }
+  if ( parser->token == PERIOD )
+  {
+    ScanAST *p = new_scanast(0);  /* token of 0 is wildcard */
+    parser->token = stringscan_gettok(parser->lexer);
+    p->label_num = label;
+    return p;
+  }
+  sprintf(ebuf, "mismatch token in ast_scan(): %s", scan_token_str(parser->token));
+  sorcerer_panic(ebuf);
     return NULL; /* MR20 make -Wall happy */
 }
 
@@ -762,9 +746,9 @@ StringParser *parser;
 StringLexer *input;
 #endif
 {
-	parser->lexer = input;
-	parser->token = stringscan_gettok(parser->lexer);
-	parser->num_labels = 0;
+  parser->lexer = input;
+  parser->token = stringscan_gettok(parser->lexer);
+  parser->num_labels = 0;
 }
 
 static void
@@ -776,10 +760,10 @@ StringLexer *scanner;
 char *input;
 #endif
 {
-	scanner->text[0]='\0';
-	scanner->input = input;
-	scanner->p = input;
-	stringscan_advance(scanner);
+  scanner->text[0]='\0';
+  scanner->input = input;
+  scanner->p = input;
+  stringscan_advance(scanner);
 }
 
 static void
@@ -790,8 +774,8 @@ stringscan_advance(scanner)
 StringLexer *scanner;
 #endif
 {
-	if ( *(scanner->p) == '\0' ) scanner->c = StringScanEOF;
-	scanner->c = *(scanner->p)++;
+  if ( *(scanner->p) == '\0' ) scanner->c = StringScanEOF;
+  scanner->c = *(scanner->p)++;
 }
 
 static int
@@ -802,33 +786,33 @@ stringscan_gettok(scanner)
 StringLexer *scanner;
 #endif
 {
-	char *index = &scanner->text[0];
-	static char ebuf[100];
+  char *index = &scanner->text[0];
+  static char ebuf[100];
 
-	while ( isspace(scanner->c) ) { stringscan_advance(scanner); }
-	if ( isdigit(scanner->c) )
-	{
-		int tok = INT;
-		while ( isdigit(scanner->c) ) {
-			*index++ = scanner->c;
-			stringscan_advance(scanner);
-		}
-		*index = '\0';
-		return tok;
-	}
-	switch ( scanner->c )
-	{
-		case '#' : stringscan_advance(scanner); return POUND;
-		case '(' : stringscan_advance(scanner); return LPAREN;
-		case ')' : stringscan_advance(scanner); return RPAREN;
-		case '%' : stringscan_advance(scanner); return PERCENT;
-		case ':' : stringscan_advance(scanner); return COLON;
-		case '.' : stringscan_advance(scanner); return PERIOD;
-		case '\0' : return StringScanEOF;
-		case StringScanEOF : return StringScanEOF;
-		default  :
-			sprintf(ebuf, "invalid char in ast_scan: '%c'", scanner->c);
-			sorcerer_panic(ebuf);
+  while ( isspace(scanner->c) ) { stringscan_advance(scanner); }
+  if ( isdigit(scanner->c) )
+  {
+    int tok = INT;
+    while ( isdigit(scanner->c) ) {
+      *index++ = scanner->c;
+      stringscan_advance(scanner);
+    }
+    *index = '\0';
+    return tok;
+  }
+  switch ( scanner->c )
+  {
+    case '#' : stringscan_advance(scanner); return POUND;
+    case '(' : stringscan_advance(scanner); return LPAREN;
+    case ')' : stringscan_advance(scanner); return RPAREN;
+    case '%' : stringscan_advance(scanner); return PERCENT;
+    case ':' : stringscan_advance(scanner); return COLON;
+    case '.' : stringscan_advance(scanner); return PERIOD;
+    case '\0' : return StringScanEOF;
+    case StringScanEOF : return StringScanEOF;
+    default  :
+      sprintf(ebuf, "invalid char in ast_scan: '%c'", scanner->c);
+      sorcerer_panic(ebuf);
             return 0; /* MR20 Make -Wall happy */
-	}
+  }
 }

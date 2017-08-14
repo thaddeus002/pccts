@@ -27,8 +27,11 @@
  * 1992-2001
  */
 
-#include "pcctscfg.h"
+#ifndef __SOR_H__
+#define __SOR_H__
+
 #include "constants.h"
+#include "set.h"
 
 #define MaxNumFiles     20
 #define MaxRuleName     100     /* largest rule name size */
@@ -118,4 +121,6 @@ typedef struct _nfa {
 
 #ifndef require
 #define require(expr, err) {if ( !(expr) ) fatal(err);}
+#endif
+
 #endif

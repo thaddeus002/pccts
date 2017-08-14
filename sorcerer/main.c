@@ -26,12 +26,15 @@
  * AHPCRC, University of Minnesota
  * 1992-2001
  */
-#include "pcctscfg.h"
-#include "stdpccts.h"
+
+
 #include "constants.h"
 #include "sym.h"
 #include "proto.h"
+#include "hash.h"
 #include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
 
 #define MAX_INT_STACK 50
 static int istack[MAX_INT_STACK];       /* Int stack */

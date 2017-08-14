@@ -53,8 +53,6 @@
 #include "pccts_stdlib.h"
 
 
-#define CPP_FILE_SUFFIX   ".cpp"
-
 /* User may redefine how line information looks */     /* make it #line MR7 */
 /* MR21 Use #ifndef */
 
