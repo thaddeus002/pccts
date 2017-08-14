@@ -10,7 +10,7 @@
  */
 
 #define ANTLR_VERSION 13333
-#include "pcctscfg.h"
+#include "constants.h"
 #include <stdio.h>
 
 #include <ctype.h>
@@ -20,12 +20,7 @@
 #include "dlgdef.h"
 LOOKAHEAD
 
-void
-#ifdef __USE_PROTOS
-zzerraction(void)
-#else
-zzerraction()
-#endif
+void zzerraction()
 {
   (*zzerr)("invalid token");
   zzadvance();

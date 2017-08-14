@@ -32,10 +32,6 @@
  * 1989-1995
  */
 
-/* MR1                  */
-/* MR1 10-Apr-97 MR1  Replace #if logic with #include "pcctscfg.h"  */
-/* MR1                  */
-
 #header <<
   #include <ctype.h>
   #include "hash.h"

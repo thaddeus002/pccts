@@ -11,7 +11,7 @@
  */
 
 #define ANTLR_VERSION 13333
-#include "pcctscfg.h"
+#include "constants.h"
 #include <stdio.h>
 
 #include <ctype.h>

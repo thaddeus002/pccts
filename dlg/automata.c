@@ -1,5 +1,4 @@
-/* Automata conversion functions for DLG
- *
+/*
  * SOFTWARE RIGHTS
  *
  * We reserve no LEGAL rights to the Purdue Compiler Construction Tool
@@ -26,15 +25,16 @@
  * 1989-2001
  */
 
+/**
+ * Automata conversion functions for DLG
+ */
+
 #include <stdio.h>
-#include "pcctscfg.h"
+#include <stdlib.h>
+
+#include "constants.h"
 #include "dlg.h"
 
-#ifdef __STDC__
-#include <stdlib.h>
-#else
-#include <malloc.h>
-#endif /* __STDC__ */
 
 #define hash_list struct _hash_list_
 hash_list{

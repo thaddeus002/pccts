@@ -1,5 +1,4 @@
-/* dlg header file
- *
+/*
  * SOFTWARE RIGHTS
  *
  * We reserve no LEGAL rights to the Purdue Compiler Construction Tool
@@ -26,20 +25,13 @@
  * 1989-2001
  */
 
-/* MR1 Move pcctscfg.h to top of file */
+/**
+ * dlg header file
+ */
 
-#include "pcctscfg.h"
-
-/* turn off warnings for unreferenced labels */
-
-#ifdef _MSC_VER
-#pragma warning(disable:4102)
-#endif
-
+#include "constants.h"
 #include "set.h"
 
-#define TRUE  1
-#define FALSE 0
 
 /***** output related stuff *******************/
 #define IN  input_stream
@@ -92,11 +84,6 @@ dfa_node {
 #define DFA(x)  (dfa_array[x])
 #define DFA_NO(x) ( (x) ? (x)->node_no : NIL_INDEX)
 #define NFA_NO(x) ( (x) ? (x)->node_no : NIL_INDEX)
-
-/******** wrapper for memory checking ***/
-/*#define malloc(x) dlg_malloc((x),__FILE__,__LINE__)*/
-
-/*#define calloc(x,y) dlg_calloc((x),(y),__FILE__,__LINE__)*/
 
 /******** antlr attributes *************/
 typedef struct {
