@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #include <iostream>
 
-#include "config.h"         /* include token defs */
+#include "pcctscfg.h"         /* include token defs */
 #include "mytokens.h"       /* include token defs */
 #include "AParser.h"        /* include all the ANTLR yuck */
 #include "MyLexer.h"        /* define your lexer */

@@ -1,6 +1,3 @@
-#ifndef PBLACKBOX_H
-#define PBLACKBOX_H
-
 /*
  * SOFTWARE RIGHTS
  *
@@ -29,15 +26,22 @@
  * 1989-2000
  */
 
+
+/**
+ * \file PBlackBox.h
+ * \brief Define class ParserBlackBox
+ */
+
+#ifndef PBLACKBOX_H
+#define PBLACKBOX_H
+
+
 /* Completely rewritten by Chris Uzdavinis (chris@atdesk.com) for MR23 */
 
 #include "pcctscfg.h"
-
 #include "pccts_iostream.h"
 
 PCCTS_NAMESPACE_STD
-
-//  MR20 Added #include for "DLexerBase.h"
 
 #include "DLexerBase.h"
 
@@ -128,7 +132,7 @@ public:
     }
   }
 
-  Parser *parser()	   { return _parser; }
+  Parser *parser()     { return _parser; }
   Lexer  *getLexer()     { return scan; }
 };
 

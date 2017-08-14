@@ -1,4 +1,5 @@
-/*
+/* ANTLR attribute definition -- constant width text
+ *
  * SOFTWARE RIGHTS
  *
  * We reserve no LEGAL rights to the Purdue Compiler Construction Tool
@@ -26,21 +27,19 @@
  * 1989-2000
  */
 
+#ifndef ZZCHARBUF_H
+#define ZZCHARBUF_H
+
 #include "pcctscfg.h"
-#include "pccts_stdlib.h"
 #include "pccts_string.h"
 
-/* 133MR1 include stdio.h for fprintf in charptr.c */
+#ifndef D_TextSize
+#define D_TextSize  30
+#endif
 
-#include "pccts_stdio.h"
+typedef struct { char text[D_TextSize]; } Attrib;
 
-/* 133MR1 include charptr.h for Attrib in charptr.c */
+#define zzcr_attr(a,tok,t)  strncpy((a)->text, t, D_TextSize-1); \
+              (a)->text[D_TextSize-1] = '\0';
 
-#include "charptr.h"
-
-zzcr_attr(Attrib *a,int token,char *text)
-{
-  *a = (char *) malloc(strlen(text)+1);
-  if ( *a == NULL ) {fprintf(stderr, "zzcr_attr: out of memory!\n"); exit(-1);}
-  strcpy(*a, text);
-}
+#endif
