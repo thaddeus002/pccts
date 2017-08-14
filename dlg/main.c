@@ -36,8 +36,18 @@
 #include <ctype.h>
 #include <string.h>
 #include "dlg.h"
-#include "stdpccts.h"
+#include "tokens.h"
 #include "constants.h"
+
+#ifndef ANTLR_VERSION
+#define ANTLR_VERSION 13333
+#endif
+
+#define zzSET_SIZE 8
+#include "antlr.h"
+#include "dlgdef.h"
+
+
 
 char *version = "1.33MR33";
 int numfiles = 0;

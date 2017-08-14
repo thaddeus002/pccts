@@ -34,6 +34,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdarg.h>
+#include <stdlib.h>
 
 #include "constants.h"
 #include "hash.h"
@@ -52,10 +53,6 @@ static Tree *FreeList = NULL;
 
 static int tmember_of_context(Tree *, Predicate *);
 
-#if TREE_DEBUG
-set     set_of_tnodes_in_use;
-int     stop_on_tnode_seq_number=(-1);     /* (-1) to disable */
-#endif
 
 /* Do root
  * Then each sibling
@@ -234,20 +231,10 @@ tnode( int tok )
   p->down = NULL;
   p->token = tok;
 
-    TnodesAllocated++;                                      /* MR10 */
-    TnodesInUse++;                                          /* MR10 */
-    if (TnodesInUse > TnodesPeak) TnodesPeak=TnodesInUse;   /* MR10 */
+  TnodesAllocated++;                                      /* MR10 */
+  TnodesInUse++;                                          /* MR10 */
+  if (TnodesInUse > TnodesPeak) TnodesPeak=TnodesInUse;   /* MR10 */
 
-#ifdef TREE_DEBUG
-  require(!p->in_use, "tnode: node in use!");
-  p->in_use = 1;
-    p->seq=TnodesAllocated;
-    set_orel( (unsigned) TnodesAllocated,&set_of_tnodes_in_use);
-    if (stop_on_tnode_seq_number == p->seq) {
-      fprintf(stderr,"\n*** just allocated tnode #%d ***\n",
-            stop_on_tnode_seq_number);
-    };
-#endif
   return p;
 }
 
@@ -269,21 +256,13 @@ void _Tfree( Tree *t )
 {
   if ( t!=NULL )
   {
-#ifdef TREE_DEBUG
-        if (t->seq == stop_on_tnode_seq_number) {
-           fprintf(stderr,"\n*** just freed tnode #%d ***\n",t->seq);
-        };
-    require(t->in_use, "_Tfree: node not in use!");
-    t->in_use = 0;
-        set_rm( (unsigned) t->seq,set_of_tnodes_in_use);
-#endif
     t->right = FreeList;
     FreeList = t;
-        TnodesInUse--;                   /* MR10 */
+    TnodesInUse--;
   }
 }
 
-/* tree duplicate */
+/** tree duplicate */
 Tree *tdup( Tree *t )
 {
   Tree *u;
@@ -296,7 +275,7 @@ Tree *tdup( Tree *t )
   return u;
 }
 
-/* tree duplicate (assume tree is a chain downwards) */
+/** tree duplicate (assume tree is a chain downwards) */
 Tree *tdup_chain( Tree *t )
 {
   Tree *u;
@@ -312,10 +291,6 @@ Tree *tappend( Tree *t, Tree *u )
 {
   Tree *w;
 
-/*** fprintf(stderr, "tappend(");
- *** preorder(t); fprintf(stderr, ",");
- *** preorder(u); fprintf(stderr, " )\n");
-*/
   if ( t == NULL ) return u;
   if ( t->token == ALT && t->right == NULL ) return tappend(t->down, u);
   for (w=t; w->right!=NULL; w=w->right) {;}
@@ -323,7 +298,7 @@ Tree *tappend( Tree *t, Tree *u )
   return t;
 }
 
-/* dealloc all nodes in a tree */
+/** dealloc all nodes in a tree */
 void Tfree( Tree *t )
 {
   if ( t == NULL ) return;
@@ -332,7 +307,8 @@ void Tfree( Tree *t )
   _Tfree( t );
 }
 
-/* find all children (alts) of t that require remaining_k nodes to be LL_k
+/**
+ * Find all children (alts) of t that require remaining_k nodes to be LL_k
  * tokens long.
  *
  * t-->o
@@ -373,7 +349,7 @@ Tree *tlink( Tree *t, Tree *u, int remaining_k )
   return t;
 }
 
-/* remove as many ALT nodes as possible while still maintaining semantics */
+/** remove as many ALT nodes as possible while still maintaining semantics */
 Tree *tshrink( Tree *t )
 {
   if ( t == NULL ) return NULL;

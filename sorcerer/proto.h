@@ -82,14 +82,9 @@ extern char CurClassName[];
 extern int GenCPP;
 extern int NoCtor; /* MR23 */
 
-#ifdef __VMS
-#define STRICMP strcasecmp
-#else
 #define STRICMP stricmp
-#endif
                            /* F u n c t i o n s */
 
-#ifdef __USE_PROTOS
 extern int main( int, char *[] );
 extern int STRICMP(const char *, const char *);   /* MR20 */
 extern void help( void );
@@ -155,71 +150,3 @@ extern void dump_prefixed_decl( char *prefix, char *s, FILE *f );
 extern void ensure_no_C_file_collisions(char *class_c_file);
 extern void GenCPPClassHeader(void);
 extern void GenCPPClassCode(void);
-#else
-extern int main( );
-extern int STRICMP();   /* MR20 */
-extern void help( );
-extern FILE * NextFile( );
-extern void pushint( );
-extern int popint( );
-extern int istacksize( );
-extern void istackreset( );
-extern int istackempty( );
-extern int topint( );
-extern char * eMsg3( );
-extern char * eMsgd( );
-extern void fatalFL( );
-extern void list_add( );
-extern Entry * newEntry( );
-extern void token_association( );
-extern char * outname( );
-extern char * OutMetaName( );
-extern void set_fprint( );
-extern void gen_info_hdr( );
-extern void gen_hdr( );
-extern void gen_hdr1( );
-extern void gen( );
-extern void gen_header( );
-extern void gen_rule( );
-extern void gen_block( );
-extern void gen_alt( );
-extern void gen_tree_pattern( );
-extern void gen_element( );
-extern void define_labels_in_block( );
-extern void define_labels_in_alt( );
-extern void define_labels_in_tree( );
-extern void define_labels_in_element( );
-extern void dumpAction( );
-extern char * find_predicate( );
-extern set gen_prediction_expr( );
-extern void GenRulePrototypes( );
-extern void gen_tokens_file( );
-extern void code_for_guess_block( );
-extern set Lookahead( );
-extern void build_GLA( );
-extern GLA * build_GLA_for_block( );
-extern GLA * build_GLA_for_ALT( );
-extern GLA * build_GLA_for_tree( );
-extern GLA * build_GLA_for_element( );
-extern void build_follow_links( );
-extern void dump_GLAs( );
-extern void dump_GLA( );
-extern void test_block_consistency( );
-extern void GenRulePrototype();
-extern void GenRulePrototype();
-extern void DumpOldStyleParms();
-extern int DumpNextNameInDef();
-extern void DumpListOfParmNames();
-extern SymEntry *define_token();
-extern char *actiondup();
-extern AST *read_sor_desc();
-extern void DumpType();
-extern AST *first_guess_block();
-extern RefVarRec *refVarRec();
-extern char *cvt_token_str();
-extern char *id_in_decl();
-extern void dump_prefixed_decl();
-extern void ensure_no_C_file_collisions();
-extern void GenCPPClassHeader();
-extern void GenCPPClassCode();
-#endif

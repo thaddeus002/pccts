@@ -1,6 +1,6 @@
-#ifndef tokens_h
-#define tokens_h
-/* tokens.h -- List of labelled tokens and stuff
+/**
+ * \file tokens.h
+ * \brief List of labelled tokens and stuff
  *
  * Generated from: dlg_p.g
  *
@@ -8,6 +8,11 @@
  * Purdue University Electrical Engineering
  * ANTLR Version 1.33MR33
  */
+
+
+#ifndef tokens_h
+#define tokens_h
+
 #define zzEOF_TOKEN 1
 #define L_EOF 4
 #define PER_PER 5
@@ -40,85 +45,22 @@
 #define LIT 32
 #define REGCHAR 33
 
-#ifdef __USE_PROTOS
-void grammar(void);
-#else
-extern void grammar();
-#endif
+void grammar();
+void start_states();
+void do_conversion();
+void rule_list();
+void rule();
+void reg_expr();
+void and_expr();
+void repeat_expr();
+void expr();
+void atom_list();
+void near_atom();
+void atom();
+void anychar();
 
-#ifdef __USE_PROTOS
-void start_states(void);
-#else
-extern void start_states();
-#endif
+#include "antlr.h"
 
-#ifdef __USE_PROTOS
-void do_conversion(void);
-#else
-extern void do_conversion();
-#endif
-
-#ifdef __USE_PROTOS
-void rule_list(void);
-#else
-extern void rule_list();
-#endif
-
-#ifdef __USE_PROTOS
-void rule(void);
-#else
-extern void rule();
-#endif
-
-#ifdef __USE_PROTOS
-void reg_expr(void);
-#else
-extern void reg_expr();
-#endif
-
-#ifdef __USE_PROTOS
-void and_expr(void);
-#else
-extern void and_expr();
-#endif
-
-#ifdef __USE_PROTOS
-void repeat_expr(void);
-#else
-extern void repeat_expr();
-#endif
-
-#ifdef __USE_PROTOS
-void expr(void);
-#else
-extern void expr();
-#endif
-
-#ifdef __USE_PROTOS
-void atom_list(void);
-#else
-extern void atom_list();
-#endif
-
-#ifdef __USE_PROTOS
-void near_atom(void);
-#else
-extern void near_atom();
-#endif
-
-#ifdef __USE_PROTOS
-void atom(void);
-#else
-extern void atom();
-#endif
-
-#ifdef __USE_PROTOS
-void anychar(void);
-#else
-extern void anychar();
-#endif
-
-#endif
 extern SetWordType zzerr1[];
 extern SetWordType zzerr2[];
 extern SetWordType zzerr3[];
@@ -131,3 +73,8 @@ extern SetWordType zzerr7[];
 extern SetWordType zzerr8[];
 extern SetWordType zzerr9[];
 extern SetWordType setwd3[];
+
+
+
+#endif
+

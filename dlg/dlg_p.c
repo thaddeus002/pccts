@@ -31,14 +31,6 @@
 ANTLR_INFO
 
 
-/* MR20 G. Hobbelt
-Fix for Borland C++ 4.x & 5.x compiling with ALL warnings enabled
-*/
-
-#ifdef __TURBOC__
-#pragma warn -aus  /* unused assignment of 'xxx' */
-#endif
-
 int action_no = 0;     /* keep track of actions outputed */
 int nfa_allocated = 0; /* keeps track of number of nfa nodes */
 nfa_node **nfa_array = NULL;/* root of binary tree that stores nfa array */

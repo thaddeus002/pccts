@@ -74,10 +74,6 @@ typedef struct _tree {
         struct _tree *tref; /* if token==TREE_REF */
         set sref;     /* if token==SET */
       } v;
-#ifdef TREE_DEBUG
-      int in_use;
-      int seq;
-#endif
 } Tree;
 
 
@@ -175,14 +171,15 @@ typedef struct _ExceptionGroup {
           else (a) = (*(fpTraverse[(p)->ntype]))( p, k, rk );}
 
 
-/* All syntax diagram nodes derive from Node -- superclass
+/**
+ * All syntax diagram nodes derive from Node -- superclass
  */
 typedef struct _node {
       NodeType ntype;
       char *rname;    /* what rule does this element live in? */
       int file;     /* index in FileStr */
       int line;     /* line number that element occurs on */
-    } Node;
+} Node;
 
 typedef struct _anode {
       NodeType ntype;
@@ -235,7 +232,7 @@ typedef struct _toknode {
       ExceptionGroup *ex_group; /* any exception[el_label] attached? */
             unsigned char use_def_MT_handler;
             unsigned char label_used_in_semantic_pred;  /* MR10 */
-    } TokNode;
+} TokNode;
 
 typedef struct _rrnode {
       NodeType ntype;
