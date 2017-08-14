@@ -33,14 +33,15 @@
 # Micro Data Base Systems
 # Lafayette, Indiana
 #
-SET=../support/set
+
 PCCTS_H=../h
+COMMON=../common
 COMMON_H=../common
 
 CC ?= gcc
 ANTLR = ../bin/antlr
 DLG = ../bin/dlg
-CPPFLAGS += -I. -I$(SET) -I$(PCCTS_H) -I$(COMMON_H) -DUSER_ZZSYN -DZZLEXBUFSIZE=32000
+CPPFLAGS += -I$(PCCTS_H) -I$(COMMON_H) -DUSER_ZZSYN -DZZLEXBUFSIZE=32000
 
 #ifndef PREFIX
 PREFIX=/usr/local
@@ -59,7 +60,7 @@ antlr : $(OBJ) $(SRC)
 PCCTS_GEN=
 
 SRC=antlr.c scan.c err.c bits.c build.c fset2.c fset.c gen.c globals.c \
-	hash.c lex.c main.c misc.c $(SET)/set.c pred.c egman.c mrhoist.c fcache.c
+	hash.c lex.c main.c misc.c $(COMMON)/set.c pred.c egman.c mrhoist.c fcache.c
 
 #
 # Don't worry about the ambiguity messages coming from antlr
@@ -75,8 +76,8 @@ scan.o : scan.c mode.h tokens.h
 #scan.c mode.h: parser.dlg
 #	$(DLG) -C2 parser.dlg scan.c
 
-set.o : $(SET)/set.c
-	$(CC) $(CFLAGS) $(CPPFLAGS) $(COTHER) -c -o set.o $(SET)/set.c
+set.o : $(COMMON)/set.c
+	$(CC) $(CFLAGS) $(CPPFLAGS) $(COTHER) -c -o set.o $<
 
 
 

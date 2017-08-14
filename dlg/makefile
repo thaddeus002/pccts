@@ -9,12 +9,13 @@
 # Micro Data Base Systems
 # Lafayette, Indiana
 #
-SET=../support/set
+
 PCCTS_H=../h
+COMMON=../common
 COMMON_H=../common
 
 CC ?= gcc
-CPPFLAGS += -I. -I$(SET) -I$(PCCTS_H) -I$(COMMON_H) -DUSER_ZZSYN -DZZLEXBUFSIZE=32000
+CPPFLAGS += -I$(PCCTS_H) -I$(COMMON_H) -DUSER_ZZSYN -DZZLEXBUFSIZE=32000
 OBJ = dlg_p.o dlg_a.o main.o err.o set.o support.o output.o \
         relabel.o automata.o
 
@@ -26,7 +27,7 @@ dlg : $(OBJ) $(SRC)
 		$(CC) $(CFLAGS) $(CPPFLAGS) -o dlg $(OBJ)
 
 
-SRC = dlg_p.c dlg_a.c main.c err.c $(SET)/set.c support.c output.c \
+SRC = dlg_p.c dlg_a.c main.c err.c $(COMMON)/set.c support.c output.c \
         relabel.c automata.c
 
 #dlg_p.c parser.dlg err.c tokens.h : dlg_p.g
@@ -44,8 +45,8 @@ dlg_a.o : dlg_a.c dlg.h tokens.h mode.h
 main.o : main.c dlg.h
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c main.c
 
-set.o : $(SET)/set.c
-	$(CC) -c $(CFLAGS) $(CPPFLAGS) $(SET)/set.c
+set.o : $(COMMON)/set.c
+	$(CC) -c $(CFLAGS) $(CPPFLAGS) $<
 
 #clean up all the intermediate files
 clean:
