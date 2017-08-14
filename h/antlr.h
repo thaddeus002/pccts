@@ -28,16 +28,7 @@
 
 /**
  * \file antlr.h
- */
-
-#ifndef ANTLR_H
-#define ANTLR_H
-
-#include "pcctscfg.h"
-#include "pccts_stdio.h"
-
-
-/*
+ *
  * Define all of the stack setup and manipulation of $i, #i variables.
  *
  *  Notes:
@@ -45,7 +36,10 @@
  */
 
 
-#include "pccts_stdlib.h"
+#ifndef ANTLR_H
+#define ANTLR_H
+
+#include "pcctscfg.h"
 #include "pccts_string.h"
 
 
@@ -215,10 +209,10 @@ typedef struct _zzantlr_state {
       char text[ZZLEXBUFSIZE];
 #endif
 #ifdef zzTRACE_RULES
-            int     traceOptionValue;       /* MR10 */
-            int     traceGuessOptionValue;  /* MR10 */
-            char    *traceCurrentRuleName;  /* MR10 */
-            int     traceDepth;             /* MR10 */
+      int     traceOptionValue;       /* MR10 */
+      int     traceGuessOptionValue;  /* MR10 */
+      char    *traceCurrentRuleName;  /* MR10 */
+      int     traceDepth;             /* MR10 */
 #endif
 
 } zzantlr_state;

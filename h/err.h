@@ -1,8 +1,4 @@
 /*
- * err.h
- *
- * Standard error handling mechanism
- *
  * SOFTWARE RIGHTS
  *
  * We reserve no LEGAL rights to the Purdue Compiler Construction Tool
@@ -32,6 +28,13 @@
  * 1989-2000
  */
 
+/**
+ * \file err.h
+ *
+ * Standard error handling mechanism
+ */
+
+
 #ifndef ERR_H
 #define ERR_H
 
@@ -44,12 +47,7 @@
 /*    Proper choice of STDC and cplusplus pre-processor symbols (?) */
 /*                        */
 #include "pccts_string.h"
-
-#ifdef PCCTS_USE_STDARG
 #include "pccts_stdarg.h"
-#else
-#include <varargs.h>
-#endif
 
 #ifdef DUM
 /* Define usable bits per unsigned int word (used for set stuff) */
@@ -89,13 +87,7 @@ int  zzGuessSeq=0;          /* MR10 */
 int  zzSyntaxErrCount=0;    /* MR11 */
 int  zzLexErrCount=0;       /* MR11 */
 
-void
-#ifdef __USE_PROTOS
-zzresynch(SetWordType *wd,SetWordType mask)
-#else
-zzresynch(wd,mask)
-SetWordType *wd, mask;
-#endif
+void zzresynch(SetWordType *wd,SetWordType mask)
 {
   static int consumed = 1;
 
@@ -117,16 +109,10 @@ SetWordType *wd, mask;
 /*         Change suggested by Eli Sternheim (eli@interhdl.com)           */
 /*                                                                          */
 
-void
-#ifdef __USE_PROTOS
-zzconsumeUntil(SetWordType *st)
-#else
-zzconsumeUntil(st)
-SetWordType *st;
-#endif
+void zzconsumeUntil(SetWordType *st)
 {
     int     tmp;                                                     /* MR7 */
-  while ( !zzset_el( (tmp=LA(1)), st) && tmp!=1 /* Eof */) {       /* MR7 */
+    while ( !zzset_el( (tmp=LA(1)), st) && tmp!=1 /* Eof */) {       /* MR7 */
                                                       zzCONSUME; }   /* MR7 */
 }
 
@@ -135,16 +121,10 @@ SetWordType *st;
 /*         Change suggested by Eli Sternheim (eli@interhdl.com)           */
 /*                                                                          */
 
-void
-#ifdef __USE_PROTOS
-zzconsumeUntilToken(int t)
-#else
-zzconsumeUntilToken(t)
-int t;
-#endif
+void zzconsumeUntilToken(int t)
 {
     int     tmp;                                                     /* MR7 */
-  while ( (tmp=LA(1)) !=t && tmp!=1 /* Eof */) { zzCONSUME; }      /* MR7 */
+    while ( (tmp=LA(1)) !=t && tmp!=1 /* Eof */) { zzCONSUME; }      /* MR7 */
 }
 
 /* input looks like:
@@ -222,12 +202,7 @@ va_dcl
   else *err_k = k;
 }
 
-#ifdef __USE_PROTOS
 void zzTraceGuessDone(zzantlr_state *state)
-#else
-void zzTraceGuessDone(state)
-  zzantlr_state     *state;
-#endif
 {
 #ifdef zzTRACE_RULES
 #ifdef ZZCAN_GUESS
@@ -260,13 +235,7 @@ void zzTraceGuessDone(state)
 #endif
 }
 
-void
-#ifdef __USE_PROTOS
-zzsave_antlr_state(zzantlr_state *buf)
-#else
-zzsave_antlr_state(buf)
-zzantlr_state *buf;
-#endif
+void zzsave_antlr_state(zzantlr_state *buf)
 {
 #ifdef LL_K
   int     i;
@@ -316,13 +285,7 @@ zzantlr_state *buf;
 #endif
 }
 
-void
-#ifdef __USE_PROTOS
-zzrestore_antlr_state(zzantlr_state *buf)
-#else
-zzrestore_antlr_state(buf)
-zzantlr_state *buf;
-#endif
+void zzrestore_antlr_state(zzantlr_state *buf)
 {
 
 #ifdef zzTRACE_RULES
@@ -389,13 +352,7 @@ zzantlr_state *buf;
 #endif
 }
 
-void
-#ifdef __USE_PROTOS
-zzedecode(SetWordType *a)
-#else
-zzedecode(a)
-SetWordType *a;
-#endif
+void zzedecode(SetWordType *a)
 {
   register SetWordType *p = a;
   register SetWordType *endp = &(p[zzSET_SIZE]);
@@ -415,17 +372,7 @@ SetWordType *a;
 
 #ifndef USER_ZZSYN
 /* standard error reporting function */
-void
-#ifdef __USE_PROTOS
-zzsyn(char *text, int tok, char *egroup, SetWordType *eset, int etok, int k, char *bad_text)
-#else
-zzsyn(text, tok, egroup, eset, etok, k, bad_text)
-char *text, *egroup, *bad_text;
-int tok;
-int etok;
-int k;
-SetWordType *eset;
-#endif
+void zzsyn(char *text, int tok, char *egroup, SetWordType *eset, int etok, int k, char *bad_text)
 {
 
     zzSyntaxErrCount++;                             /* MR11 */
@@ -445,25 +392,12 @@ SetWordType *eset;
 #endif
 
 /* is b an element of set p? */
-int
-#ifdef __USE_PROTOS
-zzset_el(unsigned b, SetWordType *p)
-#else
-zzset_el(b,p)
-unsigned b;
-SetWordType *p;
-#endif
+int zzset_el(unsigned b, SetWordType *p)
 {
   return( p[BSETDIVWORD(b)] & bitmask[BSETMODWORD(b)] );
 }
 
-int
-#ifdef __USE_PROTOS
-zzset_deg(SetWordType *a)
-#else
-zzset_deg(a)
-SetWordType *a;
-#endif
+int zzset_deg(SetWordType *a)
 {
   /* Fast compute degree of a set... the number
      of elements present in the set.  Assumes
@@ -490,19 +424,9 @@ SetWordType *a;
 #ifdef DEMAND_LOOK
 
 #ifdef LL_K
-int
-#ifdef __USE_PROTOS
-_zzmatch(int _t, char **zzBadText, char **zzMissText,
+int _zzmatch(int _t, char **zzBadText, char **zzMissText,
     int *zzMissTok, int *zzBadTok,
     SetWordType **zzMissSet)
-#else
-_zzmatch(_t, zzBadText, zzMissText, zzMissTok, zzBadTok, zzMissSet)
-int _t;
-char **zzBadText;
-char **zzMissText;
-int *zzMissTok, *zzBadTok;
-SetWordType **zzMissSet;
-#endif
 {
   if ( zzdirty==LL_K ) {
     zzCONSUME;
@@ -519,13 +443,7 @@ SetWordType **zzMissSet;
   return 1;
 }
 
-int
-#ifdef __USE_PROTOS
-_zzmatch_wsig(int _t)
-#else
-_zzmatch_wsig(_t)
-int _t;
-#endif
+int _zzmatch_wsig(int _t)
 {
   if ( zzdirty==LL_K ) {
     zzCONSUME;
@@ -541,18 +459,8 @@ int _t;
 
 #else
 
-int
-#ifdef __USE_PROTOS
-_zzmatch(int _t, char **zzBadText, char **zzMissText,
+int _zzmatch(int _t, char **zzBadText, char **zzMissText,
      int *zzMissTok, int *zzBadTok, SetWordType **zzMissSet)
-#else
-_zzmatch(_t, zzBadText, zzMissText, zzMissTok, zzBadTok, zzMissSet)
-int _t;
-char **zzBadText;
-char **zzMissText;
-int *zzMissTok, *zzBadTok;
-SetWordType **zzMissSet;
-#endif
 {
   if ( zzdirty ) {zzCONSUME;}
   if ( LA(1)!=_t ) {
@@ -566,13 +474,7 @@ SetWordType **zzMissSet;
   return 1;
 }
 
-int
-#ifdef __USE_PROTOS
-_zzmatch_wsig(int _t)
-#else
-_zzmatch_wsig(_t)
-int _t;
-#endif
+int _zzmatch_wsig(int _t)
 {
   if ( zzdirty ) {zzCONSUME;}
   if ( LA(1)!=_t ) {
@@ -587,19 +489,9 @@ int _t;
 
 #else
 
-int
-#ifdef __USE_PROTOS
-_zzmatch(int _t, char **zzBadText, char **zzMissText,
+int _zzmatch(int _t, char **zzBadText, char **zzMissText,
     int *zzMissTok, int *zzBadTok,
     SetWordType **zzMissSet)
-#else
-_zzmatch(_t, zzBadText, zzMissText, zzMissTok, zzBadTok, zzMissSet)
-int _t;
-char **zzBadText;
-char **zzMissText;
-int *zzMissTok, *zzBadTok;
-SetWordType **zzMissSet;
-#endif
 {
   if ( LA(1)!=_t ) {
     *zzBadText = *zzMissText=LATEXT(1);
@@ -611,13 +503,7 @@ SetWordType **zzMissSet;
   return 1;
 }
 
-int
-#ifdef __USE_PROTOS
-_zzmatch_wsig(int _t)
-#else
-_zzmatch_wsig(_t)
-int _t;
-#endif
+int _zzmatch_wsig(int _t)
 {
   if ( LA(1)!=_t ) return 0;
   zzMakeAttr
@@ -627,12 +513,7 @@ int _t;
 #endif /*DEMAND_LOOK*/
 
 #ifdef ZZINF_LOOK
-void
-#ifdef __USE_PROTOS
-_inf_zzgettok(void)
-#else
-_inf_zzgettok()
-#endif
+void _inf_zzgettok()
 {
   if ( zzinf_labase >= zzinf_last )
     {NLA = zzEOF_TOKEN; strcpy(NLATEXT, "");}
@@ -651,12 +532,7 @@ _inf_zzgettok()
  * Once the number of total tokens is known, the LATEXT(i) array (zzinf_text)
  * is allocated and it's pointers are set to the tokens in zzinf_text_buffer.
  */
-void
-#ifdef __USE_PROTOS
-zzfill_inf_look(void)
-#else
-zzfill_inf_look()
-#endif
+void zzfill_inf_look()
 {
   int tok, line;
   int zzinf_token_buffer_size = ZZINF_DEF_TOKEN_BUFFER_SIZE;
@@ -754,21 +630,10 @@ zzfill_inf_look()
 }
 #endif
 
-int
-#ifdef __USE_PROTOS
-_zzsetmatch(SetWordType *e, char **zzBadText, char **zzMissText,
+int _zzsetmatch(SetWordType *e, char **zzBadText, char **zzMissText,
       int *zzMissTok, int *zzBadTok,
       SetWordType **zzMissSet,
       SetWordType *zzTokclassErrset /* MR23 */)
-#else
-_zzsetmatch(e, zzBadText, zzMissText, zzMissTok, zzBadTok, zzMissSet, zzTokclassErrset /* MR23 */)
-SetWordType *e;
-char **zzBadText;
-char **zzMissText;
-int *zzMissTok, *zzBadTok;
-SetWordType **zzMissSet;
-SetWordType *zzTokclassErrset;
-#endif
 {
 #ifdef DEMAND_LOOK
 #ifdef LL_K
@@ -795,14 +660,7 @@ SetWordType *zzTokclassErrset;
   return 1;
 }
 
-int
-#ifdef __USE_PROTOS
-_zzmatch_wdfltsig(int tokenWanted, SetWordType *whatFollows)
-#else
-_zzmatch_wdfltsig(tokenWanted, whatFollows)
-int tokenWanted;
-SetWordType *whatFollows;
-#endif
+int _zzmatch_wdfltsig(int tokenWanted, SetWordType *whatFollows)
 {
 #ifdef DEMAND_LOOK
 #ifdef LL_K
@@ -841,17 +699,9 @@ SetWordType *whatFollows;
   }
 }
 
-int
-#ifdef __USE_PROTOS
-_zzsetmatch_wdfltsig(SetWordType *tokensWanted,
+int _zzsetmatch_wdfltsig(SetWordType *tokensWanted,
            int tokenTypeOfSet,
            SetWordType *whatFollows)
-#else
-_zzsetmatch_wdfltsig(tokensWanted, tokenTypeOfSet, whatFollows)
-SetWordType *tokensWanted;
-int tokenTypeOfSet;
-SetWordType *whatFollows;
-#endif
 {
 #ifdef DEMAND_LOOK
 #ifdef LL_K
@@ -887,13 +737,7 @@ SetWordType *whatFollows;
   }
 }
 
-int
-#ifdef __USE_PROTOS
-_zzsetmatch_wsig(SetWordType *e)
-#else
-_zzsetmatch_wsig(e)
-SetWordType *e;
-#endif
+int _zzsetmatch_wsig(SetWordType *e)
 {
 #ifdef DEMAND_LOOK
 #ifdef LL_K
@@ -953,12 +797,7 @@ void zzTraceGuessFail()
      zero value turns off trace
 */
 
-#ifdef __USE_PROTOS
 void zzTraceIn(char * rule)
-#else
-void zzTraceIn(rule)
-  char  *rule;
-#endif
 {
 #ifdef zzTRACE_RULES
 
@@ -991,12 +830,7 @@ void zzTraceIn(rule)
   return;
 }
 
-#ifdef __USE_PROTOS
 void zzTraceOut(char * rule)
-#else
-void zzTraceOut(rule)
-  char  *rule;
-#endif
 {
 #ifdef zzTRACE_RULES
   int       doIt=0;
@@ -1026,12 +860,7 @@ void zzTraceOut(rule)
 #endif
 }
 
-#ifdef __USE_PROTOS
 int zzTraceOption(int delta)
-#else
-int zzTraceOption(delta)
-  int   delta;
-#endif
 {
 #ifdef zzTRACE_RULES
     int     prevValue=zzTraceOptionValue;
@@ -1054,12 +883,7 @@ int zzTraceOption(delta)
 #endif
 }
 
-#ifdef __USE_PROTOS
 int zzTraceGuessOption(int delta)
-#else
-int zzTraceGuessOption(delta)
-  int   delta;
-#endif
 {
 #ifdef zzTRACE_RULES
 #ifdef ZZCAN_GUESS
