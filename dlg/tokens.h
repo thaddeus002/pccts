@@ -45,7 +45,7 @@
 #define LIT 32
 #define REGCHAR 33
 
-void grammar(char *mode_file); //dlg_p.c
+void grammar(char *version, char *mode_file); //dlg_p.c
 void start_states();
 void do_conversion();
 void rule_list();

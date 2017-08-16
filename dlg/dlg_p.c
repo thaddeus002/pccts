@@ -45,14 +45,14 @@ int mode_counter = 0;  /* keep track of number of %%names */
 
 
 
-void grammar(char *mode_file)
+void grammar(char *version, char *mode_file)
 {
   zzRULE;
   zzBLOCK(zztasp1);
   zzMake0;
   {
-  p_head(mode_file);
-  p_class_hdr();
+  p_head(version, mode_file);
+  p_class_hdr(version);
   func_action = FALSE;
   {
     zzBLOCK(zztasp2);

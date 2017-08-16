@@ -115,7 +115,7 @@ static char *mystrdup(char *s)
   return p;
 }
 
-void p_class_hdr()
+void p_class_hdr(char *version)
 {
   if ( class_stream == NULL ) return;
   fprintf(class_stream, "#ifndef %s\n", gate_symbol(ClassName("")));
@@ -223,9 +223,10 @@ void p_class_def2()
 
 /**
  * generate required header on output
+ * \param version the program's version
  * \param mode_file filename for mode output may be "mode.h"
  */
-void p_head(char *mode_file)
+void p_head(char *version, char *mode_file)
 {
   fprintf(OUT, "/*\n");
   fprintf(OUT, " * D L G tables\n");

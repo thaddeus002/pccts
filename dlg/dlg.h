@@ -91,7 +91,6 @@ typedef struct {
   nfa_node *l,*r;
   set label;
 } Attrib;
-
 #define zzcr_attr(attr, token, text) {          \
   (attr)->letter = text[0]; (attr)->l = NULL;     \
   (attr)->r = NULL; (attr)->label = empty;      \
@@ -100,7 +99,6 @@ typedef struct {
 #define zzd_attr(a) set_free((a)->label);
 
 /******************** Variable ******************************/
-extern char *version; /* tells what version this is */
 extern char *file_str[];  /* file names being used */
 extern int  err_found;  /* flag to indicate error occured */
 extern int  action_no;  /* last action function printed */
@@ -151,8 +149,8 @@ extern char *ClassName(char *);
 extern char *OutMetaName(char *);
 extern void error(char*, int);
 extern void warning(char*, int);
-extern void p_head(char *mode_file); //output.c
-extern void p_class_hdr(void);
+extern void p_head(char *version, char *mode_file); //output.c
+extern void p_class_hdr(char *version); //output.c
 extern void p_includes(void);
 extern void p_tables(void);
 extern void p_tail(void);         /* MR1 */

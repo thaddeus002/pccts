@@ -47,11 +47,11 @@
 #include "antlr.h"
 #include "dlgdef.h"
 
+/* tells what version this is */
 #define VERSION "1.33MR33"
 /* name of file for mode output */
 #define MODE_FILE "mode.h"
 
-char *version = "1.33MR33";
 int numfiles = 0;
 char *file_str[2] = {NULL, NULL};
 char *class_name = DEFAULT_CLASSNAME;
@@ -177,7 +177,7 @@ static void usage(char *program)
 int main(int argc, char *argv[])
 {
   init();
-  fprintf(stderr, "%s  Version %s   1989-2001\n", basename(argv[0]), version);
+  fprintf(stderr, "%s  Version %s   1989-2001\n", basename(argv[0]), VERSION);
   if ( argc == 1 )
   {
     usage(argv[0]);
@@ -207,7 +207,7 @@ int main(int argc, char *argv[])
      know what the file really is */
   /* make sure that reading and writing somewhere */
   if (input_stream && output_stream && mode_stream){
-    ANTLR(grammar(MODE_FILE), input_stream);
+    ANTLR(grammar(VERSION, MODE_FILE), input_stream);
   }
   p_class_def2();     /* MR1 */
 
