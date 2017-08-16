@@ -90,12 +90,13 @@ typedef struct {
   unsigned char letter;
   nfa_node *l,*r;
   set label;
-  } Attrib;
+} Attrib;
 
 #define zzcr_attr(attr, token, text) {          \
   (attr)->letter = text[0]; (attr)->l = NULL;     \
   (attr)->r = NULL; (attr)->label = empty;      \
 }
+
 #define zzd_attr(a) set_free((a)->label);
 
 /******************** Variable ******************************/
@@ -124,7 +125,6 @@ extern FILE *input_stream;  /* where description read from */
 extern FILE *output_stream; /* where to put the output */
 extern FILE *mode_stream; /* where to put the mode output */
 extern FILE *class_stream;
-extern char *mode_file; /* name of file for mode output */
 extern int  case_insensitive;/* ignore case of input spec. */
 extern int  warn_ambig; /* show if regular expressions ambiguous */
 extern int  gen_cpp;
@@ -151,7 +151,7 @@ extern char *ClassName(char *);
 extern char *OutMetaName(char *);
 extern void error(char*, int);
 extern void warning(char*, int);
-extern void p_head(void);
+extern void p_head(char *mode_file); //output.c
 extern void p_class_hdr(void);
 extern void p_includes(void);
 extern void p_tables(void);

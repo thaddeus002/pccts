@@ -26,13 +26,13 @@
  */
 
 /**
+ * \file automata.c
  * Automata conversion functions for DLG
  */
 
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "constants.h"
 #include "dlg.h"
 
 
@@ -159,33 +159,13 @@ dfa_node **nfa_to_dfa(nfa_node *start)
 
 void clear_hash(void)
 {
-  register int i;
+  int i;
 
-  for(i=0; i<HASH_SIZE; ++i)
+  for(i=0; i<HASH_SIZE; ++i) {
     dfa_hash[i] = 0;
-}
-
-#if HASH_STAT
-void fprint_hash_stats(FILE *f)
-{
-  register hash_list *p;
-  register int i,j;
-  register total;
-
-  total=0;
-  for(i=0; i<HASH_SIZE; ++i){
-    j=0;
-    p = dfa_hash[i];
-    while(p){
-      ++j;
-      p = p->next;
-    }
-    total+=j;
-    fprintf(f,"bin[%d] has %d\n",i,j);
   }
-  fprintf(f,"total = %d\n",total);
 }
-#endif
+
 
 /**
  * Returns a pointer to a dfa node that has the same nfa nodes in it.

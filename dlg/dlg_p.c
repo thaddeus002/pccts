@@ -45,13 +45,15 @@ int mode_counter = 0;  /* keep track of number of %%names */
 
 
 
-void grammar()
+void grammar(char *mode_file)
 {
   zzRULE;
   zzBLOCK(zztasp1);
   zzMake0;
   {
-  p_head(); p_class_hdr(); func_action = FALSE;
+  p_head(mode_file);
+  p_class_hdr();
+  func_action = FALSE;
   {
     zzBLOCK(zztasp2);
     zzMake0;
@@ -184,9 +186,6 @@ void do_conversion()
   nfa_to_dfa(zzaArg(zztasp1,1 ).l);
   ++mode_counter;
   func_action = FALSE;
-#ifdef HASH_STAT
-  fprint_hash_stats(stderr);
-#endif
   zzEXIT(zztasp1);
   return;
 fail:

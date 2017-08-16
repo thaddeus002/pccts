@@ -197,9 +197,6 @@ do_conversion : <<new_automaton_mode(); func_action = TRUE;>>
         nfa_to_dfa($1.l);
         ++mode_counter;
             func_action = FALSE;
-#ifdef HASH_STAT
-        fprint_hash_stats(stderr);
-#endif
       >>
     ;
 

@@ -47,12 +47,13 @@
 #include "antlr.h"
 #include "dlgdef.h"
 
-
+#define VERSION "1.33MR33"
+/* name of file for mode output */
+#define MODE_FILE "mode.h"
 
 char *version = "1.33MR33";
 int numfiles = 0;
 char *file_str[2] = {NULL, NULL};
-char *mode_file = "mode.h";
 char *class_name = DEFAULT_CLASSNAME;
 char *OutputDirectory = TopDirectory;
 
@@ -80,7 +81,6 @@ void p_cl_name(char *s, char *t)
       warning("-cl only valid in C++ mode; -cl ignored...",0);
     }
   }
-void p_mode_file(char *s, char *t){mode_file=t;}
 void p_outdir(char *s,char *t) {OutputDirectory=t;}
 void p_interactive()  {interactive = TRUE;}
 void p_case_s()   { case_insensitive = FALSE; }
@@ -104,7 +104,6 @@ Opt options[] = {
   { "-C1", 0, (WildFunc)p_comp1, "Compression level 1" },
   { "-C2", 0, (WildFunc)p_comp2, "Compression level 2" },
   { "-Wambiguity", 0, (WildFunc)p_warn_ambig, "Warn if expressions ambiguous"},
-  { "-m", 1, (WildFunc)p_mode_file, "Rename lexical mode output file"},
   { "-i", 0, (WildFunc)p_interactive, "Build interactive scanner (not valid for C++ mode)"},
   { "-ci", 0, (WildFunc)p_case_i, "Make lexical analyzer case insensitive"},
   { "-cl", 1, (WildFunc)p_cl_name, "Rename lexer class (DLGLexer); only used for -CC"},
@@ -187,12 +186,6 @@ int main(int argc, char *argv[])
   ProcessArgs(argc-1, &(argv[1]), options);
   if (interactive && gen_cpp) {
     fprintf(stderr,"\n");
-/***  MR21a This statement is wrong ! ***/
-#if 0
-***   fprintf(stderr,"Interactive lexer option (\"-i\") has no effect when in C++ mode\n");
-***   fprintf(stderr,"because of extra buffering provided by ANTLRTokenBuffer class.\n");
-***   fprintf(stderr,"\n");
-#endif
   }
   input_stream = read_stream(file_str[0]);
   if (input_stream) {
@@ -207,14 +200,14 @@ int main(int argc, char *argv[])
     }
     else {
       output_stream = write_stream(file_str[1]);
-      mode_stream = write_stream(mode_file);
+      mode_stream = write_stream(MODE_FILE);
     }
   }
   /* make sure that error reporting routines in grammar
      know what the file really is */
   /* make sure that reading and writing somewhere */
   if (input_stream && output_stream && mode_stream){
-    ANTLR(grammar(), input_stream);
+    ANTLR(grammar(MODE_FILE), input_stream);
   }
   p_class_def2();     /* MR1 */
 

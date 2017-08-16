@@ -183,7 +183,6 @@ void p_class_def2()
 
   fprintf(class_stream, "\tstatic DfaState *dfa[%d];\n", dfa_allocated);
   fprintf(class_stream, "\tstatic DfaState dfa_base[];\n");
-/*  fprintf(class_stream, "\tstatic int dfa_base_no[];\n"); */
   fprintf(class_stream, "\tstatic unsigned char *b_class_no[];\n");
   fprintf(class_stream, "\tstatic DfaState accepts[%d];\n",dfa_allocated+1);
   fprintf(class_stream, "\tstatic DLGChar alternatives[%d];\n",dfa_allocated+1);
@@ -222,8 +221,11 @@ void p_class_def2()
   fprintf(class_stream, "#endif\n");
 }
 
-/** generate required header on output */
-void p_head()
+/**
+ * generate required header on output
+ * \param mode_file filename for mode output may be "mode.h"
+ */
+void p_head(char *mode_file)
 {
   fprintf(OUT, "/*\n");
   fprintf(OUT, " * D L G tables\n");
@@ -530,16 +532,6 @@ void p_base_table()
 
 void p_class_table()
 {
-#if 0
-  register int m;
-
-  fprintf(OUT,"%s int %sdfa_class_no[] = {\n",
-      gen_cpp?"":"static",
-      gen_cpp?ClassName("::"):"");
-  for(m=0; m<(mode_counter-1); ++m)
-    fprintf(OUT,"\t%d,\n", dfa_class_nop[m]);
-  fprintf(OUT,"\t%d\n};\n\n", dfa_class_nop[m]);
-#endif
 }
 
 
@@ -597,103 +589,3 @@ char * ClassName(char *suffix)
   sprintf(buf, "%s%s", class_name, suffix);
   return buf;
 }
-
-#ifdef DEBUG
-
-/** print out a particular nfa node that is pointed to by p */
-void p_nfa_node(nfa_node *p)
-{
-   register nfa_node *t;
-
-  if (p != NIL_INDEX){
-    printf("NFA state : %d\naccept state : %d\n",
-      NFA_NO(p),p->accept);
-    if (p->trans[0] != NIL_INDEX){
-      printf("trans[0] => %d on ", NFA_NO(p->trans[0]));
-      p_set(p->label);
-      printf("\n");
-      }
-    else
-      printf("trans[0] => nil\n");
-    if (p->trans[1] != NIL_INDEX)
-      printf("trans[1] => %d on epsilon\n",
-        NFA_NO(p->trans[1]));
-    else
-      printf("trans[1] => nil\n");
-    printf("\n");
-    }
-}
-
-/**
- * code to print out special structures when using a debugger
- * \param p state number also index into array
- */
-void p_nfa(nfa_node *p)
-{
-/* each node has a marker on it so it only gets printed once */
-
-  operation_no++; /* get new number */
-  s_p_nfa(p);
-}
-
-void s_p_nfa(nfa_node *p)
-{
-  if ((p != NIL_INDEX) && (p->nfa_set != operation_no)){
-    /* so it is only printed once */
-    p->nfa_set = operation_no;
-    p_nfa_node(p);
-    s_p_nfa(p->trans[0]);
-    s_p_nfa(p->trans[1]);
-    }
-}
-
-void p_dfa_node(dfa_node *p)
-{
-  int i;
-
-  if (p != NIL_INDEX){
-    printf("DFA state :%d\n",NFA_NO(p));
-    if (p->done)
-      printf("done\n");
-    else
-      printf("undone\n");
-    printf("from nfa states : ");
-    p_set(p->nfa_states);
-    printf("\n");
-    /* NOTE: trans arcs stored as ints rather than pointer*/
-    for (i=0; i<class_no; i++){
-      printf("%d ",p->trans[i]);
-      }
-    printf("\n\n");
-    }
-}
-
-/** prints out all the dfa nodes actually allocated */
-void p_dfa()
-{
-  int i;
-
-  for (i = 1; i<=dfa_allocated; i++)
-    p_dfa_node(NFA(i));
-}
-
-
-/** print out numbers in the set label */
-void p_set(set label)
-{
-  unsigned *t, *e;
-
-  if (set_nil(label)){
-    printf("epsilon\n");
-  }else{
-    t = e = set_pdq(label);
-    while(*e != nil){
-      printf("%d ", (*e+MIN_CHAR));
-      e++;
-    }
-    printf("\n");
-    free(t);
-  }
-}
-
-#endif
