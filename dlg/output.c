@@ -582,7 +582,7 @@ void p_mode_def(char *s, int m)
 }
 
 
-char * ClassName(char *suffix)
+char *ClassName(char *suffix)
 {
   static char buf[200];
   extern char *class_name;

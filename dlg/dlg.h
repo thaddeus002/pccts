@@ -128,7 +128,6 @@ extern int  warn_ambig; /* show if regular expressions ambiguous */
 extern int  gen_cpp;
 extern char *cl_file_str;
 extern int  firstLexMember; /* MR1 */
-extern char *OutputDirectory;
 extern char *class_name;
 
 /******************** Functions ******************************/
@@ -142,11 +141,11 @@ extern dfa_node *dfastate(set);
 extern dfa_node **nfa_to_dfa(nfa_node *);
 extern void internal_error(char *, char *, int);    /* MR9 23-Sep-97 */
 extern FILE *read_stream(char *); /* opens file for reading */
-extern FILE *write_stream(char *);  /* opens file for writing */
+extern FILE *write_stream(char *outputDirectory, char *name);  /* opens file for writing */
 extern void make_nfa_model_node(void);
 extern void make_dfa_model_node(int);
-extern char *ClassName(char *);
-extern char *OutMetaName(char *);
+extern char *ClassName(char *suffix); // output.c
+extern char *OutMetaName(char *outputDirectory, char *n); // support.c
 extern void error(char*, int);
 extern void warning(char*, int);
 extern void p_head(char *version, char *mode_file); //output.c

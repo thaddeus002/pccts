@@ -191,16 +191,16 @@ int main(int argc, char *argv[])
   if (input_stream) {
     /* don't overwrite unless input okay */
     if ( gen_cpp ) {
-      output_stream = write_stream(ClassName(CPP_FILE_SUFFIX));
+      output_stream = write_stream(OutputDirectory, ClassName(CPP_FILE_SUFFIX));
       if ( file_str[1]!=NULL ) {
         warning("output file implicit in C++ mode; ignored...",0);
       }
-      class_stream = write_stream(ClassName(".h"));
+      class_stream = write_stream(OutputDirectory, ClassName(".h"));
       mode_stream = class_stream;
     }
     else {
-      output_stream = write_stream(file_str[1]);
-      mode_stream = write_stream(MODE_FILE);
+      output_stream = write_stream(OutputDirectory, file_str[1]);
+      mode_stream = write_stream(OutputDirectory, MODE_FILE);
     }
   }
   /* make sure that error reporting routines in grammar

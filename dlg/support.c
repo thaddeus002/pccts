@@ -91,7 +91,8 @@ FILE *read_stream(char *name)
   return f;
 }
 
-FILE *write_stream(char *name)
+/** opens file for writing */
+FILE *write_stream(char *outputDirectory, char *name)
 {
   FILE *f;
 
@@ -100,7 +101,7 @@ FILE *write_stream(char *name)
       fprintf(stderr, "dlg: invalid option: '%s'\n", name);
       f = NULL;
     }else{
-      f = fopen(OutMetaName(name), "w");
+      f = fopen(OutMetaName(outputDirectory, name), "w");
       if (f == NULL){
         /* couldn't open file */
         fprintf(stderr,
@@ -150,14 +151,14 @@ void warning(char *message,int line_no)
    MR10: if OutputDirectory was changed by user (-o option)
 */
 
-char *OutMetaName(char *n)
+char *OutMetaName(char *outputDirectory, char *n)
 {
     static char *dir_sym = DirectorySymbol;
     static char newname[MaxFileName+1];
     char *p;
 
   /* If OutputDirectory is same as TopDirectory (platform default) then leave n alone. */
-    if (strcmp(OutputDirectory, TopDirectory) == 0)
+    if (strcmp(outputDirectory, TopDirectory) == 0)
     return n;
 
   /* p will point to filename without path information */
@@ -167,7 +168,7 @@ char *OutMetaName(char *n)
     p = n;
 
   /* Copy new output directory into newname[] */
-  strcpy(newname, OutputDirectory);
+  strcpy(newname, outputDirectory);
 
   /* if new output directory does not have trailing dir_sym, add it! */
   if (newname[strlen(newname)-1] != *dir_sym)

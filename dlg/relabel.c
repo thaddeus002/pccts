@@ -33,16 +33,13 @@
  */
 
 
-
 #include <stdio.h>
-#include "dlg.h"
-#ifdef __STDC__
 #include <stdlib.h>
-#else
-#include <malloc.h>
-#endif /* __STDC__ */
 
-int class_no = CHAR_RANGE;  /* number of classes for labels */
+#include "dlg.h"
+
+
+int class_no = CHAR_RANGE; /* number of classes for labels */
 int first_el[CHAR_RANGE]; /* first element in each class partition */
 set class_sets[CHAR_RANGE]; /* array holds partitions from class */
         /* compression */
@@ -84,18 +81,7 @@ void partition(nfa_node* start,int level)
   set temp;
 
   unpart_chars = set_dup(used_chars);
-#if 0
-  /* EOF (-1+1) alway in class 0 */
-  class_sets[0] = set_of(0);
-  first_el[0] = 0;
-  used_classes = set_of(0);
-  temp = set_dif(unpart_chars, class_sets[0]);
-  set_free(unpart_chars);
-  unpart_chars = temp;
-  class_no = 1;
-#else
   class_no = 0;
-#endif
   while (!set_nil(unpart_chars)){
     /* don't look for equivalent labels if c <= 1 */
     if (level <= 1){
@@ -115,14 +101,6 @@ void partition(nfa_node* start,int level)
 
   /* free unpart_chars -ATG 5/6/95 */
   set_free(unpart_chars);
-
-#if 0
-  /* group all the other unused characters into a class */
-  set_orel(class_no,&used_classes);
-  first_el[class_no] = set_int(current_class);
-  class_sets[class_no] = set_dif(normal_chars,used_chars);
-  ++class_no;
-#endif
 }
 
 
