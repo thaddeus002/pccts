@@ -98,3 +98,4 @@ install: manpages
 	$(MAKE) -C dlg PREFIX=$(PREFIX) install
 	[ ! -d $(INCDIR) ] && install -d $(INCDIR)
 	install -m 644 h/* $(INCDIR)
+	install -m 644 hpp/* $(INCDIR)

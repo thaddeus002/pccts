@@ -18,7 +18,7 @@
  * addition, we ask that this header remain intact in our source code.
  * As long as these guidelines are kept, we expect to continue enhancing
  * this system and expect to make other tools available as they are
- * completed. 
+ * completed.
  *
  * ANTLR 1.33
  * Terence Parr
@@ -29,157 +29,105 @@
 
 #include "pcctscfg.h"
 
-#ifdef PCCTS_USE_STDARG
-#include "pccts_stdarg.h"
-#else
-#include <varargs.h>
-#endif
+#include <stdarg.h>
 
 /* ensure that tree manipulation variables are current after a rule
  * reference
  */
 
-void
-#ifdef __USE_PROTOS
-zzlink(AST **_root, AST **_sibling, AST **_tail)
-#else
-zzlink(_root, _sibling, _tail)
-AST **_root, **_sibling, **_tail;
-#endif
+void zzlink(AST **_root, AST **_sibling, AST **_tail)
 {
-	if ( *_sibling == NULL ) return;
-	if ( *_root == NULL ) *_root = *_sibling;
-	else if ( *_root != *_sibling ) (*_root)->down = *_sibling;
-	if ( *_tail==NULL ) *_tail = *_sibling;
-	while ( (*_tail)->right != NULL ) *_tail = (*_tail)->right;
+  if ( *_sibling == NULL ) return;
+  if ( *_root == NULL ) *_root = *_sibling;
+  else if ( *_root != *_sibling ) (*_root)->down = *_sibling;
+  if ( *_tail==NULL ) *_tail = *_sibling;
+  while ( (*_tail)->right != NULL ) *_tail = (*_tail)->right;
 }
 
-AST *
-#ifdef __USE_PROTOS
-zzastnew(void)
-#else
-zzastnew()
-#endif
+AST *zzastnew()
 {
-	AST *p = (AST *) calloc(1, sizeof(AST));
-	if ( p == NULL ) fprintf(stderr,"%s(%d): cannot allocate AST node\n",__FILE__,__LINE__);
-	return p;
+  AST *p = (AST *) calloc(1, sizeof(AST));
+  if ( p == NULL ) fprintf(stderr,"%s(%d): cannot allocate AST node\n",__FILE__,__LINE__);
+  return p;
 }
 
-/* add a child node to the current sibling list */
-void
-#ifdef __USE_PROTOS
-zzsubchild(AST **_root, AST **_sibling, AST **_tail)
-#else
-zzsubchild(_root, _sibling, _tail)
-AST **_root, **_sibling, **_tail;
-#endif
+/** Add a child node to the current sibling list */
+void zzsubchild(AST **_root, AST **_sibling, AST **_tail)
 {
-	AST *n;
-	zzNON_GUESS_MODE {
-	n = zzastnew();
+  AST *n;
+  zzNON_GUESS_MODE {
+  n = zzastnew();
 #ifdef DEMAND_LOOK
-	zzcr_ast(n, &(zzaCur), LA(0), LATEXT(0));
+  zzcr_ast(n, &(zzaCur), LA(0), LATEXT(0));
 #else
-	zzcr_ast(n, &(zzaCur), LA(1), LATEXT(1));
+  zzcr_ast(n, &(zzaCur), LA(1), LATEXT(1));
 #endif
-	zzastPush( n );
-	if ( *_tail != NULL ) (*_tail)->right = n;
-	else {
-		*_sibling = n;
-		if ( *_root != NULL ) (*_root)->down = *_sibling;
-	}
-	*_tail = n;
-	if ( *_root == NULL ) *_root = *_sibling;
-	}
+  zzastPush( n );
+  if ( *_tail != NULL ) (*_tail)->right = n;
+  else {
+    *_sibling = n;
+    if ( *_root != NULL ) (*_root)->down = *_sibling;
+  }
+  *_tail = n;
+  if ( *_root == NULL ) *_root = *_sibling;
+  }
 }
 
-/* make a new AST node.  Make the newly-created
- * node the root for the current sibling list.  If a root node already
+/**
+ * Make a new AST node. Make the newly-created
+ * node the root for the current sibling list. If a root node already
  * exists, make the newly-created node the root of the current root.
  */
-void
-#ifdef __USE_PROTOS
-zzsubroot(AST **_root, AST **_sibling, AST **_tail)
-#else
-zzsubroot(_root, _sibling, _tail)
-AST **_root, **_sibling, **_tail;
-#endif
+void zzsubroot(AST **_root, AST **_sibling, AST **_tail)
 {
-	AST *n;
-	zzNON_GUESS_MODE {
-	n = zzastnew();
+  AST *n;
+  zzNON_GUESS_MODE {
+  n = zzastnew();
 #ifdef DEMAND_LOOK
-	zzcr_ast(n, &(zzaCur), LA(0), LATEXT(0));
+  zzcr_ast(n, &(zzaCur), LA(0), LATEXT(0));
 #else
-	zzcr_ast(n, &(zzaCur), LA(1), LATEXT(1));
+  zzcr_ast(n, &(zzaCur), LA(1), LATEXT(1));
 #endif
-	zzastPush( n );
-	if ( *_root != NULL )
-		if ( (*_root)->down == *_sibling ) *_sibling = *_tail = *_root;
-	*_root = n;
-	(*_root)->down = *_sibling;
-	}
+  zzastPush( n );
+  if ( *_root != NULL )
+    if ( (*_root)->down == *_sibling ) *_sibling = *_tail = *_root;
+  *_root = n;
+  (*_root)->down = *_sibling;
+  }
 }
 
 /* Apply function to root then each sibling
  * example: print tree in child-sibling LISP-format (AST has token field)
  *
- *	void show(tree)
- *	AST *tree;
- *	{
- *		if ( tree == NULL ) return;
- *		printf(" %s", zztokens[tree->token]);
- *	}
+ *  void show(tree)
+ *  AST *tree;
+ *  {
+ *    if ( tree == NULL ) return;
+ *    printf(" %s", zztokens[tree->token]);
+ *  }
  *
- *	void before() { printf(" ("); }
- *	void after()  { printf(" )"); }
+ *  void before() { printf(" ("); }
+ *  void after()  { printf(" )"); }
  *
- *	LISPdump() { zzpre_ast(tree, show, before, after); }
+ *  LISPdump() { zzpre_ast(tree, show, before, after); }
  *
  */
-void
-#ifdef __USE_PROTOS
-zzpre_ast(
-	  AST *tree,
-	  void (*func)(AST *),   /* apply this to each tree node */
-	  void (*before)(AST *), /* apply this to root of subtree before preordering it */
-	  void (*after)(AST *))  /* apply this to root of subtree after preordering it */
-#else
-zzpre_ast(tree, func, before, after)
-AST *tree;
-void (*func)(),   /* apply this to each tree node */
-	 (*before)(), /* apply this to root of subtree before preordering it */
-	 (*after)();  /* apply this to root of subtree after preordering it */
-#endif
+void zzpre_ast(
+    AST *tree,
+    void (*func)(AST *),   /* apply this to each tree node */
+    void (*before)(AST *), /* apply this to root of subtree before preordering it */
+    void (*after)(AST *))  /* apply this to root of subtree after preordering it */
 {
-	while ( tree!= NULL )
-	{
-		if ( tree->down != NULL ) (*before)(tree);
-		(*func)(tree);
-		zzpre_ast(tree->down, func, before, after);
-		if ( tree->down != NULL ) (*after)(tree);
-		tree = tree->right;
-	}
+  while ( tree!= NULL )
+  {
+    if ( tree->down != NULL ) (*before)(tree);
+    (*func)(tree);
+    zzpre_ast(tree->down, func, before, after);
+    if ( tree->down != NULL ) (*after)(tree);
+    tree = tree->right;
+  }
 }
 
-/* free all AST nodes in tree; apply func to each before freeing */
-
-#if 0
-////void
-////#ifdef __USE_PROTOS
-////zzfree_ast(AST *tree)
-////#else
-////zzfree_ast(tree)
-////AST *tree;
-////#endif
-////{
-////	if ( tree == NULL ) return;
-////	zzfree_ast( tree->down );
-////	zzfree_ast( tree->right );
-////	zztfree( tree );
-////}
-#endif
 
 /*
    MR19 Optimize freeing of the following structure to limit recursion
@@ -199,13 +147,7 @@ void (*func)(),   /* apply this to each tree node */
    NAKAJIMA Mutsuki (muc@isr.co.jp).
 */
 
-void
-#ifdef __USE_PROTOS
-zzfree_ast(AST *tree)
-#else
-zzfree_ast(tree)
-AST *tree;
-#endif
+void zzfree_ast(AST *tree)
 {
 
     AST *otree;
@@ -247,99 +189,76 @@ AST *tree;
  * Requires at least two parameters with the last one being NULL.  If
  * both are NULL, return NULL.
  */
-#ifdef PCCTS_USE_STDARG
 AST *zztmake(AST *rt, ...)
-#else
-AST *zztmake(va_alist)
-va_dcl
-#endif
 {
-	va_list ap;
-	register AST *child, *sibling=NULL, *tail=NULL /* MR20 */, *w;
-	AST *root;
+  va_list ap;
+  register AST *child, *sibling=NULL, *tail=NULL /* MR20 */, *w;
+  AST *root;
 
 #ifdef PCCTS_USE_STDARG
-	va_start(ap, rt);
-	root = rt;
+  va_start(ap, rt);
+  root = rt;
 #else
-	va_start(ap);
-	root = va_arg(ap, AST *);
+  va_start(ap);
+  root = va_arg(ap, AST *);
 #endif
 
-	if ( root != NULL )
-		if ( root->down != NULL ) return NULL;
-	child = va_arg(ap, AST *);
-	while ( child != NULL )
-	{
-		for (w=child; w->right!=NULL; w=w->right) {;} /* find end of child */
-		if ( sibling == NULL ) {sibling = child; tail = w;}
-		else {tail->right = child; tail = w;}
-		child = va_arg(ap, AST *);
-	}
-	if ( root==NULL ) root = sibling;
-	else root->down = sibling;
-	va_end(ap);
-	return root;
+  if ( root != NULL )
+    if ( root->down != NULL ) return NULL;
+  child = va_arg(ap, AST *);
+  while ( child != NULL )
+  {
+    for (w=child; w->right!=NULL; w=w->right) {;} /* find end of child */
+    if ( sibling == NULL ) {sibling = child; tail = w;}
+    else {tail->right = child; tail = w;}
+    child = va_arg(ap, AST *);
+  }
+  if ( root==NULL ) root = sibling;
+  else root->down = sibling;
+  va_end(ap);
+  return root;
 }
 
 /* tree duplicate */
-AST *
-#ifdef __USE_PROTOS
-zzdup_ast(AST *t)
-#else
-zzdup_ast(t)
-AST *t;
-#endif
+AST *zzdup_ast(AST *t)
 {
-	AST *u;
-	
-	if ( t == NULL ) return NULL;
-	u = zzastnew();
-	*u = *t;
+  AST *u;
+
+  if ( t == NULL ) return NULL;
+  u = zzastnew();
+  *u = *t;
 #ifdef zzAST_DOUBLE
-	u->up = NULL;		/* set by calling invocation */
-	u->left = NULL;
+  u->up = NULL;   /* set by calling invocation */
+  u->left = NULL;
 #endif
-	u->right = zzdup_ast(t->right);
-	u->down = zzdup_ast(t->down);
+  u->right = zzdup_ast(t->right);
+  u->down = zzdup_ast(t->down);
 #ifdef zzAST_DOUBLE
-	if ( u->right!=NULL ) u->right->left = u;
-	if ( u->down!=NULL ) u->down->up = u;
+  if ( u->right!=NULL ) u->right->left = u;
+  if ( u->down!=NULL ) u->down->up = u;
 #endif
-	return u;
+  return u;
 }
 
-void
-#ifdef __USE_PROTOS
-zztfree(AST *t)
-#else
-zztfree(t)
-AST *t;
-#endif
+void zztfree(AST *t)
 {
 #ifdef zzd_ast
-	zzd_ast( t );
+  zzd_ast( t );
 #endif
-	free( t );
+  free( t );
 }
 
 #ifdef zzAST_DOUBLE
-/*
+/**
  * Set the 'up', and 'left' pointers of all nodes in 't'.
  * Initial call is double_link(your_tree, NULL, NULL).
  */
-void
-#ifdef __USE_PROTOS
-zzdouble_link(AST *t, AST *left, AST *up)
-#else
-zzdouble_link(t, left, up)
-AST *t, *left, *up;
-#endif
+void zzdouble_link(AST *t, AST *left, AST *up)
 {
-	if ( t==NULL ) return;
-	t->left = left;
-	t->up = up;
-	zzdouble_link(t->down, NULL, t);
-	zzdouble_link(t->right, t, up);
+  if ( t==NULL ) return;
+  t->left = left;
+  t->up = up;
+  zzdouble_link(t->down, NULL, t);
+  zzdouble_link(t->right, t, up);
 }
 #endif

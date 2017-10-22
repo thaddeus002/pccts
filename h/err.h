@@ -42,12 +42,8 @@
 #include <stdlib.h>
 #include <assert.h>
 
-/*                        */
-/*  7-Apr-97  133MR1                    */
-/*    Proper choice of STDC and cplusplus pre-processor symbols (?) */
-/*                        */
-#include "pccts_string.h"
-#include "pccts_stdarg.h"
+#include <string.h>
+#include <stdarg.h>
 
 #ifdef DUM
 /* Define usable bits per unsigned int word (used for set stuff) */

@@ -40,7 +40,7 @@
 #define ANTLR_H
 
 #include "pcctscfg.h"
-#include "pccts_string.h"
+#include <string.h>
 
 
 typedef int ANTLRTokenType;

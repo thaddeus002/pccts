@@ -32,7 +32,7 @@
 #include <cstdlib>
 #include <cstdarg>
 #include <cstring>
-#include <cstdio.h>
+#include <cstdio>
 
 PCCTS_NAMESPACE_STD
 
