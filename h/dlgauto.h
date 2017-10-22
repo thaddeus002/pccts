@@ -30,46 +30,38 @@
 #ifndef ZZDEFAUTO_H
 #define ZZDEFAUTO_H
 
-/*  10-Apr-97 133MR1	Uses __USE_PROTOS show should #include pcctscfg.h */
 
 #include "pcctscfg.h"
 
-zzchar_t	*zzlextext;	/* text of most recently matched token */
-zzchar_t	*zzbegexpr;	/* beginning of last reg expr recogn. */
-zzchar_t	*zzendexpr;	/* beginning of last reg expr recogn. */
-int	zzbufsize = 0;	/* number of characters in zzlextext */          /* MR7 */
-int	zzbegcol = 0;	/* column that first character of token is in*/
-int	zzendcol = 0;	/* column that last character of token is in */
-int	zzline = 1;	/* line current token is on */
-int	zzreal_line=1;	/* line of 1st portion of token that is not skipped */
-int	zzchar;		/* character to determine next state */
-int	zzbufovf;	/* indicates that buffer too small for text */
-int	zzcharfull = 0;
-static zzchar_t	*zznextpos;/* points to next available position in zzlextext*/
-static int 	zzclass;
+zzchar_t  *zzlextext; /* text of most recently matched token */
+zzchar_t  *zzbegexpr; /* beginning of last reg expr recogn. */
+zzchar_t  *zzendexpr; /* beginning of last reg expr recogn. */
+int zzbufsize = 0;  /* number of characters in zzlextext */          /* MR7 */
+int zzbegcol = 0; /* column that first character of token is in*/
+int zzendcol = 0; /* column that last character of token is in */
+int zzline = 1; /* line current token is on */
+int zzreal_line=1;  /* line of 1st portion of token that is not skipped */
+int zzchar;   /* character to determine next state */
+int zzbufovf; /* indicates that buffer too small for text */
+int zzcharfull = 0;
+static zzchar_t *zznextpos;/* points to next available position in zzlextext*/
+static int  zzclass;
 
-#ifdef __USE_PROTOS
-void	zzerrstd(const char *);
-void	(*zzerr)(const char *)=zzerrstd;/* pointer to error reporting function */
-extern int	zzerr_in(void);
-static int	(*zzfunc_in)(void) = zzerr_in;  /* MR20 */
-#else
-void	zzerrstd();
-void	(*zzerr)()=zzerrstd;	/* pointer to error reporting function */
-extern int	zzerr_in();
-static int	(*zzfunc_in)() = zzerr_in;      /* MR20 */
-#endif
+void  zzerrstd(const char *);
+void  (*zzerr)(const char *)=zzerrstd;/* pointer to error reporting function */
+extern int  zzerr_in(void);
+static int  (*zzfunc_in)(void) = zzerr_in;  /* MR20 */
 
-static FILE	*zzstream_in=0;
-static zzchar_t	*zzstr_in=0;
+static FILE *zzstream_in=0;
+static zzchar_t *zzstr_in=0;
 
 #ifdef USER_ZZMODE_STACK
-int 	          zzauto = 0;
+int             zzauto = 0;
 #else
 static int     zzauto = 0;
 #endif
-static int	zzadd_erase;
-static char 	zzebuf[70];
+static int  zzadd_erase;
+static char   zzebuf[70];
 
 #ifdef ZZCOL
 #define ZZINC (++zzendcol)
@@ -80,425 +72,345 @@ static char 	zzebuf[70];
 
 #define ZZGETC_STREAM {zzchar = getc(zzstream_in); zzclass = ZZSHIFT(zzchar);}
 #define ZZGETC_FUNC {zzchar = (*zzfunc_in)(); zzclass = ZZSHIFT(zzchar);}
-#define ZZGETC_STR { 			\
-	if (*zzstr_in){				\
-		zzchar = *zzstr_in;		\
-		++zzstr_in;				\
-	}else{						\
-		zzchar = EOF;			\
-	}							\
-	zzclass = ZZSHIFT(zzchar);	\
+#define ZZGETC_STR {      \
+  if (*zzstr_in){       \
+    zzchar = *zzstr_in;   \
+    ++zzstr_in;       \
+  }else{            \
+    zzchar = EOF;     \
+  }             \
+  zzclass = ZZSHIFT(zzchar);  \
 }
 
-#define ZZNEWSTATE	(newstate = dfa[state][zzclass])
+#define ZZNEWSTATE  (newstate = dfa[state][zzclass])
 
 #ifndef ZZCOPY
-#define ZZCOPY	\
-	/* Truncate matching buffer to size (not an error) */	\
-	if (zznextpos < lastpos){				\
-		*(zznextpos++) = zzchar;			\
-	}else{							\
-		zzbufovf = 1;					\
-	}
+#define ZZCOPY  \
+  /* Truncate matching buffer to size (not an error) */ \
+  if (zznextpos < lastpos){       \
+    *(zznextpos++) = zzchar;      \
+  }else{              \
+    zzbufovf = 1;         \
+  }
 #endif
 
-void
-#ifdef __USE_PROTOS
-zzrdstream( FILE *f )
-#else
-zzrdstream( f )
-FILE *f;
-#endif
+void zzrdstream( FILE *f )
 {
-	/* make sure that it is really set to something, otherwise just
-	   leave it be.
-	*/
-	if (f){
-		/* make sure that there is always someplace to get input
-		   before closing zzstream_in
-		*/
+  /* make sure that it is really set to something, otherwise just
+     leave it be.
+  */
+  if (f){
+    /* make sure that there is always someplace to get input
+       before closing zzstream_in
+    */
 #if 0
-		if (zzstream_in && zzstream_in!=stdin) fclose( zzstream_in );
+    if (zzstream_in && zzstream_in!=stdin) fclose( zzstream_in );
 #endif
-		zzline = 1;
-		zzstream_in = f;
-		zzfunc_in = NULL;
-		zzstr_in = 0;
-		zzcharfull = 0;
-	}
+    zzline = 1;
+    zzstream_in = f;
+    zzfunc_in = NULL;
+    zzstr_in = 0;
+    zzcharfull = 0;
+  }
 }
 
-void
-#ifdef __USE_PROTOS
-zzrdfunc( int (*f)(void) )
-#else
-zzrdfunc( f )
-int (*f)();
-#endif
+void zzrdfunc( int (*f)(void) )
 {
-	/* make sure that it is really set to something, otherwise just
-	   leave it be.
-	*/
-	if (f){
-		/* make sure that there is always someplace to get input
-		   before closing zzstream_in
-		*/
+  /* make sure that it is really set to something, otherwise just
+     leave it be.
+  */
+  if (f){
+    /* make sure that there is always someplace to get input
+       before closing zzstream_in
+    */
 #if 0
-		if (zzstream_in && zzstream_in!=stdin) fclose( zzstream_in );
+    if (zzstream_in && zzstream_in!=stdin) fclose( zzstream_in );
 #endif
-		zzline = 1;
-		zzstream_in = NULL;
-		zzfunc_in = f;
-		zzstr_in = 0;
-		zzcharfull = 0;
-	}
+    zzline = 1;
+    zzstream_in = NULL;
+    zzfunc_in = f;
+    zzstr_in = 0;
+    zzcharfull = 0;
+  }
 }
 
 
-void
-#ifdef __USE_PROTOS
-zzrdstr( zzchar_t *s )
-#else
-zzrdstr( s )
-zzchar_t *s;
-#endif
+void zzrdstr( zzchar_t *s )
 {
-	/* make sure that it is really set to something, otherwise just
-	   leave it be.
-	*/
-	if (s){
-		/* make sure that there is always someplace to get input
-		   before closing zzstream_in
-		*/
+  /* make sure that it is really set to something, otherwise just
+     leave it be.
+  */
+  if (s){
+    /* make sure that there is always someplace to get input
+       before closing zzstream_in
+    */
 #if 0
-		if (zzstream_in && zzstream_in!=stdin) fclose( zzstream_in );
+    if (zzstream_in && zzstream_in!=stdin) fclose( zzstream_in );
 #endif
-		zzline = 1;
-		zzstream_in = NULL;
-		zzfunc_in = 0;
-		zzstr_in = s;
-		zzcharfull = 0;
-	}
+    zzline = 1;
+    zzstream_in = NULL;
+    zzfunc_in = 0;
+    zzstr_in = s;
+    zzcharfull = 0;
+  }
 }
 
 
-#ifdef __USE_PROTOS
-void zzclose_stream(void)
-#else
 void zzclose_stream()
-#endif
 {
 #if 0
-	fclose( zzstream_in );
-	zzstream_in = NULL;
-	zzfunc_in = NULL;
+  fclose( zzstream_in );
+  zzstream_in = NULL;
+  zzfunc_in = NULL;
 #endif
 }
 
 /* saves dlg state, but not what feeds dlg (such as file position) */
-void
-#ifdef __USE_PROTOS
-zzsave_dlg_state(struct zzdlg_state *state)
-#else
-zzsave_dlg_state(state)
-struct zzdlg_state *state;
-#endif
+void zzsave_dlg_state(struct zzdlg_state *state)
 {
-	state->stream = zzstream_in;
-	state->func_ptr = zzfunc_in;
-	state->str = zzstr_in;
-	state->auto_num = zzauto;
-	state->add_erase = zzadd_erase;
-	state->lookc = zzchar;
-	state->char_full = zzcharfull;
-	state->begcol = zzbegcol;
-	state->endcol = zzendcol;
-	state->line = zzline;
-	state->lextext = zzlextext;
-	state->begexpr = zzbegexpr;
-	state->endexpr = zzendexpr;
-	state->bufsize = zzbufsize;
-	state->bufovf = zzbufovf;
-	state->nextpos = zznextpos;
-	state->class_num = zzclass;
+  state->stream = zzstream_in;
+  state->func_ptr = zzfunc_in;
+  state->str = zzstr_in;
+  state->auto_num = zzauto;
+  state->add_erase = zzadd_erase;
+  state->lookc = zzchar;
+  state->char_full = zzcharfull;
+  state->begcol = zzbegcol;
+  state->endcol = zzendcol;
+  state->line = zzline;
+  state->lextext = zzlextext;
+  state->begexpr = zzbegexpr;
+  state->endexpr = zzendexpr;
+  state->bufsize = zzbufsize;
+  state->bufovf = zzbufovf;
+  state->nextpos = zznextpos;
+  state->class_num = zzclass;
 }
 
-void
-#ifdef __USE_PROTOS
-zzrestore_dlg_state(struct zzdlg_state *state)
-#else
-zzrestore_dlg_state(state)
-struct zzdlg_state *state;
-#endif
+void zzrestore_dlg_state(struct zzdlg_state *state)
 {
-	zzstream_in = state->stream;
-	zzfunc_in = state->func_ptr;
-	zzstr_in = state->str;
-	zzauto = state->auto_num;
-	zzadd_erase = state->add_erase;
-	zzchar = state->lookc;
-	zzcharfull = state->char_full;
-	zzbegcol = state->begcol;
-	zzendcol = state->endcol;
-	zzline = state->line;
-	zzlextext = state->lextext;
-	zzbegexpr = state->begexpr;
-	zzendexpr = state->endexpr;
-	zzbufsize = state->bufsize;
-	zzbufovf = state->bufovf;
-	zznextpos = state->nextpos;
-	zzclass = state->class_num;
+  zzstream_in = state->stream;
+  zzfunc_in = state->func_ptr;
+  zzstr_in = state->str;
+  zzauto = state->auto_num;
+  zzadd_erase = state->add_erase;
+  zzchar = state->lookc;
+  zzcharfull = state->char_full;
+  zzbegcol = state->begcol;
+  zzendcol = state->endcol;
+  zzline = state->line;
+  zzlextext = state->lextext;
+  zzbegexpr = state->begexpr;
+  zzendexpr = state->endexpr;
+  zzbufsize = state->bufsize;
+  zzbufovf = state->bufovf;
+  zznextpos = state->nextpos;
+  zzclass = state->class_num;
 }
 
-void
-#ifdef __USE_PROTOS
-zzmode( int m )
-#else
-zzmode( m )
-int m;
-#endif
+void zzmode( int m )
 {
-	/* points to base of dfa table */
-	if (m<MAX_MODE){
-		zzauto = m;
-		/* have to redo class since using different compression */
-		zzclass = ZZSHIFT(zzchar);
-	}else{
-		sprintf(zzebuf,"Invalid automaton mode = %d ",m);
-		zzerr(zzebuf);
-	}
+  /* points to base of dfa table */
+  if (m<MAX_MODE){
+    zzauto = m;
+    /* have to redo class since using different compression */
+    zzclass = ZZSHIFT(zzchar);
+  }else{
+    sprintf(zzebuf,"Invalid automaton mode = %d ",m);
+    zzerr(zzebuf);
+  }
 }
 
-/* erase what is currently in the buffer, and get a new reg. expr */
-
-#ifdef __USE_PROTOS
-void zzskip(void)
-#else
+/** erase what is currently in the buffer, and get a new reg. expr */
 void zzskip()
-#endif
 {
-	zzadd_erase = 1;
+  zzadd_erase = 1;
 }
 
-/* don't erase what is in the zzlextext buffer, add on to it */
-#ifdef __USE_PROTOS
+/** don't erase what is in the zzlextext buffer, add on to it */
 void zzmore()
-#else
-void zzmore()
-#endif
 {
-	zzadd_erase = 2;
+  zzadd_erase = 2;
 }
 
-/* substitute c for the reg. expr last matched and is in the buffer */
-#ifdef __USE_PROTOS
-void
-zzreplchar(zzchar_t c)
-#else
-void
-zzreplchar(c)
-zzchar_t c;
-#endif
+/** substitute c for the reg. expr last matched and is in the buffer */
+void zzreplchar(zzchar_t c)
 {
-	/* can't allow overwriting null at end of string */
-	if (zzbegexpr < &zzlextext[zzbufsize-1]){
-		*zzbegexpr = c;
-		*(zzbegexpr+1) = '\0';
-	}
-	zzendexpr = zzbegexpr;
-	if (c != '\0') {
-		zznextpos = zzbegexpr + 1;
-	}
-	else {
-		zznextpos = zzbegexpr;	/* MR30 Zero terminates string. */
-	}
+  /* can't allow overwriting null at end of string */
+  if (zzbegexpr < &zzlextext[zzbufsize-1]){
+    *zzbegexpr = c;
+    *(zzbegexpr+1) = '\0';
+  }
+  zzendexpr = zzbegexpr;
+  if (c != '\0') {
+    zznextpos = zzbegexpr + 1;
+  }
+  else {
+    zznextpos = zzbegexpr;  /* MR30 Zero terminates string. */
+  }
 }
 
-/* replace the string s for the reg. expr last matched and in the buffer */
-void
-#ifdef __USE_PROTOS
-zzreplstr(register zzchar_t *s)
-#else
-zzreplstr(s)
-register zzchar_t *s;
-#endif
+/** replace the string s for the reg. expr last matched and in the buffer */
+void zzreplstr(register zzchar_t *s)
 {
-	register zzchar_t *l= &zzlextext[zzbufsize -1];
+  register zzchar_t *l= &zzlextext[zzbufsize -1];
 
-	zznextpos = zzbegexpr;
-	if (s){
-	 	while ((zznextpos <= l) && (*(zznextpos++) = *(s++))!=0){
-			/* empty */
-		}
-		/* correct for NULL at end of string */
-		zznextpos--;
-	}
-	if ((zznextpos <= l) && (*(--s) == 0)){
-		zzbufovf = 0;
-	}else{
-		zzbufovf = 1;
-	}
-	*(zznextpos) = '\0';
-	zzendexpr = zznextpos - 1;
+  zznextpos = zzbegexpr;
+  if (s){
+    while ((zznextpos <= l) && (*(zznextpos++) = *(s++))!=0){
+      /* empty */
+    }
+    /* correct for NULL at end of string */
+    zznextpos--;
+  }
+  if ((zznextpos <= l) && (*(--s) == 0)){
+    zzbufovf = 0;
+  }else{
+    zzbufovf = 1;
+  }
+  *(zznextpos) = '\0';
+  zzendexpr = zznextpos - 1;
 }
 
-#ifdef __USE_PROTOS
-void zzgettok(void)
-#else
 void zzgettok()
-#endif
 {
-	register int state, newstate;
-	/* last space reserved for the null char */
-	zzchar_t *lastpos;  /* MR27 Remove register since address operator used. */
+  register int state, newstate;
+  /* last space reserved for the null char */
+  zzchar_t *lastpos;  /* MR27 Remove register since address operator used. */
 
 skip:
-	zzreal_line = zzline;
-	zzbufovf = 0;
-	lastpos = &zzlextext[zzbufsize-1];
-	zznextpos = zzlextext;
-	zzbegcol = zzendcol+1;
+  zzreal_line = zzline;
+  zzbufovf = 0;
+  lastpos = &zzlextext[zzbufsize-1];
+  zznextpos = zzlextext;
+  zzbegcol = zzendcol+1;
 more:
-	zzbegexpr = zznextpos;
+  zzbegexpr = zznextpos;
 #ifdef ZZINTERACTIVE
-	/* interactive version of automaton */
-	/* if there is something in zzchar, process it */
-	state = newstate = dfa_base[zzauto];
-	if (zzcharfull){
-		ZZINC;
-		ZZCOPY;
-		ZZNEWSTATE;
-	}
-	if (zzstr_in)
-		while (zzalternatives[newstate]){
-			state = newstate;
-			ZZGETC_STR;
-			ZZINC;
-			ZZCOPY;
-			ZZNEWSTATE;
-		}
-	else if (zzstream_in)
-		while (zzalternatives[newstate]){
-			state = newstate;
-			ZZGETC_STREAM;
-			ZZINC;
-			ZZCOPY;
-			ZZNEWSTATE;
-		}
-	else if (zzfunc_in)
-		while (zzalternatives[newstate]){
-			state = newstate;
-			ZZGETC_FUNC;
-			ZZINC;
-			ZZCOPY;
-			ZZNEWSTATE;
-		}
-	/* figure out if last character really part of token */
-	if ((state != dfa_base[zzauto]) && (newstate == DfaStates)){
-		zzcharfull = 1;
-		--zznextpos;
-	}else{
-		zzcharfull = 0;
-		state = newstate;
-	}
-	*(zznextpos) = '\0';
-	/* Able to transition out of start state to some non err state?*/
-	if ( state == dfa_base[zzauto] ){
-		/* make sure doesn't get stuck */
-		zzadvance();
-	}
+  /* interactive version of automaton */
+  /* if there is something in zzchar, process it */
+  state = newstate = dfa_base[zzauto];
+  if (zzcharfull){
+    ZZINC;
+    ZZCOPY;
+    ZZNEWSTATE;
+  }
+  if (zzstr_in)
+    while (zzalternatives[newstate]){
+      state = newstate;
+      ZZGETC_STR;
+      ZZINC;
+      ZZCOPY;
+      ZZNEWSTATE;
+    }
+  else if (zzstream_in)
+    while (zzalternatives[newstate]){
+      state = newstate;
+      ZZGETC_STREAM;
+      ZZINC;
+      ZZCOPY;
+      ZZNEWSTATE;
+    }
+  else if (zzfunc_in)
+    while (zzalternatives[newstate]){
+      state = newstate;
+      ZZGETC_FUNC;
+      ZZINC;
+      ZZCOPY;
+      ZZNEWSTATE;
+    }
+  /* figure out if last character really part of token */
+  if ((state != dfa_base[zzauto]) && (newstate == DfaStates)){
+    zzcharfull = 1;
+    --zznextpos;
+  }else{
+    zzcharfull = 0;
+    state = newstate;
+  }
+  *(zznextpos) = '\0';
+  /* Able to transition out of start state to some non err state?*/
+  if ( state == dfa_base[zzauto] ){
+    /* make sure doesn't get stuck */
+    zzadvance();
+  }
 #else
-	/* non-interactive version of automaton */
-	if (!zzcharfull)
-		zzadvance();
-	else
-		ZZINC;
-	state = dfa_base[zzauto];
-	if (zzstr_in)
-		while (ZZNEWSTATE != DfaStates){
-			state = newstate;
-			ZZCOPY;
-			ZZGETC_STR;
-			ZZINC;
-		}
-	else if (zzstream_in)
-		while (ZZNEWSTATE != DfaStates){
-			state = newstate;
-			ZZCOPY;
-			ZZGETC_STREAM;
-			ZZINC;
-		}
-	else if (zzfunc_in)
-		while (ZZNEWSTATE != DfaStates){
-			state = newstate;
-			ZZCOPY;
-			ZZGETC_FUNC;
-			ZZINC;
-		}
-	zzcharfull = 1;
-	if ( state == dfa_base[zzauto] ){
-		if (zznextpos < lastpos){
-			*(zznextpos++) = zzchar;
-		}else{
-			zzbufovf = 1;
-		}
-		*zznextpos = '\0';
-		/* make sure doesn't get stuck */
-		zzadvance();
-	}else{
-		*zznextpos = '\0';
-	}
+  /* non-interactive version of automaton */
+  if (!zzcharfull)
+    zzadvance();
+  else
+    ZZINC;
+  state = dfa_base[zzauto];
+  if (zzstr_in)
+    while (ZZNEWSTATE != DfaStates){
+      state = newstate;
+      ZZCOPY;
+      ZZGETC_STR;
+      ZZINC;
+    }
+  else if (zzstream_in)
+    while (ZZNEWSTATE != DfaStates){
+      state = newstate;
+      ZZCOPY;
+      ZZGETC_STREAM;
+      ZZINC;
+    }
+  else if (zzfunc_in)
+    while (ZZNEWSTATE != DfaStates){
+      state = newstate;
+      ZZCOPY;
+      ZZGETC_FUNC;
+      ZZINC;
+    }
+  zzcharfull = 1;
+  if ( state == dfa_base[zzauto] ){
+    if (zznextpos < lastpos){
+      *(zznextpos++) = zzchar;
+    }else{
+      zzbufovf = 1;
+    }
+    *zznextpos = '\0';
+    /* make sure doesn't get stuck */
+    zzadvance();
+  }else{
+    *zznextpos = '\0';
+  }
 #endif
 #ifdef ZZCOL
-	zzendcol -= zzcharfull;
+  zzendcol -= zzcharfull;
 #endif
-	zzendexpr = zznextpos -1;
-	zzadd_erase = 0;
-	(*actions[accepts[state]])();
-	switch (zzadd_erase) {
-		case 1: goto skip;
-		case 2: goto more;
-	}
+  zzendexpr = zznextpos -1;
+  zzadd_erase = 0;
+  (*actions[accepts[state]])();
+  switch (zzadd_erase) {
+    case 1: goto skip;
+    case 2: goto more;
+  }
 }
 
-#ifdef __USE_PROTOS
-void zzadvance(void)
-#else
 void zzadvance()
-#endif
 {
-	if (zzstream_in) { ZZGETC_STREAM; zzcharfull = 1; ZZINC;}
-	if (zzfunc_in) { ZZGETC_FUNC; zzcharfull = 1; ZZINC;}
-	if (zzstr_in) { ZZGETC_STR; zzcharfull = 1; ZZINC;}
-	if (!(zzstream_in || zzfunc_in || zzstr_in)){
-		zzerr_in();
-	}
+  if (zzstream_in) { ZZGETC_STREAM; zzcharfull = 1; ZZINC;}
+  if (zzfunc_in) { ZZGETC_FUNC; zzcharfull = 1; ZZINC;}
+  if (zzstr_in) { ZZGETC_STR; zzcharfull = 1; ZZINC;}
+  if (!(zzstream_in || zzfunc_in || zzstr_in)){
+    zzerr_in();
+  }
 }
 
-void
-#ifdef __USE_PROTOS
-zzerrstd(const char *s)
-#else
-zzerrstd(s)
-char *s;
-#endif
+void zzerrstd(const char *s)
 {
-        zzLexErrCount++;                /* MR11 */
-        fprintf(stderr,
-                "%s near line %d (text was '%s')\n",
-                ((s == NULL) ? "Lexical error" : s),
-                zzline,zzlextext);
+  zzLexErrCount++;                /* MR11 */
+  fprintf(stderr,
+      "%s near line %d (text was '%s')\n",
+      ((s == NULL) ? "Lexical error" : s),
+      zzline,zzlextext);
 }
 
-#ifdef __USE_PROTOS
-int zzerr_in(void)
-#else
 int zzerr_in()
-#endif
 {
-	fprintf(stderr,"No input stream, function, or string\n");
-	/* return eof to get out gracefully */
-	return EOF;
+  fprintf(stderr,"No input stream, function, or string\n");
+  /* return eof to get out gracefully */
+  return EOF;
 }
 
 #endif

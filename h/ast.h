@@ -86,15 +86,9 @@ typedef struct _ast {
 extern int zzast_sp;
 extern AST *zzastStack[];
 
-/* MR26 */
 
-#ifdef PCCTS_USE_STDARG
 AST *zztmake(AST *, ...);
-#else
-AST *zztmake();
-#endif
 
-#ifdef __USE_PROTOS
 void zzlink(AST **, AST **, AST **);
 void zzsubchild(AST **, AST **, AST **);
 void zzsubroot(AST **, AST **, AST **);
@@ -105,17 +99,5 @@ void zztfree(AST *);
 void zzdouble_link(AST *, AST *, AST *);
 AST *zzastnew(void);
 
-#else
-
-void zzlink();
-AST *zzastnew();
-void zzsubchild();
-void zzsubroot();
-void zzpre_ast();
-void zzfree_ast();
-AST *zzdup_ast();
-void zztfree();
-void zzdouble_link();
-#endif
 
 #endif
