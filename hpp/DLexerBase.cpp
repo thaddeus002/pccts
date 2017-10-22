@@ -29,8 +29,8 @@
 
 #include "pcctscfg.h"
 
-#include "pccts_stdio.h"
-#include "pccts_stdlib.h"
+#include <cstdio>
+#include <cstdlib>
 
 PCCTS_NAMESPACE_STD
 

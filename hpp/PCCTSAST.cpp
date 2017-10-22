@@ -33,7 +33,7 @@
 #include "pcctscfg.h"
 
 #include "PCCTSAST.h"
-#include "pccts_stdarg.h"
+#include <cstdarg>
 
 PCCTS_NAMESPACE_STD
 

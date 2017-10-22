@@ -33,7 +33,7 @@
 
 #include "pcctscfg.h"
 
-#include "pccts_stdio.h"
+#include <cstdio>
 
 PCCTS_NAMESPACE_STD
 
@@ -45,25 +45,25 @@ class ANTLRAbstractToken;
 class DllExportPCCTS ANTLRTokenPtr {
 public:
     ANTLRTokenPtr(ANTLRAbstractToken *addr=NULL){ptr_ = addr; ref();}
-    ANTLRTokenPtr(const ANTLRTokenPtr &lhs)	{ptr_ = lhs.ptr_; lhs.ref();}
+    ANTLRTokenPtr(const ANTLRTokenPtr &lhs) {ptr_ = lhs.ptr_; lhs.ref();}
     ~ANTLRTokenPtr();
 
     // use ANTLRTokenPtr as a pointer to ANTLRToken
 //
-//  8-Apr-97	MR1	Make operator -> a const member function
-//			  as well as some other member functions
+//  8-Apr-97  MR1 Make operator -> a const member function
+//        as well as some other member functions
 //
-    ANTLRAbstractToken *operator-> () const { return ptr_; }		// MR1
+    ANTLRAbstractToken *operator-> () const { return ptr_; }    // MR1
 //
 //  7-Apr-97 133MR1
-//	     Fix suggested by Andreas Magnusson
-//			(Andreas.Magnusson@mailbox.swipnet.se)
-    void operator = (const ANTLRTokenPtr & lhs);		    	// MR1
+//       Fix suggested by Andreas Magnusson
+//      (Andreas.Magnusson@mailbox.swipnet.se)
+    void operator = (const ANTLRTokenPtr & lhs);          // MR1
     void operator = (ANTLRAbstractToken *addr);
-    int operator != (const ANTLRTokenPtr &q) const	    		// MR1 // MR11 unsigned -> int
-	{ return this->ptr_ != q.ptr_; }
-    int operator == (const ANTLRTokenPtr &q) const  			// MR1 // MR11 unsigned -> int
-	{ return this->ptr_ == q.ptr_; }
+    int operator != (const ANTLRTokenPtr &q) const          // MR1 // MR11 unsigned -> int
+  { return this->ptr_ != q.ptr_; }
+    int operator == (const ANTLRTokenPtr &q) const        // MR1 // MR11 unsigned -> int
+  { return this->ptr_ == q.ptr_; }
     int operator == (const ANTLRAbstractToken *addr) const      // MR11
     { return this->ptr_ == addr; }
     int operator != (const ANTLRAbstractToken *addr) const      // MR11

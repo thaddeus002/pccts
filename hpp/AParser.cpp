@@ -29,10 +29,10 @@
 
 #include "pcctscfg.h"
 
-#include "pccts_stdlib.h"
-#include "pccts_stdarg.h"
-#include "pccts_string.h"
-#include "pccts_stdio.h"
+#include <cstdlib>
+#include <cstdarg>
+#include <cstring>
+#include <cstdio.h>
 
 PCCTS_NAMESPACE_STD
 

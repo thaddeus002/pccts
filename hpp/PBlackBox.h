@@ -39,7 +39,7 @@
 /* Completely rewritten by Chris Uzdavinis (chris@atdesk.com) for MR23 */
 
 #include "pcctscfg.h"
-#include "pccts_iostream.h"
+#include <iostream>
 
 PCCTS_NAMESPACE_STD
 

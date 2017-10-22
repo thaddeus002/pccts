@@ -15,7 +15,7 @@ ERR = A/err
 HDR_FILE =
 SCAN = A/ALexer
 PCCTS = ../..
-A_H = $(PCCTS)/h
+A_H = $(PCCTS)/hpp
 BIN = $(PCCTS)/bin
 A = $(BIN)/antlr
 D = $(BIN)/dlg
@@ -23,7 +23,7 @@ CFLAGS = -I. -I$(A_H) -IA -IB -g
 #
 # Delay lookahead so that an extra fetch is not done by
 # 'A' parser which is needed by 'B' parser.
-# 
+#
 AFLAGS = -o A -CC
 DFLAGS = -C2 -i -CC -cl ALexer -o A
 GRM = test.g

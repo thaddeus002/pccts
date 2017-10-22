@@ -37,8 +37,8 @@
 
 #include "pcctscfg.h"
 
-#include "pccts_stdio.h"
-#include "pccts_setjmp.h"
+#include <cstdio>
+#include <csetjmp>
 
 PCCTS_NAMESPACE_STD
 

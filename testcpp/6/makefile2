@@ -12,10 +12,10 @@ TOKENS = B/tokens.h
 # The following filenames must be consistent with A/D flags
 D_FILE = B/parser.dlg
 ERR = B/err
-HDR_FILE = 
+HDR_FILE =
 SCAN = B/BLexer
 PCCTS = ../..
-A_H = $(PCCTS)/h
+A_H = $(PCCTS)/hpp
 BIN = $(PCCTS)/bin
 A = $(BIN)/antlr
 D = $(BIN)/dlg

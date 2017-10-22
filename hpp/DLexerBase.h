@@ -31,7 +31,7 @@
 #define DLGX_H
 
 #include "pcctscfg.h"
-#include "pccts_stdio.h"
+#include <cstdio>
 
 PCCTS_NAMESPACE_STD
 

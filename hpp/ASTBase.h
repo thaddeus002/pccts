@@ -32,8 +32,8 @@
 
 #include "pcctscfg.h"
 
-#include "pccts_stdio.h"
-#include "pccts_stdlib.h"
+#include <cstdio>
+#include <cstdlib>
 
 PCCTS_NAMESPACE_STD
 
@@ -57,39 +57,39 @@ class DllExportPCCTS ASTBase : public PCCTS_AST {
 #endif
 
 protected:
-	ASTBase *_right, *_down;
+  ASTBase *_right, *_down;
 
 public:
 
 #ifdef PCCTS_NOT_USING_SOR
-	ASTBase *right()	{ return _right; }
-	ASTBase *down()	    { return _down; }
-	void setRight(ASTBase *t)	{ _right = (ASTBase *)t; }
-	void setDown(ASTBase *t)	{ _down = (ASTBase *)t; }
+  ASTBase *right()  { return _right; }
+  ASTBase *down()     { return _down; }
+  void setRight(ASTBase *t) { _right = (ASTBase *)t; }
+  void setDown(ASTBase *t)  { _down = (ASTBase *)t; }
 #else
-	PCCTS_AST *right()	{ return _right; }	// define the SORCERER interface
-	PCCTS_AST *down()	{ return _down; }
-	void setRight(PCCTS_AST *t)	{ _right = (ASTBase *)t; }
-	void setDown(PCCTS_AST *t)	{ _down = (ASTBase *)t; }
+  PCCTS_AST *right()  { return _right; }  // define the SORCERER interface
+  PCCTS_AST *down() { return _down; }
+  void setRight(PCCTS_AST *t) { _right = (ASTBase *)t; }
+  void setDown(PCCTS_AST *t)  { _down = (ASTBase *)t; }
 #endif
-	ASTBase() { _right = _down = NULL; }
-	virtual ~ASTBase() { ; }
+  ASTBase() { _right = _down = NULL; }
+  virtual ~ASTBase() { ; }
 #ifndef PCCTS_NOT_USING_SOR
-	virtual ASTBase *dup();
+  virtual ASTBase *dup();
 #endif
-	void destroy();
-	void preorder(void* pData = NULL /* MR23 */);
-	static ASTBase *tmake(ASTBase *, ...);
-	static void link(ASTBase **, ASTBase **, ASTBase **);
-	void subchild(ASTBase **, ASTBase **, ASTBase **);
-	void subroot(ASTBase **, ASTBase **, ASTBase **);
-	virtual void preorder_action(void* /*pData*/ = NULL /* MR23 */) { ; }
-	virtual void preorder_before_action(void* /*pData*/ = NULL /* MR23 */) { /* MR23 */ printMessage(stdout, " ("); }
-	virtual void preorder_after_action(void* /*pData*/ = NULL /* MR23 */) { /* MR23 */ printMessage(stdout, " )"); }
+  void destroy();
+  void preorder(void* pData = NULL /* MR23 */);
+  static ASTBase *tmake(ASTBase *, ...);
+  static void link(ASTBase **, ASTBase **, ASTBase **);
+  void subchild(ASTBase **, ASTBase **, ASTBase **);
+  void subroot(ASTBase **, ASTBase **, ASTBase **);
+  virtual void preorder_action(void* /*pData*/ = NULL /* MR23 */) { ; }
+  virtual void preorder_before_action(void* /*pData*/ = NULL /* MR23 */) { /* MR23 */ printMessage(stdout, " ("); }
+  virtual void preorder_after_action(void* /*pData*/ = NULL /* MR23 */) { /* MR23 */ printMessage(stdout, " )"); }
     virtual void panic(const char *msg);         /* MR21 */
     virtual void reportOverwriteOfDownPointer(); /* MR21 */
 #ifdef PCCTS_NOT_USING_SOR
-	virtual int printMessage(FILE* pFile, const char* pFormat, ...); // MR23
+  virtual int printMessage(FILE* pFile, const char* pFormat, ...); // MR23
 #endif
 };
 
@@ -108,15 +108,15 @@ public:
   ASTBase *left() { return _left; }
   ASTBase *up() { return _up; }
   void setLeft(ASTBase *t) { _left = (ASTDoublyLinkedBase *)t; }    // MR6
-  void setUp(ASTBase *t)   { _up = (ASTDoublyLinkedBase *)t; }	    // MR6
+  void setUp(ASTBase *t)   { _up = (ASTDoublyLinkedBase *)t; }      // MR6
 #else
   PCCTS_AST *left() { return _left; }
   PCCTS_AST *up() { return _up; }
   void setLeft(PCCTS_AST *t) { _left = (ASTDoublyLinkedBase *)t; }  // MR6
-  void setUp(PCCTS_AST *t)   { _up = (ASTDoublyLinkedBase *)t; }	// MR6
+  void setUp(PCCTS_AST *t)   { _up = (ASTDoublyLinkedBase *)t; }  // MR6
 #endif
 
 };
 
-class AST;	// announce that this class will be coming along shortly
+class AST;  // announce that this class will be coming along shortly
 #endif

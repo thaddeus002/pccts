@@ -32,10 +32,10 @@
 
 #include "pcctscfg.h"
 
-#include "pccts_string.h"
-#include "pccts_stdio.h"
-#include "pccts_stdlib.h"
-#include "pccts_stdarg.h" // MR23
+#include <cstring>
+#include <cstdio>
+#include <cstdlib>
+#include <cstdarg> // MR23
 
 PCCTS_NAMESPACE_STD
 

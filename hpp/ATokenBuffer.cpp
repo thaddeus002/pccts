@@ -100,7 +100,7 @@ ANTLRTokenBuffer::
 }
 
 #if defined(DBG_TBUF)||defined(DBG_TBUF_MARK_REW)
-#include "pccts_stdio.h"
+#include <cstdio>
 PCCTS_NAMESPACE_STD
 #endif
 

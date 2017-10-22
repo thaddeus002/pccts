@@ -31,7 +31,7 @@
 #define ATOKENBUFFER_H_GATE
 
 #include "pcctscfg.h"
-#include "pccts_stdlib.h"
+#include <cstdlib>
 
 PCCTS_NAMESPACE_STD
 
