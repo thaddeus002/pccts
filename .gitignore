@@ -1,6 +1,5 @@
 *.o
 bin
-antlr
 dlg
 sorcerer
 genmk

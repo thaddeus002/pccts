@@ -49,8 +49,8 @@
 #define PCCTS_NAMESPACE_STD
 #endif
 
-#include "pccts_stdio.h"
-#include "pccts_stdlib.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 
 /* User may redefine how line information looks */     /* make it #line MR7 */

@@ -39,8 +39,6 @@ COMMON=../common
 COMMON_H=../common
 
 CC ?= gcc
-ANTLR = ../bin/antlr
-DLG = ../bin/dlg
 CPPFLAGS += -I$(PCCTS_H) -I$(COMMON_H) -DUSER_ZZSYN -DZZLEXBUFSIZE=32000
 
 #ifndef PREFIX
@@ -55,26 +53,15 @@ antlr : $(OBJ) $(SRC)
 		$(CC) $(CFLAGS) $(CPPFLAGS) $(COTHER) -o antlr $(OBJ)
 
 
-# what files does PCCTS generate (both ANTLR and DLG)
-#PCCTS_GEN=antlr.c scan.c err.c tokens.h mode.h parser.dlg stdpccts.h remap.h
-PCCTS_GEN=
 
 SRC=antlr.c scan.c err.c bits.c build.c fset2.c fset.c gen.c globals.c \
 	hash.c lex.c main.c misc.c $(COMMON)/set.c pred.c egman.c mrhoist.c fcache.c
 
-#
-# Don't worry about the ambiguity messages coming from antlr
-# for making antlr.c etc...  [should be 10 of them, I think]
-#
-#antlr.c stdpccts.h parser.dlg tokens.h err.c : antlr.g
-#	$(ANTLR) -gh antlr.g
 
 antlr.o : antlr.c mode.h tokens.h
 
 scan.o : scan.c mode.h tokens.h
 
-#scan.c mode.h: parser.dlg
-#	$(DLG) -C2 parser.dlg scan.c
 
 set.o : $(COMMON)/set.c
 	$(CC) $(CFLAGS) $(CPPFLAGS) $(COTHER) -c -o set.o $<
@@ -85,9 +72,9 @@ set.o : $(COMMON)/set.c
 clean:
 	rm -f *.o core
 
-#remove everything in clean plus the PCCTS files generated
-scrub:
-	rm -f antlr $(PCCTS_GEN) *.o core
+#remove everything in clean
+scrub: clean
+	rm -f antlr
 
 install: antlr
 	install antlr $(PREFIX)/bin
