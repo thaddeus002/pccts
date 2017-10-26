@@ -247,7 +247,7 @@ Graph buildRuleRef( char *text )
   r->altstart = CurAltStart;
   r->assign = NULL;
   if ( (p=(RuleEntry *)hash_get(Rname, text)) != NULL ) r->text = p->str;
-  else r->text = mystrdup( text );
+  else r->text = strdup(text);
   j1->p1  = (Node *) r;
   r->next = (Node *) j2;
   g.left = (Node *) j1; g.right = (Node *) j2;

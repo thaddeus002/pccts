@@ -451,18 +451,25 @@ void Tklink( char *token, char *expr )
  * Given a string, this function allocates and returns a pointer to a
  * hash table record of size 'sz' whose "str" pointer is reset to a position
  * in the string table.
+ * \param text the entry's text. must not be NULL.
+ * \param sz size of the new Entry TODO what this means ?
  */
+// TODO move this to hash.c
 Entry *newEntry( char *text, int sz )
 {
   Entry *p;
   require(text!=NULL, "new: NULL terminal");
 
-  if ( (p = (Entry *) calloc(1,sz)) == 0 )
+  p = (Entry *) calloc(1,sz));
+
+  if ( p == NULL )
   {
     fatal_internal("newEntry: out of memory for terminals\n");
     exit(PCCTS_EXIT_FAILURE);
   }
-  p->str = mystrdup(text);
+
+  p->str = strdup(text);
+  // TODO log a warning if p->str==NULL
 
   return(p);
 }

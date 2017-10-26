@@ -10,6 +10,7 @@
 
 #define ANTLR_VERSION 13333
 #include <stdio.h>
+#include <string.h> // strdup()
 
 #include "hash.h"
 #include "generic.h"
@@ -1445,14 +1446,18 @@ static void act123()
     strcmp(zzbegexpr, "#include")==0 ||
     strcmp(zzbegexpr, "#error")==0) )
     {
-      static char buf[100];
-      sprintf(buf, "%s_ast", zzbegexpr+1);
-      /* MR27 */            list_add(&CurAstLabelsInActions, mystrdup(zzbegexpr+1));
-      zzreplstr(buf);
-      chkGTFlag();
+        static char buf[100];
+        sprintf(buf, "%s_ast", zzbegexpr+1);
+        char *copy = strdup(zzbegexpr+1);
+        if(copy == NULL) {
+            exit(123);
+        }
+        list_add(&CurAstLabelsInActions, copy);
+        zzreplstr(buf);
+        chkGTFlag();
     }
     zzmore();
-  }
+}
 
 
 static void act124()

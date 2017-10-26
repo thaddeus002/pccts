@@ -12,7 +12,7 @@
 
 #define ANTLR_VERSION 13333
 #include <stdio.h>
-
+#include <string.h>
 #include <ctype.h>
 #include "hash.h"
 #include "generic.h"
@@ -100,7 +100,7 @@ void grammar()
             }
             else {
               if ( strcmp(ParserName,"zzparser")==0 ) {
-                ParserName=StripQuotes(mystrdup(LATEXT(1)));
+                ParserName=StripQuotes(strdup(LATEXT(1)));
                 if ( RulePrefix[0]!='\0' )
                 {
                   warn("#parser meta-op incompatible with '-gp prefix'; '-gp' ignored");
@@ -119,10 +119,10 @@ void grammar()
               {
                 char *fname;
                 zzantlr_state st; FILE *f; struct zzdlg_state dst;
-                UserTokenDefsFile = mystrdup(LATEXT(1));
+                UserTokenDefsFile = strdup(LATEXT(1));
                 zzsave_antlr_state(&st);
                 zzsave_dlg_state(&dst);
-                fname = mystrdup(LATEXT(1));
+                fname = strdup(LATEXT(1));
                 f = fopen(StripQuotes(fname), "r");
                 if ( f==NULL ) {warn(eMsg1("cannot open token defs file '%s'", fname+1));}
                 else {
@@ -132,7 +132,7 @@ void grammar()
                 zzrestore_antlr_state(&st);
                 zzrestore_dlg_state(&dst);
               }
- zzCONSUME;
+              zzCONSUME;
 
             }
             else break; /* MR6 code for exiting loop "for sure" */
@@ -468,90 +468,85 @@ void rule()
   zzBLOCK(zztasp1);
   zzMake0;
   {
-
-
-      ExceptionGroup *eg;
-  RuleEntry *q; Junction *p; Graph r; int f, l; ECnode *e;
-  set toksrefd, rulesrefd;
-  char *pdecl=NULL, *ret=NULL, *a; CurRetDef = CurParmDef = NULL;
-  CurExGroups = NULL;
-  CurElementLabels = NULL;
-  CurAstLabelsInActions = NULL; /* MR27 */
-  /* We want a new element label hash table for each rule */
-  if ( Elabel!=NULL ) killHashTable(Elabel);
-  Elabel = newHashTable();
-  attribsRefdFromAction = empty;
-  zzmatch(NonTerminal);
-  q=NULL;
-  if ( hash_get(Rname, LATEXT(1))!=NULL ) {
-    err(eMsg1("duplicate rule definition: '%s'",LATEXT(1)));
-    CannotContinue=TRUE;
-  }
-  else
-  {
-    q = (RuleEntry *)hash_add(Rname,
-    LATEXT(1),
-    (Entry *)newRuleEntry(LATEXT(1)));
-    CurRule = q->str;
-  }
-  CurRuleNode = q;
-  f = CurFile; l = zzline;
-  NumRules++;
- zzCONSUME;
-
-  {
-    zzBLOCK(zztasp2);
-    zzMake0;
+    ExceptionGroup *eg;
+    RuleEntry *q; Junction *p; Graph r; int f, l; ECnode *e;
+    set toksrefd, rulesrefd;
+    char *pdecl=NULL, *ret=NULL, *a; CurRetDef = CurParmDef = NULL;
+    CurExGroups = NULL;
+    CurElementLabels = NULL;
+    CurAstLabelsInActions = NULL; /* MR27 */
+    /* We want a new element label hash table for each rule */
+    if ( Elabel!=NULL ) killHashTable(Elabel);
+    Elabel = newHashTable();
+    attribsRefdFromAction = empty;
+    zzmatch(NonTerminal);
+    q=NULL;
+    if ( hash_get(Rname, LATEXT(1))!=NULL ) {
+      err(eMsg1("duplicate rule definition: '%s'",LATEXT(1)));
+      CannotContinue=TRUE;
+    }
+    else
     {
-    if ( (LA(1)==103) ) {
-      zzmatch(103);
-      if ( q!=NULL ) q->noAST = TRUE;
- zzCONSUME;
-
+      q = (RuleEntry *)hash_add(Rname,
+        LATEXT(1),
+        (Entry *)newRuleEntry(LATEXT(1)));
+      CurRule = q->str;
     }
-    else {
-      if ( (setwd1[LA(1)]&0x80) ) {
-      }
-      else {zzFAIL(1,zzerr4,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
-    }
-    zzEXIT(zztasp2);
-    }
-  }
-  {
-    zzBLOCK(zztasp2);
-    zzMake0;
+    CurRuleNode = q;
+    f = CurFile; l = zzline;
+    NumRules++;
+    zzCONSUME;
     {
-    ;
-    if ( (setwd2[LA(1)]&0x1) ) {
+      zzBLOCK(zztasp2);
+      zzMake0;
       {
-        zzBLOCK(zztasp3);
-        zzMake0;
-        {
-        if ( (LA(1)==104) ) {
-          zzmatch(104); zzCONSUME;
+        if ( (LA(1)==103) ) {
+          zzmatch(103);
+          if ( q!=NULL ) q->noAST = TRUE;
+          zzCONSUME;
         }
         else {
-          if ( (LA(1)==PassAction) ) {
+          if ( (setwd1[LA(1)]&0x80) ) {
           }
-          else {zzFAIL(1,zzerr5,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+          else {zzFAIL(1,zzerr4,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
         }
-        zzEXIT(zztasp3);
+        zzEXIT(zztasp2);
+      }
+    }
+    {
+      zzBLOCK(zztasp2);
+      zzMake0;
+      {
+        ;
+        if ( (setwd2[LA(1)]&0x1) ) {
+        {
+          zzBLOCK(zztasp3);
+          zzMake0;
+          {
+            if ( (LA(1)==104) ) {
+              zzmatch(104); zzCONSUME;
+            }
+            else {
+              if ( (LA(1)==PassAction) ) {
+              }
+              else {zzFAIL(1,zzerr5,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+            }
+            zzEXIT(zztasp3);
+          }
         }
+        zzmatch(PassAction);
+        pdecl = (char *) calloc(strlen(LATEXT(1))+1, sizeof(char));
+        require(pdecl!=NULL, "rule rule: cannot allocate param decl");
+        strcpy(pdecl, LATEXT(1));
+        CurParmDef = pdecl;
+        zzCONSUME;
       }
-      zzmatch(PassAction);
-      pdecl = (char *) calloc(strlen(LATEXT(1))+1, sizeof(char));
-      require(pdecl!=NULL, "rule rule: cannot allocate param decl");
-      strcpy(pdecl, LATEXT(1));
-      CurParmDef = pdecl;
- zzCONSUME;
-
-    }
-    else {
-      if ( (setwd2[LA(1)]&0x2) ) {
+      else {
+        if ( (setwd2[LA(1)]&0x2) ) {
+        }
+        else {zzFAIL(1,zzerr6,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
       }
-      else {zzFAIL(1,zzerr6,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
-    }
-    zzEXIT(zztasp2);
+      zzEXIT(zztasp2);
     }
   }
   {
@@ -565,7 +560,7 @@ void rule()
       require(ret!=NULL, "rule rule: cannot allocate ret type");
       strcpy(ret, LATEXT(1));
       CurRetDef = ret;
- zzCONSUME;
+      zzCONSUME;
 
     }
     else {
@@ -582,9 +577,8 @@ void rule()
     {
     if ( (LA(1)==QuotedTerm) ) {
       zzmatch(QuotedTerm);
-      if ( q!=NULL ) q->egroup=mystrdup(LATEXT(1));
- zzCONSUME;
-
+      if ( q!=NULL ) q->egroup=strdup(LATEXT(1));
+      zzCONSUME;
     }
     else {
       if ( (LA(1)==106) ) {
@@ -606,7 +600,7 @@ void rule()
       list_add(&eclasses, (char *)e);
       if ( q->egroup == NULL ) a[0] = (char)tolower(a[0]);
       /* refers to itself */
-      list_add(&(e->elist), mystrdup(q->str));
+      list_add(&(e->elist), strdup(q->str));
     }
     else {
       warn(eMsg1("default errclass for '%s' would conflict with token/errclass/tokclass",a));
@@ -620,7 +614,7 @@ void rule()
   /* MR23 */    CurAltNum_array[BlkLevel] = CurAltNum;
   zzmatch(106);
   inAlt=1;
- zzCONSUME;
+  zzCONSUME;
 
   block( &toksrefd, &rulesrefd );
   r = makeBlk(zzaArg(zztasp1,7),0, NULL /* pFirstSetSymbol */ );
@@ -652,7 +646,7 @@ void rule()
   altFixup();leFixup();egFixup();
   zzmatch(107);
   inAlt=0;
- zzCONSUME;
+  zzCONSUME;
 
   {
     zzBLOCK(zztasp2);
@@ -664,8 +658,7 @@ void rule()
       require(a!=NULL, "rule rule: cannot allocate error action");
       strcpy(a, LATEXT(1));
       CurRuleBlk->erraction = a;
- zzCONSUME;
-
+      zzCONSUME;
     }
     else {
       if ( (setwd2[LA(1)]&0x8) ) {
@@ -810,11 +803,11 @@ void aPred()
   zzmatch(111);
 
   MR_usingPredNames=1;      /* will need to use -mrhoist version of genPredTree */
- zzCONSUME;
+  zzCONSUME;
 
   zzmatch(TokenTerm);
-  name=mystrdup(LATEXT(1));
- zzCONSUME;
+  name=strdup(LATEXT(1));
+  zzCONSUME;
 
 
   /* don't free - referenced in predicates */
@@ -835,7 +828,7 @@ void aPred()
     {
     if ( (LA(1)==Pred) ) {
       zzmatch(Pred);
-      predLiteral=mystrdup(LATEXT(1));
+      predLiteral=strdup(LATEXT(1));
       save_line=action_line;
       save_file=action_file;
  zzCONSUME;
@@ -1050,10 +1043,8 @@ Predicate *predPrimary()
   Predicate     *predExpr=NULL;
   if ( (LA(1)==TokenTerm) ) {
     zzmatch(TokenTerm);
-    name=mystrdup(LATEXT(1));
- zzCONSUME;
-
-
+    name=strdup(LATEXT(1));
+    zzCONSUME;
     predEntry=(PredEntry *) hash_get(Pname,name);
     if (predEntry == NULL) {
       warnFL(eMsg1("no previously defined #pred with name \"%s\"",name),
@@ -1109,8 +1100,8 @@ void aLexclass()
   {
   zzmatch(116); zzCONSUME;
   zzmatch(TokenTerm);
-  lexclass(mystrdup(LATEXT(1)));
- zzCONSUME;
+  lexclass(strdup(LATEXT(1)));
+  zzCONSUME;
 
   zzEXIT(zztasp1);
   return;
@@ -1137,15 +1128,15 @@ void error()
     ;
     if ( (LA(1)==TokenTerm) ) {
       zzmatch(TokenTerm);
-      t=mystrdup(LATEXT(1));
- zzCONSUME;
+      t=strdup(LATEXT(1));
+      zzCONSUME;
 
     }
     else {
       if ( (LA(1)==QuotedTerm) ) {
         zzmatch(QuotedTerm);
-        t=mystrdup(LATEXT(1));
- zzCONSUME;
+        t=strdup(LATEXT(1));
+        zzCONSUME;
 
       }
       else {zzFAIL(1,zzerr14,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
@@ -1180,21 +1171,21 @@ void error()
     {
     if ( (LA(1)==NonTerminal) ) {
       zzmatch(NonTerminal);
-      if ( go ) t=mystrdup(LATEXT(1));
+      if ( go ) t=strdup(LATEXT(1));
  zzCONSUME;
 
     }
     else {
       if ( (LA(1)==TokenTerm) ) {
         zzmatch(TokenTerm);
-        if ( go ) t=mystrdup(LATEXT(1));
+        if ( go ) t=strdup(LATEXT(1));
  zzCONSUME;
 
       }
       else {
         if ( (LA(1)==QuotedTerm) ) {
           zzmatch(QuotedTerm);
-          if ( go ) t=mystrdup(LATEXT(1));
+          if ( go ) t=strdup(LATEXT(1));
  zzCONSUME;
 
         }
@@ -1216,23 +1207,20 @@ void error()
         {
         if ( (LA(1)==NonTerminal) ) {
           zzmatch(NonTerminal);
-          if ( go ) t=mystrdup(LATEXT(1));
- zzCONSUME;
-
+          if ( go ) t=strdup(LATEXT(1));
+          zzCONSUME;
         }
         else {
           if ( (LA(1)==TokenTerm) ) {
             zzmatch(TokenTerm);
-            if ( go ) t=mystrdup(LATEXT(1));
- zzCONSUME;
-
+            if ( go ) t=strdup(LATEXT(1));
+            zzCONSUME;
           }
           else {
             if ( (LA(1)==QuotedTerm) ) {
               zzmatch(QuotedTerm);
-              if ( go ) t=mystrdup(LATEXT(1));
- zzCONSUME;
-
+              if ( go ) t=strdup(LATEXT(1));
+              zzCONSUME;
             }
             else {zzFAIL(1,zzerr16,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
           }
@@ -1268,7 +1256,7 @@ void tclass()
   char *totext=NULL;
   zzmatch(118); zzCONSUME;
   zzmatch(TokenTerm);
-  t=mystrdup(LATEXT(1));
+  t=strdup(LATEXT(1));
   zzCONSUME;
 
   e = newTCnode;
@@ -1298,7 +1286,7 @@ void tclass()
     if ( (LA(1)==114) ) {
       zzmatch(114); zzCONSUME;
       zzmatch(QuotedTerm);
-      akaString=mystrdup(StripQuotes(LATEXT(1)));
+      akaString=strdup(StripQuotes(LATEXT(1)));
       /* MR11 */                   save_file=CurFile;save_line=zzline;
       /* MR23 */
  zzCONSUME;
@@ -1345,9 +1333,9 @@ void tclass()
               err("implicit token definition not allowed with #tokdefs");
               go = 0;
             }
-            else {t=mystrdup(LATEXT(1)); tok=addTname(LATEXT(1));}
+            else {t=strdup(LATEXT(1)); tok=addTname(LATEXT(1));}
           }
- zzCONSUME;
+          zzCONSUME;
 
           {
             zzBLOCK(zztasp4);
@@ -1362,7 +1350,7 @@ void tclass()
                   err("implicit token definition not allowed with #tokdefs");
                   go = 0;
                 } else {
-                  totext=mystrdup(LATEXT(1)); totok=addTname(LATEXT(1));
+                  totext=strdup(LATEXT(1)); totok=addTname(LATEXT(1));
                 }
               }
  zzCONSUME;
@@ -1386,9 +1374,9 @@ void tclass()
                 err("implicit token definition not allowed with #tokdefs");
                 go = 0;
               }
-              else {t=mystrdup(LATEXT(1)); tok=addTexpr(LATEXT(1));}
+              else {t=strdup(LATEXT(1)); tok=addTexpr(LATEXT(1));}
             }
- zzCONSUME;
+            zzCONSUME;
 
           }
           else {zzFAIL(1,zzerr19,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
@@ -1440,8 +1428,8 @@ void token()
     {
     if ( (LA(1)==TokenTerm) ) {
       zzmatch(TokenTerm);
-      t=mystrdup(LATEXT(1));
- zzCONSUME;
+      t=strdup(LATEXT(1));
+      zzCONSUME;
 
       {
         zzBLOCK(zztasp3);
@@ -1450,7 +1438,7 @@ void token()
         if ( (LA(1)==114) ) {
           zzmatch(114); zzCONSUME;
           zzmatch(QuotedTerm);
-          akaString=mystrdup(StripQuotes(LATEXT(1)));
+          akaString=strdup(StripQuotes(LATEXT(1)));
           /* MR11 */                   save_file=CurFile;save_line=zzline;
           /* MR11 */
  zzCONSUME;
@@ -1499,8 +1487,8 @@ void token()
     {
     if ( (LA(1)==QuotedTerm) ) {
       zzmatch(QuotedTerm);
-      e=mystrdup(LATEXT(1));
- zzCONSUME;
+      e=strdup(LATEXT(1));
+      zzCONSUME;
 
     }
     else {
@@ -1808,8 +1796,8 @@ LabelEntry *element_label()
   {
   TermEntry *t=NULL; LabelEntry *l=NULL; RuleEntry *r=NULL; char *lab;
   zzmatch(LABEL);
-  lab = mystrdup(LATEXT(1));
- zzCONSUME;
+  lab = strdup(LATEXT(1));
+  zzCONSUME;
 
 
   UsedNewStyleLabel = 1;
@@ -3019,8 +3007,8 @@ void defines(char * fname)
     do {
       zzmatch(149); zzCONSUME;
       zzmatch(ID);
-      t = mystrdup(LATEXT(1));
- zzCONSUME;
+      t = strdup(LATEXT(1));
+      zzCONSUME;
 
       zzmatch(INT);
 
@@ -3069,8 +3057,8 @@ void enum_def(char * fname)
   zzmatch(ID); zzCONSUME;
   zzmatch(152); zzCONSUME;
   zzmatch(ID);
-  t = mystrdup(LATEXT(1));
- zzCONSUME;
+  t = strdup(LATEXT(1));
+  zzCONSUME;
 
   {
     zzBLOCK(zztasp2);
@@ -3133,8 +3121,8 @@ void enum_def(char * fname)
         else {
           if ( (LA(1)==ID) ) {
             zzmatch(ID);
-            t = mystrdup(LATEXT(1));
- zzCONSUME;
+            t = strdup(LATEXT(1));
+            zzCONSUME;
 
             {
               zzBLOCK(zztasp4);
