@@ -46,16 +46,15 @@ PREFIX=/usr/local
 #endif
 
 
+SRC=antlr.c scan.c err.c bits.c build.c fset2.c fset.c gen.c globals.c \
+	hash.c lex.c main.c misc.c $(COMMON)/set.c pred.c egman.c mrhoist.c fcache.c
+
 OBJ=antlr.o scan.o err.o bits.o build.o fset2.o fset.o gen.o \
         globals.o hash.o lex.o main.o misc.o set.o pred.o egman.o mrhoist.o fcache.o
 
 antlr : $(OBJ) $(SRC)
-		$(CC) $(CFLAGS) $(CPPFLAGS) $(COTHER) -o antlr $(OBJ)
+	$(CC) $(CFLAGS) $(CPPFLAGS) $(COTHER) -o antlr $(OBJ)
 
-
-
-SRC=antlr.c scan.c err.c bits.c build.c fset2.c fset.c gen.c globals.c \
-	hash.c lex.c main.c misc.c $(COMMON)/set.c pred.c egman.c mrhoist.c fcache.c
 
 
 antlr.o : antlr.c mode.h tokens.h
@@ -64,7 +63,7 @@ scan.o : scan.c mode.h tokens.h
 
 
 set.o : $(COMMON)/set.c
-	$(CC) $(CFLAGS) $(CPPFLAGS) $(COTHER) -c -o set.o $<
+	$(CC) -c $(CFLAGS) $(CPPFLAGS) $(COTHER) $<
 
 
 
@@ -72,7 +71,7 @@ set.o : $(COMMON)/set.c
 clean:
 	rm -f *.o core
 
-#remove everything in clean
+#remove everything in clean plus binaries
 scrub: clean
 	rm -f antlr
 
