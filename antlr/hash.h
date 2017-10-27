@@ -29,6 +29,16 @@
 /**
  * \file hash.h
  * \brief define hash table entries, sizes, hash function...
+ *
+ * Manage hash tables.
+ * A HashTable is a collection of Entry classed by hash of str.
+ *
+ * The following functions are visible:
+ *
+ *    Entry **newHashTable();   Create and return initialized hash table
+ *    Entry *hash_add(Entry **, char *, Entry *);
+ *    Entry *hash_get(Entry **, char *);
+ *    void  killHashTable(HashTable table);
  */
 
 #ifndef __HASH_H_
@@ -56,18 +66,20 @@ typedef struct _entry {
  */
 typedef Entry **HashTable;
 
-Entry *hash_get(HashTable table, char *key);
-
+/** Create and return initialized hash table */
 HashTable newHashTable();
 
-Entry *hash_add(HashTable table, char *key, Entry *rec);
 
 void  killHashTable(HashTable table);
 
 /**
- * Add a string to the string table and return a pointer to it.
- * Bump the pointer into the string table to next avail position.
+ * Given a table, add 'rec' with key 'key' (add to front of list).
+ * \return ptr to entry
  */
-char *mystrdup(char *s);
+Entry *hash_add(HashTable table, char *key, Entry *rec);
+
+/** Return ptr to 1st entry found in table under key (return NULL if none found) */
+Entry *hash_get(HashTable table, char *key);
+
 
 #endif

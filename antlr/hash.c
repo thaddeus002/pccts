@@ -28,15 +28,17 @@
 
 /**
  * \file hash.c
+ * \brief define hash table entries, sizes, hash function...
  *
  * Manage hash tables.
+ * A HashTable is a collection of Entry classed by hash of str.
  *
  * The following functions are visible:
  *
- *    char  *mystrdup(char *);    Make space and copy string
  *    Entry **newHashTable();   Create and return initialized hash table
  *    Entry *hash_add(Entry **, char *, Entry *);
  *    Entry *hash_get(Entry **, char *);
+ *    void  killHashTable(HashTable table);
  */
 
 
@@ -54,15 +56,9 @@
 
 /** number of entries in the table */
 static unsigned size = HashTableSize;
-/** uniq static char string for all table */
-static char *strings = NULL;
-/** cursor on global char table 'strings' */
-static char *strp;
-/** length of 'strings' */
-static unsigned strsize = StrTableSize;
 
 
-/** Hash 's' using 'size', place into h (s is modified) */
+/** Hash 's' using 'size'. */
 static unsigned int hash(char *s, unsigned int size) {
 
   unsigned int h = 0;
@@ -75,28 +71,25 @@ static unsigned int hash(char *s, unsigned int size) {
 
 
 /** create the hash table and string table for terminals (string table only once) */
-HashTable newHashTable( )
+HashTable newHashTable()
 {
   HashTable table;
 
   table = calloc(size, sizeof(Entry *));
   require( table != NULL, "cannot allocate hash table");
-  if ( strings == NULL )
-  {
-    strings = (char *) calloc(strsize, sizeof(char));
-    require( strings != NULL, "cannot allocate string table");
-    strp = strings;
-  }
   return table;
 }
 
-void killHashTable( HashTable table )
+void killHashTable(HashTable table)
 {
   /* for now, just free table, forget entries */
   free( (char *) table );
 }
 
-/** Given a table, add 'rec' with key 'key' (add to front of list). return ptr to entry */
+/**
+ * Given a table, add 'rec' with key 'key' (add to front of list).
+ * \return ptr to entry
+ */
 Entry *hash_add(HashTable table, char *key, Entry *rec)
 {
   unsigned h=0;
@@ -125,23 +118,3 @@ Entry *hash_get(HashTable table, char *key)
   return( NULL );
 }
 
-
-/**
- * Add a string to the string table and return a pointer to it.
- * Bump the pointer into the string table to next avail position.
- */
-char *mystrdup(char *s)
-{
-  char *start=strp;
-  require(s!=NULL, "mystrdup: NULL string");
-
-  while ( *s != '\0' )
-  {
-    require(strp <= &(strings[strsize-2]),
-         "string table overflow\nIncrease StrTableSize in hash.h and recompile hash.c\n");
-    *strp++ = *s++;
-  }
-  *strp++ = '\0';
-
-  return( start );
-}
