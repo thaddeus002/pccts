@@ -34,6 +34,7 @@
 #include <stdlib.h>
 
 #include "dlg.h"
+#include "relabel.h"
 
 
 #define hash_list struct _hash_list_

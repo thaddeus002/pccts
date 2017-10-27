@@ -22,6 +22,7 @@
 #include "dlgdef.h"
 #include "mode.h"
 #include "support.h"
+#include "relabel.h"
 
 /* MR23 In order to remove calls to PURIFY use the antlr -nopurify option */
 

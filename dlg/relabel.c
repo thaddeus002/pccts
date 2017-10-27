@@ -28,7 +28,7 @@
 /**
  * This group of functions does the character class compression.
  * It goes over the dfa and relabels the arcs with the partitions
- * of characters in the NFA.  The partitions are stored in the
+ * of characters in the NFA. The partitions are stored in the
  * array class.
  */
 
@@ -36,45 +36,32 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "dlg.h"
+#include "relabel.h"
 
-
-int class_no = CHAR_RANGE; /* number of classes for labels */
 int first_el[CHAR_RANGE]; /* first element in each class partition */
-set class_sets[CHAR_RANGE]; /* array holds partitions from class */
-        /* compression */
+int class_no = CHAR_RANGE;
+
+static void r_intersect(nfa_node* start,set* maximal_class);
+
 
 /**
- * goes through labels on NFA graph and partitions the characters into
- * character classes.  This reduces the amount of space required for each
- * dfa node, since only one arc is required each class instead of one arc
- * for each character
- * level:
- * 0 no compression done
- * 1 remove unused characters from classes
- * 2 compress equivalent characters into same class
- *
- * returns the number of character classes required
+ * given pointer to beginning of graph and recursively walks it trying
+ * to find a maximal partition.  This partion in returned in maximal_class
  */
-int relabel(nfa_node* start,int level)
+static void intersect_nfa_labels(nfa_node* start,set* maximal_class)
 {
-  if (level){
-    set_free(used_classes);
-    partition(start,level);
-    label_with_classes(start);
-  }else{
-    /* classes equivalent to all characters in alphabet */
-    class_no = CHAR_RANGE;
-  }
-  return class_no;
+  /* pick a new operation number */
+  ++operation_no;
+  r_intersect(start,maximal_class);
 }
+
 
 /**
  * makes character class sets for new labels
  * \param start beginning of nfa graph
  * \param level compression level to uses
  */
-void partition(nfa_node* start,int level)
+static void partition(nfa_node* start,int level)
 {
   set current_class;
   set unpart_chars;
@@ -104,18 +91,7 @@ void partition(nfa_node* start,int level)
 }
 
 
-/**
- * given pointer to beginning of graph and recursively walks it trying
- * to find a maximal partition.  This partion in returned in maximal_class
- */
-void intersect_nfa_labels(nfa_node* start,set* maximal_class)
-{
-  /* pick a new operation number */
-  ++operation_no;
-  r_intersect(start,maximal_class);
-}
-
-void r_intersect(nfa_node* start,set* maximal_class)
+static void r_intersect(nfa_node* start,set* maximal_class)
 {
   set temp;
 
@@ -136,14 +112,7 @@ void r_intersect(nfa_node* start,set* maximal_class)
 }
 
 
-/** puts class labels in place of old character labels */
-void label_with_classes(nfa_node* start)
-{
-  ++operation_no;
-  label_node(start);
-}
-
-void label_node(nfa_node *start)
+static void label_node(nfa_node *start)
 {
   set new_label;
   register int i;
@@ -165,3 +134,38 @@ void label_node(nfa_node *start)
     label_node(start->trans[1]);
   }
 }
+
+
+/** puts class labels in place of old character labels */
+static void label_with_classes(nfa_node* start)
+{
+  ++operation_no;
+  label_node(start);
+}
+
+
+/**
+ * goes through labels on NFA graph and partitions the characters into
+ * character classes.  This reduces the amount of space required for each
+ * dfa node, since only one arc is required each class instead of one arc
+ * for each character
+ * level:
+ * 0 no compression done
+ * 1 remove unused characters from classes
+ * 2 compress equivalent characters into same class
+ *
+ * returns the number of character classes required
+ */
+int relabel(nfa_node* start,int level)
+{
+  if (level){
+    set_free(used_classes);
+    partition(start,level);
+    label_with_classes(start);
+  }else{
+    /* classes equivalent to all characters in alphabet */
+    class_no = CHAR_RANGE;
+  }
+  return class_no;
+}
+

@@ -29,6 +29,9 @@
  * dlg header file
  */
 
+#ifndef DLG_H__
+#define DLG_H__
+
 #include "constants.h"
 #include "set.h"
 
@@ -105,8 +108,6 @@ extern int  action_no;  /* last action function printed */
 extern int  func_action;  /* should actions be turned into functions?*/
 extern set  used_chars; /* used to label trans. arcs */
 extern set  used_classes; /* classes or chars used to label trans. arcs */
-extern int  class_no; /* number of classes used */
-extern set  class_sets[]; /* shows char. in each class */
 extern set  normal_chars; /* mask off unused portion of set */
 extern int  comp_level; /* what compression level to use */
 extern int  interactive;  /* interactive scanner (avoid lookahead)*/
@@ -147,7 +148,6 @@ extern void p_tables(void);
 extern void p_tail(void);         /* MR1 */
 extern void p_class_def1(void);       /* MR1 */
 extern void new_automaton_mode(void);     /* MR1 */
-extern int  relabel(nfa_node *,int);      /* MR1 */
 extern void p_shift_table(int);       /* MR1 */
 extern void p_bshift_table(void);       /* MR1 */
 extern void p_class_table(void);        /* MR1 */
@@ -164,8 +164,5 @@ extern void p_base_table(void);       /* MR1 */
 extern void p_single_node(int,int);     /* MR1 */
 extern char * minsize(int);       /* MR1 */
 extern void close1(nfa_node *,int,set *);   /* MR1 */
-extern void partition(nfa_node *,int);      /* MR1 */
-extern void intersect_nfa_labels(nfa_node *,set *); /* MR1 */
-extern void r_intersect(nfa_node *,set *);    /* MR1 */
-extern void label_node(nfa_node *);     /* MR1 */
-extern void label_with_classes(nfa_node *);   /* MR1 */
+
+#endif
