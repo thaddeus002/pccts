@@ -45,7 +45,6 @@
 #define MAX_ON_LINE 10
 
 #define NFA_MIN   64  /* minimum nfa_array size */
-#define DFA_MIN   64  /* minimum dfa_array size */
 
 #define DEFAULT_CLASSNAME "DLGLexer"
 
@@ -83,10 +82,8 @@ dfa_node {
           */
 };
 
-/******** macros for accessing the NFA and DFA nodes ****/
+/******** macros for accessing the NFA nodes ****/
 #define NFA(x)  (nfa_array[x])
-#define DFA(x)  (dfa_array[x])
-#define DFA_NO(x) ( (x) ? (x)->node_no : NIL_INDEX)
 #define NFA_NO(x) ( (x) ? (x)->node_no : NIL_INDEX)
 
 /******** antlr attributes *************/
@@ -117,9 +114,7 @@ extern int  dfa_basep[];  /* start of each group of dfa */
 extern int  dfa_class_nop[];/* number of transistion arcs in */
         /* each dfa in each mode */
 extern int  nfa_allocated;
-extern int  dfa_allocated;
 extern nfa_node **nfa_array;  /* start of nfa "array" */
-extern dfa_node **dfa_array;  /* start of dfa "array" */
 extern int  operation_no; /* unique number for each operation */
 extern FILE *input_stream;  /* where description read from */
 extern FILE *output_stream; /* where to put the output */
@@ -133,14 +128,8 @@ extern int  firstLexMember; /* MR1 */
 extern char *class_name;
 
 /******************** Functions ******************************/
-extern int  reach(unsigned *, register int, unsigned *);
-extern set  closure(set *, unsigned *);
-extern dfa_node *new_dfa_node(set);
 extern nfa_node *new_nfa_node(void);
-extern dfa_node *dfastate(set);
-extern dfa_node **nfa_to_dfa(nfa_node *);
 extern void make_nfa_model_node(void);
-extern void make_dfa_model_node(int);
 extern char *ClassName(char *suffix); // output.c
 extern void p_head(char *version, char *mode_file); //output.c
 extern void p_class_hdr(char *version); //output.c
@@ -155,7 +144,6 @@ extern void p_class_table(void);        /* MR1 */
 extern void p_mode_def(char *,int);     /* MR1 */
 extern void init(void);         /* MR1 */
 extern void p_class_def2(void);       /* MR1 */
-extern void clear_hash(void);       /* MR1 */
 extern void p_alternative_table(void);      /* MR1 */
 extern void p_node_table(void);       /* MR1 */
 extern void p_dfa_table(void);        /* MR1 */
@@ -164,6 +152,5 @@ extern void p_action_table(void);       /* MR1 */
 extern void p_base_table(void);       /* MR1 */
 extern void p_single_node(int,int);     /* MR1 */
 extern char * minsize(int);       /* MR1 */
-extern void close1(nfa_node *,int,set *);   /* MR1 */
 
 #endif

@@ -75,6 +75,7 @@
 #include "dlg.h"
 #include "constants.h"
 #include "relabel.h"
+#include "automata.h"
 
 static char *mode_name[MAX_MODES];
 static int mode_number[MAX_MODES];

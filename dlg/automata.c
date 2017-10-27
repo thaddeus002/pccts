@@ -35,13 +35,8 @@
 
 #include "dlg.h"
 #include "relabel.h"
+#include "automata.h"
 
-
-#define hash_list struct _hash_list_
-hash_list{
-  hash_list *next;  /* next thing in list */
-  dfa_node *node;
-};
 
 int dfa_allocated = 0;  /* keeps track of number of dfa nodes */
 dfa_node  **dfa_array;  /* root of binary tree that stores dfa array */
@@ -49,24 +44,11 @@ dfa_node  *dfa_model_node;
 hash_list   *dfa_hash[HASH_SIZE]; /* used to quickly find */
           /* desired dfa node */
 
-void make_dfa_model_node(int width)
-{
-  register int i;
-  dfa_model_node = (dfa_node*) malloc(sizeof(dfa_node)
-       + sizeof(int)*width);
-  dfa_model_node->node_no = -1; /* impossible value for real dfa node */
-  dfa_model_node->dfa_set = 0;
-  dfa_model_node->alternatives = FALSE;
-  dfa_model_node->done = FALSE;
-  dfa_model_node->nfa_states = empty;
-  for(i = 0; i<width; i++){
-    dfa_model_node->trans[i] = NIL_INDEX;
-  }
-}
+static void close1(nfa_node *node, int o, set *b);
 
 
 /** adds a new nfa to the binary tree and returns a pointer to it */
-dfa_node *new_dfa_node(set nfa_states)
+static dfa_node *new_dfa_node(set nfa_states)
 {
   register int j;
   register dfa_node *t;
@@ -96,6 +78,129 @@ dfa_node *new_dfa_node(set nfa_states)
   t->nfa_states = set_dup(nfa_states);
   dfa_array[dfa_allocated] = t;
   return t;
+}
+
+
+/**
+ * Returns a pointer to a dfa node that has the same nfa nodes in it.
+ * This may or maynot be a newly created node.
+ */
+static dfa_node *dfastate(set nfa_states)
+{
+  register hash_list *p;
+  int bin;
+
+  /* hash using set and see if it exists */
+  bin = set_hash(nfa_states,HASH_SIZE);
+  p = dfa_hash[bin];
+  while(p && !set_equ(nfa_states,(p->node)->nfa_states)){
+    p = p->next;
+  }
+  if(!p){
+    /* next state to add to hash table */
+    p = (hash_list*)malloc(sizeof(hash_list));
+    p->node = new_dfa_node(nfa_states);
+    p->next = dfa_hash[bin];
+    dfa_hash[bin] = p;
+  }
+  return (p->node);
+}
+
+
+/* this reach assumes the closure has been done already on set */
+static int reach(unsigned *nfa_list, register int a, unsigned *reach_list)
+{
+  register unsigned *e;
+  register nfa_node *node;
+  int t=0;
+
+  e = nfa_list;
+  if (e){
+    while (*e != nil){
+      node = NFA(*e);
+      if (set_el(a,node->label)){
+        t=1;
+        *reach_list=NFA_NO(node->trans[0]);
+        ++reach_list;
+      }
+      ++e;
+    }
+  }
+  *reach_list=nil;
+  return t;
+}
+
+
+/* finds all the nodes that can be reached by epsilon transitions
+   from the set of a nodes and returns puts them back in set b */
+static set closure(set *b, unsigned *reach_list)
+{
+  register nfa_node *node,*n; /* current node being examined */
+  register unsigned *e;
+
+  ++operation_no;
+  e=reach_list;
+
+  while (*e != nil){
+    node = NFA(*e);
+    set_orel(NFA_NO(node),b);
+    /* mark it done */
+    node->nfa_set = operation_no;
+    if ((n=node->trans[0]) != NIL_INDEX && set_nil(node->label) &&
+      (n->nfa_set != operation_no)){
+      /* put in b */
+      set_orel(NFA_NO(n),b);
+      close1(n,operation_no,b);
+    }
+    if ((n=node->trans[1]) != NIL_INDEX &&
+      (n->nfa_set != operation_no)){
+      /* put in b */
+      set_orel(NFA_NO(node->trans[1]),b);
+      close1(n,operation_no,b);
+    }
+    ++e;
+  }
+  return *b;
+}
+
+
+/**
+ * \param o marker to avoid cycles
+ */
+static void close1(nfa_node *node, int o, set *b)
+{
+  register nfa_node *n; /* current node being examined */
+
+  /* mark it done */
+  node->nfa_set = o;
+  if ((n=node->trans[0]) != NIL_INDEX && set_nil(node->label) &&
+    (n->nfa_set != o)){
+    /* put in b */
+    set_orel(NFA_NO(n),b);
+    close1(n,o,b);
+  }
+  if ((n=node->trans[1]) != NIL_INDEX &&
+    (n->nfa_set != o)){
+    /* put in b */
+    set_orel(NFA_NO(node->trans[1]),b);
+    close1(n,o,b);
+  }
+}
+
+
+void make_dfa_model_node(int width)
+{
+  register int i;
+  dfa_model_node = (dfa_node*) malloc(sizeof(dfa_node)
+       + sizeof(int)*width);
+  dfa_model_node->node_no = -1; /* impossible value for real dfa node */
+  dfa_model_node->dfa_set = 0;
+  dfa_model_node->alternatives = FALSE;
+  dfa_model_node->done = FALSE;
+  dfa_model_node->nfa_states = empty;
+  for(i = 0; i<width; i++){
+    dfa_model_node->trans[i] = NIL_INDEX;
+  }
 }
 
 
@@ -158,116 +263,11 @@ dfa_node **nfa_to_dfa(nfa_node *start)
   return dfa_array;
 }
 
-void clear_hash(void)
+void clear_hash()
 {
   int i;
 
   for(i=0; i<HASH_SIZE; ++i) {
     dfa_hash[i] = 0;
-  }
-}
-
-
-/**
- * Returns a pointer to a dfa node that has the same nfa nodes in it.
- * This may or maynot be a newly created node.
- */
-dfa_node *dfastate(set nfa_states)
-{
-  register hash_list *p;
-  int bin;
-
-  /* hash using set and see if it exists */
-  bin = set_hash(nfa_states,HASH_SIZE);
-  p = dfa_hash[bin];
-  while(p && !set_equ(nfa_states,(p->node)->nfa_states)){
-    p = p->next;
-  }
-  if(!p){
-    /* next state to add to hash table */
-    p = (hash_list*)malloc(sizeof(hash_list));
-    p->node = new_dfa_node(nfa_states);
-    p->next = dfa_hash[bin];
-    dfa_hash[bin] = p;
-  }
-  return (p->node);
-}
-
-
-/* this reach assumes the closure has been done already on set */
-int reach(unsigned *nfa_list, register int a, unsigned *reach_list)
-{
-  register unsigned *e;
-  register nfa_node *node;
-  int t=0;
-
-  e = nfa_list;
-  if (e){
-    while (*e != nil){
-      node = NFA(*e);
-      if (set_el(a,node->label)){
-        t=1;
-        *reach_list=NFA_NO(node->trans[0]);
-        ++reach_list;
-      }
-      ++e;
-    }
-  }
-  *reach_list=nil;
-  return t;
-}
-
-/* finds all the nodes that can be reached by epsilon transitions
-   from the set of a nodes and returns puts them back in set b */
-set closure(set *b, unsigned *reach_list)
-{
-  register nfa_node *node,*n; /* current node being examined */
-  register unsigned *e;
-
-  ++operation_no;
-  e=reach_list;
-
-  while (*e != nil){
-    node = NFA(*e);
-    set_orel(NFA_NO(node),b);
-    /* mark it done */
-    node->nfa_set = operation_no;
-    if ((n=node->trans[0]) != NIL_INDEX && set_nil(node->label) &&
-      (n->nfa_set != operation_no)){
-      /* put in b */
-      set_orel(NFA_NO(n),b);
-      close1(n,operation_no,b);
-    }
-    if ((n=node->trans[1]) != NIL_INDEX &&
-      (n->nfa_set != operation_no)){
-      /* put in b */
-      set_orel(NFA_NO(node->trans[1]),b);
-      close1(n,operation_no,b);
-    }
-    ++e;
-  }
-  return *b;
-}
-
-/**
- * \param o marker to avoid cycles
- */
-void close1(nfa_node *node, int o, set *b)
-{
-  register nfa_node *n; /* current node being examined */
-
-  /* mark it done */
-  node->nfa_set = o;
-  if ((n=node->trans[0]) != NIL_INDEX && set_nil(node->label) &&
-    (n->nfa_set != o)){
-    /* put in b */
-    set_orel(NFA_NO(n),b);
-    close1(n,o,b);
-  }
-  if ((n=node->trans[1]) != NIL_INDEX &&
-    (n->nfa_set != o)){
-    /* put in b */
-    set_orel(NFA_NO(node->trans[1]),b);
-    close1(n,o,b);
   }
 }
