@@ -131,23 +131,15 @@ extern int  firstLexMember; /* MR1 */
 extern char *class_name;
 
 /******************** Functions ******************************/
-extern char   *dlg_malloc(int, char *, int); /* wrapper malloc */
-extern char   *dlg_calloc(int, int, char *, int); /* wrapper calloc */
 extern int  reach(unsigned *, register int, unsigned *);
 extern set  closure(set *, unsigned *);
 extern dfa_node *new_dfa_node(set);
 extern nfa_node *new_nfa_node(void);
 extern dfa_node *dfastate(set);
 extern dfa_node **nfa_to_dfa(nfa_node *);
-extern void internal_error(char *, char *, int);    /* MR9 23-Sep-97 */
-extern FILE *read_stream(char *); /* opens file for reading */
-extern FILE *write_stream(char *outputDirectory, char *name);  /* opens file for writing */
 extern void make_nfa_model_node(void);
 extern void make_dfa_model_node(int);
 extern char *ClassName(char *suffix); // output.c
-extern char *OutMetaName(char *outputDirectory, char *n); // support.c
-extern void error(char*, int);
-extern void warning(char*, int);
 extern void p_head(char *version, char *mode_file); //output.c
 extern void p_class_hdr(char *version); //output.c
 extern void p_includes(void);

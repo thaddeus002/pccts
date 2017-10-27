@@ -30,22 +30,32 @@
 #include "dlg.h"
 #include <stdlib.h>
 #include "constants.h"
+#include "support.h"
 
+// TODO remove this var
 int err_found = 0;      /* indicates whether problem found */
 
-void internal_error(char *s, char *file,int line)    /* MR9 23-Sep-97 */
+/**
+ * Quit program if an error occured.
+ */
+static void internal_error(char *s, char *file,int line)    /* MR9 23-Sep-97 */
 {
   fprintf(stderr,s,file,line);
   exit(PCCTS_EXIT_FAILURE);
 }
 
+/**
+ * Allocate 'bytes' bytes, or quit if fail.
+ * \param bytes the number of bytes to allocate
+ * \param file name of source file
+ * \param line line number in which the function is called
+ */
 char *dlg_malloc(int bytes,char *file,int line)
 {
   char *t;
 
   t = (char *) malloc(bytes);
   if (!t){
-    /* error */
     internal_error("%s(%d): unable to allocate memory\n",
       file,line);
   }
@@ -53,13 +63,18 @@ char *dlg_malloc(int bytes,char *file,int line)
 }
 
 
+/**
+ * Allocate 'n' times 'bytes' bytes, or quit if fail.
+ * \param bytes the number of bytes to allocate
+ * \param file name of source file
+ * \param line line number in which the function is called
+ */
 char *dlg_calloc(int n,int bytes,char *file,int line)
 {
   char *t;
 
   t = (char *) calloc(n,bytes);
   if (!t){
-    /* error */
     internal_error("%s(%d): unable to allocate memory\n",
       file,line);
   }
@@ -67,6 +82,11 @@ char *dlg_calloc(int n,int bytes,char *file,int line)
 }
 
 
+/**
+ * Open an input stream.
+ * \param name file to read
+ * \return the new filestream (must be closed), or NULL if fail, or stdin if 'name' is NULL.
+ */
 FILE *read_stream(char *name)
 {
   FILE *f;
@@ -91,7 +111,49 @@ FILE *read_stream(char *name)
   return f;
 }
 
-/** opens file for writing */
+/* MR10: Jeff Vincent
+   MR10: Changed to remove directory information from n only if
+   MR10: if OutputDirectory was changed by user (-o option)
+*/
+
+/**
+ * \return a pointer to a staticaly allocated string.
+ */
+static char *OutMetaName(char *outputDirectory, char *n)
+{
+  static char *dir_sym = DirectorySymbol;
+  static char newname[MaxFileName+1];
+  char *p;
+
+  /* If OutputDirectory is same as TopDirectory (platform default) then leave n alone. */
+  if (strcmp(outputDirectory, TopDirectory) == 0)
+    return n;
+
+  /* p will point to filename without path information */
+  if ((p = strrchr(n, *dir_sym)) != NULL)
+    p++;
+  else
+    p = n;
+
+  /* Copy new output directory into newname[] */
+  strcpy(newname, outputDirectory);
+
+  /* if new output directory does not have trailing dir_sym, add it! */
+  if (newname[strlen(newname)-1] != *dir_sym)
+    strcat(newname, dir_sym);
+
+  /* contatenate FILE NAME ONLY to new output directory */
+  strcat(newname, p);
+
+  return newname;
+}
+
+/**
+ * Opens file for writing.
+ * \param outputDirectory
+ * \param name filename to write
+ * \return newly opened stream (that must be closed), or NULL if failed, or stdout if 'name' is NULL
+ */
 FILE *write_stream(char *outputDirectory, char *name)
 {
   FILE *f;
@@ -144,38 +206,4 @@ void warning(char *message,int line_no)
   fprintf(stderr,ErrHdr,
     (file_str[0] ? file_str[0] : "stdin"), line_no);
   fprintf(stderr, " Warning: %s\n", message);
-}
-
-/* MR10: Jeff Vincent
-   MR10: Changed to remove directory information from n only if
-   MR10: if OutputDirectory was changed by user (-o option)
-*/
-
-char *OutMetaName(char *outputDirectory, char *n)
-{
-    static char *dir_sym = DirectorySymbol;
-    static char newname[MaxFileName+1];
-    char *p;
-
-  /* If OutputDirectory is same as TopDirectory (platform default) then leave n alone. */
-    if (strcmp(outputDirectory, TopDirectory) == 0)
-    return n;
-
-  /* p will point to filename without path information */
-  if ((p = strrchr(n, *dir_sym)) != NULL)
-    p++;
-  else
-    p = n;
-
-  /* Copy new output directory into newname[] */
-  strcpy(newname, outputDirectory);
-
-  /* if new output directory does not have trailing dir_sym, add it! */
-  if (newname[strlen(newname)-1] != *dir_sym)
-    strcat(newname, dir_sym);
-
-  /* contatenate FILE NAME ONLY to new output directory */
-  strcat(newname, p);
-
-  return newname;
 }

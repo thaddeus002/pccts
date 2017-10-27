@@ -38,6 +38,7 @@
 #include "dlg.h"
 #include "tokens.h"
 #include "constants.h"
+#include "support.h"
 
 #ifndef ANTLR_VERSION
 #define ANTLR_VERSION 13333

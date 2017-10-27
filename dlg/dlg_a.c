@@ -18,6 +18,8 @@
 #include "antlr.h"
 #include "tokens.h"
 #include "dlgdef.h"
+#include "support.h"
+
 LOOKAHEAD
 
 void zzerraction()
