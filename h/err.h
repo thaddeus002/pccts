@@ -129,12 +129,7 @@ void zzconsumeUntilToken(int t)
  * (and which set wasn't it a member of).
  */
 
-#ifdef PCCTS_USE_STDARG
 void zzFAIL(int k, ...)
-#else
-void zzFAIL(va_alist)
-va_dcl
-#endif
 {
 #ifdef LL_K
   static char text[LL_K*ZZLEXBUFSIZE+1];

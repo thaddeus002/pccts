@@ -10,11 +10,6 @@
  * ANTLR Version 1.33MR33
  */
 
-#define ANTLR_VERSION 13333
-#include "constants.h"
-#include <stdio.h>
-
-#include <ctype.h>
 #include "dlg.h"
 #define zzSET_SIZE 8
 #include "antlr.h"
