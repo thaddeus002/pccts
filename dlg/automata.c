@@ -38,6 +38,9 @@
 #include "automata.h"
 
 
+/* size of hash table used to find dfa_states quickly */
+#define HASH_SIZE 211
+
 int dfa_allocated = 0;  /* keeps track of number of dfa nodes */
 dfa_node  **dfa_array;  /* root of binary tree that stores dfa array */
 dfa_node  *dfa_model_node;

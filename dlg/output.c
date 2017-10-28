@@ -77,6 +77,9 @@
 #include "relabel.h"
 #include "automata.h"
 
+#define MAX_MODES 50  /* number of %%names allowed */
+#define MAX_ON_LINE 10
+
 static char *mode_name[MAX_MODES];
 static int mode_number[MAX_MODES];
 static int cur_mode=0;
@@ -85,7 +88,6 @@ int operation_no = 0; /* used to mark nodes so that infinite loops avoided */
 int dfa_basep[MAX_MODES];   /* start of each group of states */
 int dfa_class_nop[MAX_MODES]; /* number of elements in each group of states*/
 
-FILE *input_stream; /* where to read description from */
 FILE *output_stream;  /* where to put the output    */
 FILE *mode_stream;  /* where to put the mode.h stuff */
 FILE *class_stream; /* where to put the scan.h stuff (if gen_cpp) */
@@ -116,6 +118,16 @@ static char *mystrdup(char *s)
   strcpy(p, s);
   return p;
 }
+
+static void p_alternative_table();
+static void p_node_table();
+static void p_dfa_table();
+static void p_accept_table();
+static void p_action_table();
+static void p_base_table();
+static void p_single_node(int,int);
+static char *minsize(int);
+
 
 void p_class_hdr(char *version)
 {
@@ -230,28 +242,28 @@ void p_class_def2()
  */
 void p_head(char *version, char *mode_file)
 {
-  fprintf(OUT, "/*\n");
-  fprintf(OUT, " * D L G tables\n");
-  fprintf(OUT, " *\n");
-  fprintf(OUT, " * Generated from:");
-  fprintf(OUT, " %s", file_str[0]);
-  fprintf(OUT, "\n");
-  fprintf(OUT, " *\n");
-  fprintf(OUT, " * 1989-2001 by  Will Cohen, Terence Parr, and Hank Dietz\n");
-  fprintf(OUT, " * Purdue University Electrical Engineering\n");
-  fprintf(OUT, " * DLG Version %s\n", version);
-  fprintf(OUT, " */\n\n");
-  if ( gen_cpp)  fprintf(OUT, "#include \"pcctscfg.h\"\n");
-  if ( gen_cpp ) fprintf(OUT, "#include \"pccts_stdio.h\"\n");
-  if ( !gen_cpp ) fprintf(OUT, "#include \"%s\"\n\n", mode_file);
-  fprintf(OUT,"\n");
+  fprintf(output_stream, "/*\n");
+  fprintf(output_stream, " * D L G tables\n");
+  fprintf(output_stream, " *\n");
+  fprintf(output_stream, " * Generated from:");
+  fprintf(output_stream, " %s", file_str[0]);
+  fprintf(output_stream, "\n");
+  fprintf(output_stream, " *\n");
+  fprintf(output_stream, " * 1989-2001 by  Will Cohen, Terence Parr, and Hank Dietz\n");
+  fprintf(output_stream, " * Purdue University Electrical Engineering\n");
+  fprintf(output_stream, " * DLG Version %s\n", version);
+  fprintf(output_stream, " */\n\n");
+  if ( gen_cpp)  fprintf(output_stream, "#include \"pcctscfg.h\"\n");
+  if ( gen_cpp ) fprintf(output_stream, "#include \"pccts_stdio.h\"\n");
+  if ( !gen_cpp ) fprintf(output_stream, "#include \"%s\"\n\n", mode_file);
+  fprintf(output_stream,"\n");
 }
 
 void p_includes()
 {
-  fprintf(OUT, "#include \"%s\"\n", APARSER_H);
-  fprintf(OUT, "#include \"%s\"\n", DLEXERBASE_H);
-  fprintf(OUT, "#include \"%s\"\n", ClassName(".h"));
+  fprintf(output_stream, "#include \"%s\"\n", APARSER_H);
+  fprintf(output_stream, "#include \"%s\"\n", DLEXERBASE_H);
+  fprintf(output_stream, "#include \"%s\"\n", ClassName(".h"));
 }
 
 /** generate code to tie up any loose ends */
@@ -259,18 +271,18 @@ void p_tail()
 {
   if ( gen_cpp ) {
     if ( strcmp(ClassName(""), DEFAULT_CLASSNAME)!=0 )
-      fprintf(OUT, "#define DLGLexer %s\n", ClassName(""));
-    fprintf(OUT, "#include \"%s\"\n", DLEXER_H);  /* MR23 Rename DLexer.cpp to DLexer.h */
+      fprintf(output_stream, "#define DLGLexer %s\n", ClassName(""));
+    fprintf(output_stream, "#include \"%s\"\n", DLEXER_H);  /* MR23 Rename DLexer.cpp to DLexer.h */
     return;
   }
-  fprintf(OUT, "\n");
-  fprintf(OUT, "\n");
+  fprintf(output_stream, "\n");
+  fprintf(output_stream, "\n");
   if (comp_level)
-    fprintf(OUT, "#define ZZSHIFT(c) (b_class_no[zzauto][1+c])\n");
+    fprintf(output_stream, "#define ZZSHIFT(c) (b_class_no[zzauto][1+c])\n");
   else
-    fprintf(OUT, "#define ZZSHIFT(c) (1+c)\n");
-  if ( !gen_cpp ) fprintf(OUT, "#define MAX_MODE %d\n",mode_counter);
-  fprintf(OUT, "#include \"dlgauto.h\"\n");
+    fprintf(output_stream, "#define ZZSHIFT(c) (1+c)\n");
+  if ( !gen_cpp ) fprintf(output_stream, "#define MAX_MODE %d\n",mode_counter);
+  fprintf(output_stream, "#include \"dlgauto.h\"\n");
 }
 
 
@@ -278,24 +290,24 @@ void p_tail()
 void p_tables()
 {
   if ( !gen_cpp ) {
-    fprintf(OUT, "#define DfaStates\t%d\n", dfa_allocated);
-    fprintf(OUT, "typedef %s DfaState;\n\n", minsize(dfa_allocated));
+    fprintf(output_stream, "#define DfaStates\t%d\n", dfa_allocated);
+    fprintf(output_stream, "typedef %s DfaState;\n\n", minsize(dfa_allocated));
   }
 
   if ( gen_cpp ) {
     int i;
-    fprintf(OUT, "\n");
-    fprintf(OUT, "const int %s::MAX_MODE=%d;\n",
+    fprintf(output_stream, "\n");
+    fprintf(output_stream, "const int %s::MAX_MODE=%d;\n",
         ClassName(""),
         mode_counter);
-    fprintf(OUT, "const int %s::DfaStates=%d;\n",
+    fprintf(output_stream, "const int %s::DfaStates=%d;\n",
         ClassName(""),
         dfa_allocated);
     for (i=0; i<cur_mode; i++) {
-      fprintf(OUT, "const int %s::%s=%d;\n",
+      fprintf(output_stream, "const int %s::%s=%d;\n",
           ClassName(""), mode_name[i], mode_number[i]);
     }
-    fprintf(OUT, "\n");
+    fprintf(output_stream, "\n");
   }
 
   p_node_table();
@@ -314,7 +326,7 @@ void p_tables()
 /**
  * figures out the smallest variable type that will hold the transitions
  */
-char *minsize(int elements)
+static char *minsize(int elements)
 {
   int i = 0;
 
@@ -324,7 +336,7 @@ char *minsize(int elements)
 }
 
 
-void p_node_table()
+static void p_node_table()
 {
   register int  i;
   register int  m = 0;
@@ -338,18 +350,18 @@ void p_node_table()
 }
 
 
-void p_single_node(int i, int classes)
+static void p_single_node(int i, int classes)
 {
   register int  j;
   register int  trans, items_on_line;
 
 #if 1
   /* extra state (classes+1) for invalid characters */
-  fprintf(OUT, "%sDfaState %sst%d[%d] = {\n  ",
+  fprintf(output_stream, "%sDfaState %sst%d[%d] = {\n  ",
     gen_cpp?ClassName("::"):"static ",
     gen_cpp?ClassName("::"):"",(i-1), (classes+1));
 #else
-  fprintf(OUT, "static DfaState st%d[%d] = {\n  ", (i-1), classes);
+  fprintf(output_stream, "static DfaState st%d[%d] = {\n  ", (i-1), classes);
 #endif
   items_on_line = MAX_ON_LINE;
   for(j=0; j<classes; ++j){
@@ -357,44 +369,44 @@ void p_single_node(int i, int classes)
     if (trans == NIL_INDEX)
       trans = dfa_allocated+1;
     /* all of DFA moved down one in array */
-    fprintf(OUT, "%d", trans-1);
-    fprintf(OUT, ", ");
+    fprintf(output_stream, "%d", trans-1);
+    fprintf(output_stream, ", ");
     if (!(--items_on_line)){
-      fprintf(OUT, "\n  ");
+      fprintf(output_stream, "\n  ");
       items_on_line = MAX_ON_LINE;
     }
   }
 #if 1
   /* put in jump to error state */
-  fprintf(OUT, "%d\n};\n\n", dfa_allocated);
+  fprintf(output_stream, "%d\n};\n\n", dfa_allocated);
 #else
-  fprintf(OUT, "\n};\n\n");
+  fprintf(output_stream, "\n};\n\n");
 #endif
 }
 
 
-void p_dfa_table()
+static void p_dfa_table()
 {
   register int  i;
 
-  fprintf(OUT, "\n%sDfaState *%sdfa[%d] = {\n",
+  fprintf(output_stream, "\n%sDfaState *%sdfa[%d] = {\n",
     gen_cpp?ClassName("::"):"",gen_cpp?ClassName("::"):"", dfa_allocated);
   for (i=0; i<(dfa_allocated-1); ++i){
-    fprintf(OUT, "\tst%d,\n", i);
+    fprintf(output_stream, "\tst%d,\n", i);
   }
-  fprintf(OUT, "\tst%d\n", i);
-  fprintf(OUT, "};\n\n");
+  fprintf(output_stream, "\tst%d\n", i);
+  fprintf(output_stream, "};\n\n");
 }
 
 
-void p_accept_table()
+static void p_accept_table()
 {
   register int  i = 1;
   register int  items_on_line = 0;
   int   true_interactive = TRUE;
 
   /* make sure element for one past (zzerraction) -WEC 12/16/92 */
-  fprintf(OUT,"\n%sDfaState %saccepts[%d] = {\n  ",
+  fprintf(output_stream,"\n%sDfaState %saccepts[%d] = {\n  ",
       gen_cpp?ClassName("::"):"",
       gen_cpp?ClassName("::"):"",
       dfa_allocated+1);
@@ -442,7 +454,7 @@ void p_accept_table()
     if ((DFA(i)->alternatives) && (accept != 0)){
       true_interactive = FALSE;
     }
-    fprintf(OUT, "%d, ", accept);
+    fprintf(output_stream, "%d, ", accept);
 
     /* free up memory before we "break" below -ATG 4/6/95 */
     free(t);
@@ -451,7 +463,7 @@ void p_accept_table()
     if ((++i)>dfa_allocated)
       break;
     if ((++items_on_line)>=MAX_ON_LINE){
-      fprintf(OUT,"\n  ");
+      fprintf(output_stream,"\n  ");
       items_on_line = 0;
     }
 /*
@@ -461,7 +473,7 @@ void p_accept_table()
   }
   /* make sure element for one past (zzerraction) -WEC 12/16/92 */
 skip_accepts:
-  fprintf(OUT, "0\n};\n\n");
+  fprintf(output_stream, "0\n};\n\n");
 }
 
 
@@ -471,25 +483,25 @@ void p_action_table()
   char* theClassName = ClassName("");
 
   if ( gen_cpp )
-    fprintf(OUT, "Ptr%sMemberFunc %s::actions[%d] = {\n", theClassName,
+    fprintf(output_stream, "Ptr%sMemberFunc %s::actions[%d] = {\n", theClassName,
           theClassName, action_no+1);
   else
-    fprintf(OUT, "void (*actions[%d])() = {\n", action_no+1);
+    fprintf(output_stream, "void (*actions[%d])() = {\n", action_no+1);
   if ( gen_cpp )
-    fprintf(OUT, "\t&%s::erraction,\n", theClassName);
+    fprintf(output_stream, "\t&%s::erraction,\n", theClassName);
   else
-    fprintf(OUT, "\tzzerraction,\n");
+    fprintf(output_stream, "\tzzerraction,\n");
   for (i=1; i<action_no; ++i) {
     if ( gen_cpp )
-      fprintf(OUT,"\t&%s::act%d,\n", theClassName, i);
+      fprintf(output_stream,"\t&%s::act%d,\n", theClassName, i);
     else
-      fprintf(OUT,"\tact%d,\n", i);
+      fprintf(output_stream,"\tact%d,\n", i);
   }
   if ( gen_cpp )
-    fprintf(OUT,"\t&%s::act%d\n", theClassName, i);
+    fprintf(output_stream,"\t&%s::act%d\n", theClassName, i);
   else
-    fprintf(OUT,"\tact%d\n", i);
-  fprintf(OUT, "};\n\n");
+    fprintf(output_stream,"\tact%d\n", i);
+  fprintf(output_stream, "};\n\n");
 }
 
 
@@ -498,7 +510,7 @@ void p_shift_table(int m)
   register int  i = 0, j;
   register int  items_on_line = 0;
 
-  fprintf(OUT, "%s unsigned char %sshift%d[%d] = {\n  ",
+  fprintf(output_stream, "%s unsigned char %sshift%d[%d] = {\n  ",
     gen_cpp?"":"static",
     gen_cpp?ClassName("::"):"", m, CHAR_RANGE);
   for (;;) {
@@ -507,29 +519,29 @@ void p_shift_table(int m)
       if (set_el(i,class_sets[j]))
         break;
       }
-    fprintf(OUT,"%d",j);
+    fprintf(output_stream,"%d",j);
     if ((++i)>=CHAR_RANGE)
       break;
-    fprintf(OUT,", ");
+    fprintf(output_stream,", ");
     if ((++items_on_line)>=MAX_ON_LINE){
-      fprintf(OUT,"\n  ");
+      fprintf(output_stream,"\n  ");
       items_on_line = 0;
       }
     }
-  fprintf(OUT, "\n};\n\n");
+  fprintf(output_stream, "\n};\n\n");
 }
 
 
-void p_base_table()
+static void p_base_table()
 {
   register int m;
 
-  fprintf(OUT, "%sDfaState %sdfa_base[] = {\n",
+  fprintf(output_stream, "%sDfaState %sdfa_base[] = {\n",
       gen_cpp?ClassName("::"):"static ",
       gen_cpp?ClassName("::"):"");
   for(m=0; m<(mode_counter-1); ++m)
-    fprintf(OUT, "\t%d,\n", dfa_basep[m]-1);
-  fprintf(OUT, "\t%d\n};\n\n", dfa_basep[m]-1);
+    fprintf(output_stream, "\t%d,\n", dfa_basep[m]-1);
+  fprintf(output_stream, "\t%d\n};\n\n", dfa_basep[m]-1);
 }
 
 
@@ -542,32 +554,32 @@ void p_bshift_table()
 {
   register int m;
 
-  fprintf(OUT,"%s unsigned char *%sb_class_no[] = {\n",
+  fprintf(output_stream,"%s unsigned char *%sb_class_no[] = {\n",
     gen_cpp?"":"static",
     gen_cpp?ClassName("::"):"");
   for(m=0; m<(mode_counter-1); ++m)
-    fprintf(OUT, "\tshift%d,\n", m);
-  fprintf(OUT, "\tshift%d\n};\n\n", m);
+    fprintf(output_stream, "\tshift%d,\n", m);
+  fprintf(output_stream, "\tshift%d\n};\n\n", m);
 }
 
 
-void p_alternative_table()
+static void p_alternative_table()
 {
   register int i;
 
-  if ( !gen_cpp ) fprintf(OUT, "#define ZZINTERACTIVE\n\n");
+  if ( !gen_cpp ) fprintf(output_stream, "#define ZZINTERACTIVE\n\n");
   if ( gen_cpp )
-    fprintf(OUT, "DLGChar %salternatives[%d] = {\n",  /* mr23 vhs %sDfaStates+1 */
+    fprintf(output_stream, "DLGChar %salternatives[%d] = {\n",  /* mr23 vhs %sDfaStates+1 */
         ClassName("::"),
         dfa_allocated+1); /* vhs ClassName("::")); */
   else
-    fprintf(OUT, "static %s zzalternatives[DfaStates+1] = {\n",
+    fprintf(output_stream, "static %s zzalternatives[DfaStates+1] = {\n",
         minsize(dfa_allocated));
 
   for(i=1; i<=dfa_allocated; ++i)
-    fprintf(OUT, "\t%d,\n", DFA(i)->alternatives);
-  fprintf(OUT, "/* must have 0 for zzalternatives[DfaStates] */\n");
-  fprintf(OUT, "\t0\n};\n\n");
+    fprintf(output_stream, "\t%d,\n", DFA(i)->alternatives);
+  fprintf(output_stream, "/* must have 0 for zzalternatives[DfaStates] */\n");
+  fprintf(output_stream, "\t0\n};\n\n");
 }
 
 

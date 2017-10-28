@@ -27,6 +27,8 @@
 
 /* MR23 In order to remove calls to PURIFY use the antlr -nopurify option */
 
+#define NFA_MIN   64  /* minimum nfa_array size */
+
 #ifndef PCCTS_PURIFY
 #define PCCTS_PURIFY(r,s) memset((char *) &(r),'\0',(s));
 #endif
@@ -46,6 +48,7 @@ int flag_paren = FALSE;
 int flag_brace = FALSE;
 int mode_counter = 0;  /* keep track of number of %%names */
 
+static nfa_node *new_nfa_node();
 
 
 void grammar(char *version, char *mode_file)
@@ -726,7 +729,7 @@ fail:
 }
 
 /* adds a new nfa to the binary tree and returns a pointer to it */
-nfa_node * new_nfa_node()
+static nfa_node * new_nfa_node()
 {
   register nfa_node *t;
   static int nfa_size=0;  /* elements nfa_array[] can hold */

@@ -36,6 +36,20 @@
 #include "relabel.h"
 
 
+#define dfa_node struct _dfa_node
+dfa_node {
+  int   node_no;
+  int   dfa_set;
+  int   alternatives; /* used for interactive mode */
+          /* are more characters needed */
+  int   done;
+  set   nfa_states;
+  int   trans[1];/* size of transition table depends on
+          * number of classes required for automata.
+          */
+};
+
+
 #define hash_list struct _hash_list_
 hash_list{
   hash_list *next;  /* next thing in list */

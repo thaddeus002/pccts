@@ -66,6 +66,9 @@ int case_insensitive = FALSE;
 int warn_ambig = FALSE;
 int gen_cpp = FALSE;
 
+FILE *input_stream; /* where to read description from */
+
+static void init();
 
 /* Option List Stuff */
 
@@ -221,7 +224,7 @@ int main(int argc, char *argv[])
 }
 
 /* initialize all the variables */
-void init()
+static void init()
 {
   register int i;
 

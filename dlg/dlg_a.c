@@ -54,30 +54,30 @@ int lexMember = 0;    /* <<%%lexmemeber ...>>       MR1 */
 int lexAction = 0;    /* <<%%lexaction ...>>      MR1 */
 int parserClass = 0;  /* <<%%parserclass ...>>        MR1 */
 int lexPrefix = 0;    /* <<%%lexprefix ...>>      MR1 */
-char  theClassName[100];                 /* MR11 */
-char  *pClassName=theClassName;          /* MR11 */
-int firstLexMember=1;                      /* MR1 */
+char  theClassName[100];
+char  *pClassName=theClassName;
+int firstLexMember=1;
 
 
-void  xxputc(int c) {           /* MR1 */
-    if (parserClass) {            /* MR1 */
-      *pClassName++=c;            /* MR1 */
-      *pClassName=0;            /* MR1 */
-    } else if (lexMember || lexPrefix) {        /* MR1 */
-      if (class_stream != NULL) fputc(c,class_stream);    /* MR1 */
-    } else {              /* MR1 */
-      fputc(c,OUT);           /* MR1 */
-    };                /* MR1 */
-  }                 /* MR1 */
+void  xxputc(int c) {
+    if (parserClass) {
+      *pClassName++=c;
+      *pClassName=0;
+    } else if (lexMember || lexPrefix) {
+      if (class_stream != NULL) fputc(c,class_stream);
+    } else {
+      fputc(c,output_stream);
+    };
+  }
 
-  void xxprintf(char *format,char *string) {      /* MR1 */
-      if (lexMember || lexPrefix || parserClass) {      /* MR1 */
-        if (class_stream != NULL)         /* MR1 */
-        fprintf(class_stream,format,string);      /* MR1 */
-      } else {              /* MR1 */
-        fprintf(OUT,format,string);         /* MR1 */
-      };                /* MR1 */
-    }                 /* MR1 */
+void xxprintf(char *format,char *string) {
+    if (lexMember || lexPrefix || parserClass) {
+        if (class_stream != NULL)
+            fprintf(class_stream,format,string);
+    } else {
+        fprintf(output_stream,format,string);
+    };
+}
 
 static void act1()
 {
@@ -121,28 +121,28 @@ static void act6()
 static void act7()
 {
     NLA = LEXMEMBER;
-    lexMember=1;          /* MR1 */
-    if (firstLexMember != 0) {      /* MR1 */
-      firstLexMember=0;       /* MR1 */
-      p_class_def1();       /* MR1 */
-    };            /* MR1 */
-    zzmode(ACT);          /* MR1 */
-  }
+    lexMember=1;
+    if (firstLexMember != 0) {
+      firstLexMember=0;
+      p_class_def1();
+    };
+    zzmode(ACT);
+}
 
 
 static void act8()
 {
     NLA = LEXACTION;
     lexAction=1;zzmode(ACT);
-  }
+}
 
 
 static void act9()
 {
     NLA = PARSERCLASS;
-    parserClass=1;        /* MR1 */
-    zzmode(ACT);          /* MR1 */
-  }
+    parserClass=1;
+    zzmode(ACT);
+}
 
 
 static void act10()
@@ -156,7 +156,7 @@ static void act11()
 {
     NLA = ACTION;
     if (func_action)
-    fprintf(OUT,"\n%s %sact%d()\n{ ",
+    fprintf(output_stream,"\n%s %sact%d()\n{ ",
     gen_cpp?"ANTLRTokenType":"static void",
     gen_cpp?ClassName("::"):"", ++action_no);
     zzmode(ACT); zzskip();
@@ -343,7 +343,7 @@ static void act34()
 static void act35()
 {
     NLA = ACTION;
-    if (func_action) fprintf(OUT,"}\n\n");
+    if (func_action) fprintf(output_stream,"}\n\n");
     zzmode(START);
     /* MR1                      */
     /* MR1  11-Apr-97 Provide mechanism for inserting code into DLG class */
