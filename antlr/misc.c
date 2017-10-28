@@ -460,7 +460,7 @@ Entry *newEntry( char *text, int sz )
   Entry *p;
   require(text!=NULL, "new: NULL terminal");
 
-  p = (Entry *) calloc(1,sz));
+  p = (Entry *) calloc(1,sz);
 
   if ( p == NULL )
   {
