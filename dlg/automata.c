@@ -33,7 +33,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "dlg.h"
 #include "relabel.h"
 #include "automata.h"
 #include "constants.h"
@@ -41,6 +40,11 @@
 
 /* size of hash table used to find dfa_states quickly */
 #define HASH_SIZE 211
+
+extern int  nfa_allocated;
+extern char *class_name; //main.c
+
+
 
 int dfa_allocated = 0;  /* keeps track of number of dfa nodes */
 dfa_node  **dfa_array;  /* root of binary tree that stores dfa array */

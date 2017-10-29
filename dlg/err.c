@@ -10,7 +10,7 @@
  * ANTLR Version 1.33MR33
  */
 
-#include "dlg.h"
+#include "dlg_p.h"
 #define zzSET_SIZE 8
 #include "antlr.h"
 #include "tokens.h"

@@ -18,35 +18,27 @@
  * As long as these guidelines are kept, we expect to continue enhancing
  * this system and expect to make other tools available as they are
  * completed.
- *
- * DLG 1.33
- * Will Cohen
- * With mods by Terence Parr; AHPCRC, University of Minnesota
- * 1989-2001
  */
 
 /**
  * dlg header file
  */
 
-#ifndef DLG_H__
-#define DLG_H__
+#ifndef DLG_P_H__
+#define DLG_P_H__
 
 #include <stdio.h>
 #include "set.h"
 
-
 /***** output related stuff *******************/
 #define DEFAULT_CLASSNAME "DLGLexer"
 
-/* these macros allow the size of the character set to be easily changed */
-/* NOTE: do NOT change MIN_CHAR since EOF is the lowest char, -1 */
-#define MIN_CHAR (-1) /* lowest possible character possible on input */
-#define MAX_CHAR 255  /* highest possible character possible on input */
-#define CHAR_RANGE (1+(MAX_CHAR) - (MIN_CHAR))
 
 /* indicates that the not an "array" reference */
 #define NIL_INDEX 0
+
+
+
 
 #define nfa_node struct _nfa_node
 nfa_node {
@@ -57,62 +49,66 @@ nfa_node {
   set   label;  /* one arc always labelled with epsilon */
 };
 
-
-/******** macros for accessing the NFA nodes ****/
-#define NFA(x)  (nfa_array[x])
-#define NFA_NO(x) ( (x) ? (x)->node_no : NIL_INDEX)
-
 /******** antlr attributes *************/
+#define zzcr_attr(attr, token, text) {          \
+  (attr)->letter = text[0]; (attr)->l = NULL;     \
+  (attr)->r = NULL; (attr)->label = empty;      \
+}
+
 typedef struct {
   unsigned char letter;
   nfa_node *l,*r;
   set label;
 } Attrib;
 
-#define zzcr_attr(attr, token, text) {          \
-  (attr)->letter = text[0]; (attr)->l = NULL;     \
-  (attr)->r = NULL; (attr)->label = empty;      \
-}
+/******** macros for accessing the NFA nodes ****/
+#define NFA(x)  (nfa_array[x])
+#define NFA_NO(x) ( (x) ? (x)->node_no : NIL_INDEX)
+
+/* these macros allow the size of the character set to be easily changed */
+/* NOTE: do NOT change MIN_CHAR since EOF is the lowest char, -1 */
+#define MIN_CHAR (-1) /* lowest possible character possible on input */
+#define MAX_CHAR 255  /* highest possible character possible on input */
+#define CHAR_RANGE (1+(MAX_CHAR) - (MIN_CHAR))
+
 
 /******************** Variable ******************************/
-extern char *file_str[];  /* file names being used */ //main.c
-extern int  action_no;  /* last action function printed */ //dlg_p.c
-extern int  func_action;  /* should actions be turned into functions?*/ //dlg_a.c
-extern set  used_chars; /* used to label trans. arcs */ //dlg_p.c
-extern set  used_classes; /* classes or chars used to label trans. arcs */ // dlg_p.c
-extern set  normal_chars; /* mask off unused portion of set */ //dlg_p.c
-extern int  comp_level; /* what compression level to use */ // main.c
-extern int  interactive;  /* interactive scanner (avoid lookahead)*/  // main.c
-extern int  mode_counter; /* keeps track of the number of %%name */ //dlg_p.c
-extern int  dfa_basep[];  /* start of each group of dfa */ // output.c
-extern int  dfa_class_nop[];/* number of transistion arcs in */ //output.c
-        /* each dfa in each mode */
-extern int  nfa_allocated;
-extern nfa_node **nfa_array;  /* start of nfa "array" */
 extern int  operation_no; /* unique number for each operation */
+extern nfa_node **nfa_array;  /* start of nfa "array" */
+extern int  action_no;  /* last action function printed */
+extern set  used_chars; /* used to label trans. arcs */
+extern set  used_classes; /* classes or chars used to label trans. arcs */
+extern set  normal_chars; /* mask off unused portion of set */
+extern int  mode_counter; /* keeps track of the number of %%name */
 extern FILE *output_stream; /* where to put the output */
 extern FILE *mode_stream; /* where to put the mode output */
 extern FILE *class_stream;
-extern int  case_insensitive;/* ignore case of input spec. */
-extern int  warn_ambig; /* show if regular expressions ambiguous */
 extern int  gen_cpp;
-extern int  firstLexMember; /* MR1 */
-extern char *class_name; //main.c
+extern int  func_action;  /* should actions be turned into functions?*/ //dlg_a.c
+extern int  firstLexMember; /* defined in dlg_a.c */
+extern int  dfa_class_nop[];/* number of transistion arcs in */ //output.c
+        /* each dfa in each mode */
+extern int  comp_level; /* what compression level to use */ // main.c
+extern char *file_str[];  /* file names being used */ //main.c
+
+
+
 
 /******************** Functions ******************************/
-extern void make_nfa_model_node();
 extern char *ClassName(char *suffix); // output.c
-extern void p_head(char *version, char *mode_file); //output.c
+extern void p_mode_def(char *,int);
+extern void p_class_def1();
+extern void p_head(char *version, char *mode_file); // defined in output.c
 extern void p_class_hdr(char *version); //output.c
 extern void p_includes();
 extern void p_tables();
 extern void p_tail();
-extern void p_class_def1();
-extern void new_automaton_mode(); // main.c
 extern void p_shift_table(int);
-extern void p_bshift_table();
-extern void p_class_table();
-extern void p_mode_def(char *,int);
+extern void new_automaton_mode(); // main.c
+extern void make_nfa_model_node();
 extern void p_class_def2();
+
+
+
 
 #endif

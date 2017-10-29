@@ -15,7 +15,7 @@
 #include <stdio.h>
 
 #include <ctype.h>
-#include "dlg.h"
+#include "dlg_p.h"
 #define zzSET_SIZE 8
 #include "antlr.h"
 #include "tokens.h"

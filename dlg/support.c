@@ -27,8 +27,8 @@
 
 #include <stdio.h>
 #include <string.h>
-#include "dlg.h"
 #include <stdlib.h>
+#include "dlg_p.h"
 #include "constants.h"
 #include "support.h"
 

@@ -14,7 +14,7 @@
 #include <stdio.h>
 
 #include <ctype.h>
-#include "dlg.h"
+#include "dlg_p.h"
 #include "antlr.h"
 #include "tokens.h"
 #include "dlgdef.h"

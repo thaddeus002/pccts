@@ -33,13 +33,13 @@ dlg : $(OBJ) $(SRC)
 
 
 
-dlg_p.o : dlg_p.c dlg.h tokens.h mode.h
+dlg_p.o : dlg_p.c dlg_p.h tokens.h mode.h
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c dlg_p.c
 
-dlg_a.o : dlg_a.c dlg.h tokens.h mode.h
+dlg_a.o : dlg_a.c dlg_p.h tokens.h mode.h
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c dlg_a.c
 
-main.o : main.c dlg.h
+main.o : main.c dlg_p.h
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c main.c
 
 set.o : $(COMMON)/set.c

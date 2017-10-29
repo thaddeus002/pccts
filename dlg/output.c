@@ -72,7 +72,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "dlg.h"
+#include "dlg_p.h"
 #include "constants.h"
 #include "relabel.h"
 #include "automata.h"
@@ -80,6 +80,10 @@
 
 #define MAX_MODES 50  /* number of %%names allowed */
 #define MAX_ON_LINE 10
+
+extern int interactive; /* interactive scanner (avoid lookahead)*/  // defined in main.c
+extern int  warn_ambig; /* show if regular expressions ambiguous */
+
 
 static char *mode_name[MAX_MODES];
 static int mode_number[MAX_MODES];
@@ -128,6 +132,9 @@ static void p_action_table();
 static void p_base_table();
 static void p_single_node(int,int);
 static char *minsize(int);
+static void p_class_table();
+static void p_bshift_table();
+
 
 
 void p_class_hdr(char *version)
@@ -545,13 +552,13 @@ static void p_base_table()
   fprintf(output_stream, "\t%d\n};\n\n", dfa_basep[m]-1);
 }
 
-
-void p_class_table()
+// TODO Remove this function
+static void p_class_table()
 {
 }
 
 
-void p_bshift_table()
+static void p_bshift_table()
 {
   register int m;
 

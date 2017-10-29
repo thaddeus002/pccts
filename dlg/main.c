@@ -35,7 +35,7 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
-#include "dlg.h"
+#include "dlg_p.h"
 #include "tokens.h"
 #include "constants.h"
 #include "support.h"

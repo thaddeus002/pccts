@@ -30,7 +30,7 @@
 #ifndef RELABEL_H__
 #define RELABEL_H__
 
-#include "dlg.h"
+#include "dlg_p.h"
 
 
 extern int class_no; /* number of classes used for labels */
