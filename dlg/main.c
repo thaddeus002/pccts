@@ -40,6 +40,7 @@
 #include "constants.h"
 #include "support.h"
 #include "automata.h"
+#include "constants.h"
 
 #ifndef ANTLR_VERSION
 #define ANTLR_VERSION 13333

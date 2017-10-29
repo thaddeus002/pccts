@@ -77,6 +77,7 @@
 #include "relabel.h"
 #include "automata.h"
 
+
 #define MAX_MODES 50  /* number of %%names allowed */
 #define MAX_ON_LINE 10
 

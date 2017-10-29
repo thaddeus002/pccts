@@ -24,6 +24,8 @@
 #include "support.h"
 #include "relabel.h"
 #include "automata.h"
+#include "constants.h"
+
 
 /* MR23 In order to remove calls to PURIFY use the antlr -nopurify option */
 

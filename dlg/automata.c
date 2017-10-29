@@ -36,6 +36,7 @@
 #include "dlg.h"
 #include "relabel.h"
 #include "automata.h"
+#include "constants.h"
 
 
 /* size of hash table used to find dfa_states quickly */

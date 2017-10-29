@@ -33,7 +33,6 @@
 #define DLG_H__
 
 #include <stdio.h>
-#include "constants.h"
 #include "set.h"
 
 
