@@ -25,6 +25,7 @@
 #include "relabel.h"
 #include "automata.h"
 #include "constants.h"
+#include "output.h"
 
 
 /* MR23 In order to remove calls to PURIFY use the antlr -nopurify option */
@@ -36,6 +37,12 @@
 #endif
 
 ANTLR_INFO
+
+
+extern int case_insensitive;/* ignore case of input spec. */
+extern int  dfa_basep[];  /* start of each group of dfa */ // output.c
+extern int  dfa_class_nop[];/* number of transistion arcs in */ //output.c
+        /* each dfa in each mode */
 
 
 int action_no = 0;     /* keep track of actions outputed */
@@ -50,8 +57,15 @@ int flag_paren = FALSE;
 int flag_brace = FALSE;
 int mode_counter = 0;  /* keep track of number of %%names */
 
+
 static nfa_node *new_nfa_node();
 
+/** stuff that needs to be reset when a new automaton is being built */
+void new_automaton_mode()
+{
+  set_free(used_chars);
+  clear_hash();
+}
 
 void grammar(char *version, char *mode_file)
 {

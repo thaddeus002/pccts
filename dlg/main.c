@@ -36,6 +36,7 @@
 #include <ctype.h>
 #include <string.h>
 #include "dlg_p.h"
+#include "output.h"
 #include "tokens.h"
 #include "constants.h"
 #include "support.h"
@@ -68,6 +69,7 @@ int warn_ambig = FALSE;
 int gen_cpp = FALSE;
 
 FILE *input_stream; /* where to read description from */
+FILE *mode_stream;  /* where to put the mode.h stuff */
 
 static void init();
 
@@ -248,9 +250,3 @@ static void init()
   func_action = FALSE;
 }
 
-/** stuff that needs to be reset when a new automaton is being built */
-void new_automaton_mode()
-{
-  set_free(used_chars);
-  clear_hash();
-}

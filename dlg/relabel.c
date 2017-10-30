@@ -37,6 +37,8 @@
 #include <stdlib.h>
 
 #include "relabel.h"
+#include "output.h"
+
 
 int first_el[CHAR_RANGE]; /* first element in each class partition */
 int class_no = CHAR_RANGE;

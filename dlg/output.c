@@ -72,10 +72,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "dlg_p.h"
 #include "constants.h"
-#include "relabel.h"
 #include "automata.h"
+#include "output.h"
 
 
 #define MAX_MODES 50  /* number of %%names allowed */
@@ -94,7 +93,7 @@ int dfa_basep[MAX_MODES];   /* start of each group of states */
 int dfa_class_nop[MAX_MODES]; /* number of elements in each group of states*/
 
 FILE *output_stream;  /* where to put the output    */
-FILE *mode_stream;  /* where to put the mode.h stuff */
+extern FILE *mode_stream;  /* where to put the mode.h stuff */
 FILE *class_stream; /* where to put the scan.h stuff (if gen_cpp) */
 
 /* NOTE: This section is MACHINE DEPENDENT */
@@ -485,7 +484,7 @@ skip_accepts:
 }
 
 
-void p_action_table()
+static void p_action_table()
 {
   register int  i;
   char* theClassName = ClassName("");

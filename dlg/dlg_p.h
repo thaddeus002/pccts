@@ -73,41 +73,22 @@ typedef struct {
 
 
 /******************** Variable ******************************/
-extern int  operation_no; /* unique number for each operation */
 extern nfa_node **nfa_array;  /* start of nfa "array" */
 extern int  action_no;  /* last action function printed */
 extern set  used_chars; /* used to label trans. arcs */
 extern set  used_classes; /* classes or chars used to label trans. arcs */
 extern set  normal_chars; /* mask off unused portion of set */
 extern int  mode_counter; /* keeps track of the number of %%name */
-extern FILE *output_stream; /* where to put the output */
-extern FILE *mode_stream; /* where to put the mode output */
-extern FILE *class_stream;
 extern int  gen_cpp;
 extern int  func_action;  /* should actions be turned into functions?*/ //dlg_a.c
 extern int  firstLexMember; /* defined in dlg_a.c */
-extern int  dfa_class_nop[];/* number of transistion arcs in */ //output.c
-        /* each dfa in each mode */
 extern int  comp_level; /* what compression level to use */ // main.c
 extern char *file_str[];  /* file names being used */ //main.c
 
 
 
-
 /******************** Functions ******************************/
-extern char *ClassName(char *suffix); // output.c
-extern void p_mode_def(char *,int);
-extern void p_class_def1();
-extern void p_head(char *version, char *mode_file); // defined in output.c
-extern void p_class_hdr(char *version); //output.c
-extern void p_includes();
-extern void p_tables();
-extern void p_tail();
-extern void p_shift_table(int);
-extern void new_automaton_mode(); // main.c
-extern void make_nfa_model_node();
-extern void p_class_def2();
-
+void make_nfa_model_node();
 
 
 
