@@ -691,8 +691,8 @@ int main( int argc, char *argv[] )
          fprintf(stderr,"\n");
       }
     }
-  cleanUp();
-  exit(PCCTS_EXIT_SUCCESS);
+    cleanUp();
+    exit(EXIT_SUCCESS);
     return 0;           /* MR11 make compilers happy */
 }
 
@@ -863,7 +863,7 @@ void fatalFL( char *err_, char *f, int l )
   fprintf(stderr, ErrHdr, f, l);
   fprintf(stderr, " %s\n", err_);
   cleanUp();
-  exit(PCCTS_EXIT_FAILURE);
+  exit(EXIT_FAILURE);
 }
 
 void fatal_intern( char *err_, char *f, int l )
@@ -877,7 +877,7 @@ void fatal_intern( char *err_, char *f, int l )
   fprintf(stderr, ErrHdr, f, l);
   fprintf(stderr, "  please pray to the ``bug'' gods that there is a trival fix.]\n");
   cleanUp();
-  exit(PCCTS_EXIT_FAILURE);
+  exit(EXIT_FAILURE);
 }
 
 void cleanUp( void )
@@ -1015,7 +1015,7 @@ void ProcessArgs( int argc, char **argv, Opt *options )
               argv++;
                     } else {
                         fprintf(stderr,"error: required argument for option %s omitted\n",*argv);
-                        exit(PCCTS_EXIT_FAILURE);
+                        exit(EXIT_FAILURE);
                     };
         }
         else

@@ -44,8 +44,6 @@
 #define FALSE 0
 #endif
 
-#define PCCTS_EXIT_SUCCESS 0
-#define PCCTS_EXIT_FAILURE 1
 #define zzDIE   return 1;
 #define zzDONE  return 0;
 

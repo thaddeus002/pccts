@@ -465,7 +465,7 @@ Entry *newEntry( char *text, int sz )
   if ( p == NULL )
   {
     fatal_internal("newEntry: out of memory for terminals\n");
-    exit(PCCTS_EXIT_FAILURE);
+    exit(EXIT_FAILURE);
   }
 
   p->str = strdup(text);

@@ -205,7 +205,7 @@ tnode( int tok )
                 CurAmbigAlt1,
                 CurAmbigAlt2,
                 CurAmbigbtype);
-        exit(PCCTS_EXIT_FAILURE);
+        exit(EXIT_FAILURE);
       }
     }
     newblk = (Tree *)calloc(TreeBlockAllocSize, sizeof(Tree));
@@ -216,7 +216,7 @@ tnode( int tok )
               CurAmbigAlt1,
               CurAmbigAlt2,
               CurAmbigbtype);
-      exit(PCCTS_EXIT_FAILURE);
+      exit(EXIT_FAILURE);
     }
     n += TreeBlockAllocSize;
     for (p=newblk; p<&(newblk[TreeBlockAllocSize]); p++)
@@ -1041,7 +1041,7 @@ Tree *VerifyAmbig( Junction *alt1, Junction *alt2, unsigned **ft, set *fs, Tree 
             CurAmbigAlt1,
             CurAmbigAlt2,
             CurAmbigbtype);
-    exit(PCCTS_EXIT_FAILURE);
+    exit(EXIT_FAILURE);
   }
   for (k=1; k<=LL_k; k++) findex[k] = 0;
 

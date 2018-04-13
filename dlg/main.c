@@ -177,7 +177,7 @@ static void usage(char *program)
     p++;
   }
 
-  exit(PCCTS_EXIT_FAILURE);
+  exit(EXIT_FAILURE);
 }
 
 
@@ -222,7 +222,7 @@ int main(int argc, char *argv[])
   if ( output_stream!=NULL ) fclose(output_stream);
   if ( !gen_cpp && mode_stream!=NULL ) fclose(mode_stream);
   if ( class_stream!=NULL ) fclose(class_stream);
-  exit(PCCTS_EXIT_SUCCESS);
+  exit(EXIT_SUCCESS);
   return 0;   /* get rid of warning message MR1 */
 }
 

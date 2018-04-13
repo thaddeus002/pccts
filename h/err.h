@@ -537,21 +537,21 @@ void zzfill_inf_look()
   {
     fprintf(stderr, "cannot allocate lookahead text buffer (%d bytes)\n",
     zzinf_text_buffer_size);
-    exit(PCCTS_EXIT_FAILURE);
+    exit(EXIT_FAILURE);
   }
   zzinf_tokens = (int *) calloc(zzinf_token_buffer_size,sizeof(int));
   if ( zzinf_tokens == NULL )
   {
     fprintf(stderr, "cannot allocate token buffer (%d tokens)\n",
         zzinf_token_buffer_size);
-    exit(PCCTS_EXIT_FAILURE);
+    exit(EXIT_FAILURE);
   }
     zzinf_line = (int *) calloc(zzinf_token_buffer_size,sizeof(int));
     if ( zzinf_line == NULL )
     {
         fprintf(stderr, "cannot allocate line buffer (%d ints)\n",
                 zzinf_token_buffer_size);
-        exit(PCCTS_EXIT_FAILURE);
+        exit(EXIT_FAILURE);
   }
 
   /* get tokens, copying text to text buffer */
@@ -568,7 +568,7 @@ void zzfill_inf_look()
       {
         fprintf(stderr, "cannot allocate lookahead token buffer (%d tokens)\n",
             zzinf_token_buffer_size);
-        exit(PCCTS_EXIT_FAILURE);
+        exit(EXIT_FAILURE);
       }
             zzinf_line = (int *) realloc(zzinf_line,
                                          zzinf_token_buffer_size*sizeof(int));
@@ -576,7 +576,7 @@ void zzfill_inf_look()
             {
                 fprintf(stderr, "cannot allocate lookahead line buffer (%d ints)\n",
                         zzinf_token_buffer_size);
-                exit(PCCTS_EXIT_FAILURE);
+                exit(EXIT_FAILURE);
       }
 
     }
@@ -589,7 +589,7 @@ void zzfill_inf_look()
       {
         fprintf(stderr, "cannot allocate lookahead text buffer (%d bytes)\n",
             zzinf_text_buffer_size);
-        exit(PCCTS_EXIT_FAILURE);
+        exit(EXIT_FAILURE);
       }
     }
     /* record token and text and line of input symbol */
@@ -608,7 +608,7 @@ void zzfill_inf_look()
   {
     fprintf(stderr, "cannot allocate lookahead text buffer (%d)\n",
         zzinf_text_buffer_size);
-    exit(PCCTS_EXIT_FAILURE);
+    exit(EXIT_FAILURE);
   }
   zzinf_text_buffer_index = 0;
   zzinf_lap = 0;

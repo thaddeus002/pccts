@@ -41,7 +41,7 @@ int err_found = 0;      /* indicates whether problem found */
 static void internal_error(char *s, char *file,int line)    /* MR9 23-Sep-97 */
 {
   fprintf(stderr,s,file,line);
-  exit(PCCTS_EXIT_FAILURE);
+  exit(EXIT_FAILURE);
 }
 
 /**
@@ -190,7 +190,7 @@ void fatal(char *message,int line_no)
   fprintf(stderr,ErrHdr,
     (file_str[0] ? file_str[0] : "stdin"), line_no);
   fprintf(stderr, " Fatal: %s\n", message);
-  exit(PCCTS_EXIT_FAILURE);
+  exit(EXIT_FAILURE);
 }
 
 void error(char *message,int line_no)
