@@ -69,8 +69,5 @@
 #define DllExportPCCTS
 #endif
 
-#ifndef PCCTS_USE_STDARG
-#define PCCTS_USE_STDARG
-#endif
 
 #endif

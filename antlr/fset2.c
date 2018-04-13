@@ -144,26 +144,13 @@ Tree *prune( Tree *t, int k )
 }
 
 /* build a tree (root child1 child2 ... NULL) */
-#ifdef PCCTS_USE_STDARG
 Tree *tmake(Tree *root, ...)
-#else
-Tree *tmake(va_alist)
-va_dcl
-#endif
 {
   Tree *w;
   va_list ap;
   Tree *child, *sibling=NULL, *tail=NULL;
-#ifndef PCCTS_USE_STDARG
-  Tree *root;
-#endif
 
-#ifdef PCCTS_USE_STDARG
   va_start(ap, root);
-#else
-  va_start(ap);
-  root = va_arg(ap, Tree *);
-#endif
   child = va_arg(ap, Tree *);
   while ( child != NULL )
   {

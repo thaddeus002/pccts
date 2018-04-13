@@ -36,11 +36,7 @@
 #include "CASTBase.h"
 #include "astlib.h"
 
-#ifdef PCCTS_USE_STDARG
 #include <stdarg.h>
-#else
-#include <varargs.h>
-#endif
 
                /* String Scanning/Parsing Stuff */
 
@@ -121,24 +117,14 @@ static int stringscan_gettok(StringLexer *scanner);
  * The ast_down and ast_right down/right pointers are used to make the tree.
  */
 SORAST *
-#ifdef PCCTS_USE_STDARG
 ast_make(SORAST *rt, ...)
-#else
-ast_make(va_alist)
-va_dcl
-#endif
 {
   va_list ap;
   register SORAST *child, *sibling=NULL, *tail = NULL, *w;
   SORAST *root;
 
-#ifdef PCCTS_USE_STDARG
   va_start(ap, rt);
   root = rt;
-#else
-  va_start(ap);
-  root = va_arg(ap, SORAST *);
-#endif
 
   if ( root != NULL )
     if ( root->ast_down != NULL ) return NULL;
@@ -556,29 +542,14 @@ ScanAST *t;
  *
  * This function returns the number of labels matched.
  */
-int
-#ifdef PCCTS_USE_STDARG
-ast_scan(char *templ, SORAST *tree, ...)
-#else
-ast_scan(va_alist)
-va_dcl
-#endif
+int ast_scan(char *templ, SORAST *tree, ...)
 {
   va_list ap;
   ScanAST *t;
   int n, i, found=0;
   SORAST ***label_ptrs=NULL;
 
-#ifdef PCCTS_USE_STDARG
   va_start(ap, tree);
-#else
-  char *templ;
-  SORAST *tree;
-
-  va_start(ap);
-  templ = va_arg(ap, char *);
-  tree = va_arg(ap, SORAST *);
-#endif
 
   /* make a ScanAST tree out of the template */
   t = stringparser_parse_scanast(templ, &n);
@@ -605,12 +576,7 @@ va_dcl
 }
 
 static ScanAST *
-#ifdef __USE_PROTOS
 new_scanast(int tok)
-#else
-new_scanast(tok)
-int tok;
-#endif
 {
     ScanAST *p = (ScanAST *) calloc(1, sizeof(ScanAST));
     if ( p == NULL ) {fprintf(stderr, "out of mem\n"); exit(-1);}
@@ -619,13 +585,7 @@ int tok;
 }
 
 static ScanAST *
-#ifdef __USE_PROTOS
 stringparser_parse_scanast(char *templ, int *num_labels)
-#else
-stringparser_parse_scanast(templ, num_labels)
-char *templ;
-int *num_labels;
-#endif
 {
   StringLexer lex;
   StringParser parser;

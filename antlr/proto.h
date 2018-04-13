@@ -243,11 +243,7 @@ extern char *PRED_AND_LIST;
 #define STRICMP stricmp
 
 
-#ifdef PCCTS_USE_STDARG
 extern Tree *tmake(Tree *root, ...);
-#else
-extern Tree *tmake();
-#endif
 
 extern int STRICMP(const char*, const char*);
 extern void istackreset(void);

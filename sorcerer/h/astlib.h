@@ -37,13 +37,8 @@
 #define MaxTreeStackDepth 400
 
 
-#ifdef PCCTS_USE_STDARG
 extern SORAST *ast_make(SORAST *rt, ...);
 extern int ast_scan(char *_template, SORAST *tree, ...);
-#else
-extern SORAST *ast_make();
-extern int ast_scan();
-#endif
 
 extern SORAST *ast_find_all(SORAST *t, SORAST *u, SORAST **cursor);
 extern int ast_match(SORAST *t, SORAST *u);

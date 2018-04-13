@@ -28,8 +28,6 @@
 #define __CONSTANTS_H
 
 
-#define PCCTS_USE_STDARG
-
 /* largest file name size */
 #define MaxFileName   300
 

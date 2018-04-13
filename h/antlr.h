@@ -649,11 +649,8 @@ extern int _zzsetmatch_wdfltsig(SetWordType *tokensWanted,
 
 /* MR26 */
 
-#ifdef PCCTS_USE_STDARG
 extern void zzFAIL(int k, ...);
-#else
-extern void zzFAIL();
-#endif
+
         /* E x t e r n  D e f s */
 
 extern Attrib zzempty_attr(void);

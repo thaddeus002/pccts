@@ -195,13 +195,8 @@ AST *zztmake(AST *rt, ...)
   register AST *child, *sibling=NULL, *tail=NULL /* MR20 */, *w;
   AST *root;
 
-#ifdef PCCTS_USE_STDARG
   va_start(ap, rt);
   root = rt;
-#else
-  va_start(ap);
-  root = va_arg(ap, AST *);
-#endif
 
   if ( root != NULL )
     if ( root->down != NULL ) return NULL;

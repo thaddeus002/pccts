@@ -145,16 +145,8 @@ void zzFAIL(int k, ...)
   int *err_k;
   int i;
   va_list ap;
-#ifndef PCCTS_USE_STDARG      /* MR20 */
-  int k;
-#endif
-#ifdef PCCTS_USE_STDARG         /* MR20 */
   va_start(ap, k);
-#else
-  va_start(ap);
-  k = va_arg(ap, int);  /* how many lookahead sets? */
-#endif
-    assert(k <= sizeof(f)/sizeof(f[0]));    /* MR20 G. Hobbelt */
+  assert(k <= sizeof(f)/sizeof(f[0]));    /* MR20 G. Hobbelt */
   text[0] = '\0';
   for (i=1; i<=k; i++)  /* collect all lookahead sets */
   {
