@@ -9,7 +9,6 @@ pccts is made of various programs :
  * antlr
  * dlg
  * sorcerer (not build by default)
- * genmk (not build by default) : makefiles generator
 
 For more details on this programs, see "Documentation section".
 
@@ -36,10 +35,7 @@ For more details on this programs, see "Documentation section".
    documentation read `CHANGES_FROM_133*.txt` and
    `KNOWN_PROBLEMS.txt`
 
-1. You need not create a library. The makefile created by genmk
-   assumes that the files are not part of a library.
-
-   If you wish to create a library from elements of pccts/h:
+1. If you wish to create a library from elements of pccts/h:
 
    If the first letter of the filename is lowercase (uppercase) it is
    related to the code generated using the pccts C mode (C++ mode).
