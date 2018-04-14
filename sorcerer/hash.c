@@ -46,13 +46,8 @@ static char *strings = NULL;
 static char *strp;
 static unsigned strsize = StrTableSize;
 
-/* create the hash table and string table for terminals (string table only once) */
-Entry **
-#ifdef __USE_PROTOS
-newHashTable( void )
-#else
-newHashTable( )
-#endif
+/** create the hash table and string table for terminals (string table only once) */
+Entry **newHashTable( void )
 {
   Entry **table;
 
@@ -67,16 +62,8 @@ newHashTable( )
   return table;
 }
 
-/* Given a table, add 'rec' with key 'key' (add to front of list). return ptr to entry */
-Entry *
-#ifdef __USE_PROTOS
-hash_add( Entry **table, char *key, Entry *rec )
-#else
-hash_add( table, key, rec )
-Entry **table;
-char *key;
-Entry *rec;
-#endif
+/** Given a table, add 'rec' with key 'key' (add to front of list). return ptr to entry */
+Entry *hash_add( Entry **table, char *key, Entry *rec )
 {
   unsigned h=0;
   char *p=key;
@@ -89,15 +76,8 @@ Entry *rec;
   return rec;
 }
 
-/* Return ptr to 1st entry found in table under key (return NULL if none found) */
-Entry *
-#ifdef __USE_PROTOS
-hash_get( Entry **table, char *key )
-#else
-hash_get( table, key )
-Entry **table;
-char *key;
-#endif
+/** Return ptr to 1st entry found in table under key (return NULL if none found) */
+Entry *hash_get( Entry **table, char *key )
 {
   unsigned h=0;
   char *p=key;
@@ -112,13 +92,7 @@ char *key;
   return( NULL );
 }
 
-void
-#ifdef __USE_PROTOS
-hashStat( Entry **table )
-#else
-hashStat( table )
-Entry **table;
-#endif
+void hashStat( Entry **table )
 {
   static unsigned short count[20];
   int i,n=0,low=0, hi=0;
@@ -163,16 +137,11 @@ Entry **table;
   fprintf(stderr, "Range of hash function: %d..%d\n", low, hi);
 }
 
-/* Add a string to the string table and return a pointer to it.
+/**
+ * Add a string to the string table and return a pointer to it.
  * Bump the pointer into the string table to next avail position.
  */
-char *
-#ifdef __USE_PROTOS
-mystrdup( char *s )
-#else
-mystrdup( s )
-char *s;
-#endif
+char *mystrdup( char *s )
 {
   char *start=strp;
   require(s!=NULL, "mystrdup: NULL string");

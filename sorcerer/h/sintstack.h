@@ -33,12 +33,11 @@
 #include "sorcerer.h"
 
 typedef struct _istack {
-		int *data;
-		int sp;
-		int	size;
-	} SIntStack;
+    int *data;
+    int sp;
+    int size;
+} SIntStack;
 
-#ifdef __USE_PROTOS
 extern SIntStack *sint_newstack(int size);
 extern void sint_freestack(SIntStack *st);
 extern void sint_push(SIntStack *st, int i);
@@ -47,15 +46,5 @@ extern int sint_stacksize(SIntStack *st);
 extern void sint_stackreset(SIntStack *st);
 extern int sint_stackempty(SIntStack *st);
 extern int sint_top(SIntStack *st);
-#else
-extern SIntStack *sint_newstack();
-extern void sint_freestack();
-extern void sint_push();
-extern int sint_pop();
-extern int sint_stacksize();
-extern void sint_stackreset();
-extern int sint_stackempty();
-extern int sint_top();
-#endif
 
 #endif

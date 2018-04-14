@@ -53,11 +53,7 @@
 int define_num = 0;
 
 char *
-#ifdef __USE_PROTOS
 scarf_to_end_of_func_call(void)
-#else
-scarf_to_end_of_func_call()
-#endif
 {
   static char func_call_str[MaxAtom+1];
   char *p;
@@ -82,13 +78,7 @@ more:
 
 <<
 void    /* MR9 23-Sep-97 Eliminate complaint about no return value */
-#ifdef __USE_PROTOS
 lisp( AST *tree, FILE *output )
-#else
-lisp( tree, output )
-AST *tree;
-FILE *output;
-#endif
 {
   while ( tree != NULL )
   {
@@ -118,25 +108,14 @@ FILE *output;
 }
 
 AST *
-#ifdef __USE_PROTOS
 zzmk_ast(AST *node, int token)
-#else
-zzmk_ast(node, token)
-AST *node;
-int token;
-#endif
 {
   node->token = token;
     return node;
 }
 
 AST *
-#ifdef __USE_PROTOS
 read_sor_desc(FILE *f)
-#else
-read_sor_desc(f)
-FILE *f;
-#endif
 {
   AST *root = NULL;
 
@@ -973,16 +952,7 @@ enum_def!
  * (define USER_ZZSYN when compiling so don't get 2 definitions)
  */
 void
-#ifdef __USE_PROTOS
 zzsyn(char *text, int tok, char *egroup, SetWordType *eset, int etok, int k, char *bad_text)
-#else
-zzsyn(text, tok, egroup, eset, etok, k, bad_text)
-char *text, *egroup, *bad_text;
-int tok;
-int etok;
-int k;
-SetWordType *eset;
-#endif
 {
   fprintf(stderr, ErrHdr, FileStr[CurFile]!=NULL?FileStr[CurFile]:"stdin", zzline);
   fprintf(stderr, " syntax error at \"%s\"", (tok==zzEOF_TOKEN)?"EOF":text);
@@ -1000,12 +970,7 @@ SetWordType *eset;
 }
 
 SymEntry *
-#ifdef __USE_PROTOS
 define_token(char *text)
-#else
-define_token(text)
-char *text;
-#endif
 {
   SymEntry *p;
 

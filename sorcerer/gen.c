@@ -67,37 +67,19 @@ static int tabs=0;
 #define PastWhiteSpace(s) while (*(s) == ' ' || *(s) == '\t') {s++;}
 
 
-static void
-#ifdef __USE_PROTOS
-go_down(int nl)
-#else
-go_down(nl)
-int nl;
-#endif
+static void go_down(int nl)
 {
   fprintf(output, "_DOWN;");
   if ( nl ) fprintf(output, "\n");
 }
 
-static void
-#ifdef __USE_PROTOS
-go_right(int nl)
-#else
-go_right(nl)
-int nl;
-#endif
+static void go_right(int nl)
 {
   fprintf(output, "_RIGHT;");
   if ( nl ) fprintf(output, "\n");
 }
 
-void
-#ifdef __USE_PROTOS
-gen_info_hdr( FILE *f )
-#else
-gen_info_hdr( f )
-FILE *f;
-#endif
+void gen_info_hdr(FILE *f)
 {
   fprintf(f, "/*\n");
   fprintf(f, " * S O R C E R E R  T r a n s l a t i o n  H e a d e r\n");
@@ -109,12 +91,7 @@ FILE *f;
   fprintf(f, " */\n");
 }
 
-void
-#ifdef __USE_PROTOS
-gen_hdr_CPP( void )
-#else
-gen_hdr_CPP( )
-#endif
+void gen_hdr_CPP(void)
 {
   char CPPParser_h_Name[MaxFileName+1];
 
@@ -133,12 +110,7 @@ gen_hdr_CPP( )
   fprintf(output, "#include \"%s\"\n", CPPParser_h_Name);
 }
 
-void
-#ifdef __USE_PROTOS
-gen_hdr_C( void )
-#else
-gen_hdr_C( )
-#endif
+void gen_hdr_C(void)
 {
   if ( Inline ) return;
   gen_info_hdr(output);
@@ -180,23 +152,13 @@ gen_hdr_C( )
   if ( transform ) fprintf(output, "#include \"sorcerer.c\"\n");
 }
 
-void
-#ifdef __USE_PROTOS
-gen_hdr( void )
-#else
-gen_hdr( )
-#endif
+void gen_hdr(void)
 {
   if ( GenCPP ) gen_hdr_CPP();
   else gen_hdr_C();
 }
 
-void
-#ifdef __USE_PROTOS
-gen_hdr1( void )
-#else
-gen_hdr1( )
-#endif
+void gen_hdr1(void)
 {
   if ( !Inline )
   {
@@ -235,13 +197,7 @@ gen_hdr1( )
   }
 }
 
-void
-#ifdef __USE_PROTOS
-gen( AST *t )
-#else
-gen( t )
-AST *t;
-#endif
+void gen(AST *t)
 {
   if ( t==NULL ) return;
   while ( t!=NULL && t->token == NonTerm )
@@ -273,13 +229,7 @@ AST *t;
   fclose(output);
 }
 
-void
-#ifdef __USE_PROTOS
-gen_rule( AST *t )
-#else
-gen_rule( t )
-AST *t;
-#endif
+void gen_rule( AST *t )
 {
   SymEntry *s;
 
@@ -381,19 +331,12 @@ AST *t;
   fprintf(output, "}\n");
 }
 
-/*
+/**
  * The lookahead is stored in the 1st node of each alt of the block.
  * The Lookahead of what follows (for CLOSURE and OPT) blocks, is stored
  * in the node which branches over the enclosed, optional block.
  */
-void
-#ifdef __USE_PROTOS
-gen_block( AST *q, int block_type )
-#else
-gen_block( q, block_type )
-AST *q;
-int block_type;
-#endif
+void gen_block( AST *q, int block_type )
 {
   AST *t = q, *u, *g;
   GLA *start_state, *follow=NULL;
@@ -544,13 +487,7 @@ int block_type;
   test_block_consistency(q, block_type);
 }
 
-void
-#ifdef __USE_PROTOS
-gen_alt( AST *t )
-#else
-gen_alt( t )
-AST *t;
-#endif
+void gen_alt( AST *t )
 {
   require(t!=NULL && t->token==ALT, "gen_alt: invalid alt");
 
@@ -565,13 +502,7 @@ AST *t;
     { TAB; go_right(1); }
 }
 
-void
-#ifdef __USE_PROTOS
-gen_tree_pattern( AST *t )
-#else
-gen_tree_pattern( t )
-AST *t;
-#endif
+void gen_tree_pattern( AST *t )
 {
   while ( t != NULL )
   {
@@ -601,13 +532,7 @@ AST *t;
   }
 }
 
-void
-#ifdef __USE_PROTOS
-gen_element( AST *t )
-#else
-gen_element( t )
-AST *t;
-#endif
+void gen_element( AST *t )
 {
   char *res;
   require(t!=NULL, "gen_element: NULL tree pointer");
@@ -758,14 +683,8 @@ AST *t;
   }
 }
 
-/* walk the block of a rule and define all labels to be "SORAST *label_i" */
-void
-#ifdef __USE_PROTOS
-define_labels_in_block( AST *t )
-#else
-define_labels_in_block( t )
-AST *t;
-#endif
+/** walk the block of a rule and define all labels to be "SORAST *label_i" */
+void define_labels_in_block( AST *t )
 {
   require(t!=NULL, "define_labels_in_block: NULL tree pointer");
   require(t->token==BLOCK, "define_labels_in_block: invalid block");
@@ -777,13 +696,7 @@ AST *t;
   }
 }
 
-void
-#ifdef __USE_PROTOS
-define_labels_in_alt( AST *t )
-#else
-define_labels_in_alt( t )
-AST *t;
-#endif
+void define_labels_in_alt( AST *t )
 {
   require(t!=NULL, "define_labels_in_alt: NULL tree pointer");
   require(t->token==ALT, "gen_alt: invalid alt");
@@ -791,13 +704,7 @@ AST *t;
   define_labels_in_tree(t->down);
 }
 
-void
-#ifdef __USE_PROTOS
-define_labels_in_tree( AST *t )
-#else
-define_labels_in_tree( t )
-AST *t;
-#endif
+void define_labels_in_tree( AST *t )
 {
   while ( t != NULL )
   {
@@ -813,13 +720,7 @@ AST *t;
   }
 }
 
-void
-#ifdef __USE_PROTOS
-define_labels_in_element( AST *t )
-#else
-define_labels_in_element( t )
-AST *t;
-#endif
+void define_labels_in_element( AST *t )
 {
   require(t!=NULL, "define_labels_in_element: NULL tree pointer");
   switch ( t->token )
@@ -875,17 +776,7 @@ AST *t;
    line information is correct for the compiler/debuggers.
 */
 void
-#ifdef __USE_PROTOS
 dumpAction( char *s, FILE *output, int tabs, int file, int line, int final_newline )
-#else
-dumpAction( s, output, tabs, file, line, final_newline )
-char *s;
-FILE *output;
-int tabs;
-int file;
-int line;
-int final_newline;
-#endif
 {
     int inDQuote, inSQuote;
     require(s!=NULL,    "dumpAction: NULL action");
@@ -952,13 +843,7 @@ int final_newline;
     if ( final_newline ) putc('\n', output);
 }
 
-char *
-#ifdef __USE_PROTOS
-find_predicate( AST *t )
-#else
-find_predicate( t )
-AST *t;
-#endif
+char *find_predicate( AST *t )
 {
   if ( t==NULL ) return NULL;
   if ( t->token == Action )
@@ -975,17 +860,11 @@ AST *t;
   return NULL;
 }
 
-/* Given a pointer to a tree pattern element (Token, BLOCK, etc...),
+/**
+ * Given a pointer to a tree pattern element (Token, BLOCK, etc...),
  * generate an expression that predicts when that path would match.
  */
-set
-#ifdef __USE_PROTOS
-gen_prediction_expr( AST *alt, GLA *t )
-#else
-gen_prediction_expr( alt, t )
-AST *alt;
-GLA *t;
-#endif
+set gen_prediction_expr( AST *alt, GLA *t )
 {
   char *sempred;
   set a, rs;
@@ -1089,13 +968,7 @@ GLA *t;
  * all rules with ret types.
  */
 void
-#ifdef __USE_PROTOS
-GenRulePrototypes( FILE *f, int tabs )
-#else
-GenRulePrototypes( f, tabs )
-FILE *f;
-int tabs;
-#endif
+GenRulePrototypes(FILE *f, int tabs)
 {
   AST *p;
   SymEntry *s;
@@ -1112,15 +985,7 @@ int tabs;
 }
 
 void
-#ifdef __USE_PROTOS
 GenRulePrototype(FILE *f, AST *p, SymEntry *s, int decl_not_def)
-#else
-GenRulePrototype(f, p, s, decl_not_def)
-FILE *f;
-SymEntry *s;
-AST *p;
-int decl_not_def;
-#endif
 {
   require(s!=NULL&&s->definition!=NULL, "GenRulePrototype: no def for rule");
 
@@ -1188,11 +1053,7 @@ int decl_not_def;
  * 'def_token_file'.
  */
 void
-#ifdef __USE_PROTOS
-gen_tokens_file( void )
-#else
-gen_tokens_file( )
-#endif
+gen_tokens_file(void)
 {
   FILE *f;
   ListNode *p;
@@ -1220,12 +1081,7 @@ gen_tokens_file( )
 }
 
 AST *
-#ifdef __USE_PROTOS
 first_guess_block(AST *q)
-#else
-first_guess_block(q)
-AST *q;
-#endif
 {
   require(q!=NULL&&q->token==ALT, "first_guess_block: non-ALT ptr");
 
@@ -1248,13 +1104,7 @@ AST *q;
 }
 
 void
-#ifdef __USE_PROTOS
 code_for_guess_block( AST *t, int *guess_block_in_prev_alt )
-#else
-code_for_guess_block( t, guess_block_in_prev_alt )
-AST *t;
-int *guess_block_in_prev_alt;
-#endif
 {
   if ( found_guess_block )
   {

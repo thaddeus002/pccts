@@ -39,10 +39,6 @@
 #define PCCTS_CONFIG_H
 
 
-#ifndef __USE_PROTOS
-#define __USE_PROTOS
-#endif
-
 #ifdef PCCTS_USE_NAMESPACE_STD
 #define PCCTS_NAMESPACE_STD     namespace std {}; using namespace std;
 #else

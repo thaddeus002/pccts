@@ -33,14 +33,9 @@
 
 typedef SList SStack;
 
-#define newSStack	(SStack *) calloc(1, sizeof(SStack));
+#define newSStack   (SStack *) calloc(1, sizeof(SStack));
 
-#ifdef __USE_PROTOS
 extern void sstack_push( SStack **st, void *e );
 extern void *sstack_pop( SStack **st );
-#else
-extern void sstack_push();
-extern void *sstack_pop();
-#endif
 
 #endif

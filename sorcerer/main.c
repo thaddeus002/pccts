@@ -61,24 +61,13 @@ static int cistrequ(char *a,char *b)
 static void ProcessArgs(int, char **, Opt *);
 
 static void
-#ifdef __USE_PROTOS
 pOut( char *s, char *t )
-#else
-pOut( s, t )
-char *s;
-char *t;
-#endif
 {
   OutputDirectory = t;
 }
 
 static void
-#ifdef __USE_PROTOS
 pFile( char *s )
-#else
-pFile( s )
-char *s;
-#endif
 {
   if ( *s=='-' ) { warnNoFL( eMsg1("invalid option: '%s'",s) ); return; }
   if ( DontAcceptFiles )
@@ -93,12 +82,7 @@ char *s;
 }
 
 static void
-#ifdef __USE_PROTOS
 pDToks( char *s, char *t )
-#else
-pDToks( s, t )
-char *s, *t;
-#endif
 {
   if ( !GenCPP )
   {
@@ -111,12 +95,7 @@ char *s, *t;
 }
 
 static void
-#ifdef __USE_PROTOS
 pDToksFile( char *s, char *t )
-#else
-pDToksFile( s, t )
-char *s, *t;
-#endif
 {
   if ( GenCPP )
   {
@@ -137,12 +116,7 @@ char *s, *t;
 }
 
 static void
-#ifdef __USE_PROTOS
 pPrefix( char *s, char *t )
-#else
-pPrefix( s, t )
-char *s, *t;
-#endif
 {
   Prefix = t;
   if ( GenCPP ) {
@@ -159,12 +133,7 @@ char *s, *t;
 }
 
 static void
-#ifdef __USE_PROTOS
 pFuncs( char *s, char *t )
-#else
-pFuncs( s, t )
-char *s, *t;
-#endif
 {
   if ( GenCPP ) { errNoFL("-funcs option makes no sense in C++ mode; ignored"); return; }
   GenKRProtos = GenAnsiProtos = 0;
@@ -178,12 +147,7 @@ char *s, *t;
 }
 
 static void
-#ifdef __USE_PROTOS
 pProtoFile( char *s, char *t )
-#else
-pProtoFile( s, t )
-char *s, *t;
-#endif
 {
   if ( GenCPP )
     {warnNoFL("-proto-file not valid with C++ interface; ignored");}
@@ -269,14 +233,7 @@ Opt options[] = {
     { NULL, 0, NULL, NULL }
 };
 
-int
-#ifdef __USE_PROTOS
-main(int argc, char *argv[])
-#else
-main(argc, argv)
-int argc;
-char *argv[];
-#endif
+int main(int argc, char *argv[])
 {
   AST *root;
 #ifdef THINK_C
@@ -339,11 +296,7 @@ char *argv[];
 }
 
 void
-#ifdef __USE_PROTOS
 help(void)
-#else
-help()
-#endif
 {
   Opt *p = options;
   static char buf[MaxRuleName+1];
@@ -360,11 +313,7 @@ help()
 }
 
 FILE *
-#ifdef __USE_PROTOS
 NextFile( void )
-#else
-NextFile( )
-#endif
 {
   FILE *f;
 
@@ -386,80 +335,45 @@ NextFile( )
 }
 
 void
-#ifdef __USE_PROTOS
 pushint( int i )
-#else
-pushint( i )
-int i;
-#endif
 {
     require(isp>0, "pushint: stack overflow");
     istack[--isp] = i;
 }
 
 int
-#ifdef __USE_PROTOS
 popint( void )
-#else
-popint( )
-#endif
 {
     require(isp<MAX_INT_STACK, "popint: stack underflow");
     return istack[isp++];
 }
 
 int
-#ifdef __USE_PROTOS
 istacksize( void )
-#else
-istacksize( )
-#endif
 {
     return MAX_INT_STACK-isp;
 }
 
 void
-#ifdef __USE_PROTOS
 istackreset( void )
-#else
-istackreset( )
-#endif
 {
     isp = MAX_INT_STACK;
 }
 
-int
-#ifdef __USE_PROTOS
-istackempty( void )
-#else
-istackempty( )
-#endif
+int istackempty( void )
 {
     return isp==MAX_INT_STACK;
 }
 
-int
-#ifdef __USE_PROTOS
-topint( void )
-#else
-topint( )
-#endif
+int topint(void)
 {
     require(isp<MAX_INT_STACK, "topint: stack underflow");
     return istack[isp];
 }
 
-/* sprintf up to 3 strings */
+/** sprintf up to 3 strings */
 char *
-#ifdef __USE_PROTOS
 eMsg3( char *s, char *a1, char *a2, char *a3 )
-#else
-eMsg3( s, a1, a2, a3 )
-char *s;
-char *a1;
-char *a2;
-char *a3;
-#endif
 {
     static char buf[250];           /* DANGEROUS as hell !!!!!! */
 
@@ -468,13 +382,7 @@ char *a3;
 }
 
 char *
-#ifdef __USE_PROTOS
 eMsgd( char *s, int d )
-#else
-eMsgd( s, d )
-char *s;
-int d;
-#endif
 {
     static char buf[250];           /* DANGEROUS as hell !!!!!! */
 
@@ -483,21 +391,14 @@ int d;
 }
 
 void
-#ifdef __USE_PROTOS
 fatalFL( char *err_, char *f, int l )
-#else
-fatalFL( err_, f, l )
-char *err_;
-char *f;
-int l;
-#endif
 {
     fprintf(stderr, ErrHdr, f, l);
     fprintf(stderr, " %s\n", err_);
     exit(1);
 }
 
-/*
+/**
  * add an element to a list.
  *
  * Any non-empty list has a sentinel node whose 'elem' pointer is really
@@ -505,13 +406,7 @@ int l;
  * Elements are appended to the list.
  */
 void
-#ifdef __USE_PROTOS
 list_add( ListNode **list, void *e )
-#else
-list_add( list, e )
-ListNode **list;
-void *e;
-#endif
 {
   ListNode *p, *tail;
   require(e!=NULL, "list_add: attempting to add NULL list element");
@@ -536,14 +431,7 @@ void *e;
 }
 
 static void
-#ifdef __USE_PROTOS
 ProcessArgs( int argc, char **argv, Opt *options )
-#else
-ProcessArgs( argc, argv, options )
-int argc;
-char **argv;
-Opt *options;
-#endif
 {
   Opt *p;
   require(argv!=NULL, "ProcessArgs: command line NULL");
@@ -572,19 +460,13 @@ Opt *options;
   }
 }
 
-/*
+/**
  * Given a string, this function allocates and returns a pointer to a
  * hash table record of size 'sz' whose "str" pointer is reset to a position
  * in the string table.
  */
 Entry *
-#ifdef __USE_PROTOS
 newEntry( char *text, int sz )
-#else
-newEntry( text, sz )
-char *text;
-int sz;
-#endif
 {
   Entry *p;
   require(text!=NULL, "new: NULL terminal");
@@ -600,13 +482,7 @@ int sz;
 }
 
 void
-#ifdef __USE_PROTOS
 token_association(int token_type, char *text)
-#else
-token_association( token_type, text )
-int token_type;
-char *text;
-#endif
 {
   if ( token_type >= token_table_size ) /* overflow? */
   {
@@ -622,7 +498,7 @@ char *text;
   token_dict[token_type] = text;
 }
 
-/*
+/**
  * Return a string corresponding to the output file name associated
  * with the input file name passed in.
  *
@@ -642,12 +518,7 @@ char *text;
  * Use malloc() for new string.
  */
 char *
-#ifdef __USE_PROTOS
 outname( char *fs )
-#else
-outname( fs )
-char *fs;
-#endif
 {
   static char buf[MaxFileName+1];
   char *p;
@@ -664,12 +535,7 @@ char *fs;
 }
 
 void
-#ifdef __USE_PROTOS
 ensure_no_C_file_collisions(char *class_c_file)
-#else
-ensure_no_C_file_collisions(class_c_file)
-char *class_c_file;
-#endif
 {
   int i;
 
@@ -693,12 +559,7 @@ char *class_c_file;
    MR10: if OutputDirectory was changed by user (-o option)
 */
 char *
-#ifdef __USE_PROTOS
 OutMetaName(char *n)
-#else
-OutMetaName(n)
-char *n;
-#endif
 {
     static char *dir_sym = DirectorySymbol;
     static char newname[MaxFileName+1];
@@ -728,13 +589,7 @@ char *n;
 }
 
 void
-#ifdef __USE_PROTOS
 set_fprint( FILE *f, set e )
-#else
-set_fprint( f, e )
-FILE *f;
-set e;
-#endif
 {
   int t;
 
@@ -749,20 +604,14 @@ set e;
   fprintf(f, " }");
 }
 
-/* Given a list of ANSI-style parameter declarations, print out a
+/** Given a list of ANSI-style parameter declarations, print out a
  * comma-separated list of the symbols (w/o types).
  * Basically, we look for a comma, then work backwards until start of
  * the symbol name.  Then print it out until 1st non-alnum char.  Now,
  * move on to next parameter.
  */
 void
-#ifdef __USE_PROTOS
 DumpListOfParmNames( char *pdecl, FILE *output )
-#else
-DumpListOfParmNames( pdecl, output )
-char *pdecl;
-FILE *output;
-#endif
 {
   int firstTime = 1, done = 0;
   require(output!=NULL, "DumpListOfParmNames: NULL parm");
@@ -776,17 +625,11 @@ FILE *output;
   }
 }
 
-/* given a list of parameters or return values, dump the next
+/** given a list of parameters or return values, dump the next
  * name to output.  Return 1 if last one just printed, 0 if more to go.
  */
 int
-#ifdef __USE_PROTOS
 DumpNextNameInDef( char **q, FILE *output )
-#else
-DumpNextNameInDef( q, output )
-char **q;
-FILE *output;
-#endif
 {
   char *p = *q;   /* where did we leave off? */
   int done=0;
@@ -804,18 +647,13 @@ FILE *output;
   return done;
 }
 
-/* Given a list of ANSI-style parameter declarations, dump K&R-style
+/**
+ * Given a list of ANSI-style parameter declarations, dump K&R-style
  * declarations, one per line for each parameter.  Basically, convert
  * comma to semi-colon, newline.
  */
 void
-#ifdef __USE_PROTOS
 DumpOldStyleParms( char *pdecl, FILE *output )
-#else
-DumpOldStyleParms( pdecl, output )
-char *pdecl;
-FILE *output;
-#endif
 {
   require(output!=NULL, "DumpOldStyleParms: NULL parm");
 
@@ -834,17 +672,9 @@ FILE *output;
   putc('\n', output);
 }
 
-/* Take in a type definition (type + symbol) and print out type only */
+/** Take in a type definition (type + symbol) and print out type only */
 void
-#ifdef __USE_PROTOS
 DumpType( char *s, FILE *f, char *file, int line )
-#else
-DumpType( s, f, file, line )
-char *s;
-FILE *f;
-char *file;
-int line;
-#endif
 {
   char *p, *end;
   require(s!=NULL, "DumpType: invalid type string");
@@ -870,12 +700,7 @@ int line;
 }
 
 char *
-#ifdef __USE_PROTOS
 actiondup(char *s)
-#else
-actiondup(s)
-char *s;
-#endif
 {
   char *p = (char *) malloc(strlen(s)+1);
   require(p!=NULL, "actiondup: no memory");
@@ -885,12 +710,7 @@ char *s;
 
 #ifdef OLD
 RefVarRec *
-#ifdef __USE_PROTOS
 newRefVarRec(char *t,char *lab, char *init)
-#else
-newRefVarRec(t,lab,init)
-char *t,*lab,*init;
-#endif
 {
   RefVarRec *p;
   SymEntry *q;
@@ -913,7 +733,8 @@ char *t,*lab,*init;
 }
 #endif
 
-/* From one of the following ref var defs, create a record to track
+/**
+ * From one of the following ref var defs, create a record to track
  * the info:
  *
  *      @(int *p);
@@ -923,12 +744,7 @@ char *t,*lab,*init;
  * The 'def' pointer should point to the first char after the '('
  */
 RefVarRec *
-#ifdef __USE_PROTOS
 refVarRec(char *def)
-#else
-refVarRec(def)
-char *def;
-#endif
 {
   RefVarRec *p;
   char *s,*decl;
@@ -955,16 +771,12 @@ char *def;
   return p;
 }
 
-/* given a decl (type + id) return a ptr to the id; nondestructive to 'decl'.
+/**
+ * given a decl (type + id) return a ptr to the id; nondestructive to 'decl'.
  * Just scan backwards from the end looking for the start of the first id.
  */
 char *
-#ifdef __USE_PROTOS
 id_in_decl( char *decl )
-#else
-id_in_decl( decl )
-char *decl;
-#endif
 {
   static char id[MaxAtom+1];
   char *p = &(decl[strlen(decl)-1]);
@@ -984,16 +796,9 @@ char *decl;
   return id;
 }
 
-/* Take in a decl (type + id) and print it out with a prefix on id */
+/** Take in a decl (type + id) and print it out with a prefix on id */
 void
-#ifdef __USE_PROTOS
 dump_prefixed_decl( char *prefix, char *s, FILE *f )
-#else
-dump_prefixed_decl( prefix, s, f )
-char *prefix;
-char *s;
-FILE *f;
-#endif
 {
     char *p, *id;
     require(s!=NULL, "invalid type string");
@@ -1017,7 +822,7 @@ FILE *f;
   }
 }
 
-/*
+/**
  * Convert
  *
  *  0, "#( RangeOp #(Minus %1:IConst %2:Var) #(Plus %3:Var %4:Var) )",
@@ -1029,12 +834,7 @@ FILE *f;
  *           t, &w, &x, &y, &z);
  */
 char *
-#ifdef __USE_PROTOS
 cvt_token_str(char *prefix, char *s)
-#else
-cvt_token_str(prefix, s)
-char *prefix, *s;
-#endif
 {
   SymEntry *q;
   char *b, *e, *p;

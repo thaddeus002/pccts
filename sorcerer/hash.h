@@ -41,26 +41,20 @@
 #endif
 
 typedef struct _entry {   /* Minimum hash table entry -- superclass */
-      char *str;
-      struct _entry *next;
-    } Entry;
+    char *str;
+    struct _entry *next;
+} Entry;
 
 /* Hash 's' using 'size', place into h (s is modified) */
 #define Hash(s,h,size)                \
   {while ( *s != '\0' ) h = (h<<1) + *s++;    \
   h %= size;}
 
-#ifdef __USE_PROTOS
-Entry *hash_get(Entry **, char *),
-    **newHashTable(void),
-    *hash_add(Entry **, char *, Entry *);
+Entry *hash_get(Entry **, char *);
+Entry **newHashTable(void);
+Entry *hash_add(Entry **, char *, Entry *);
 char  *mystrdup(char *);
 void hashStat( Entry ** );
-#else
-Entry *hash_get(), **newHashTable(), *hash_add();
-char  *mystrdup();
-void hashStat();
-#endif
 
 #endif
 

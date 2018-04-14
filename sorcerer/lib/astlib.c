@@ -43,11 +43,7 @@
 #define StringScanMaxText 50
 
 typedef struct stringlexer {
-#ifdef __USE_PROTOS
       signed int c;
-#else
-      int c;
-#endif
       char *input;
       char *p;
       char text[StringScanMaxText];
@@ -145,29 +141,14 @@ ast_make(SORAST *rt, ...)
 
 /* The following push and pop routines are only used by ast_find_all() */
 
-static void
-#ifdef __USE_PROTOS
-_push(SORAST **st, int *sp, SORAST *e)
-#else
-_push(st, sp, e)
-SORAST **st;
-int *sp;
-SORAST *e;
-#endif
+static void _push(SORAST **st, int *sp, SORAST *e)
 {
   (*sp)--;
   require((*sp)>=0, "stack overflow");
   st[(*sp)] = e;
 }
 
-static SORAST *
-#ifdef __USE_PROTOS
-_pop(SORAST **st, int *sp)
-#else
-_pop(st, sp)
-SORAST **st;
-int *sp;
-#endif
+static SORAST *_pop(SORAST **st, int *sp)
 {
   SORAST *e = st[*sp];
   (*sp)++;
@@ -175,14 +156,8 @@ int *sp;
   return e;
 }
 
-/* Is 'u' a subtree of 't' beginning at the root? */
-int
-#ifdef __USE_PROTOS
-ast_match_partial(SORAST *t, SORAST *u)
-#else
-ast_match_partial(t, u)
-SORAST *t, *u;
-#endif
+/** Is 'u' a subtree of 't' beginning at the root? */
+int ast_match_partial(SORAST *t, SORAST *u)
 {
   SORAST *sib;
 
@@ -198,17 +173,12 @@ SORAST *t, *u;
   return 1;
 }
 
-/* Find all occurrences of u in t.
+/**
+ * Find all occurrences of u in t.
  * 'cursor' must be initialized to 't'.  It eventually
  * returns NULL when no more occurrences of 'u' are found.
  */
-SORAST *
-#ifdef __USE_PROTOS
-ast_find_all(SORAST *t, SORAST *u, SORAST **cursor)
-#else
-ast_find_all(t, u, cursor)
-SORAST *t, *u, **cursor;
-#endif
+SORAST *ast_find_all(SORAST *t, SORAST *u, SORAST **cursor)
 {
   SORAST *sib;
   static SORAST *template_stack[MaxTreeStackDepth];
@@ -269,14 +239,8 @@ keep_looking:
   goto keep_looking;
 }
 
-/* are two trees exactly alike? */
-int
-#ifdef __USE_PROTOS
-ast_match(SORAST *t, SORAST *u)
-#else
-ast_match(t, u)
-SORAST *t, *u;
-#endif
+/** are two trees exactly alike? */
+int ast_match(SORAST *t, SORAST *u)
 {
   SORAST *sib;
 
@@ -292,16 +256,7 @@ SORAST *t, *u;
   return 1;
 }
 
-static int
-#ifdef __USE_PROTOS
-ast_scanmatch(ScanAST *t, SORAST *u, SORAST **labels[], int *n)
-#else
-ast_scanmatch(t, u, labels, n)
-ScanAST *t;
-SORAST *u;
-SORAST **labels[];
-int *n;
-#endif
+static int ast_scanmatch(ScanAST *t, SORAST *u, SORAST **labels[], int *n)
 {
   ScanAST *sib;
 
@@ -326,13 +281,7 @@ int *n;
   return 1;
 }
 
-void
-#ifdef __USE_PROTOS
-ast_insert_after(SORAST *a, SORAST *b)
-#else
-ast_insert_after(a, b)
-SORAST *a,*b;
-#endif
+void ast_insert_after(SORAST *a, SORAST *b)
 {
   SORAST *end;
   require(a!=NULL, "ast_insert_after: NULL input tree");
@@ -343,13 +292,7 @@ SORAST *a,*b;
   a->ast_right = b;
 }
 
-void
-#ifdef __USE_PROTOS
-ast_append(SORAST *a, SORAST *b)
-#else
-ast_append(a, b)
-SORAST *a,*b;
-#endif
+void ast_append(SORAST *a, SORAST *b)
 {
   SORAST *end;
   require(a!=NULL&&b!=NULL, "ast_append: NULL input tree");
@@ -358,13 +301,7 @@ SORAST *a,*b;
   end->ast_right = b;
 }
 
-SORAST *
-#ifdef __USE_PROTOS
-ast_tail(SORAST *a)
-#else
-ast_tail(a)
-SORAST *a;
-#endif
+SORAST *ast_tail(SORAST *a)
 {
   SORAST *end;
   require(a!=NULL, "ast_tail: NULL input tree");
@@ -373,13 +310,7 @@ SORAST *a;
   return end;
 }
 
-SORAST *
-#ifdef __USE_PROTOS
-ast_bottom(SORAST *a)
-#else
-ast_bottom(a)
-SORAST *a;
-#endif
+SORAST *ast_bottom(SORAST *a)
 {
   SORAST *end;
   require(a!=NULL, "ast_bottom: NULL input tree");
@@ -388,13 +319,7 @@ SORAST *a;
   return end;
 }
 
-SORAST *
-#ifdef __USE_PROTOS
-ast_cut_between(SORAST *a, SORAST *b)
-#else
-ast_cut_between(a, b)
-SORAST *a,*b;
-#endif
+SORAST *ast_cut_between(SORAST *a, SORAST *b)
 {
   SORAST *end, *ret;
   require(a!=NULL&&b!=NULL, "ast_cut_between: NULL input tree");
@@ -408,13 +333,7 @@ SORAST *a,*b;
   return ret;
 }
 
-SList *
-#ifdef __USE_PROTOS
-ast_to_slist(SORAST *t)
-#else
-ast_to_slist(t)
-SORAST *t;
-#endif
+SList *ast_to_slist(SORAST *t)
 {
   SList *list=NULL;
   SORAST *p;
@@ -426,13 +345,7 @@ SORAST *t;
   return list;
 }
 
-SORAST *
-#ifdef __USE_PROTOS
-slist_to_ast(SList *list)
-#else
-slist_to_ast(list)
-SList *list;
-#endif
+SORAST *slist_to_ast(SList *list)
 {
   SORAST *t=NULL, *last=NULL;
   SList *p;
@@ -447,12 +360,7 @@ SList *list;
 }
 
 void
-#ifdef __USE_PROTOS
 ast_free(SORAST *t)
-#else
-ast_free(t)
-SORAST *t;
-#endif
 {
     if ( t == NULL ) return;
     ast_free( t->ast_down );
@@ -461,12 +369,7 @@ SORAST *t;
 }
 
 int
-#ifdef __USE_PROTOS
 ast_nsiblings(SORAST *t)
-#else
-ast_nsiblings(t)
-SORAST *t;
-#endif
 {
   int n=0;
 
@@ -479,13 +382,7 @@ SORAST *t;
 }
 
 SORAST *
-#ifdef __USE_PROTOS
 ast_sibling_index(SORAST *t, int i)
-#else
-ast_sibling_index(t,i)
-SORAST *t;
-int i;
-#endif
 {
   int j=1;
   require(i>0, "ast_sibling_index: i<=0");
@@ -500,12 +397,7 @@ int i;
 }
 
 static void
-#ifdef __USE_PROTOS
 scanast_free(ScanAST *t)
-#else
-scanast_free(t)
-ScanAST *t;
-#endif
 {
     if ( t == NULL ) return;
     scanast_free( t->down );
@@ -599,18 +491,12 @@ stringparser_parse_scanast(char *templ, int *num_labels)
 }
 
 static void
-#ifdef __USE_PROTOS
 stringparser_match(StringParser *parser, int token)
-#else
-stringparser_match(parser, token)
-StringParser *parser;
-int token;
-#endif
 {
   if ( parser->token != token ) sorcerer_panic("bad tree in ast_scan()");
 }
 
-/*
+/**
  * Match a tree of the form:
  *    (root child1 child2 ... childn)
  * or,
@@ -619,12 +505,7 @@ int token;
  * where the elements are integers or labeled integers.
  */
 static ScanAST *
-#ifdef __USE_PROTOS
 stringparser_parse_tree(StringParser *parser)
-#else
-stringparser_parse_tree(parser)
-StringParser *parser;
-#endif
 {
   ScanAST *t=NULL, *root, *child, *last = NULL;
 
@@ -650,12 +531,7 @@ StringParser *parser;
 }
 
 static ScanAST *
-#ifdef __USE_PROTOS
 stringparser_parse_element(StringParser *parser)
-#else
-stringparser_parse_element(parser)
-StringParser *parser;
-#endif
 {
   static char ebuf[100];
   int label = 0;
@@ -698,13 +574,7 @@ StringParser *parser;
 }
 
 static void
-#ifdef __USE_PROTOS
 stringparser_init(StringParser *parser, StringLexer *input)
-#else
-stringparser_init(parser, input)
-StringParser *parser;
-StringLexer *input;
-#endif
 {
   parser->lexer = input;
   parser->token = stringscan_gettok(parser->lexer);
@@ -712,13 +582,7 @@ StringLexer *input;
 }
 
 static void
-#ifdef __USE_PROTOS
 stringlexer_init(StringLexer *scanner, char *input)
-#else
-stringlexer_init(scanner, input)
-StringLexer *scanner;
-char *input;
-#endif
 {
   scanner->text[0]='\0';
   scanner->input = input;
@@ -727,24 +591,14 @@ char *input;
 }
 
 static void
-#ifdef __USE_PROTOS
 stringscan_advance(StringLexer *scanner)
-#else
-stringscan_advance(scanner)
-StringLexer *scanner;
-#endif
 {
   if ( *(scanner->p) == '\0' ) scanner->c = StringScanEOF;
   scanner->c = *(scanner->p)++;
 }
 
 static int
-#ifdef __USE_PROTOS
 stringscan_gettok(StringLexer *scanner)
-#else
-stringscan_gettok(scanner)
-StringLexer *scanner;
-#endif
 {
   char *index = &scanner->text[0];
   static char ebuf[100];
