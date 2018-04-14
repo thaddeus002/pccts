@@ -69,8 +69,6 @@ extern int wild_card;
 extern int UserDefdTokens;
 extern int Inline;
 extern char *Prefix;
-extern int GenAnsiProtos;
-extern int GenKRProtos;
 extern FILE *ProtoFILE;
 extern char *GenProtoFile;
 extern ListNode *RefVars;

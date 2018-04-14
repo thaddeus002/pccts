@@ -169,12 +169,7 @@ void gen_hdr1(void)
   {
     /* make a func to init the ref vars with inits */
     fprintf(output, "\nvoid\n");
-    fprintf(output, "#ifdef __USE_PROTOS\n");
     fprintf(output, "_refvar_inits(STreeParser *p)\n");
-    fprintf(output, "#else\n");
-    fprintf(output, "_refvar_inits(p)\n");
-    fprintf(output, "STreeParser *p;\n");
-    fprintf(output, "#endif\n");
     fprintf(output, "{\n");
     if ( AllRefVars!=NULL )
     {
@@ -1011,41 +1006,18 @@ GenRulePrototype(FILE *f, AST *p, SymEntry *s, int decl_not_def)
   }
 
   if ( decl_not_def ) fprintf(f, "extern ");
-  if ( GenAnsiProtos && GenKRProtos ) fprintf(f, "\n#ifdef __USE_PROTOS\n");
-  if ( GenAnsiProtos )
-  {
-    if ( s->rt != NULL )
-      DumpType(s->rt, f, FileStr[s->definition->file], s->definition->line);
-    else fprintf(f, "void");
-    fprintf(f, " %s%s(STreeParser *_parser, SORAST **_root%s",
-        Prefix,
-        p->text,
-        transform?", SORAST **_result":"");
-    if ( s->args != NULL ) fprintf(f, ",%s", s->args);
-    fprintf(f, ")");
-    if ( decl_not_def ) fprintf(f, ";");
-    fprintf(f, "\n");
-  }
-  if ( GenAnsiProtos && GenKRProtos ) fprintf(f, "#else\n");
-  if ( GenKRProtos )
-  {
-    if ( s->rt != NULL )
-      DumpType(s->rt, f, FileStr[s->definition->file], s->definition->line);
-    else fprintf(f, "void");
-    if ( decl_not_def) fprintf(f, " %s%s();\n", Prefix, p->text);
-    else
-    {
-      fprintf(f, " %s%s(_parser, _root%s",
-          Prefix, p->text,transform?", _result":"");
-      if ( s->args!=NULL ) fprintf(f, ",");
-      DumpListOfParmNames(s->args, f);
-      fprintf(f, ")\n");
-      fprintf(f, "STreeParser *_parser;\n");
-      fprintf(f, "SORAST **_root%s;\n", transform?", **_result":"");
-      DumpOldStyleParms(s->args, f);
-    }
-  }
-  if ( GenAnsiProtos && GenKRProtos ) fprintf(f, "#endif\n");
+
+  if ( s->rt != NULL )
+    DumpType(s->rt, f, FileStr[s->definition->file], s->definition->line);
+  else fprintf(f, "void");
+  fprintf(f, " %s%s(STreeParser *_parser, SORAST **_root%s",
+      Prefix,
+      p->text,
+      transform?", SORAST **_result":"");
+  if ( s->args != NULL ) fprintf(f, ",%s", s->args);
+  fprintf(f, ")");
+  if ( decl_not_def ) fprintf(f, ";");
+  fprintf(f, "\n");
 }
 
 /*

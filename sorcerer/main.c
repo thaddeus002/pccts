@@ -44,11 +44,12 @@ static int DontAcceptStdin = 0;
 static int DontAcceptFiles = 0;
 
 typedef struct _Opt {
-      char *option;
-      int  arg;
-      void (*process)();
-      char *descr;
-    } Opt;
+    char *option;
+    int  arg;
+    void (*process)();
+    char *descr;
+} Opt;
+
 
 static int cistrequ(char *a,char *b)
 {
@@ -133,20 +134,6 @@ pPrefix( char *s, char *t )
 }
 
 static void
-pFuncs( char *s, char *t )
-{
-  if ( GenCPP ) { errNoFL("-funcs option makes no sense in C++ mode; ignored"); return; }
-  GenKRProtos = GenAnsiProtos = 0;
-  if ( cistrequ(t, "kr")) GenKRProtos = 1;
-  else if ( cistrequ(t, "ansi")) GenAnsiProtos = 1;
-  else if ( cistrequ(t, "both")) {GenAnsiProtos = 1; GenKRProtos = 1;}
-  else {
-    warnNoFL(eMsg1("don't know how to generate '%s' style functions; assuming ANSI",t));
-    GenAnsiProtos = 1;
-  }
-}
-
-static void
 pProtoFile( char *s, char *t )
 {
   if ( GenCPP )
@@ -220,7 +207,6 @@ Opt options[] = {
     { "-CPP",    0, pCPP,  "Generate C++ output"},
     { "-def-tokens", 0, pDToks,"Define ref'd tokens w/unique integer (C++ interface)"},
     { "-def-tokens-file", 1, pDToksFile,"Define ref'd tokens w/unique integer (put in file)"},
-    { "-funcs", 1,    pFuncs,"Gen 'ANSI', 'KR', or 'both' style function headers"},
     { "-guts", 0,   pGuts,"Print out a bunch of internal data structures"},
     { "-inline", 0,   pInline, "Gen only actions and functions for given rules"},
     { "-noctor", 0,   pNoCtor, "Do not generate a blank constructor"}, /* MR23 */

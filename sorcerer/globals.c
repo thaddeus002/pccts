@@ -83,6 +83,3 @@ char  CurRefVarLabel[MaxAtom+1];
 char  CurClassName[MaxAtom+1]="";
 int   GenCPP = 0;
 int   NoCtor = 0; /* MR23 */
-
-int   GenAnsiProtos=1;  /* Gen both if both Protos are on */
-int   GenKRProtos=0;
