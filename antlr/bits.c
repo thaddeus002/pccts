@@ -41,6 +41,7 @@
 #include "hash.h"
 #include "generic.h"
 #include "dlgdef.h"
+#include "logger.h"
 
 /* char is only thing that is pretty much always known == 8 bits
  * This allows output of antlr (set stuff, anyway) to be androgynous (portable)

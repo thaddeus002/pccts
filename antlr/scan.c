@@ -20,6 +20,7 @@
 #include "tokens.h"
 #include "dlgdef.h"
 #include "mode.h"
+#include "logger.h"
 
 LOOKAHEAD
 

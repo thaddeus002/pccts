@@ -39,6 +39,7 @@
 #include "hash.h"
 #include "generic.h"
 #include "dlgdef.h"
+#include "logger.h"
 
 #define NumExprPerLine  4
 static int on1line=0;

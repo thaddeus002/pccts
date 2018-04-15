@@ -66,10 +66,6 @@ antlr :
 dlg	:
 	$(MAKE) -C dlg $@
 
-genmk:
-	$(MAKE) -C support/genmk CC="$(CC)" COPT="$(COPT)" $@
-	@echo genmk executable now in $(BINDIR)
-
 fini:
 	@echo
 	@echo "       PCCTS 1.33MR33 build complete"

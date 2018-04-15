@@ -45,9 +45,6 @@
 #define warn(err)                               \
       {fprintf(stderr, ErrHdr, FileStr[CurFile], zzline);       \
       fprintf(stderr, " warning: %s\n", err);}
-#define warnNoCR( err )                             \
-      {fprintf(stderr, ErrHdr, FileStr[CurFile], zzline);       \
-      fprintf(stderr, " warning: %s", err);}
 #define errNoFL(err)  {found_error=1; fprintf(stderr, "error: %s\n", err);}
 #define errFL(err,f,l)                              \
       {found_error=1; fprintf(stderr, ErrHdr, f, l);                    \

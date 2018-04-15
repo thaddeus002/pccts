@@ -39,6 +39,7 @@
 #include "hash.h"
 #include "generic.h"
 #include "dlgdef.h"
+#include "logger.h"
 
 static void ensure_predicates_cover_ambiguous_lookahead_sequences
                                     (Junction *, Junction *, char *, Tree *);

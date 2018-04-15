@@ -40,6 +40,7 @@
 #include "generic.h"
 #include "constants.h"
 #include "stdpccts.h"
+#include "logger.h"
 
 #define MAX_INT_STACK 50
 static int istack[MAX_INT_STACK];   /* Int stack */
@@ -53,15 +54,19 @@ static int tnodes_used_in_guard_predicates_etc;     /* MR10 */
     /* C m d - L i n e  O p t i o n  S t r u c t  &  F u n c s */
 
 typedef struct _Opt {
-      char *option;
-      int  arg;
-      void (*process)();
-      char *descr;
-    } Opt;
+    char *option;
+    int  arg;
+    void (*process)();
+    char *descr;
+} Opt;
 
-extern void ProcessArgs(int, char **, Opt *);
+void ProcessArgs(int, char **, Opt *);
 
-int ci_strequ(char *a,char *b)
+/**
+ * Compare two string case insentive way.
+ * \return true if the strings are equal
+ */
+int ci_strequ(char *a, char *b)
 {
   for ( ;*a != 0 && *b != 0; a++, b++) {
     if (toupper(*a) != toupper(*b)) return 0;
@@ -858,13 +863,6 @@ char *outnameX( char *fs ,char *suffix)
   return( buf );
 }
 
-void fatalFL( char *err_, char *f, int l )
-{
-  fprintf(stderr, ErrHdr, f, l);
-  fprintf(stderr, " %s\n", err_);
-  cleanUp();
-  exit(EXIT_FAILURE);
-}
 
 void fatal_intern( char *err_, char *f, int l )
 {
@@ -1165,59 +1163,6 @@ static void ensure_no_C_file_collisions(char *class_c_file)
   }
 }
 
-void warnNoFL(char *err)
-{
-  fprintf(stderr, "warning: %s\n", err);
-}
-
-void warnFL(char *err,char *f,int l)
-{
-  fprintf(stderr, ErrHdr, f, l);
-  fprintf(stderr, " warning: %s\n", err);
-}
-
-void warn(char *err)
-{
-  /* back up the file number if we hit an error at the end of the last file */
-  if ( CurFile >= NumFiles && CurFile >= 1 ) CurFile--;
-  fprintf(stderr, ErrHdr, FileStr[CurFile], zzline);
-  fprintf(stderr, " warning: %s\n", err);
-}
-
-void warnNoCR( char *err )
-{
-  /* back up the file number if we hit an error at the end of the last file */
-  if ( CurFile >= NumFiles && CurFile >= 1 ) CurFile--;
-  fprintf(stderr, ErrHdr, FileStr[CurFile], zzline);
-  fprintf(stderr, " warning: %s", err);
-}
-
-void errNoFL(char *err)
-{
-  fprintf(stderr, "error: %s\n", err);
-}
-
-void errFL(char *err,char *f,int l)
-{
-  fprintf(stderr, ErrHdr, f, l);
-  fprintf(stderr, " error: %s\n", err);
-}
-
-void err(char *err)
-{
-  /* back up the file number if we hit an error at the end of the last file */
-  if ( CurFile >= NumFiles && CurFile >= 1 ) CurFile--;
-  fprintf(stderr, ErrHdr, FileStr[CurFile], zzline);
-  fprintf(stderr, " error: %s\n", err);
-}
-
-void errNoCR( char *err )
-{
-  /* back up the file number if we hit an error at the end of the last file */
-  if ( CurFile >= NumFiles && CurFile >= 1 ) CurFile--;
-  fprintf(stderr, ErrHdr, FileStr[CurFile], zzline);
-  fprintf(stderr, " error: %s", err);
-}
 
 UserAction *newUserAction(char *s)
 {

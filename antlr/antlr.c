@@ -23,6 +23,7 @@
 #include "dlgdef.h"
 #include "mode.h"
 #include "constants.h"
+#include "logger.h"
 
 /* MR23 In order to remove calls to PURIFY use the antlr -nopurify option */
 

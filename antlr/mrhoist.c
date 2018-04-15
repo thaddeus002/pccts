@@ -35,6 +35,7 @@
 #include "hash.h"
 #include "generic.h"
 #include "dlgdef.h"
+#include "logger.h"
 
 void dumppred(Predicate *);
 
