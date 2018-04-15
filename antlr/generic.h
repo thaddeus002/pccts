@@ -32,6 +32,8 @@
  */
 
 #include "syn.h"
+// for Entry
+#include "hash.h"
 
 #define StrSame     0
 

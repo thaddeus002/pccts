@@ -32,6 +32,8 @@
  */
 
 #include <stdio.h>
+// for Entry
+#include "hash.h"
 
                            /* V a r i a b l e s */
 
