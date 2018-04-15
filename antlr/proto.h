@@ -31,6 +31,10 @@
  * function prototypes
  */
 
+
+#ifndef __PROTO_H__
+#define __PROTO_H__
+
 #include <stdio.h>
 // for Entry
 #include "hash.h"
@@ -525,3 +529,5 @@ extern int UsedNewStyleLabel;
 #define MAX_BLK_LEVEL 100
 extern int     CurBlockID_array[MAX_BLK_LEVEL];
 extern int     CurAltNum_array[MAX_BLK_LEVEL];
+
+#endif
