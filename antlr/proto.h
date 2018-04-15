@@ -406,7 +406,6 @@ extern Tree *tdup_chain(Tree *);
 extern Tree *tdif(Tree *, Predicate *, set *, set *);
 extern set covered_set(Predicate *);
 extern void AmbiguityDialog(Junction *, int, Junction *, Junction *, int *, int *);
-extern void dumpAmbigMsg(set *, FILE *, int);
 extern void GenRuleFuncRedefs(FILE *, Junction *);
 extern void GenPredefinedSymbolRedefs(FILE *);
 extern void GenASTSymbolRedefs(FILE *);

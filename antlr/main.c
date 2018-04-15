@@ -779,12 +779,6 @@ static void buildRulePtr( )
   }
 }
 
-void dlgerror(const char *s)
-{
-  fprintf(stderr, ErrHdr, FileStr[CurFile], zzline);
-  fprintf(stderr, " lexical error: %s (text was '%s')\n",
-          ((s == NULL) ? "Lexical error" : s), zzlextext);
-}
 
 void readDescr()
 {
@@ -864,25 +858,6 @@ char *outnameX( char *fs ,char *suffix)
 }
 
 
-void fatal_intern( char *err_, char *f, int l )
-{
-  fprintf(stderr, ErrHdr, f, l);
-  fprintf(stderr, " #$%%*&@# internal error: %s\n", err_);
-  fprintf(stderr, ErrHdr, f, l);
-  fprintf(stderr, " [complain to nearest government official\n");
-  fprintf(stderr, ErrHdr, f, l);
-  fprintf(stderr, "  or send hate-mail to parrt@parr-research.com;\n");
-  fprintf(stderr, ErrHdr, f, l);
-  fprintf(stderr, "  please pray to the ``bug'' gods that there is a trival fix.]\n");
-  cleanUp();
-  exit(EXIT_FAILURE);
-}
-
-void cleanUp( void )
-{
-  if ( DefFile != NULL) fclose( DefFile );
-}
-
 /**
  * Sprintf up to 3 strings.
  * \param s format
@@ -937,24 +912,18 @@ void s_fprT(FILE *f, set e)
 /** Return the token name or regular expression for a token number. */
 char *TerminalString( int token )
 {
-  int j;
   static char imag_name[20];
 
   /* look in all lexclasses for the token */
   if ( TokenString(token) != NULL ) return TokenString(token);
-  for (j=0; j<NumLexClasses; j++)
+  for (int j=0; j<NumLexClasses; j++)
   {
     lexmode(j);
     if ( ExprString(token) != NULL ) return ExprString(token);
   }
 
-    if (1) {
-      sprintf(imag_name,"UnknownToken#%d",token);           /* MR13 */
-      return imag_name;                                     /* MR13 */
-    }
-
-  require(j<NumLexClasses, eMsgd("No label or expr for token %d",token));
-  return "invalid";
+  sprintf(imag_name,"UnknownToken#%d",token);
+  return imag_name;
 }
 
                     /* S i m p l e  I n t  S t a c k */

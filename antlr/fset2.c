@@ -188,23 +188,23 @@ tnode( int tok )
     {
       if ( (n+TreeBlockAllocSize) >= TreeResourceLimit )
       {
-        fprintf(stderr, ErrHdr, FileStr[CurAmbigfile], CurAmbigline);
-        fprintf(stderr, " hit analysis resource limit while analyzing alts %d and %d %s\n",
+        fatalNM(" hit analysis resource limit while analyzing alts %d and %d %s",
+                FileStr[CurAmbigfile],
+                CurAmbigline,
                 CurAmbigAlt1,
                 CurAmbigAlt2,
                 CurAmbigbtype);
-        exit(EXIT_FAILURE);
       }
     }
     newblk = (Tree *)calloc(TreeBlockAllocSize, sizeof(Tree));
     if ( newblk == NULL )
     {
-      fprintf(stderr, ErrHdr, FileStr[CurAmbigfile], CurAmbigline);
-      fprintf(stderr, " out of memory while analyzing alts %d and %d %s\n",
+      fatalNM(" out of memory while analyzing alts %d and %d %s",
+              FileStr[CurAmbigfile],
+              CurAmbigline,
               CurAmbigAlt1,
               CurAmbigAlt2,
               CurAmbigbtype);
-      exit(EXIT_FAILURE);
     }
     n += TreeBlockAllocSize;
     for (p=newblk; p<&(newblk[TreeBlockAllocSize]); p++)
@@ -1024,12 +1024,12 @@ Tree *VerifyAmbig( Junction *alt1, Junction *alt2, unsigned **ft, set *fs, Tree 
   findex = (int *) calloc(LL_k+1, sizeof(int));
   if ( findex == NULL )
   {
-    fprintf(stderr, ErrHdr, FileStr[CurAmbigfile], CurAmbigline);
-    fprintf(stderr, " out of memory while analyzing alts %d and %d of %s\n",
+    fatalNM(" out of memory while analyzing alts %d and %d of %s",
+            FileStr[CurAmbigfile],
+            CurAmbigline,
             CurAmbigAlt1,
             CurAmbigAlt2,
             CurAmbigbtype);
-    exit(EXIT_FAILURE);
   }
   for (k=1; k<=LL_k; k++) findex[k] = 0;
 

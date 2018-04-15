@@ -3348,23 +3348,24 @@ char *inline_set(char *s)
   return "inlineX_set";
 }
 
-/* ANTLR-specific syntax error message generator
-* (define USER_ZZSYN when compiling so don't get 2 definitions)
+/* ANTLR/DLG-specific syntax error message generator
+* (define USER_ZZSYN when compiling so don't get 2 definitions : also define in err.h)
 */
 void zzsyn(char *text, int tok, char *egroup, SetWordType *eset, int etok,
 int k, char *bad_text)
 {
-fprintf(stderr, ErrHdr, FileStr[CurFile]!=NULL?FileStr[CurFile]:"stdin", zzline);
-fprintf(stderr, " syntax error at \"%s\"", (tok==zzEOF_TOKEN)?"EOF":text);
-if ( !etok && !eset ) {fprintf(stderr, "\n"); return;}
-if ( k==1 ) fprintf(stderr, " missing");
-else
-{
-fprintf(stderr, "; \"%s\" not", bad_text);
-if ( zzset_deg(eset)>1 ) fprintf(stderr, " in");
-}
-if ( zzset_deg(eset)>0 ) zzedecode(eset);
-else fprintf(stderr, " %s", zztokens[etok]);
-if ( strlen(egroup) > (size_t)0 ) fprintf(stderr, " in %s", egroup);
-fprintf(stderr, "\n");
+    hdrLog(FileStr[CurFile]!=NULL?FileStr[CurFile]:"stdin", zzline);
+
+    fprintf(stderr, " syntax error at \"%s\"", (tok==zzEOF_TOKEN)?"EOF":text);
+    if ( !etok && !eset ) {fprintf(stderr, "\n"); return;}
+    if ( k==1 ) fprintf(stderr, " missing");
+    else
+    {
+        fprintf(stderr, "; \"%s\" not", bad_text);
+        if ( zzset_deg(eset)>1 ) fprintf(stderr, " in");
+    }
+    if ( zzset_deg(eset)>0 ) zzedecode(eset);
+    else fprintf(stderr, " %s", zztokens[etok]);
+    if ( strlen(egroup) > (size_t)0 ) fprintf(stderr, " in %s", egroup);
+    fprintf(stderr, "\n");
 }

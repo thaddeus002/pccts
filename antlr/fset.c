@@ -425,7 +425,7 @@ set rAction( ActionNode *p, int k, set *rk )
         /* A m b i g u i t y  R e s o l u t i o n */
 
 
-void dumpAmbigMsg( set *fset, FILE *f, int want_nls )
+void dumpAmbigMsg(set *fset, FILE *f, int want_nls)
 {
   int i;
 
@@ -483,19 +483,19 @@ static void verify_context(Predicate *predicate)
 
 /* MR9 Suppress annoying messages caused by our own clever(?) fix */
 
-      fprintf(stderr, ErrHdr, FileStr[predicate->source->file],
-        predicate->source->line);
-    fprintf(stderr, " warning: predicate applied for >1 lookahead %d-sequences\n", predicate->k);
-    fprintf(stderr, ErrHdr, FileStr[predicate->source->file],
-        predicate->source->line);
-    fprintf(stderr, "     predicate text: \"%s\"\n",
-                        (predicate->expr == NULL ? "(null)" : predicate->expr) );
-    fprintf(stderr, ErrHdr, FileStr[predicate->source->file],
-        predicate->source->line);
-    fprintf(stderr, "     You may only want one lookahead %d-sequence to apply\n", predicate->k);
-    fprintf(stderr, ErrHdr, FileStr[predicate->source->file],
-        predicate->source->line);
-    fprintf(stderr, "     Try using a context guard '(...)? =>'\n");
+    warning("predicate applied for >1 lookahead %d-sequences", FileStr[predicate->source->file],
+        predicate->source->line, predicate->k);
+
+    log_more("predicate text: \"%s\"",FileStr[predicate->source->file],
+        predicate->source->line, (predicate->expr == NULL ? "(null)" : predicate->expr));
+
+    log_more("You may only want one lookahead %d-sequence to apply",
+        FileStr[predicate->source->file],
+        predicate->source->line, predicate->k);
+
+    log_more("Try using a context guard '(...)? =>'",
+        FileStr[predicate->source->file], predicate->source->line);
+
     predicate->source->ctxwarned = 1;
   }
     verify_context(predicate->right);       /* MR10 */
@@ -535,7 +535,7 @@ static void ensure_predicates_cover_ambiguous_lookahead_sequences
       non_covered = tdif(ambig, alt1->predicate, alt1->fset, alt2->fset);
     if ( (non_covered!=NULL || alt1->predicate==NULL) && WarningLevel>1 )
     {
-      fprintf(stderr, ErrHdr, FileStr[alt1->file], alt1->line);
+      hdrLog(FileStr[alt1->file], alt1->line);
       fprintf(stderr, " warning: alt %d %shas no predicate to resolve ambiguity",
               alt1->altnum, sub);
       if ( alt1->predicate!=NULL && non_covered!=NULL )
@@ -556,7 +556,7 @@ static void ensure_predicates_cover_ambiguous_lookahead_sequences
       non_covered = tdif(ambig, alt2->predicate, alt1->fset, alt2->fset);
     if ( (non_covered!=NULL || alt2->predicate==NULL) && WarningLevel>1 )
     {
-      fprintf(stderr, ErrHdr, FileStr[alt2->file], alt2->line);
+      hdrLog(FileStr[alt2->file], alt2->line);
       fprintf(stderr, " warning: alt %d %shas no predicate to resolve ambiguity",
               alt2->altnum, sub);
       if ( alt2->predicate!=NULL && non_covered!=NULL )
@@ -580,7 +580,7 @@ static void ensure_predicates_cover_ambiguous_lookahead_sequences
     non_covered = set_dif(delta, covered_set(alt1->predicate));
     if ( set_deg(non_covered)>0 && WarningLevel>1 )
     {
-      fprintf(stderr, ErrHdr, FileStr[alt1->file], alt1->line);
+      hdrLog(FileStr[alt1->file], alt1->line);
       fprintf(stderr, " warning: alt %d %shas no predicate to resolve ambiguity",
               alt1->altnum, sub);
       if ( alt1->predicate!=NULL )
@@ -594,7 +594,7 @@ static void ensure_predicates_cover_ambiguous_lookahead_sequences
     non_covered = set_dif(delta, covered_set(alt2->predicate));
     if ( set_deg(non_covered)>0 && WarningLevel>1 )
     {
-      fprintf(stderr, ErrHdr, FileStr[alt2->file], alt2->line);
+      hdrLog(FileStr[alt2->file], alt2->line);
       fprintf(stderr, " warning: alt %d %shas no predicate to resolve ambiguity",
               alt2->altnum, sub);
       if ( alt2->predicate!=NULL )
@@ -625,8 +625,8 @@ void MR_doPredicatesHelp(int inGuessBlock,Junction *alt1,Junction *alt2,int jtyp
 
     if ( (jtype == RuleBlk || jtype == aSubBlk)
              && (alt1->predicate == NULL && alt2->predicate != NULL)) {
-        fprintf(stderr, ErrHdr, FileStr[parentRule->file],parentRule->line);
-        fprintf(stderr," warning: alt %d line %d and alt %d line %d of %s\n%s%s%s",
+        warning("alt %d line %d and alt %d line %d of %s\n%s%s%s",
+          FileStr[parentRule->file],parentRule->line,
           alt1->altnum,
           alt1->line,
           alt2->altnum,
@@ -650,9 +650,8 @@ void MR_doPredicatesHelp(int inGuessBlock,Junction *alt1,Junction *alt2,int jtyp
              considered validation predicates and therefore not
              participate in the predication expression
         */
-
-        fprintf(stderr, ErrHdr,FileStr[parentRule->file],parentRule->line);
-        fprintf(stderr," warning: %s of %s in rule %s\n     (file %s alt %d line %d and alt %d line %d)\n%s",
+        warning("%s of %s in rule %s\n     (file %s alt %d line %d and alt %d line %d)\n%s",
+          FileStr[parentRule->file],parentRule->line,
           "the predicates used to disambiguate optional/exit paths of ",
           sub,
           CurRule,
@@ -663,8 +662,8 @@ void MR_doPredicatesHelp(int inGuessBlock,Junction *alt1,Junction *alt2,int jtyp
           alt2->line,
           "     are identical and have no resolving power\n");
       } else {
-      fprintf(stderr, ErrHdr, FileStr[parentRule->file], parentRule->line);
-        fprintf(stderr," warning: %s rule %s\n     (file %s alt %d line %d and alt %d line %d)\n%s",
+        warning("%s rule %s\n     (file %s alt %d line %d and alt %d line %d)\n%s",
+          FileStr[parentRule->file], parentRule->line,
           "the predicates used to disambiguate",
           CurRule,
           FileStr[alt1->file],
@@ -687,8 +686,8 @@ void MR_doPredicatesHelp(int inGuessBlock,Junction *alt1,Junction *alt2,int jtyp
       p2=MR_predSimplifyALL(p2);
       if (MR_comparePredicates(p1,p2)) {
         if (jtype == aLoopBegin || jtype == aPlusBlk ) {
-          fprintf(stderr, ErrHdr, FileStr[parentRule->file], parentRule->line);
-          fprintf(stderr," warning: %s of %s in rule %s\n     (file %s alt %d line %d and alt %d line %d)\n%s%s",
+          warning("%s of %s in rule %s\n     (file %s alt %d line %d and alt %d line %d)\n%s%s",
+            FileStr[parentRule->file], parentRule->line,
             "the predicates used to disambiguate optional/exit paths of ",
             sub,
             CurRule,
@@ -700,8 +699,8 @@ void MR_doPredicatesHelp(int inGuessBlock,Junction *alt1,Junction *alt2,int jtyp
             "     are identical when compared without context and may have no\n",
             "     resolving power for some lookahead sequences.\n");
         } else {
-          fprintf(stderr, ErrHdr, FileStr[parentRule->file], parentRule->line);
-          fprintf(stderr," warning: %s rule %s\n     (file %s alt %d line %d and alt %d line %d)\n%s%s",
+          warning("%s rule %s\n     (file %s alt %d line %d and alt %d line %d)\n%s%s",
+            FileStr[parentRule->file], parentRule->line,
             "the predicates used to disambiguate",
             CurRule,
             FileStr[alt1->file],
@@ -765,8 +764,9 @@ void MR_doPredicatesHelp(int inGuessBlock,Junction *alt1,Junction *alt2,int jtyp
         };
       } else if (MR_secondPredicateUnreachable(p1,p2)) {
         if (jtype == aLoopBegin || jtype == aPlusBlk ) {
-          fprintf(stderr, ErrHdr, FileStr[parentRule->file], parentRule->line);
-          fprintf(stderr," warning: %s of %s in rule %s\n     (file %s alt %d line %d and alt %d line %d)\n%s%s",
+          warning("%s of %s in rule %s\n     (file %s alt %d line %d and alt %d line %d)\n%s%s",
+            FileStr[parentRule->file],
+            parentRule->line,
             "the predicate used to disambiguate the first choice of the optional/exit paths of ",
             sub,
             CurRule,
@@ -778,8 +778,9 @@ void MR_doPredicatesHelp(int inGuessBlock,Junction *alt1,Junction *alt2,int jtyp
             "     appears to \"cover\" the second predicate when compared without context.\n",
             "     The second predicate may have no resolving power for some lookahead sequences.\n");
         } else {
-          fprintf(stderr, ErrHdr, FileStr[parentRule->file], parentRule->line);
-          fprintf(stderr," warning: %s rule %s\n     (file %s alt %d line %d and alt %d line %d)\n%s%s",
+          warning("%s rule %s\n     (file %s alt %d line %d and alt %d line %d)\n%s%s",
+            FileStr[parentRule->file],
+            parentRule->line,
             "the predicate used to disambiguate the first choice of",
             CurRule,
             FileStr[alt1->file],
@@ -910,22 +911,22 @@ void HandleAmbiguity( Junction *block, Junction *alt1, Junction *alt2, int jtype
   {
     if ( ParseWithPredicates )
     {
-            if (alt1->predicate != NULL) predicate_free(alt1->predicate);  /* MR12 */
-            if (alt2->predicate != NULL) predicate_free(alt2->predicate);  /* MR12 */
+      if (alt1->predicate != NULL) predicate_free(alt1->predicate);  /* MR12 */
+      if (alt2->predicate != NULL) predicate_free(alt2->predicate);  /* MR12 */
 
-            require(MR_PredRuleRefStack.count == 0,"PredRuleRef stack not empty");
-            alt1->predicate = MR_find_predicates_and_supp((Node *)alt1->p1);
-            require(MR_PredRuleRefStack.count == 0,"PredRuleRef stack not empty");
-            require (MR_predicate_context_completed(alt1->predicate),"predicate alt 1 not completed");
-            alt1->predicate=MR_predSimplifyALL(alt1->predicate);
+      require(MR_PredRuleRefStack.count == 0,"PredRuleRef stack not empty");
+      alt1->predicate = MR_find_predicates_and_supp((Node *)alt1->p1);
+      require(MR_PredRuleRefStack.count == 0,"PredRuleRef stack not empty");
+      require (MR_predicate_context_completed(alt1->predicate),"predicate alt 1 not completed");
+      alt1->predicate=MR_predSimplifyALL(alt1->predicate);
 
-            require(MR_PredRuleRefStack.count == 0,"PredRuleRef stack not empty");
-        alt2->predicate = MR_find_predicates_and_supp((Node *)alt2->p1);
-            require(MR_PredRuleRefStack.count == 0,"PredRuleRef stack not empty");
-            require (MR_predicate_context_completed(alt2->predicate),"predicate alt 2 not completed");
-            alt2->predicate=MR_predSimplifyALL(alt2->predicate);
+      require(MR_PredRuleRefStack.count == 0,"PredRuleRef stack not empty");
+      alt2->predicate = MR_find_predicates_and_supp((Node *)alt2->p1);
+      require(MR_PredRuleRefStack.count == 0,"PredRuleRef stack not empty");
+      require (MR_predicate_context_completed(alt2->predicate),"predicate alt 2 not completed");
+      alt2->predicate=MR_predSimplifyALL(alt2->predicate);
 
-            MR_doPredicatesHelp(0,alt1,alt2,jtype,sub);
+      MR_doPredicatesHelp(0,alt1,alt2,jtype,sub);
 
       if ( HoistPredicateContext
                     && (alt1->predicate!=NULL||alt2->predicate!=NULL) )
@@ -942,14 +943,12 @@ void HandleAmbiguity( Junction *block, Junction *alt1, Junction *alt2, int jtype
 
     if ( WarningLevel>1 )
     {
-      fprintf(stderr, ErrHdr, FileStr[alt1->file], alt1->line);
       if ( jtype == aLoopBegin || jtype == aPlusBlk )
-        fprintf(stderr, " warning: optional/exit path and alt(s) %sambiguous upon", sub);
+        warning("optional/exit path and alt(s) %sambiguous upon", FileStr[alt1->file], alt1->line, sub);
       else
-        fprintf(stderr, " warning(approx): alts %d and %d %sambiguous upon",
-            alt1->altnum, alt2->altnum, sub);
+        warning("alts %d and %d %sambiguous upon", FileStr[alt1->file], alt1->line, alt1->altnum, alt2->altnum, sub);
       dumpAmbigMsg(fset, stderr, 0);
-            MR_traceAmbSource(fset,alt1,alt2);
+      MR_traceAmbSource(fset,alt1,alt2);
     }
     for (i=1; i<=CLL_k; i++) set_free( fset[i] );
     free((char *)fset);
@@ -989,14 +988,13 @@ void HandleAmbiguity( Junction *block, Junction *alt1, Junction *alt2, int jtype
         return;
       }
 
-      fprintf(stderr, ErrHdr, FileStr[alt1->file], alt1->line);
       if ( jtype == aLoopBegin || jtype == aPlusBlk )
-         fprintf(stderr, " warning: optional/exit path and alt(s) %sambiguous upon", sub);
+        warning("warning: optional/exit path and alt(s) %sambiguous upon", FileStr[alt1->file], alt1->line, sub);
       else
-         fprintf(stderr, " warning: alts %d and %d %sambiguous upon",
-             alt1->altnum, alt2->altnum, sub);
+        warning("warning: alts %d and %d %sambiguous upon", FileStr[alt1->file], alt1->line,
+            alt1->altnum, alt2->altnum, sub);
       dumpAmbigMsg(fset, stderr, 0);
-            MR_traceAmbSource(fset,alt1,alt2);
+      MR_traceAmbSource(fset,alt1,alt2);
     }
 
     ambig = NULL;
@@ -1040,23 +1038,22 @@ void HandleAmbiguity( Junction *block, Junction *alt1, Junction *alt2, int jtype
     }
 /* end TJP (10/24/93) */
 
-    fprintf(stderr, ErrHdr, FileStr[alt1->file], alt1->line);
     if ( jtype == aLoopBegin || jtype == aPlusBlk )
-      fprintf(stderr, " warning: optional/exit path and alt(s) %sambiguous upon", sub);
+      warning("optional/exit path and alt(s) %sambiguous upon", FileStr[alt1->file], alt1->line, sub);
     else
-       fprintf(stderr, " warning: alts %d and %d %sambiguous upon",
+      warning("alts %d and %d %sambiguous upon", FileStr[alt1->file], alt1->line,
            alt1->altnum, alt2->altnum, sub);
     if ( elevel == 3 && LL_k>1 )
     {
        preorder(ambig);
        fprintf(stderr, "\n");
-           for (i=1; i<=CLL_k; i++) set_free( fset[i] );
-         free((char *)fset);
+       for (i=1; i<=CLL_k; i++) set_free( fset[i] );
+       free((char *)fset);
        for (i=1; i<=CLL_k; i++) free( (char *)ftbl[i] );
        free((char *)ftbl);
        Tfree(ambig);
        return;
-        };
+    };
 
     Tfree(ambig);
     dumpAmbigMsg(fset, stderr, 0);
@@ -1115,21 +1112,21 @@ void HandleAmbiguity( Junction *block, Junction *alt1, Junction *alt2, int jtype
   {
     if ( ParseWithPredicates )
     {
-            if (alt1->predicate != NULL) predicate_free(alt1->predicate);  /* MR12 */
-            if (alt2->predicate != NULL) predicate_free(alt2->predicate);  /* MR12 */
-            require(MR_PredRuleRefStack.count == 0,"PredRuleRef stack not empty");
-          alt1->predicate = MR_find_predicates_and_supp((Node *)alt1->p1);
-            require(MR_PredRuleRefStack.count == 0,"PredRuleRef stack not empty");
-            require (MR_predicate_context_completed(alt1->predicate),"predicate alt 1 not completed");
-            alt1->predicate=MR_predSimplifyALL(alt1->predicate);
+        if (alt1->predicate != NULL) predicate_free(alt1->predicate);  /* MR12 */
+        if (alt2->predicate != NULL) predicate_free(alt2->predicate);  /* MR12 */
+        require(MR_PredRuleRefStack.count == 0,"PredRuleRef stack not empty");
+        alt1->predicate = MR_find_predicates_and_supp((Node *)alt1->p1);
+        require(MR_PredRuleRefStack.count == 0,"PredRuleRef stack not empty");
+        require (MR_predicate_context_completed(alt1->predicate),"predicate alt 1 not completed");
+        alt1->predicate=MR_predSimplifyALL(alt1->predicate);
 
-            require(MR_PredRuleRefStack.count == 0,"PredRuleRef stack not empty");
+        require(MR_PredRuleRefStack.count == 0,"PredRuleRef stack not empty");
         alt2->predicate = MR_find_predicates_and_supp((Node *)alt2->p1);
-            require(MR_PredRuleRefStack.count == 0,"PredRuleRef stack not empty");
-            require (MR_predicate_context_completed(alt2->predicate),"predicate alt 2 not completed");
-            alt2->predicate=MR_predSimplifyALL(alt2->predicate);
+        require(MR_PredRuleRefStack.count == 0,"PredRuleRef stack not empty");
+        require (MR_predicate_context_completed(alt2->predicate),"predicate alt 2 not completed");
+        alt2->predicate=MR_predSimplifyALL(alt2->predicate);
 
-            MR_doPredicatesHelp(1,alt1,alt2,jtype,sub);
+        MR_doPredicatesHelp(1,alt1,alt2,jtype,sub);
 
       if ( HoistPredicateContext && (alt1->predicate!=NULL||alt2->predicate!=NULL) )
       {
@@ -1151,12 +1148,12 @@ void HandleAmbiguity( Junction *block, Junction *alt1, Junction *alt2, int jtype
 
     if ( WarningLevel>1 )
     {
-      fprintf(stderr, ErrHdr, FileStr[alt1->file], alt1->line);
       if ( jtype == aLoopBegin || jtype == aPlusBlk )
-        fprintf(stderr, " warning: optional/exit path and alt(s) %sambiguous upon", sub);
+        warning("optional/exit path and alt(s) %sambiguous upon", FileStr[alt1->file], alt1->line, sub);
       else
-        fprintf(stderr, " warning: alts %d and %d %sambiguous upon",
+        warning("alts %d and %d %sambiguous upon", FileStr[alt1->file], alt1->line,
             alt1->altnum, alt2->altnum, sub);
+
       dumpAmbigMsg(fset, stderr, 0);
             MR_traceAmbSource(fset,alt1,alt2);
     }
@@ -1269,26 +1266,25 @@ void HandleAmbiguity( Junction *block, Junction *alt1, Junction *alt2, int jtype
   }
 /* end TJP addition */
 
-  fprintf(stderr, ErrHdr, FileStr[alt1->file], alt1->line);
   if ( jtype == aLoopBegin || jtype == aPlusBlk )
-    fprintf(stderr, " warning: optional/exit path and alt(s) %sambiguous upon", sub);
+    warning("optional/exit path and alt(s) %sambiguous upon", FileStr[alt1->file], alt1->line, sub);
   else
-    fprintf(stderr, " warning: alts %d and %d %sambiguous upon",
-          alt1->altnum, alt2->altnum, sub);
+    warning("alts %d and %d %sambiguous upon", FileStr[alt1->file], alt1->line, alt1->altnum, alt2->altnum, sub);
+
   if ( elevel == 3 )
   {
     preorder(ambig->down);      /* <===== k>1 ambiguity message data */
     fprintf(stderr, "\n");
   } else {
-        MR_skipped_e3_report=1;
-      dumpAmbigMsg(fset, stderr, 0);
-    };
+    MR_skipped_e3_report=1;
+    dumpAmbigMsg(fset, stderr, 0);
+  };
 
-    MR_traceAmbSourceK(ambig,alt1,alt2);     /* <====== k>1 ambiguity aid */
+  MR_traceAmbSourceK(ambig,alt1,alt2);     /* <====== k>1 ambiguity aid */
 
   Tfree(ambig);
 
-    for (i=1; i<=CLL_k; i++) set_free( fset[i] );
+  for (i=1; i<=CLL_k; i++) set_free( fset[i] );
   free((char *)fset);
   for (i=1; i<=CLL_k; i++) free( (char *)ftbl[i] );
   free((char *)ftbl);
