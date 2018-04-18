@@ -136,6 +136,7 @@ public:
     /* MR23 */ printMessage(stderr, "ctor %s #%d\n",object,ctor);
   }
 #endif
+
   ANTLRRefCountToken()
 #ifndef DBG_REFCOUNTTOKEN
     { refcnt_ = 0; }
@@ -317,8 +318,5 @@ public:
      return *this;
    };
 };
-
-// used for backward compatibility
-typedef ANTLRCommonToken ANTLRCommonBacktrackingToken;
 
 #endif
