@@ -35,13 +35,13 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
+#include <stdbool.h>
 #include "dlg_p.h"
 #include "output.h"
 #include "tokens.h"
 #include "constants.h"
 #include "support.h"
 #include "automata.h"
-#include "constants.h"
 
 #ifndef ANTLR_VERSION
 #define ANTLR_VERSION 13333
@@ -63,10 +63,10 @@ char *OutputDirectory = TopDirectory;
 
 /* Option variables */
 int comp_level = 0;
-int interactive = FALSE;
-int case_insensitive = FALSE;
-int warn_ambig = FALSE;
-int gen_cpp = FALSE;
+int interactive = false;
+int case_insensitive = false;
+int warn_ambig = false;
+int gen_cpp = false;
 
 FILE *input_stream; /* where to read description from */
 FILE *mode_stream;  /* where to put the mode.h stuff */
@@ -90,11 +90,11 @@ void p_cl_name(char *s, char *t)
     }
   }
 void p_outdir(char *s,char *t) {OutputDirectory=t;}
-void p_interactive()  {interactive = TRUE;}
-void p_case_s()   { case_insensitive = FALSE; }
-void p_case_i()   { case_insensitive = TRUE; }
-void p_warn_ambig() { warn_ambig = TRUE; }
-void p_cpp()    { gen_cpp = TRUE; }
+void p_interactive()  {interactive = true;}
+void p_case_s()   { case_insensitive = false; }
+void p_case_i()   { case_insensitive = true; }
+void p_warn_ambig() { warn_ambig = true; }
+void p_cpp()    { gen_cpp = true; }
 
 
 typedef void (*WildFunc)();
@@ -247,6 +247,6 @@ static void init()
   clear_hash();
   /* NOTE: need to set this flag before the lexer starts getting */
   /* tokens */
-  func_action = FALSE;
+  func_action = false;
 }
 
