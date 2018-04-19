@@ -49,21 +49,14 @@
 #include <cstdlib>
 
 
-/* User may redefine how line information looks */     /* make it #line MR7 */
-/* MR21 Use #ifndef */
-
+/* User may redefine how line information looks */
 #ifndef LineInfoFormatStr
 #define LineInfoFormatStr "#line %d \"%s\"\n"
 #endif
-
-/* must assume old K&R cpp here, can't use #if defined(..)... */
-
-#define OutputDirectoryOption "Directory where all output files should go (default=\".\")"
 
 
 #ifndef DllExportPCCTS
 #define DllExportPCCTS
 #endif
-
 
 #endif

@@ -228,7 +228,6 @@ static void pAst(void)  { GenAST = TRUE; }
 static void pANSI(void) { GenANSI = TRUE; }
 static void pCr(void) { GenCR = TRUE; }
 static void pNOPURIFY(void) { PURIFY = FALSE; }
-/*static void pCt(void) { warnNoFL("-ct option is now the default"); }*/
 static void pLI(void) { GenLineInfo = TRUE; GenLineInfoMS = FALSE; } /* MR14 */
 static void pLIms(void) { GenLineInfo = TRUE; GenLineInfoMS = TRUE; }  /* MR14 */
 static void pFr(char *s, char *t) {RemapFileName = t;}
@@ -358,7 +357,7 @@ Opt options[] = {
     { "-gx", 0, pLGen,  "Do not generate lexical (dlg-related) files (default=FALSE)"},
     { "-gxt",0, pXTGen, "Do not generate tokens.h (default=FALSE)"},
     { "-k",  1, pLLK, "Set full LL(k) lookahead depth (default==1)"},
-    { "-o",  1, pOut, OutputDirectoryOption},
+    { "-o",  1, pOut, "Directory where all output files should go (default=\".\")"},
     { "-p",  0, pPrt, "Print out the grammar w/o actions (default=no)"},
     { "-pa", 0, pPrtA,  "Print out the grammar w/o actions & w/FIRST sets (default=no)"},
     { "-pr",0, pPred, "no longer used; predicates employed if present"},
@@ -366,35 +365,30 @@ Opt options[] = {
     { "-rl", 1, pTRes,  "Limit max # of tree nodes used by grammar analysis"},
     { "-stdout",0, pStdout, "Send grammar.c/grammar.cpp to stdout"},               /* MR6 */
     { "-tab", 1, pTab,  "Width of tabs (1 to 8) for grammar.c/grammar.cpp files"}, /* MR6 */
-  { "-w1", 0, pW1,  "Set the warning level to 1 (default)"},
-  { "-w2", 0, pW2,  "Ambiguities yield warnings even if predicates or (...)? block"},
-    { "-mrhoist",1,pMRhoist,                                                       /* MR9 */
-                         "Turn on/off k=1 Maintenance Release style hoisting"},  /* MR9 */
-    { "-mrhoistk",1,pMRhoistk,                                                       /* MR13 */
-                         "Turn on/off k>1 EXPERIMENTAL Maintenance Release style hoisting"},  /* MR13 */
-    { "-aa"  ,1,pAA,     "Ambiguity aid for a rule (rule name or line number)"},          /* MR11 */
-    { "-aam" ,0,pAAm,
-                         "Lookahead token may appear multiple times in -aa listing"},     /* MR11 */
-    { "-aad" ,1,pAAd,
-                         "Limits exp growth of -aa listing - default=1 (max=ck value)"},  /* MR11 */
-  { "-info",1,pInfo,
-      "Extra info: p=pred t=tnodes f=first/follow m=monitor o=orphans 0=noop"},           /* MR11 */
+    { "-w1", 0, pW1,  "Set the warning level to 1 (default)"},
+    { "-w2", 0, pW2,  "Ambiguities yield warnings even if predicates or (...)? block"},
+    { "-mrhoist",1,pMRhoist, "Turn on/off k=1 Maintenance Release style hoisting"},  /* MR9 */
+    { "-mrhoistk",1,pMRhoistk, "Turn on/off k>1 EXPERIMENTAL Maintenance Release style hoisting"},  /* MR13 */
+    { "-aa"  ,1,pAA, "Ambiguity aid for a rule (rule name or line number)"},          /* MR11 */
+    { "-aam" ,0,pAAm, "Lookahead token may appear multiple times in -aa listing"},     /* MR11 */
+    { "-aad" ,1,pAAd, "Limits exp growth of -aa listing - default=1 (max=ck value)"},  /* MR11 */
+    { "-info",1,pInfo, "Extra info: p=pred t=tnodes f=first/follow m=monitor o=orphans 0=noop"},           /* MR11 */
     { "-treport",1,pTreport,
                         "Report when tnode usage exceeds value during ambiguity resolution"},   /* MR11 */
-  { "-newAST", 0, pNewAST,
+    { "-newAST", 0, pNewAST,
                  "In C++ mode use \"newAST(...)\" rather than \"new AST(...)\""},         /* MR13 */
-  { "-tmake", 0, ptmakeInParser,
+    { "-tmake", 0, ptmakeInParser,
                  "In C++ mode use parser's tmake method rather than \"ASTBase::tmake(...)\""},   /* MR23 */
     { "-alpha",0, pAlpha,
                  "Provide additional information for \"(alpha)? beta\" error messages"},  /* MR14 */
     { "-mrblkerr",0,pMR_BlkErr,                                                           /* MR21 */
                  "EXPERIMENTAL change to (...)* and (...)+ syntax error sets"},           /* MR21 */
-  { "-nopurify",0,pNOPURIFY,
+    { "-nopurify",0,pNOPURIFY,
     "Don't use the notorious PURIFY macro (replaced by MR23 initial value syntax) to zero return arguments of rules"},   /* MR23 */
-  { "-",   0, pStdin, "Read grammar from stdin" },
-  { "*",   0, pFile,  "" }, /* anything else is a file */
-  { NULL,  0, NULL }
- };
+    { "-",   0, pStdin, "Read grammar from stdin" },
+    { "*",   0, pFile,  "" }, /* anything else is a file */
+    { NULL,  0, NULL }
+};
 
 void readDescr();
 void cleanUp();
@@ -417,345 +411,334 @@ static void report_numericPredLabels(ActionNode *a)
 
 int main( int argc, char *argv[] )
 {
-  int i;
-  static char EPSTR[] = "[Ep]";
+    int i;
+    static char EPSTR[] = "[Ep]";
 
-    Save_argc=argc;                                                  /* MR10 */
-    Save_argv=argv;                                                  /* MR10 */
-
-/*  malloc_debug(8);*/
+    Save_argc=argc;
+    Save_argv=argv;
 
 #ifdef SPECIAL_INITS
-    special_inits();                                                 /* MR1 */
+    special_inits();
 #endif
-  fprintf(stderr, "Antlr parser generator   Version %s   1989-2001\n", Version);
-  if ( argc == 1 ) { help(); zzDIE; }
-  ProcessArgs(argc-1, &(argv[1]), options);
 
-/* MR14 */    if (MR_AmbAidRule && AlphaBetaTrace) {
-/* MR14 */       fatal("Can't specify both -aa (ambiguity aid) and -alpha (\"(alpha)? beta\" aid)");
-/* MR14 */    }
+    fprintf(stderr, "Antlr parser generator   Version %s   1989-2001\n", Version);
+    if ( argc == 1 ) { help(); zzDIE; }
+    ProcessArgs(argc-1, &(argv[1]), options);
 
-    if (MRhoistingk) {              /* MR13 */
-      HoistPredicateContext=1;      /* MR13 */
-      MRhoisting=1;                 /* MR13 */
-    };                              /* MR13 */
-    if (MRhoisting && ! HoistPredicateContext) {
-/***      warnNoFL("Using \"-mrhoist\" forces \"-prc on\"");    ***/
-      HoistPredicateContext=1;
+    if (MR_AmbAidRule && AlphaBetaTrace) {
+        fatal("Can't specify both -aa (ambiguity aid) and -alpha (\"(alpha)? beta\" aid)");
+    }
+
+    if (MRhoistingk) {
+        HoistPredicateContext=1;
+        MRhoisting=1;
     };
+
+    if (MRhoisting && ! HoistPredicateContext) {
+        /* Using "-mrhoist" forces "-prc on" */
+        HoistPredicateContext=1;
+    };
+
     if (HoistPredicateContext && ! MRhoisting) {
         warnNoFL("When using predicate context (-prc on) -mrhoist on is recommended");
     }
-  /* Fix lookahead depth */
-  /* Compressed lookahead must always be larger than or equal to full lookahead */
-  if ( CLL_k < LL_k  && CLL_k>0 )
-  {
-    warnNoFL("must have compressed lookahead >= full LL(k) lookahead (setting -ck to -k)");
-    CLL_k = LL_k;
-  }
-  if ( CLL_k == -1 ) CLL_k = LL_k;
-  OutputLL_k = CLL_k;
-  if ( ((CLL_k-1)&CLL_k)!=0 ) { /* output ll(k) must be power of 2 */
-    int n;
-    for(n=1; n<CLL_k; n<<=1) {;}
-    OutputLL_k = n;
-  };
 
-  if (MR_BlkErr) {
-    warnNoFL("The -mrblkerr option is EXPERIMENTAL");
+    /* Fix lookahead depth */
+    /* Compressed lookahead must always be larger than or equal to full lookahead */
+    if ( CLL_k < LL_k  && CLL_k>0 )
+    {
+        warnNoFL("must have compressed lookahead >= full LL(k) lookahead (setting -ck to -k)");
+        CLL_k = LL_k;
+    }
+    if ( CLL_k == -1 ) CLL_k = LL_k;
+    OutputLL_k = CLL_k;
+    if ( ((CLL_k-1)&CLL_k)!=0 ) { /* output ll(k) must be power of 2 */
+        int n;
+        for(n=1; n<CLL_k; n<<=1) {}
+        OutputLL_k = n;
+    };
+
+    if (MR_BlkErr) {
+        warnNoFL("The -mrblkerr option is EXPERIMENTAL");
         if (LL_k > 1) {
-        warnNoFL("The -mrblkerr option is designed only for k=1 ck=1 grammars");
+            warnNoFL("The -mrblkerr option is designed only for k=1 ck=1 grammars");
         }
-  };
+    };
 
     if ( ! ambAidDepthSpecified) {
-      MR_AmbAidDepth=1;
-    } else {
-      if (MR_AmbAidDepth > CLL_k || MR_AmbAidDepth <= 0) {
-        warnNoFL(eMsgd(
-            "Ambiguity aid depth (\"-aad ...\") must be a number between 1 and max(k,ck)=%d",CLL_k));
         MR_AmbAidDepth=1;
-      };
-      if (MR_AmbAidDepth == 0) {
-        MR_AmbAidDepth=2;
-      };
+    } else {
+        if (MR_AmbAidDepth > CLL_k || MR_AmbAidDepth <= 0) {
+            warnNoFL(eMsgd(
+                    "Ambiguity aid depth (\"-aad ...\") must be a number between 1 and max(k,ck)=%d",CLL_k));
+            MR_AmbAidDepth=1;
+        };
+        if (MR_AmbAidDepth == 0) {
+            MR_AmbAidDepth=2;
+        };
     };
 
     if (MR_AmbAidRule != NULL) MR_AmbAidLine=atoi(MR_AmbAidRule);
 
-  fpTrans = &(C_Trans[0]);    /* Translate to C Language */
-  fpJTrans = &(C_JTrans[0]);
-  init();
-  lexclass(LexStartSymbol);
+    fpTrans = &(C_Trans[0]);    /* Translate to C Language */
+    fpJTrans = &(C_JTrans[0]);
+    init();
+    lexclass(LexStartSymbol);
 
-  readDescr();
-  LastTokenCounted = TokenNum;
-  RemapForcedTokens();
-  if ( CannotContinue ) {cleanUp(); zzDIE;}
-  if ( GenCC && no_classes_found ) fatal("required grammar class not found (exiting...)");
-  if ( WarningLevel>1 && HdrAction == NULL )
-     warnNoFL("no #header action was found");
-  if ( FoundAtOperator && ! FoundExceptionGroup) {
-     warnNoFL("found the exception operator '@' - but no exception group was found");
-  };
-  EpToken = addTname(EPSTR);    /* add imaginary token epsilon */
-  set_orel(EpToken, &imag_tokens);
+    readDescr();
+    LastTokenCounted = TokenNum;
+    RemapForcedTokens();
+    if ( CannotContinue ) {cleanUp(); zzDIE;}
+    if ( GenCC && no_classes_found ) fatal("required grammar class not found (exiting...)");
+    if ( WarningLevel>1 && HdrAction == NULL )
+        warnNoFL("no #header action was found");
+    if ( FoundAtOperator && ! FoundExceptionGroup) {
+        warnNoFL("found the exception operator '@' - but no exception group was found");
+    };
+    EpToken = addTname(EPSTR);    /* add imaginary token epsilon */
+    set_orel(EpToken, &imag_tokens);
 
-  /* this won't work for hand-built scanners since EofToken is not
-   * known.  Forces EOF to be token type 1.
-   */
-  set_orel(EofToken, &imag_tokens);
+    /* this won't work for hand-built scanners since EofToken is not
+     * known.  Forces EOF to be token type 1.
+     */
+    set_orel(EofToken, &imag_tokens);
 
-  set_size(NumWords(TokenNum-1));
+    set_size(NumWords(TokenNum-1));
 
-  /* compute the set of all known token types
-   * It represents the set of tokens from 1 to last_token_num + the
-   * reserved positions above that (if any).  Don't include the set of
-   * imaginary tokens such as the token/error classes or EOF.
-   */
-  {
-    set a;
-    a = set_dup(reserved_positions);
-    for (i=1; i<TokenNum; i++) { set_orel(i, &a); }
-    all_tokens = set_dif(a, imag_tokens);
-    set_free(a);
-  }
-
-  ComputeTokSets();       /* Compute #tokclass sets */
-  CompleteTokenSetRefs();     /* Change complex nodes in syn diag */
-    CompleteContextGuards();        /* MR13 */
-
-  if ( CodeGen ) genDefFile();  /* create tokens.h */
-  if ( LexGen ) genLexDescr();  /* create parser.dlg */
-
-  if ( GenStdPccts )
-  {
-    FILE *f = fopen(OutMetaName(stdpccts), "w");
-    if ( f==NULL ) {warnNoFL( eMsg1("can't create %s",OutMetaName(stdpccts)) );}
-    else
+    /* compute the set of all known token types
+     * It represents the set of tokens from 1 to last_token_num + the
+     * reserved positions above that (if any).  Don't include the set of
+     * imaginary tokens such as the token/error classes or EOF.
+     */
     {
+        set a;
+        a = set_dup(reserved_positions);
+        for (i=1; i<TokenNum; i++) { set_orel(i, &a); }
+        all_tokens = set_dif(a, imag_tokens);
+        set_free(a);
+    }
+
+    ComputeTokSets();       /* Compute #tokclass sets */
+    CompleteTokenSetRefs();     /* Change complex nodes in syn diag */
+    CompleteContextGuards();
+
+    if ( CodeGen ) genDefFile();  /* create tokens.h */
+    if ( LexGen ) genLexDescr();  /* create parser.dlg */
+
+    if ( GenStdPccts )
+    {
+        FILE *f = fopen(OutMetaName(stdpccts), "w");
+        if ( f==NULL ) {
+            warnNoFL( eMsg1("can't create %s",OutMetaName(stdpccts)) );
+        } else {
 #ifdef SPECIAL_FOPEN
-      special_fopen_actions(OutMetaName(stdpccts));            /* MR1 */
+            special_fopen_actions(OutMetaName(stdpccts));
 #endif
-            if (strcmp(stdpccts,"stdpccts.h") == 0) {                /* MR10 */
-            genStdPCCTSIncludeFile(f,NULL);                        /* MR10 */
-            } else {                                                 /* MR10 */
-            genStdPCCTSIncludeFile(f,pcctsBaseName(stdpccts));     /* MR32 */
+            if (strcmp(stdpccts,"stdpccts.h") == 0) {
+                genStdPCCTSIncludeFile(f,NULL);
+            } else {
+                genStdPCCTSIncludeFile(f,pcctsBaseName(stdpccts));
             };
-      fclose(f);
-    }
-  }
-
-  buildRulePtr();         /* create mapping from rule # to RuleBlk junction */
-  ComputeErrorSets();
-  FoLink( (Node *)SynDiag );    /* add follow links to end of all rules */
-
-  if ( GenCR ) GenCrossRef( SynDiag );
-
-  if ( CodeGen )
-  {
-    if ( SynDiag == NULL )
-    {
-      warnNoFL("no grammar description recognized");
-      cleanUp();
-      zzDIE;
-    }
-    else if ( !GenCC ) {
-      ErrFile = fopen(OutMetaName(ErrFileName), "w");
-      require(ErrFile != NULL, "main: can't open err file");
-#ifdef SPECIAL_FOPEN
-                special_fopen_actions(OutMetaName(ErrFileName));   /* MR1 */
-#endif
-      NewSetWd();
-      GenErrHdr();
-      TRANS(SynDiag);     /* Translate to the target language */
-      DumpSetWd();
-      DumpRemainingTokSets();
-      fclose( ErrFile );
-    }
-    else {
-      strcpy(Parser_h_Name, CurrentClassName);
-      strcat(Parser_h_Name, ".h");
-      strcpy(Parser_c_Name, CurrentClassName);
-      strcat(Parser_c_Name, CPP_FILE_SUFFIX);
-      ensure_no_C_file_collisions(Parser_c_Name);
-      Parser_h = fopen(OutMetaName(Parser_h_Name), "w");
-      require(Parser_h != NULL, "main: can't open class Parserx.h file");
-#ifdef SPECIAL_FOPEN
-        special_fopen_actions(OutMetaName(Parser_h_Name));       /* MR1 */
-#endif
-      Parser_c = fopen(OutMetaName(Parser_c_Name), "w");
-      require(Parser_c != NULL, "main: can't open class Parserx.c file");
-#ifdef SPECIAL_FOPEN
-        special_fopen_actions(OutMetaName(Parser_c_Name));       /* MR1 */
-#endif
-      GenParser_h_Hdr();
-      if ( class_before_actions != NULL )
-      {
-        ListNode *p;
-        for (p = class_before_actions->next; p!=NULL; p=p->next)
-        {
-          UserAction *ua = (UserAction *)p->elem;
-          dumpAction( ua->action, Parser_h, 0, ua->file, ua->line, 1);
+            fclose(f);
         }
-      }
-      GenParser_c_Hdr();
-      fprintf(Parser_h, "protected:\n");  /* MR20 */
-      NewSetWd();
-      TRANS(SynDiag);     /* Translate to the target language */
-      DumpSetWd();
-      GenRuleMemberDeclarationsForCC(Parser_h, SynDiag);
-      if ( class_after_actions != NULL )
-      {
-        ListNode *p;
-        for (p = class_after_actions->next; p!=NULL; p=p->next)
-        {
-          UserAction *ua = (UserAction *)p->elem;
-          dumpAction( ua->action, Parser_h, 0, ua->file, ua->line, 1);
-        }
-      }
-      DumpRemainingTokSets();
-      fprintf(Parser_h, "};\n");
-      fprintf(Parser_h, "\n#endif /* %s_h */\n", CurrentClassName);
-      fclose( Parser_h );
-      fclose( Parser_c );
     }
-  }
+
+    buildRulePtr();         /* create mapping from rule # to RuleBlk junction */
+    ComputeErrorSets();
+    FoLink( (Node *)SynDiag );    /* add follow links to end of all rules */
+
+    if ( GenCR ) GenCrossRef( SynDiag );
+
+    if ( CodeGen ) {
+        if ( SynDiag == NULL ) {
+            warnNoFL("no grammar description recognized");
+            cleanUp();
+            zzDIE;
+        } else if ( !GenCC ) {
+            ErrFile = fopen(OutMetaName(ErrFileName), "w");
+            require(ErrFile != NULL, "main: can't open err file");
+#ifdef SPECIAL_FOPEN
+            special_fopen_actions(OutMetaName(ErrFileName));
+#endif
+            NewSetWd();
+            GenErrHdr();
+            TRANS(SynDiag);     /* Translate to the target language */
+            DumpSetWd();
+            DumpRemainingTokSets();
+            fclose( ErrFile );
+        } else {
+            strcpy(Parser_h_Name, CurrentClassName);
+            strcat(Parser_h_Name, ".h");
+            strcpy(Parser_c_Name, CurrentClassName);
+            strcat(Parser_c_Name, CPP_FILE_SUFFIX);
+            ensure_no_C_file_collisions(Parser_c_Name);
+            Parser_h = fopen(OutMetaName(Parser_h_Name), "w");
+            require(Parser_h != NULL, "main: can't open class Parserx.h file");
+#ifdef SPECIAL_FOPEN
+            special_fopen_actions(OutMetaName(Parser_h_Name));
+#endif
+            Parser_c = fopen(OutMetaName(Parser_c_Name), "w");
+            require(Parser_c != NULL, "main: can't open class Parserx.c file");
+#ifdef SPECIAL_FOPEN
+            special_fopen_actions(OutMetaName(Parser_c_Name));
+#endif
+            GenParser_h_Hdr();
+            if ( class_before_actions != NULL ) {
+                ListNode *p;
+                for (p = class_before_actions->next; p!=NULL; p=p->next) {
+                    UserAction *ua = (UserAction *)p->elem;
+                    dumpAction( ua->action, Parser_h, 0, ua->file, ua->line, 1);
+                }
+            }
+            GenParser_c_Hdr();
+            fprintf(Parser_h, "protected:\n");
+            NewSetWd();
+            TRANS(SynDiag);     /* Translate to the target language */
+            DumpSetWd();
+            GenRuleMemberDeclarationsForCC(Parser_h, SynDiag);
+            if ( class_after_actions != NULL ) {
+                ListNode *p;
+                for (p = class_after_actions->next; p!=NULL; p=p->next) {
+                    UserAction *ua = (UserAction *)p->elem;
+                    dumpAction( ua->action, Parser_h, 0, ua->file, ua->line, 1);
+                }
+            }
+            DumpRemainingTokSets();
+            fprintf(Parser_h, "};\n");
+            fprintf(Parser_h, "\n#endif /* %s_h */\n", CurrentClassName);
+            fclose( Parser_h );
+            fclose( Parser_c );
+        }
+    }
 
     MR_orphanRules(stderr);
     if (LTinTokenAction && WarningLevel >= 2) {
-    if (GenCC) {
-      warnNoFL("At least one <<action>> following a token match contains a reference to LT(...)\n      this will reference the immediately preceding token,\n      not the one which follows as is the case with semantic predicates.");
+        if (GenCC) {
+            warnNoFL("At least one <<action>> following a token match contains a reference to LT(...)\n      this will reference the immediately preceding token,\n      not the one which follows as is the case with semantic predicates.");
+        }
+        warnNoFL("At least one <<action>> following a token match contains a reference to LA(...) or LATEXT(...)\n      this will reference the immediately preceding token,\n      not the one which follows as is the case with semantic predicates.");
     }
-      warnNoFL("At least one <<action>> following a token match contains a reference to LA(...) or LATEXT(...)\n      this will reference the immediately preceding token,\n      not the one which follows as is the case with semantic predicates.");
-  }
 
-  if ( PrintOut )
-  {
-    if ( SynDiag == NULL ) {warnNoFL("no grammar description recognized");}
-    else PRINT(SynDiag);
-  }
+    if ( PrintOut ) {
+        if ( SynDiag == NULL ) {warnNoFL("no grammar description recognized");}
+        else PRINT(SynDiag);
+    }
 
-#ifdef DBG_LL1
-#endif
-  GenRemapFile();         /* create remap.h */
-/* MR10 */    if (FoundGuessBlk) {
-/* MR10 */      list_apply(NumericPredLabels, (void (*)(void *))report_numericPredLabels);
-/* MR10 */    };
+    GenRemapFile();         /* create remap.h */
+    if (FoundGuessBlk) {
+        list_apply(NumericPredLabels, (void (*)(void *))report_numericPredLabels);
+    };
 
     if (InfoT && TnodesAllocated > 0) {
-      if (TnodesPeak > 10000) {
-        fprintf(stdout,"\nTree Nodes:  peak %dk  created %dk  lost %d\n",
-                        (TnodesPeak/1000),
-                        (TnodesAllocated/1000),
-                        TnodesInUse-tnodes_used_in_guard_predicates_etc);
-       } else {
-         fprintf(stdout,"\nTree Nodes:  peak %d  created %d  lost %d\n",
-                        TnodesPeak,
-                        TnodesAllocated,
-                        TnodesInUse-tnodes_used_in_guard_predicates_etc);
-       };
+        if (TnodesPeak > 10000) {
+            fprintf(stdout,"\nTree Nodes:  peak %dk  created %dk  lost %d\n",
+                    (TnodesPeak/1000),
+                    (TnodesAllocated/1000),
+                    TnodesInUse-tnodes_used_in_guard_predicates_etc);
+        } else {
+            fprintf(stdout,"\nTree Nodes:  peak %d  created %d  lost %d\n",
+                    TnodesPeak,
+                    TnodesAllocated,
+                    TnodesInUse-tnodes_used_in_guard_predicates_etc);
+        };
     };
     if (InfoF) {
-      DumpFcache();
+        DumpFcache();
     };
     if (MR_skipped_e3_report) {
-      fprintf(stderr,"note: use -e3 to get exact information on ambiguous tuples\n");
+        fprintf(stderr,"note: use -e3 to get exact information on ambiguous tuples\n");
     };
     if (MR_BadExprSets != 0) {
-      fprintf(stderr,"note: Unreachable C or C++ code was generated for empty expression sets,\n");
-      fprintf(stderr,"        probably due to undefined rules or infinite left recursion.\n");
-      fprintf(stderr,"      To locate: search the generated code for \"empty set expression\"\n");
+        fprintf(stderr,"note: Unreachable C or C++ code was generated for empty expression sets,\n");
+        fprintf(stderr,"        probably due to undefined rules or infinite left recursion.\n");
+        fprintf(stderr,"      To locate: search the generated code for \"empty set expression\"\n");
     };
     if (MR_AmbAidRule != NULL && MR_matched_AmbAidRule==0) {
-      RuleEntry *q = (RuleEntry *) hash_get(Rname,MR_AmbAidRule);
-      if (MR_AmbAidLine == 0 && q == NULL) {
-         warnNoFL(eMsg2("there is no rule \"%s\" so \"-aa %s\" will never match",
-                                                        MR_AmbAidRule,MR_AmbAidRule));
-      } else {
-        warnNoFL(eMsg1("there was no ambiguity that matched \"-aa %s\"",MR_AmbAidRule));
-      };
+        RuleEntry *q = (RuleEntry *) hash_get(Rname,MR_AmbAidRule);
+        if (MR_AmbAidLine == 0 && q == NULL) {
+            warnNoFL(eMsg2("there is no rule \"%s\" so \"-aa %s\" will never match",
+                    MR_AmbAidRule,MR_AmbAidRule));
+        } else {
+            warnNoFL(eMsg1("there was no ambiguity that matched \"-aa %s\"",MR_AmbAidRule));
+        };
     };
     if (AlphaBetaTrace) {
 
-      if (MR_AlphaBetaMessageCount == 0) {
-         fprintf(stderr,"note: there were no messages about \"(alpha)? beta\" blocks added to the generated code\n");
-      } else {
-         fprintf(stderr,"note: there were %d messages about \"(alpha)? beta\" blocks added to the generated code\n",
+        if (MR_AlphaBetaMessageCount == 0) {
+            fprintf(stderr,"note: there were no messages about \"(alpha)? beta\" blocks added to the generated code\n");
+        } else {
+            fprintf(stderr,"note: there were %d messages about \"(alpha)? beta\" blocks added to the generated code\n",
                     MR_AlphaBetaMessageCount);
-      }
+        }
 
-      if (set_null(MR_CompromisedRules)) {
-         fprintf(stderr,"note: the list of rules with compromised follow sets is empty\n");
-      } else {
-         fprintf(stderr,"note: the following is a list of rules which *may* have incorrect\n");
-         fprintf(stderr,"      follow sets computed as a result of an \"(alpha)? beta\" block\n");
-         fprintf(stderr,"\n");
-         MR_dumpRuleSet(MR_CompromisedRules);
-         fprintf(stderr,"\n");
-      }
+        if (set_null(MR_CompromisedRules)) {
+            fprintf(stderr,"note: the list of rules with compromised follow sets is empty\n");
+        } else {
+            fprintf(stderr,"note: the following is a list of rules which *may* have incorrect\n");
+            fprintf(stderr,"      follow sets computed as a result of an \"(alpha)? beta\" block\n");
+            fprintf(stderr,"\n");
+            MR_dumpRuleSet(MR_CompromisedRules);
+            fprintf(stderr,"\n");
+        }
     }
     cleanUp();
-    exit(EXIT_SUCCESS);
-    return 0;           /* MR11 make compilers happy */
+    return EXIT_SUCCESS;
 }
 
-static void init( )
-{
-  SignalEntry *q;
+static void init( ) {
+    SignalEntry *q;
 
-  Tname = newHashTable();
-  Rname = newHashTable();
-  Fcache = newHashTable();
-  Tcache = newHashTable();
-  Sname = newHashTable();
-    Pname = newHashTable();     /* MR11 */
+    Tname = newHashTable();
+    Rname = newHashTable();
+    Fcache = newHashTable();
+    Tcache = newHashTable();
+    Sname = newHashTable();
+    Pname = newHashTable();
 
-  /* Add default signal names */
-  q = (SignalEntry *)hash_add(Sname,
+    /* Add default signal names */
+    q = (SignalEntry *)hash_add(Sname,
                 "NoViableAlt",
                 (Entry *)newSignalEntry("NoViableAlt"));
-  require(q!=NULL, "cannot alloc signal entry");
-  q->signum = sigNoViableAlt;
-  q = (SignalEntry *)hash_add(Sname,
+    require(q!=NULL, "cannot alloc signal entry");
+    q->signum = sigNoViableAlt;
+    q = (SignalEntry *)hash_add(Sname,
                 "MismatchedToken",
                 (Entry *)newSignalEntry("MismatchedToken"));
-  require(q!=NULL, "cannot alloc signal entry");
-  q->signum = sigMismatchedToken;
-  q = (SignalEntry *)hash_add(Sname,
+    require(q!=NULL, "cannot alloc signal entry");
+    q->signum = sigMismatchedToken;
+    q = (SignalEntry *)hash_add(Sname,
                 "NoSemViableAlt",
                 (Entry *)newSignalEntry("NoSemViableAlt"));
-  require(q!=NULL, "cannot alloc signal entry");
-  q->signum = sigNoSemViableAlt;
+    require(q!=NULL, "cannot alloc signal entry");
+    q->signum = sigNoSemViableAlt;
 
-  reserved_positions = empty;
-  all_tokens = empty;
-  imag_tokens = empty;
-  tokclasses = empty;
-  TokenStr = (char **) calloc(TSChunk, sizeof(char *));
-  require(TokenStr!=NULL, "main: cannot allocate TokenStr");
-  FoStack = (int **) calloc(CLL_k+1, sizeof(int *));
-  require(FoStack!=NULL, "main: cannot allocate FoStack");
-  FoTOS = (int **) calloc(CLL_k+1, sizeof(int *));
-  require(FoTOS!=NULL, "main: cannot allocate FoTOS");
-  Cycles = (ListNode **) calloc(CLL_k+1, sizeof(ListNode *));
-  require(Cycles!=NULL, "main: cannot allocate Cycles List");
-    MR_CompromisedRules=empty;  /* MR14 */
+    reserved_positions = empty;
+    all_tokens = empty;
+    imag_tokens = empty;
+    tokclasses = empty;
+    TokenStr = (char **) calloc(TSChunk, sizeof(char *));
+    require(TokenStr!=NULL, "main: cannot allocate TokenStr");
+    FoStack = (int **) calloc(CLL_k+1, sizeof(int *));
+    require(FoStack!=NULL, "main: cannot allocate FoStack");
+    FoTOS = (int **) calloc(CLL_k+1, sizeof(int *));
+    require(FoTOS!=NULL, "main: cannot allocate FoTOS");
+    Cycles = (ListNode **) calloc(CLL_k+1, sizeof(ListNode *));
+    require(Cycles!=NULL, "main: cannot allocate Cycles List");
+    MR_CompromisedRules=empty;
 }
 
 static void help( )
 {
-  Opt *p = options;
-  fprintf(stderr, "antlr [options] f1 f2 ... fn\n");
-  while ( *(p->option) != '*' )
-  {
-    fprintf(stderr, "    %-9s%s   %s\n",
-            p->option,
-            (p->arg)?"___":"   ",
-            p->descr);
-    p++;
-  }
+    Opt *p = options;
+    fprintf(stderr, "antlr [options] f1 f2 ... fn\n");
+    while ( *(p->option) != '*' )
+    {
+        fprintf(stderr, "    %-9s%s   %s\n",
+                p->option,
+                (p->arg)?"___":"   ",
+                p->descr);
+        p++;
+    }
 }
 
 /**
@@ -766,26 +749,26 @@ static void help( )
  */
 static void buildRulePtr( )
 {
-  int r=1;
-  Junction *p  = SynDiag;
-  RulePtr = (Junction **) calloc(NumRules+1, sizeof(Junction *));
-  require(RulePtr!=NULL, "cannot allocate RulePtr array");
+    int r=1;
+    Junction *p  = SynDiag;
+    RulePtr = (Junction **) calloc(NumRules+1, sizeof(Junction *));
+    require(RulePtr!=NULL, "cannot allocate RulePtr array");
 
-  while ( p!=NULL )
-  {
-    require(r<=NumRules, "too many rules???");
-    RulePtr[r++] = p;
-    p = (Junction *)p->p2;
-  }
+    while ( p!=NULL )
+    {
+        require(r<=NumRules, "too many rules???");
+        RulePtr[r++] = p;
+        p = (Junction *)p->p2;
+    }
 }
 
 
 void readDescr()
 {
-  zzerr = dlgerror;
-  input = NextFile();
-  if ( input==NULL ) fatal("No grammar description found (exiting...)");
-  ANTLR(grammar(), input);
+    zzerr = dlgerror;
+    input = NextFile();
+    if ( input==NULL ) fatal("No grammar description found (exiting...)");
+    ANTLR(grammar(), input);
     tnodes_used_in_guard_predicates_etc=TnodesInUse;    /* MR10 */
 }
 
@@ -835,9 +818,9 @@ FILE *NextFile()
 char *outname(char *fs)
 {
     if ( GenCC) {
-      return outnameX(fs,CPP_FILE_SUFFIX);
+        return outnameX(fs,CPP_FILE_SUFFIX);
     } else {
-      return outnameX(fs,".c");
+        return outnameX(fs,".c");
     };
 }
 
@@ -1038,14 +1021,14 @@ static void CompleteTokenSetRefs()
       a = empty;
       for (i=q->token; i<=q->upper_range; i++) { set_orel(i, &a); }   /* MR13 */
 
-/* MR13 */    if (q->complement) {
-/* MR13 */      q->tset = set_dif(all_tokens, a);
-/* MR13 */        set_free(a);
-/* MR13 */      } else {
-/* MR13 */        q->tset = a;
-/* MR13 */      }
+      if (q->complement) {
+        q->tset = set_dif(all_tokens, a);
+        set_free(a);
+      } else {
+        q->tset = a;
+      }
 
-        }
+    }
 
     /* at this point, it can only be a complemented single token */
     else if ( q->complement )

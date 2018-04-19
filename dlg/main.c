@@ -116,7 +116,7 @@ Opt options[] = {
   { "-ci", 0, (WildFunc)p_case_i, "Make lexical analyzer case insensitive"},
   { "-cl", 1, (WildFunc)p_cl_name, "Rename lexer class (DLGLexer); only used for -CC"},
   { "-cs", 0, (WildFunc)p_case_s, "Make lexical analyzer case sensitive (default)"},
-  { "-o",  1, (WildFunc)p_outdir, OutputDirectoryOption},
+  { "-o",  1, (WildFunc)p_outdir, "Directory where all output files should go (default=\".\")"},
   { "-", 0, (WildFunc)p_stdio, "Use standard i/o rather than file"},
   { "*", 0, (WildFunc)p_file, ""}, /* anything else is a file */
   { NULL, 0, NULL }
