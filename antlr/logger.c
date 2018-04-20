@@ -27,12 +27,17 @@ typedef enum {
 } LogLevel;
 
 
+
 static void log_message(LogLevel level, char *err, char *f, int l) {
-  hdrLog(f, l);
 
-  char *levelName = NULL;
+    if((f!=NULL) && (l!=0)) {
+        hdrLog(f, l);
+        fprintf(stderr, " ");
+    }
 
-  switch(level) {
+    char *levelName = NULL;
+
+    switch(level) {
       case WARNING:
           levelName = "WARNING:";
           break;
@@ -47,8 +52,8 @@ static void log_message(LogLevel level, char *err, char *f, int l) {
           break;
       default:
           levelName = ":";
-  }
-  fprintf(stderr, " %s %s\n", levelName, err);
+    }
+    fprintf(stderr, "%s %s\n", levelName, err);
 }
 
 
@@ -75,14 +80,13 @@ static void log_message_va(LogLevel level, const char *message, char *file, int 
 }
 
 
-
 void hdrLog(char *f,int l) {
-  fprintf(stderr, ErrHdr, f, l);
+    fprintf(stderr, ErrHdr, f, l);
 }
 
 void warnNoFL(char *err)
 {
-  fprintf(stderr, "warning: %s\n", err);
+    fprintf(stderr, "warning: %s\n", err);
 }
 
 /**
@@ -91,63 +95,63 @@ void warnNoFL(char *err)
  */
 void warnFL(char *err,char *f,int l)
 {
-  hdrLog(f, l);
-  fprintf(stderr, " warning: %s\n", err);
+    hdrLog(f, l);
+    fprintf(stderr, " warning: %s\n", err);
 }
 
 void warn(char *err)
 {
-  /* back up the file number if we hit an error at the end of the last file */
-  if ( CurFile >= NumFiles && CurFile >= 1 ) CurFile--;
-  hdrLog(FileStr[CurFile], zzline);
-  fprintf(stderr, " warning: %s\n", err);
+    /* back up the file number if we hit an error at the end of the last file */
+    if ( CurFile >= NumFiles && CurFile >= 1 ) CurFile--;
+    hdrLog(FileStr[CurFile], zzline);
+    fprintf(stderr, " warning: %s\n", err);
 }
 
 void errNoFL(char *err)
 {
-  fprintf(stderr, " error: %s\n", err);
+    fprintf(stderr, " error: %s\n", err);
 }
 
 void errFL(char *err,char *f,int l)
 {
-  hdrLog(f, l);
-  fprintf(stderr, " error: %s\n", err);
+    hdrLog(f, l);
+    fprintf(stderr, " error: %s\n", err);
 }
 
 void err(char *err)
 {
-  /* back up the file number if we hit an error at the end of the last file */
-  if ( CurFile >= NumFiles && CurFile >= 1 ) CurFile--;
-  hdrLog(FileStr[CurFile], zzline);
-  fprintf(stderr, " error: %s\n", err);
+    /* back up the file number if we hit an error at the end of the last file */
+    if ( CurFile >= NumFiles && CurFile >= 1 ) CurFile--;
+    hdrLog(FileStr[CurFile], zzline);
+    fprintf(stderr, " error: %s\n", err);
 }
 
 
 void fatalFL(char *err, char *f, int l )
 {
-  hdrLog(f, l);
-  fprintf(stderr, " %s\n", err);
-  cleanUp();
-  exit(EXIT_FAILURE);
+    hdrLog(f, l);
+    fprintf(stderr, " %s\n", err);
+    cleanUp();
+    exit(EXIT_FAILURE);
 }
 
 void fatal_intern( char *err_, char *f, int l )
 {
-  hdrLog(f, l);
-  fprintf(stderr, " #$%%*&@# internal error: %s\n", err_);
-  hdrLog(f, l);
-  fprintf(stderr, " [complain to nearest government official\n");
-  hdrLog(f, l);
-  fprintf(stderr, "  or send hate-mail to parrt@parr-research.com;\n");
-  hdrLog(f, l);
-  fprintf(stderr, "  please pray to the ``bug'' gods that there is a trival fix.]\n");
-  cleanUp();
-  exit(EXIT_FAILURE);
+    hdrLog(f, l);
+    fprintf(stderr, " #$%%*&@# internal error: %s\n", err_);
+    hdrLog(f, l);
+    fprintf(stderr, " [complain to nearest government official\n");
+    hdrLog(f, l);
+    fprintf(stderr, "  or send hate-mail to parrt@parr-research.com;\n");
+    hdrLog(f, l);
+    fprintf(stderr, "  please pray to the ``bug'' gods that there is a trival fix.]\n");
+    cleanUp();
+    exit(EXIT_FAILURE);
 }
 
 void cleanUp( void )
 {
-  if ( DefFile != NULL) fclose( DefFile );
+    if ( DefFile != NULL) fclose( DefFile );
 }
 
 
@@ -195,7 +199,7 @@ void log_more(char *err, char *file, int line, ...) {
 
 void dlgerror(const char *s)
 {
-  hdrLog(FileStr[CurFile], zzline);
-  fprintf(stderr, " lexical error: %s (text was '%s')\n",
-          ((s == NULL) ? "Lexical error" : s), zzlextext);
+    hdrLog(FileStr[CurFile], zzline);
+    fprintf(stderr, " lexical error: %s (text was '%s')\n",
+            ((s == NULL) ? "Lexical error" : s), zzlextext);
 }

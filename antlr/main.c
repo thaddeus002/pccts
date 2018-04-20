@@ -164,14 +164,15 @@ static void pCk( char *s, char *t )
   }
 }
 
-static void pTab( char *s, char *t )                               /* MR6 */
-{                                                    /* MR6 */
-  TabWidth = atoi(t);                                      /* MR6 */
-  if ( TabWidth < 0 || TabWidth > 8 ) {                      /* MR6 */
-    warnNoFL("tab width must be between 1 and 8");               /* MR6 */
-    TabWidth=0;                                        /* MR6 */
-  }                                                  /* MR6 */
-}                                                      /* MR6 */
+/** Option added in MR6 */
+static void pTab( char *s, char *t )
+{
+  TabWidth = atoi(t);
+  if ( TabWidth < 0 || TabWidth > 8 ) {
+    warning("Invalid tab width option value : %s - Using default", NULL, 0, t);
+    TabWidth=4;
+  }
+}
 
 static int ambAidDepthSpecified=0;                                   /* MR11 */
 
@@ -364,7 +365,7 @@ Opt options[] = {
     { "-prc", 1, pPredCtx,"Turn on/off computation of context for hoisted predicates"},
     { "-rl", 1, pTRes,  "Limit max # of tree nodes used by grammar analysis"},
     { "-stdout",0, pStdout, "Send grammar.c/grammar.cpp to stdout"},               /* MR6 */
-    { "-tab", 1, pTab,  "Width of tabs (1 to 8) for grammar.c/grammar.cpp files"}, /* MR6 */
+    { "-tab", 1, pTab,  "Width of tabs (1 to 8) for grammar.c/grammar.cpp files (0 for tabs, default = 4)"},
     { "-w1", 0, pW1,  "Set the warning level to 1 (default)"},
     { "-w2", 0, pW2,  "Ambiguities yield warnings even if predicates or (...)? block"},
     { "-mrhoist",1,pMRhoist, "Turn on/off k=1 Maintenance Release style hoisting"},  /* MR9 */
