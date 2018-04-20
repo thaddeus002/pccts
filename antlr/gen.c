@@ -3375,11 +3375,6 @@ void genHdr( int file )
     else _gen("#include \"ast.h\"\n\n");
   }
   if ( !GenCC && DemandLookahead ) _gen("#define DEMAND_LOOK\n\n");
-#ifdef DUM
-  if ( !GenCC && LexGen ) {
-    _gen1("#define zzEOF_TOKEN %d\n", (TokenInd!=NULL?TokenInd[EofToken]:EofToken));
-  }
-#endif
   /* ###WARNING: This will have to change when SetWordSize changes */
   if ( !GenCC ) _gen1("#define zzSET_SIZE %lu\n", NumWords(TokenNum-1)*sizeof(unsigned));
     if (TraceGen) {
@@ -3569,9 +3564,6 @@ void genStdPCCTSIncludeFile( FILE *f,char *gate )    /* MR10 */
     fprintf(f,"#define NUM_SIGNALS %d\n", NumSignals);          /* MR1 */
   }
   if ( DemandLookahead ) fprintf(f,"#define DEMAND_LOOK\n");
-#ifdef DUM
-  if ( LexGen ) fprintf(f, "#define zzEOF_TOKEN %d\n", (TokenInd!=NULL?TokenInd[EofToken]:EofToken));
-#endif
   /* ###WARNING: This will have to change when SetWordSize changes */
   fprintf(f, "#define zzSET_SIZE %lu\n", NumWords(TokenNum-1)*sizeof(unsigned));
     if (TraceGen) {

@@ -760,9 +760,6 @@ void GenErrHdr( )
   };
 
   if ( OutputLL_k > 1 ) fprintf(ErrFile, "#define LL_K %d\n", OutputLL_k);
-#ifdef DUM
-  if ( LexGen ) fprintf(ErrFile, "#define zzEOF_TOKEN %d\n", (TokenInd!=NULL?TokenInd[EofToken]:EofToken));
-#endif
   fprintf(ErrFile, "#define zzSET_SIZE %lu\n", NumWords(TokenNum-1)*sizeof(unsigned));
   if ( DemandLookahead ) fprintf(ErrFile, "#define DEMAND_LOOK\n");
   fprintf(ErrFile, "#include \"antlr.h\"\n");

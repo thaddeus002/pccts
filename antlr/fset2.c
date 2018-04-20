@@ -155,15 +155,13 @@ Tree *tmake(Tree *root, ...)
   child = va_arg(ap, Tree *);
   while ( child != NULL )
   {
-#ifdef DUM
-    /* added "find end of child" thing TJP March 1994 */
-    for (w=child; w->right!=NULL; w=w->right) {;} /* find end of child */
-#else
     w = child;
-#endif
-
-    if ( sibling == NULL ) {sibling = child; tail = w;}
-    else {tail->right = child; tail = w;}
+    if ( sibling == NULL ) {
+      sibling = child;
+    } else {
+      tail->right = child;
+    }
+    tail = w;
     child = va_arg(ap, Tree *);
   }
 

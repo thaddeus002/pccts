@@ -41,20 +41,9 @@
 #include "pcctscfg.h"
 #include <stdlib.h>
 #include <assert.h>
-
 #include <string.h>
 #include <stdarg.h>
 
-#ifdef DUM
-/* Define usable bits per unsigned int word (used for set stuff) */
-#ifdef PC
-#define BSETWORDSIZE 16
-#define BSETLOGWORDSIZE 4
-#else
-#define BSETWORDSIZE 32
-#define BSETLOGWORDSIZE 5
-#endif
-#endif
 
 #define BSETWORDSIZE 8
 #define BSETLOGWORDSIZE 3   /* SetWordType is 8bits */
@@ -357,8 +346,7 @@ void zzedecode(SetWordType *a)
 /* standard error reporting function */
 void zzsyn(char *text, int tok, char *egroup, SetWordType *eset, int etok, int k, char *bad_text)
 {
-
-    zzSyntaxErrCount++;                             /* MR11 */
+  zzSyntaxErrCount++;
   fprintf(stderr, "line %d: syntax error at \"%s\"", zzline, (tok==zzEOF_TOKEN)?"EOF":bad_text);
   if ( !etok && !eset ) {fprintf(stderr, "\n"); return;}
   if ( k==1 ) fprintf(stderr, " missing");
