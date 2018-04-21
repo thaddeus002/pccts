@@ -322,22 +322,7 @@ extern set rAction( ActionNode *, int, set * );
 extern void HandleAmbiguity( Junction *, Junction *, Junction *, int );
 extern set First( Junction *, int, int, int * );
 extern void freeBlkFsets( Junction * );
-extern void genAction( ActionNode * );
-extern void genRuleRef( RuleRefNode * );
-extern void genToken( TokNode * );
-extern void genOptBlk( Junction * );
-extern void genLoopBlk( Junction *, Junction *, Junction *, int );
-extern void genLoopBegin( Junction * );
-extern void genPlusBlk( Junction * );
-extern void genSubBlk( Junction * );
-extern void genRule( Junction * );
-extern void genJunction( Junction * );
-extern void genEndBlk( Junction * );
-extern void genEndRule( Junction * );
-extern void genHdr( int );
-extern void genHdr1( int );
 extern void dumpAction( char *, FILE *, int, int, int, int );
-extern void dumpActionPlus(ActionNode*, char *, FILE *, int, int, int, int );
 extern Entry * hash_add( Entry **, char *, Entry * );
 extern Entry * hash_get( Entry **, char * );
 extern void hashStat( Entry ** );
@@ -421,13 +406,11 @@ extern void GenRuleMemberDeclarationsForCC(FILE *, Junction *);
 extern int addForcedTname( char *, int );
 extern char *OutMetaName(char *);
 extern void OutFirstSetSymbol(Junction *q, char *);
-extern void genPredTree( Predicate *p, Node *j, int ,int);
 extern UserAction *newUserAction(char *);
 extern char *gate_symbol(char *name);
 extern char *makeAltID(int blockid, int altnum);
 extern void DumpRemainingTokSets(void);
 extern void DumpANSIFunctionArgDef(FILE *f, Junction *q, int bInit);
-extern void DumpFormals(FILE *, char *, int bInit);
 extern char* hideDefaultArgs(const char* pdecl);
 extern Predicate *computePredFromContextGuard(Graph,int *msgDone);
 extern void recomputeContextGuard(Predicate *);
@@ -501,7 +484,6 @@ extern void MR_backTraceDumpItem(FILE *,int skip,Node *n);
 extern void MR_backTraceDumpItemReset(void);
 extern Junction * MR_junctionWithoutP2(Junction *);
 extern void MR_setConstrainPointer(set *);
-extern void BlockPreambleOption(Junction *q, char * pSymbol);
 extern char* getInitializer(char *);
 extern char *endFormal(char *pStart,
              char **ppDataType,
@@ -514,9 +496,7 @@ extern char *strBetween(char *pStart,
             char *pNext,
             char *pStop);
 extern int hasMultipleOperands(char *);
-extern void DumpInitializers(FILE*, RuleEntry*, char*);
 extern int isTermEntryTokClass(TermEntry *);
-extern int isEmptyAlt(Node *, Node *);
 
 /* MR20 G. Hobbelt  Create proper externs for dlg variables */
 

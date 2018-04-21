@@ -47,6 +47,21 @@
 static int on1line=0;
 static set tokensRefdInBlock;
 
+static void genPredTree( Predicate *p, Node *j, int ,int);
+static void genAction( ActionNode * );
+static void genRuleRef( RuleRefNode * );
+static void genToken( TokNode * );
+static void genOptBlk( Junction * );
+static void genLoopBlk( Junction *, Junction *, Junction *, int );
+static void genLoopBegin( Junction * );
+static void genPlusBlk( Junction * );
+static void genSubBlk( Junction * );
+static void genRule( Junction * );
+static void genJunction( Junction * );
+static void genEndBlk( Junction * );
+static void genEndRule( Junction * );
+
+
           /* T r a n s l a t i o n  T a b l e s */
 
 /* C_Trans[node type] == pointer to function that knows how to translate that node. */
@@ -76,6 +91,12 @@ void (*C_JTrans[NumJuncTypes+1])() = {
 };
 
 #define PastWhiteSpace(s) while (*(s) == ' ' || *(s) == '\t') {s++;}
+
+static int across;
+static int depth;
+static int lastkonline;
+
+static int TnodesAllocatedPrevRule=0;
 
 /** indentation detph */
 static int tabs = 0;
@@ -113,6 +134,13 @@ static void genExprTree( Tree *t, int k );
 static void genExprTreeOriginal( Tree *t, int k );                  /* MR10 */
 static char * findOuterHandlerLabel(ExceptionGroup *eg);            /* MR7 */
 static void OutLineInfo(FILE *file,int line,char *fileName);        /* MR14 */
+static void BlockPreambleOption(Junction *q, char * pSymbol);
+static void dumpActionPlus(ActionNode *a, char *s, FILE *output, int tabs, int file, int line, int final_newline );
+static void DumpInitializers(FILE* output, RuleEntry *r, char * pReturn);
+static void DumpFormals(FILE* output, char * pReturn, int bInitializer);
+static int isEmptyAlt(Node *, Node *);
+static void genHdr(int file);
+static void genHdr1(int file);
 
 /**
  * Write a formatted string to output.
@@ -131,15 +159,6 @@ static void gen(FILE *output, bool indent, char *format, ...) {
     va_end(ap);
 }
 
-
-/* MR11 a convenient place to set a break point */
-
-void MR_break()
-{
-  return;
-}
-
-/* MR10 genTraceOut(Junction *)      */
 
 static void genTraceOut(Junction *q)
 {
@@ -279,11 +298,6 @@ static void dumpException(ExceptionGroup *eg, int no_default_case)
   tabs++;                                                         /* MR7 */
   gen(output, true, "break;\n");                                 /* MR7 */
   tabs--;                                                         /* MR7 */
-
-  tabs++;
-/*****  gen(output, true, "*_retsignal = _signal;\n"); *****/
-
-  tabs--;
   gen(output, true, "}\n");
 
   if (namedHandler) {                                             /* MR7 */
@@ -324,7 +338,7 @@ static void dumpExceptions(ListNode *list)
  * For each element label that is found in a rule, generate a unique
  * Attribute (and AST pointer if GenAST) variable.
  */
-void genElementLabels(ListNode *list)
+static void genElementLabels(ListNode *list)
 {
   int first=1;
   ListNode *p;
@@ -423,8 +437,8 @@ static void BLOCK_Preamble( Junction *q )
   }
 }
 
-void
-genCombinedPredTreeContextOrig( Predicate *p )
+
+static void genCombinedPredTreeContextOrig( Predicate *p )
 {
   static set *ctx=NULL;   /* genExprSets() is destructive, make copy*/
   require(p!=NULL, "can't make context tree for NULL pred tree");
@@ -436,14 +450,12 @@ genCombinedPredTreeContextOrig( Predicate *p )
 #endif
   if ( p->down == NULL )
   {
-/***  if ( p->k>1 && p->tcontext!=NULL ) ***/
     if ( p->tcontext!=NULL )
     {
       gen(output, false, "(");
       genExprTree(p->tcontext, 1);
       gen(output, false, ")");
     }
-/***  else if ( p->k==1 && set_deg(p->scontext[1])>0 ) ***/
     else if ( set_deg(p->scontext[1])>0 )
     {
       if ( ctx==NULL ) ctx = (set *)calloc(CLL_k+1, sizeof(set));
@@ -495,9 +507,8 @@ genCombinedPredTreeContextOrig( Predicate *p )
   fatal("pred tree is really wacked");
 }
 
-/* [genCombinedPredTreeContext] */
 
-void genCombinedPredTreeContext( Predicate *p )
+static void genCombinedPredTreeContext( Predicate *p )
 {
   Tree  *t;
   int   predDepth=0;
@@ -534,9 +545,8 @@ void genCombinedPredTreeContext( Predicate *p )
   };
 }
 
-/* [genPredTreeGate] */
 
-void genPredTreeGate( Predicate *p, int in_and_expr )
+static void genPredTreeGate( Predicate *p, int in_and_expr )
 {
   if ( in_and_expr )
   {
@@ -554,7 +564,7 @@ void genPredTreeGate( Predicate *p, int in_and_expr )
   }
 }
 
-void genPredEntry(Predicate *p,int outer)
+static void genPredEntry(Predicate *p,int outer)
 {
     int         inverted=0;
     Predicate   *q;
@@ -610,8 +620,8 @@ void genPredEntry(Predicate *p,int outer)
     }
 }
 
-void
-dumpPredAction(ActionNode *anode,
+
+static void dumpPredAction(ActionNode *anode,
                     char *s,FILE *output,int tabs,int file,int line,int final_newline)
 {
     PredEntry   *predEntry=anode->predEntry;
@@ -642,10 +652,8 @@ dumpPredAction(ActionNode *anode,
     };
 }
 
-/* [genPred] */
 
-void
-genPred(Predicate *p, Node *j,int suppress_sva)
+static void genPred(Predicate *p, Node *j,int suppress_sva)
 {
   if ( FoundException && !suppress_sva) {gen(output, false, "(_sva=(");}    /* MR11 suppress_sva */
   else {gen(output, false, "(");}
@@ -677,7 +685,7 @@ genPred(Predicate *p, Node *j,int suppress_sva)
   else {gen(output, false, ")");}
 }
 
-void MR_distinctORcontextOpt(Predicate *p,Node *j,int in_and_expr)
+static void MR_distinctORcontextOpt(Predicate *p,Node *j,int in_and_expr)
 {
     Predicate   *q;
 
@@ -699,7 +707,7 @@ void MR_distinctORcontextOpt(Predicate *p,Node *j,int in_and_expr)
    };
 }
 
-void genPredTreeOrig( Predicate *p, Node *j, int in_and_expr )
+static void genPredTreeOrig( Predicate *p, Node *j, int in_and_expr )
 {
 
   int     allHaveContext=1;
@@ -761,7 +769,7 @@ void genPredTreeOrig( Predicate *p, Node *j, int in_and_expr )
 
 /* [genPredTree] */
 
-/* in_and_expr
+/** in_and_expr
 
    what to do if the context is wrong
    what to do if the context is correct but the predicate is false
@@ -783,8 +791,7 @@ void genPredTreeOrig( Predicate *p, Node *j, int in_and_expr )
         corresponding test is false: so return false when
         the context is correct but the test is false.
 */
-
-void genPredTree( Predicate *p, Node *j, int in_and_expr, int suppress_sva )
+static void genPredTree( Predicate *p, Node *j, int in_and_expr, int suppress_sva )
 {
 
     int         allHaveContext=1;
@@ -892,11 +899,11 @@ void genPredTree( Predicate *p, Node *j, int in_and_expr, int suppress_sva )
     list = p->down;
     for (; list!=NULL; list=list->right)
     {
-            if (identicalORcontextOptimization) {
-            genPred(list, j,suppress_sva);
-            } else {
-            genPredTree(list, j, 0, suppress_sva);
-            };
+      if (identicalORcontextOptimization) {
+        genPred(list, j,suppress_sva);
+      } else {
+        genPredTree(list, j, 0, suppress_sva);
+      };
       if ( list->right!=NULL ) gen(output, false, "||");
     }
     gen(output, false, ")");
@@ -907,9 +914,8 @@ void genPredTree( Predicate *p, Node *j, int in_and_expr, int suppress_sva )
   fatal_internal("predicate tree is wacked");
 }
 
-/* [genPredTreeMainXX] */
 
-Predicate *genPredTreeMainXX( Predicate *p, Node *j ,int in_and_expr)
+static Predicate *genPredTreeMainXX( Predicate *p, Node *j ,int in_and_expr)
 {
 
     int     allHaveContext=1;
@@ -936,7 +942,7 @@ Predicate *genPredTreeMainXX( Predicate *p, Node *j ,int in_and_expr)
   return p;
 }
 
-Predicate *genPredTreeMain( Predicate *p, Node *j)
+static Predicate *genPredTreeMain(Predicate *p, Node *j)
 {
   return genPredTreeMainXX(p,j,1);
 }
@@ -1023,10 +1029,6 @@ static void MR_genOneLine(Tree *tree,int k)
       MR_genOneLine(tree->right,k);
     };
 }
-
-static int across;
-static int depth;
-static int lastkonline;
 
 static void MR_genMultiLine(Tree *tree,int k)
 {
@@ -1375,8 +1377,7 @@ static int has_guess_block_as_last_item( Junction *q )
     return first_item_is_guess_block( (Junction *) alt->p1) != NULL;
 }
 
-/* MR30 See description of first_item_is_guess_block for background */
-
+/** See description of first_item_is_guess_block for background */
 Junction *first_item_is_guess_block_extra(Junction *q )
 {
   while ( q!=NULL &&
@@ -1399,10 +1400,10 @@ Junction *first_item_is_guess_block_extra(Junction *q )
   return q;
 }
 
-/* return NULL if 1st item of alt is NOT (...)? block; else return ptr to aSubBlk node
+/**
+ * return NULL if 1st item of alt is NOT (...)? block; else return ptr to aSubBlk node
  * of (...)?;  This function ignores actions and predicates.
  */
-
 Junction *first_item_is_guess_block( Junction *q )
 {
   Junction * qOriginal = q; /* DEBUG */
@@ -1480,7 +1481,7 @@ Junction *first_item_is_guess_block( Junction *q )
 
 static char stringizeBuf[STRINGIZEBUFSIZE];
 
-char *stringize(char * s)
+static char *stringize(char * s)
 {
   char    *p;
   char    *stop;
@@ -1554,7 +1555,7 @@ stringizeExit:
   return stringizeBuf;
 }
 
-int isNullAction(char *s)
+static int isNullAction(char *s)
 {
   char  *p;
   for (p=s; *p != '\0' ; p++) {
@@ -1570,7 +1571,7 @@ int isNullAction(char *s)
  * Generate an action.  Don't if action is NULL which means that it was already
  * handled as an init action.
  */
-void genAction( ActionNode *p )
+static void genAction( ActionNode *p )
 {
   require(p!=NULL,      "genAction: invalid node and/or rule");
   require(p->ntype==nAction,  "genAction: not action");
@@ -1635,14 +1636,14 @@ void genAction( ActionNode *p )
   TRANS(p->next)
 }
 
-/*
- *    if invoking rule has !noAST pass zzSTR to rule ref and zzlink it in
- *    else pass addr of temp root ptr (&_ast) (don't zzlink it in).
+/**
+ * If invoking rule has !noAST pass zzSTR to rule ref and zzlink it in
+ * else pass addr of temp root ptr (&_ast) (don't zzlink it in).
  *
- *    if ! modifies rule-ref, then never link it in and never pass zzSTR.
- *    Always pass address of temp root ptr.
+ * if ! modifies rule-ref, then never link it in and never pass zzSTR.
+ * Always pass address of temp root ptr.
  */
-void genRuleRef( RuleRefNode *p )
+static void genRuleRef( RuleRefNode *p )
 {
   Junction *q;
   char *handler_id = "";
@@ -1882,7 +1883,7 @@ pointer after
  * Getting the next token is tricky.  We want to ensure that any action
  * following a token is executed before the next GetToken();
  */
-void genToken( TokNode *p )
+static void genToken( TokNode *p )
 {
   RuleEntry *r;
   char *handler_id = "";
@@ -2296,8 +2297,7 @@ void genToken( TokNode *p )
   }
 }
 
-/*  MR21
- *
+/**
  *  There was a bug in the code generation for {...} which causes it
  *  to omit the optional tokens from the error messages.  The easiest
  *  way to fix this was to make the opt block look like a sub block:
@@ -2311,8 +2311,7 @@ void genToken( TokNode *p )
  *  The code for genOptBlk is now identical to genSubBlk except for
  *  cosmetic changes.
  */
-
-void genOptBlk( Junction *q )
+static void genOptBlk( Junction *q )
 {
   int max_k;
   set f;
@@ -2367,14 +2366,14 @@ void genOptBlk( Junction *q )
   if (q->end->p1 != NULL) TRANS(q->end->p1);
 }
 
-/*
+/**
  * Generate code for a loop blk of form:
  *
  *         |---|
  *         v   |
  *         --o-G-o-->o--
  */
-void genLoopBlk( Junction *begin, Junction *q, Junction *start, int max_k )
+static void genLoopBlk( Junction *begin, Junction *q, Junction *start, int max_k )
 {
   set         f;
   int         need_right_curly;
@@ -2517,7 +2516,7 @@ void genLoopBlk( Junction *begin, Junction *q, Junction *start, int max_k )
   tokensRefdInBlock = savetkref;
 }
 
-/*
+/**
  * Generate code for a loop blk of form:
  *
  *                 |---|
@@ -2544,7 +2543,7 @@ void genLoopBlk( Junction *begin, Junction *q, Junction *start, int max_k )
  *    else break;
  *  } while ( 1 );
  */
-void genLoopBegin( Junction *q )
+static void genLoopBegin( Junction *q )
 {
   set f;
   int i;
@@ -2591,7 +2590,7 @@ void genLoopBegin( Junction *q )
   if (q->end->p1 != NULL) TRANS(q->end->p1);
 }
 
-/*
+/**
  * Generate code for a loop blk of form:
  *
  *           |---|
@@ -2614,7 +2613,7 @@ void genLoopBegin( Junction *q )
  *    else if not 1st time through, break;
  *  } while ( 1 );
  */
-void genPlusBlk( Junction *q )
+static void genPlusBlk( Junction *q )
 {
   int         max_k;
   set         f;
@@ -2794,7 +2793,7 @@ void genPlusBlk( Junction *q )
   if (q->end->p1 != NULL) TRANS(q->end->p1);
 }
 
-/*
+/**
  * Generate code for a sub blk of alternatives of form:
  *
  *             --o-G1--o--
@@ -2825,7 +2824,7 @@ void genPlusBlk( Junction *q )
  *    ...code for Gn...
  *  }
  */
-void genSubBlk( Junction *q )
+static void genSubBlk( Junction *q )
 {
   int max_k;
   set f;
@@ -2883,7 +2882,6 @@ void genSubBlk( Junction *q )
   if (q->end->p1 != NULL) TRANS(q->end->p1);
 }
 
-static int TnodesAllocatedPrevRule=0;
 
 /**
  * Generate code for a rule.
@@ -2900,7 +2898,7 @@ static int TnodesAllocatedPrevRule=0;
  * and possible SubBlk.
  * Mark any init-action as generated so genBlk() does not regenerate it.
  */
-void genRule( Junction *q )
+static void genRule( Junction *q )
 {
 
   const char * returnValueInitializer;
@@ -2917,11 +2915,11 @@ do {    /* MR10     Change recursion into iteration         */
   require(q->ntype == nJunction,  "genRule: not junction");
   require(q->jtype == RuleBlk,  "genRule: not rule");
 
-/* MR14 */    require (MR_BackTraceStack.count == 0,"-alpha MR_BackTraceStack.count != 0");
-/* MR14 */    MR_pointerStackReset(&MR_BackTraceStack);
-/* MR14 */    if (AlphaBetaTrace) MR_MaintainBackTrace=1;
+  require (MR_BackTraceStack.count == 0,"-alpha MR_BackTraceStack.count != 0");
+  MR_pointerStackReset(&MR_BackTraceStack);
+  if (AlphaBetaTrace) MR_MaintainBackTrace=1;
 
-    CurRule=q->rname;                               /* MR11 */
+  CurRule=q->rname;
 
   r = (RuleEntry *) hash_get(Rname, q->rname);
   if ( r == NULL ) warnNoFL("Rule hash table is screwed up beyond belief");
@@ -2989,12 +2987,12 @@ do {    /* MR10     Change recursion into iteration         */
       tab();
       DumpType(q->ret, output);
             returnValueInitializer = getInitializer(q->ret);
-            if (returnValueInitializer == NULL) {                  /* MR23 */
-            gen(output, true, " _retv;\n");                             /* MR1 MR3 */
-            }                                                      /* MR23 */
-            else {                                                 /* MR23 */
-                gen(output, true, " _retv = %s;\n", returnValueInitializer);    /* MR23 */
-            }                                                      /* MR23 */
+            if (returnValueInitializer == NULL) {
+            gen(output, true, " _retv;\n");
+            }
+            else {
+                gen(output, true, " _retv = %s;\n", returnValueInitializer);
+            }
     }
   }
 
@@ -3233,11 +3231,6 @@ do {    /* MR10     Change recursion into iteration         */
     require(q==NULL || q->jtype==RuleBlk,"RuleBlk p2 does not point to another RuleBlk");
 
 } while (q != NULL);
-
-/**** The old code                           ****/
-/**** if ( q->p2 != NULL ) {TRANS(q->p2);} ****/ /* generate code for next rule too */
-/**** else dumpAfterActions( output );     ****/
-
 }
 
 
@@ -3311,7 +3304,8 @@ void DumpANSIFunctionArgDef(FILE *f, Junction *q, int bInitializer)
   fprintf(f,")");
 }
 
-void genJunction( Junction *q )
+
+static void genJunction( Junction *q )
 {
   require(q->ntype == nJunction,  "genJunction: not junction");
   require(q->jtype == Generic,  "genJunction: not generic junction");
@@ -3320,15 +3314,15 @@ void genJunction( Junction *q )
   if ( q->p2 != NULL ) TRANS(q->p2);
 }
 
-void genEndBlk( Junction *q )
+static void genEndBlk( Junction *q )
 {
 }
 
-void genEndRule( Junction *q )
+static void genEndRule( Junction *q )
 {
 }
 
-void genHdr( int file )
+static void genHdr( int file )
 {
     int     i;
 
@@ -3340,15 +3334,15 @@ void genHdr( int file )
   gen(output, false, " * With AHPCRC, University of Minnesota\n");
   gen(output, false, " * ANTLR Version %s\n", Version);
   gen(output, false, " *\n");
-/* MR10 */    gen(output, false, " *  ");
-/* MR10 */    for (i=0 ; i < Save_argc ; i++) {
-/* MR10 */      gen(output, false, " ");
-/* MR10 */      gen(output, false, "%s", Save_argv[i]);
-/* MR10 */    };
+  gen(output, false, " *  ");
+  for (i=0 ; i < Save_argc ; i++) {
+    gen(output, false, " ");
+    gen(output, false, "%s", Save_argv[i]);
+  };
   gen(output, false, "\n");
   gen(output, false, " *\n");
-    gen(output, false, " */\n\n");
-  if (FirstAction != NULL ) dumpAction( FirstAction, output, 0, -1, 0, 1);    /* MR11 MR15b */
+  gen(output, false, " */\n\n");
+  if (FirstAction != NULL ) dumpAction( FirstAction, output, 0, -1, 0, 1);
   gen(output, false, "#define ANTLR_VERSION  %s\n", VersionDef);
   gen(output, false, "#include \"pcctscfg.h\"\n");
   gen(output, false, "#include \"pccts_stdio.h\"\n");
@@ -3418,7 +3412,7 @@ void genHdr( int file )
     }                                                                       /* MR23 */
 }
 
-void genHdr1( int file )
+static void genHdr1( int file )
 {
   ListNode *p;
 
@@ -3734,10 +3728,10 @@ static void dumpRetValAssign( char *retval, char *ret_def, RuleRefNode * ruleRef
   }
 }
 
-/* This function computes the set of tokens that can possibly be seen k
+/**
+ * This function computes the set of tokens that can possibly be seen k
  * tokens in the future from point j
  */
-
 static set ComputeErrorSet( Junction *j, int k, int usePlusBlockBypass)
 {
   Junction *alt1;
@@ -3804,13 +3798,13 @@ static void makeErrorClause( Junction *q, set f, int max_k, int usePlusBlockBypa
 
   if ( max_k == 1 )
   {
-/* MR13 */  nilf=set_nil(f);
-          if ( GenCC ) {
-              gen(output, false, "else {FAIL(1,err%d", DefErrSet1(1,&f,1,NULL));
-            } else {
-               gen(output, false, "else {zzFAIL(1,zzerr%d", DefErrSet1(1,&f,1,NULL));
-            };
-        set_free(f);
+    nilf=set_nil(f);
+    if ( GenCC ) {
+      gen(output, false, "else {FAIL(1,err%d", DefErrSet1(1,&f,1,NULL));
+    } else {
+      gen(output, false, "else {zzFAIL(1,zzerr%d", DefErrSet1(1,&f,1,NULL));
+    };
+    set_free(f);
   }
   else
   {
@@ -3823,11 +3817,11 @@ static void makeErrorClause( Junction *q, set f, int max_k, int usePlusBlockBypa
 
     for (i=1; i<=max_k; i++)
     {
-/* MR14 */  if (ruleEntry->dontComputeErrorSet) {
-/* MR14 */    f=empty;
-            } else {
-              f = ComputeErrorSet(q, i, usePlusBlockBypass /* use plus block bypass ? */ );
-            }
+      if (ruleEntry->dontComputeErrorSet) {
+        f=empty;
+      } else {
+        f = ComputeErrorSet(q, i, usePlusBlockBypass /* use plus block bypass ? */ );
+      }
 
       if ( GenCC ) {gen(output, false, ",err%d", DefErrSet( &f, 1, NULL ));}
       else gen(output, false, ",zzerr%d", DefErrSet( &f, 1, NULL ));
@@ -3836,42 +3830,42 @@ static void makeErrorClause( Junction *q, set f, int max_k, int usePlusBlockBypa
     }
   }
   gen(output, false, ",&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}\n");
-/* MR13 */  if (nilf) {
-/* MR13 */    errFL("empty error set for alt - probably because of undefined rule or infinite left recursion",
-/* MR13 */                 FileStr[q->file],q->line);
-/* MR13 */    gen(output, true, " /* MR13 empty error set for this alt - undef rule ? infinite left recursion ? */");
-/* MR13 */  };
+  if (nilf) {
+    errFL("empty error set for alt - probably because of undefined rule or infinite left recursion",
+            FileStr[q->file],q->line);
+    gen(output, true, " /* MR13 empty error set for this alt - undef rule ? infinite left recursion ? */");
+  };
 }
 
-static char * findOuterHandlerLabel(ExceptionGroup *eg)                     /* MR7 */
+static char * findOuterHandlerLabel(ExceptionGroup *eg)
 {
-  char              *label=NULL;                                     /* MR7 */
-  ExceptionGroup    *outerEG;                                        /* MR7 */
+  char              *label=NULL;
+  ExceptionGroup    *outerEG;
 
-  if (eg->forRule == 0) {                                            /* MR7 */
-    if (eg->labelEntry != NULL) {                                    /* MR7 */
-      outerEG=eg->labelEntry->outerEG;                               /* MR7 */
-      if (outerEG != NULL) {                                         /* MR7 */
-        label=outerEG->altID;                                        /* MR7 */
-        outerEG->used=1;                                             /* MR7 */
-      };                                                             /* MR7 */
-    } else if (eg->outerEG != NULL) {                                /* MR7 */
-      outerEG=eg->outerEG;                                           /* MR7 */
-      label=outerEG->altID;                                          /* MR7 */
-      outerEG->used=1;                                               /* MR7 */
-    };                                                               /* MR7 */
-  };                                                                 /* MR7 */
-  return (label==NULL ? "" : label);                                 /* MR7 */
-}                                                                    /* MR7 */
+  if (eg->forRule == 0) {
+    if (eg->labelEntry != NULL) {
+      outerEG=eg->labelEntry->outerEG;
+      if (outerEG != NULL) {
+        label=outerEG->altID;
+        outerEG->used=1;
+      };
+    } else if (eg->outerEG != NULL) {
+      outerEG=eg->outerEG;
+      label=outerEG->altID;
+      outerEG->used=1;
+    };
+  };
+  return (label==NULL ? "" : label);
+}
 
 
 static void OutLineInfo(FILE *file,int line,char *fileName)
 {
-    static  char * prevFileName=NULL;
-    static  char * prevFileNameMS=NULL;
+    static char *prevFileName=NULL;
+    static char *prevFileNameMS=NULL;
 
-    char *  p;
-    char *  q;
+    char *p;
+    char *q;
 
     if (! GenLineInfo) return;
 
@@ -3896,9 +3890,7 @@ static void OutLineInfo(FILE *file,int line,char *fileName)
 }
 
 
-/* MR21 */
-
-void BlockPreambleOption(Junction *q, char * pSymbol)
+static void BlockPreambleOption(Junction *q, char * pSymbol)
 {
     set f = empty;
     if (pSymbol != NULL) {
@@ -3909,16 +3901,15 @@ void BlockPreambleOption(Junction *q, char * pSymbol)
     set_free(f);
 }
 
-/* MR21 */
 
-void dumpActionPlus(ActionNode *a, char *s, FILE *output, int tabs, int file, int line,
+static void dumpActionPlus(ActionNode *a, char *s, FILE *output, int tabs, int file, int line,
 int final_newline )
 {
     dumpAction(s,output,tabs,file,line,final_newline);
 }
 
 
-void DumpInitializers(FILE* output, RuleEntry *r, char * pReturn)
+static void DumpInitializers(FILE* output, RuleEntry *r, char * pReturn)
 {
     char *p = pReturn;
     char *pDataType;
@@ -3950,7 +3941,7 @@ void DumpInitializers(FILE* output, RuleEntry *r, char * pReturn)
     }
 }
 
-void DumpFormals(FILE* output, char * pReturn, int bInitializer)
+static void DumpFormals(FILE* output, char * pReturn, int bInitializer)
 {
     char *p = pReturn;
     char *pDataType;
@@ -3990,24 +3981,24 @@ void DumpFormals(FILE* output, char * pReturn, int bInitializer)
     }
 }
 
-/* MR23 Check for empty alt in a more intelligent way.
-        Previously, an empty alt for genBlk had to point directly
-    to the endBlock.  This did not work once I changed {...}
-    blocks to look like (...|...| epsilon) since there were
-    intervening generics.  This fixes the problem for this
-    particular case.  Things like actions or empty blocks of
-    various kinds will still cause problems, but I wasnt't
-    prepared to handle pathological cases like (A|()*). It
-    does handle (A | ()), which is a recommended idiom for
-    epsilon.
-
-        Actually, this isn't quite correct since it doesn't handle
-    the case of the ignore bit in the plus block bypass, but
-    I'm too tired to figure out the correct fix, and will just
-    work around it.
-*/
-
-int isEmptyAlt(Node * alt, Node * endBlock)
+/**
+ * Check for empty alt in a more intelligent way.
+ * Previously, an empty alt for genBlk had to point directly
+ * to the endBlock.  This did not work once I changed {...}
+ * blocks to look like (...|...| epsilon) since there were
+ * intervening generics.  This fixes the problem for this
+ * particular case.  Things like actions or empty blocks of
+ * various kinds will still cause problems, but I wasnt't
+ * prepared to handle pathological cases like (A|()*). It
+ * does handle (A | ()), which is a recommended idiom for
+ * epsilon.
+ *
+ * Actually, this isn't quite correct since it doesn't handle
+ * the case of the ignore bit in the plus block bypass, but
+ * I'm too tired to figure out the correct fix, and will just
+ * work around it.
+ */
+static int isEmptyAlt(Node * alt, Node * endBlock)
 {
   Node * n = alt;
   Junction * j;
