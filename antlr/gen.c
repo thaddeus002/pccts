@@ -35,6 +35,8 @@
 #include <stdio.h>
 #include <ctype.h> // isspace()
 #include <string.h>
+#include <stdarg.h>
+#include <stdbool.h>
 #include "constants.h"
 #include "hash.h"
 #include "generic.h"
@@ -55,7 +57,7 @@ Junctions have many types */
   genRuleRef,
   genToken,
   genAction
- };
+};
 
 /* C_JTrans[Junction type] == pointer to function that knows how to translate that
  * kind of junction node.
@@ -71,7 +73,7 @@ void (*C_JTrans[NumJuncTypes+1])() = {
   genEndRule,
   genPlusBlk,
   genLoopBegin
- };
+};
 
 #define PastWhiteSpace(s) while (*(s) == ' ' || *(s) == '\t') {s++;}
 
@@ -104,23 +106,22 @@ static void genExprTreeOriginal( Tree *t, int k );                  /* MR10 */
 static char * findOuterHandlerLabel(ExceptionGroup *eg);            /* MR7 */
 static void OutLineInfo(FILE *file,int line,char *fileName);        /* MR14 */
 
-#define gen(s)      {tab(); fprintf(output, s);}
-#define gen1(s,a)   {tab(); fprintf(output, s,a);}
-#define gen2(s,a,b)   {tab(); fprintf(output, s,a,b);}
-#define gen3(s,a,b,c) {tab(); fprintf(output, s,a,b,c);}
-#define gen4(s,a,b,c,d) {tab(); fprintf(output, s,a,b,c,d);}
-#define gen5(s,a,b,c,d,e) {tab(); fprintf(output, s,a,b,c,d,e);}
-#define gen6(s,a,b,c,d,e,f) {tab(); fprintf(output, s,a,b,c,d,e,f);}
-#define gen7(s,a,b,c,d,e,f,g) {tab(); fprintf(output, s,a,b,c,d,e,f,g);}
+/**
+ * Write a formatted string to output.
+ * \param output stream where the string goes
+ * \param indent true if we are at the beginning of the line
+ * \param format the format for the string, followed by optionnals parameters
+ */
+static void gen(FILE *output, bool indent, char *format, ...) {
+    if(indent) {
+        tab();
+    }
 
-#define _gen(s)     {fprintf(output, s);}
-#define _gen1(s,a)    {fprintf(output, s,a);}
-#define _gen2(s,a,b)  {fprintf(output, s,a,b);}
-#define _gen3(s,a,b,c)  {fprintf(output, s,a,b,c);}
-#define _gen4(s,a,b,c,d){fprintf(output, s,a,b,c,d);}
-#define _gen5(s,a,b,c,d,e){fprintf(output, s,a,b,c,d,e);}
-#define _gen6(s,a,b,c,d,e,f){fprintf(output, s,a,b,c,d,e,f);}
-#define _gen7(s,a,b,c,d,e,f,g){fprintf(output, s,a,b,c,d,e,f,g);}
+    va_list ap;
+    va_start(ap, format);
+    vfprintf(output, format, ap);
+    va_end(ap);
+}
 
 
 /* MR11 a convenient place to set a break point */
@@ -135,8 +136,8 @@ void MR_break()
 static void genTraceOut(Junction *q)
 {
   if ( TraceGen ) {
-    if ( GenCC ) {gen1("zzTRACEOUT(\"%s\");\n", q->rname);}
-        else gen1("zzTRACEOUT((ANTLRChar *)\"%s\");\n", q->rname);
+    if ( GenCC ) gen(output, true, "zzTRACEOUT(\"%s\");\n", q->rname);
+    else gen(output, true, "zzTRACEOUT((ANTLRChar *)\"%s\");\n", q->rname);
   }
 }
 
@@ -179,18 +180,18 @@ static void genTokenPointers( Junction *q )
 
   if ( set_deg(q->tokrefs) == 0 ) return;
   a = set_dup(q->tokrefs);
-  gen("ANTLRTokenPtr ");
+  gen(output, true, "ANTLRTokenPtr ");
   for (; !set_nil(a); set_rm(t, a))
   {
     t = set_int(a);
     if ( first ) first = 0;
-    else _gen(",");
-    if ( !DontCopyTokens ) _gen2("_tv%d%d,", BlkLevel, t);
-    _gen2("_t%d%d", BlkLevel, t);
-    if ( !DontCopyTokens ) {_gen2("= &_tv%d%d", BlkLevel, t);}
-    else _gen("=NULL");
+    else gen(output, false, ",");
+    if ( !DontCopyTokens ) gen(output, false, "_tv%d%d,", BlkLevel, t);
+    gen(output, false, "_t%d%d", BlkLevel, t);
+    if ( !DontCopyTokens ) {gen(output, false, "= &_tv%d%d", BlkLevel, t);}
+    else gen(output, false, "=NULL");
   }
-  _gen(";\n");
+  gen(output, false, ";\n");
   set_free(a);
 }
 
@@ -225,10 +226,10 @@ static void dumpException(ExceptionGroup *eg, int no_default_case)
     };                                                               /* MR7 */
 
     if (namedHandler) {                                              /* MR7 */
-    gen1("switch ( _signal ) {  /* [%s] */\n",eg->label);          /* MR7 */
+      gen(output, true, "switch ( _signal ) {  /* [%s] */\n",eg->label);/* MR7 */
     } else {                                                         /* MR7 */
-    gen("switch ( _signal ) {\n");                                 /* MR7 */
-      gen("case NoSignal: break;  /* MR7 */\n");                     /* MR7 */
+      gen(output, true, "switch ( _signal ) {\n");                  /* MR7 */
+      gen(output, true, "case NoSignal: break;\n");                 /* MR7 */
     };                                                               /* MR7 */
   {
     ListNode *q;
@@ -236,52 +237,52 @@ static void dumpException(ExceptionGroup *eg, int no_default_case)
     {
       ExceptionHandler *eh = (ExceptionHandler *)q->elem;
       if ( strcmp("default", eh->signalname)==0 ) {
-        gen("default :\n");
+        gen(output, true, "default :\n");
         tabs++;
         dumpAction(eh->action, output, tabs, -1, 1, 1);
-                gen("_signal=NoSignal;  /* MR7 */\n");                  /* MR7 */
-                gen("break;  /* MR7 */\n");                             /* MR7 */
+        gen(output, true, "_signal=NoSignal;\n");                  /* MR7 */
+        gen(output, true, "break;\n");                             /* MR7 */
         tabs--;
-        gen("}\n");
+        gen(output, true, "}\n");
 
                 /* copied from later code in dumpException */        /* MR7 */
 
                 if (namedHandler) {                                  /* MR7 */
-                  gen("if (_signal != NoSignal)");                   /* MR7 */
-                  _gen1(" goto %s_handler;  /* MR7 */\n",outerLabel);/* MR7 */
+                  gen(output, true, "if (_signal != NoSignal)");    /* MR7 */
+                  gen(output, false, " goto %s_handler;\n",outerLabel);/* MR7 */
                 } else if (altHandler) {                             /* MR7 */
-                  gen1("goto %s_handler;  /* MR7 */\n",outerLabel);  /* MR7 */
+                  gen(output, true, "goto %s_handler;\n",outerLabel);  /* MR7 */
                 };
         return;
       }
-      gen1("case %s :\n", eh->signalname);
+      gen(output, true, "case %s :\n", eh->signalname);
       tabs++;
       if ( eh->action != NULL )
       {
         dumpAction(eh->action, output, tabs, -1, 1, 1);
-                gen("break;  /* MR7 */\n");                          /* MR7 */
+        gen(output, true, "break;\n");                      /* MR7 */
       }
       tabs--;
     }
   }
   if ( no_default_case ) return;
 
-  gen("default :\n");
-    tabs++;                                                         /* MR7 */
-    gen("break;  /* MR7 */\n");                                     /* MR7 */
-    tabs--;                                                         /* MR7 */
+  gen(output, true, "default :\n");
+  tabs++;                                                         /* MR7 */
+  gen(output, true, "break;\n");                                 /* MR7 */
+  tabs--;                                                         /* MR7 */
 
   tabs++;
-/*****  gen("*_retsignal = _signal;\n"); *****/
+/*****  gen(output, true, "*_retsignal = _signal;\n"); *****/
 
   tabs--;
-  gen("}\n");
+  gen(output, true, "}\n");
 
     if (namedHandler) {                                             /* MR7 */
-      gen("if (_signal != NoSignal)");                              /* MR7 */
-      _gen1(" goto %s_handler;  /* MR7 */\n",outerLabel);           /* MR7 */
+      gen(output, true, "if (_signal != NoSignal)");                              /* MR7 */
+      gen(output, false, " goto %s_handler;\n",outerLabel);           /* MR7 */
     } else if (altHandler) {                                        /* MR7 */
-      gen1("goto %s_handler;  /* MR7 */\n",outerLabel);             /* MR7 */
+      gen(output, true, "goto %s_handler;\n",outerLabel);             /* MR7 */
     };
 
 }
@@ -293,7 +294,7 @@ static void dumpExceptions(ListNode *list)
   for (p = list->next; p!=NULL; p=p->next)
   {
     ExceptionGroup *eg = (ExceptionGroup *) p->elem;
-    _gen2("%s%s_handler:\n",
+    gen(output, false, "%s%s_handler:\n",
         eg->label==NULL?"":eg->label,
         eg->altID==NULL?"":eg->altID);
     if ( eg->altID!=NULL ) dumpException(eg, 0);
@@ -301,13 +302,13 @@ static void dumpExceptions(ListNode *list)
       /* This must be the rule exception handler */
       dumpException(eg, 1);
       if ( !hasDefaultException(eg) )
-            {
-                gen("default :\n");
-                tabs++;
-                gen("zzdflthandlers(_signal,_retsignal);\n");
-                tabs--;
-                gen("}\n");
-            }
+      {
+        gen(output, true, "default :\n");
+        tabs++;
+        gen(output, true, "zzdflthandlers(_signal,_retsignal);\n");
+        tabs--;
+        gen(output, true, "}\n");
+      }
     }
   }
 }
@@ -320,30 +321,30 @@ void genElementLabels(ListNode *list)
   int first=1;
   ListNode *p;
 
-  if ( GenCC ) {gen("ANTLRTokenPtr");}
-  else {gen("Attrib");}
+  if ( GenCC ) {gen(output, true, "ANTLRTokenPtr");}
+  else {gen(output, true, "Attrib");}
   for (p = list->next; p!=NULL; p=p->next)
   {
     char *ep = (char *)p->elem;
     if ( first ) first = 0;
-    else _gen(",");
-    if ( GenCC ) {_gen1(" %s=NULL",ep);}
-    else {_gen1(" %s",ep);}
+    else gen(output, false, ",");
+    if ( GenCC ) {gen(output, false, " %s=NULL",ep);}
+    else {gen(output, false, " %s",ep);}
   }
-  _gen(";\n");
+  gen(output, false, ";\n");
 
   if ( !GenAST ) return;
 
   first = 1;
-  gen("AST");
+  gen(output, true, "AST");
   for (p = list->next; p!=NULL; p=p->next)
   {
     char *ep = (char *)p->elem;
     if ( first ) first = 0;
-    else _gen(",");
-    _gen1(" *%s_ast=NULL",ep);
+    else gen(output, false, ",");
+    gen(output, false, " *%s_ast=NULL",ep);
   }
-  _gen(";\n");
+  gen(output, true, ";\n");
 }
 
 /*
@@ -358,32 +359,32 @@ static void genASTPointers( Junction *q )
   a = set_or(q->tokrefs, q->rulerefs);
   if ( set_deg(a) > 0 )
   {
-    gen("AST ");
+    gen(output, true, "AST ");
     for (; !set_nil(a); set_rm(t, a))
     {
       t = set_int(a);
       if ( first ) first = 0;
-      else _gen(",");
-      _gen2("*_ast%d%d=NULL", BlkLevel, t);
+      else gen(output, false, ",");
+      gen(output, false, "*_ast%d%d=NULL", BlkLevel, t);
     }
     set_free(a);
   }
-  _gen(";\n");
+  gen(output, false, ";\n");
 }
 
 static void BLOCK_Head( )
 {
-  gen("{\n");
+  gen(output, true, "{\n");
   tabs++;
-  if ( !GenCC ) gen1("zzBLOCK(zztasp%d);\n", BlkLevel);
+  if ( !GenCC ) gen(output, true, "zzBLOCK(zztasp%d);\n", BlkLevel);
 }
 
 static void BLOCK_Tail()
 {
-  if ( !GenCC ) gen1("zzEXIT(zztasp%d);\n", BlkLevel);
-  if ( !GenCC ) gen("}\n");
+  if ( !GenCC ) gen(output, true, "zzEXIT(zztasp%d);\n", BlkLevel);
+  if ( !GenCC ) gen(output, true, "}\n");
   tabs--;
-  gen("}\n");
+  gen(output, true, "}\n");
 }
 
 static void BLOCK_Preamble( Junction *q )
@@ -394,23 +395,23 @@ static void BLOCK_Preamble( Junction *q )
   BLOCK_Head();
   if ( GenCC ) genTokenPointers(q);
   if ( GenCC&&GenAST ) genASTPointers(q);
-  if ( q->jtype == aPlusBlk ) gen("int zzcnt=1;\n");
-  if ( q->parm != NULL && !q->predparm ) gen1("zzaPush(%s);\n", q->parm)
-  else if ( !GenCC ) gen("zzMake0;\n");
-  if ( !GenCC ) gen("{\n");
+  if ( q->jtype == aPlusBlk ) gen(output, true, "int zzcnt=1;\n");
+  if ( q->parm != NULL && !q->predparm ) gen(output, true, "zzaPush(%s);\n", q->parm);
+  else if ( !GenCC ) gen(output, true, "zzMake0;\n");
+  if ( !GenCC ) gen(output, true, "{\n");
   if ( q->jtype == aLoopBegin ) begin = (Junction *) ((Junction *)q->p1);
   else begin = q;
   if ( has_guess_block_as_first_item(begin) )
   {
-    gen("zzGUESS_BLOCK\n");
+    gen(output, true, "zzGUESS_BLOCK\n");
   }
   if ( q->jtype == aLoopBegin )
     a = findImmedAction( ((Junction *)q->p1)->p1 ); /* look at aLoopBlk */
   else
     a = findImmedAction( q->p1 );
-  if ( a!=NULL && !a->is_predicate) {
-/* MR21 */ if (!a->noHoist) dumpActionPlus(a, a->action, output, tabs, a->file, a->line, 1);
-       a->done = 1; /* remove action. We have already handled it */
+    if ( a!=NULL && !a->is_predicate) {
+      if (!a->noHoist) dumpActionPlus(a, a->action, output, tabs, a->file, a->line, 1);
+      a->done = 1; /* remove action. We have already handled it */
   }
 }
 
@@ -430,9 +431,9 @@ genCombinedPredTreeContextOrig( Predicate *p )
 /***  if ( p->k>1 && p->tcontext!=NULL ) ***/
     if ( p->tcontext!=NULL )
     {
-      _gen("(");
+      gen(output, false, "(");
       genExprTree(p->tcontext, 1);
-      _gen(")");
+      gen(output, false, ")");
     }
 /***  else if ( p->k==1 && set_deg(p->scontext[1])>0 ) ***/
     else if ( set_deg(p->scontext[1])>0 )
@@ -441,9 +442,9 @@ genCombinedPredTreeContextOrig( Predicate *p )
       require(ctx!=NULL, "ctx cannot allocate");
       ctx[0]=empty;
       ctx[1]=set_dup(p->scontext[1]);
-      _gen("(");
+      gen(output, false, "(");
       genExprSets(&(ctx[0]), p->k);
-      _gen(")");
+      gen(output, false, ")");
       set_free(ctx[1]);
     }
     else if ( p->expr==PRED_AND_LIST || p->expr==PRED_OR_LIST ) {
@@ -451,7 +452,7 @@ genCombinedPredTreeContextOrig( Predicate *p )
     }
     else {
             if (! HoistPredicateContext) {
-              _gen(" 1 /* no context: prc is off */ ");
+              gen(output, false, " 1 /* no context: prc is off */ ");
             } else {
               fatal_internal("pred tree context is empty");
             };
@@ -467,7 +468,7 @@ genCombinedPredTreeContextOrig( Predicate *p )
         for (; list!=NULL; list=list->right)
         {
            genCombinedPredTreeContextOrig(list);
-           if ( list->right!=NULL ) _gen("|| /* MR10 was wrong */ ");
+           if ( list->right!=NULL ) gen(output, false, " || ");
         };
     return;
   }
@@ -478,7 +479,7 @@ genCombinedPredTreeContextOrig( Predicate *p )
         for (; list!=NULL; list=list->right)
         {
            genCombinedPredTreeContextOrig(list);
-           if ( list->right!=NULL ) _gen("||");
+           if ( list->right!=NULL ) gen(output, false, " || ");
         };
         return;
      };
@@ -503,23 +504,23 @@ void genCombinedPredTreeContext( Predicate *p )
 /* MR13 */      scontext[0]=empty;
 /* MR13 */      scontext[1]=MR_compute_pred_set(p);
 /* MR13 */      if (set_nil(scontext[1])) {
-/* MR13 */        _gen(" 1 /* MR12 no context (-prc off) */ ");
+/* MR13 */        gen(output, false, " 1 /* MR12 no context (-prc off) */ ");
 /* MR13 */      } else {
-/* MR13 */        _gen("(");
+/* MR13 */        gen(output, false, "(");
 /* MR13 */        genExprSets(&scontext[0], 1);
 /* MR13 */        set_free(scontext[1]);
-/* MR13 */        _gen(")");
+/* MR13 */        gen(output, false, ")");
 /* MR13 */      };
 
     } else {
       t=MR_compute_pred_tree_context(p);
       if (t == NULL) {
-        _gen(" 1 /* MR12 no context (-prc off) */ ");
+        gen(output, false, " 1 /* MR12 no context (-prc off) */ ");
       } else {
-        _gen("(");
+        gen(output, false, "(");
         genExprTree(t, 1);
         Tfree(t);   /* MR10 */
-        _gen(")");
+        gen(output, false, ")");
       };
     };
   };
@@ -531,17 +532,17 @@ void genPredTreeGate( Predicate *p, int in_and_expr )
 {
   if ( in_and_expr )
   {
-    _gen("!(");
+    gen(output, false, "!(");
     genCombinedPredTreeContext(p);
-    _gen(")||");
-    if ( p->down!=NULL ) _gen("\n");
+    gen(output, false, ")||");
+    if ( p->down!=NULL ) gen(output, false, "\n");
   }
   else
   {
-    _gen("(");
+    gen(output, false, "(");
     genCombinedPredTreeContext(p);
-    _gen(")&&");
-    if ( p->down!=NULL ) _gen("\n");
+    gen(output, false, ")&&");
+    if ( p->down!=NULL ) gen(output, false, "\n");
   }
 }
 
@@ -556,48 +557,48 @@ void genPredEntry(Predicate *p,int outer)
 
     if (p->predEntry != NULL && p->predEntry->predLiteral != NULL) {
       if (p->inverted != p->predEntry->pred->inverted) {
-        _gen("! /* inverted pred */ (");
+        gen(output, false, "! /* inverted pred */ (");
         needRP=1;
       } else {
-        if (!localOuter) _gen("(");
+        if (!localOuter) gen(output, false, "(");
         needRP=1;
       };
       dumpAction(p->predEntry->predLiteral,output,0,p->source->file,p->source->line,0);
-      if (needRP) _gen(")");
+      if (needRP) gen(output, false, ")");
       return;
     };
 
     inverted=p->inverted;
 
     if (inverted) {
-      _gen(" ! /* inverted pred */ (");
+      gen(output, false, " ! /* inverted pred */ (");
       localOuter=1;
     };
 
     if (p->expr == PRED_OR_LIST) {
-      if (!localOuter) _gen("(");
+      if (!localOuter) gen(output, false, "(");
       for (q=p->down; q != NULL ; q=q->right) {
         genPredEntry(q,0);
-        if (q->right != NULL) _gen(" || ");
+        if (q->right != NULL) gen(output, false, " || ");
       };
-      if (!localOuter) _gen(")");
+      if (!localOuter) gen(output, false, ")");
     } else if (p->expr == PRED_AND_LIST) {
-      if (!localOuter) _gen("(");
+      if (!localOuter) gen(output, false, "(");
       for (q=p->down; q != NULL ; q=q->right) {
         genPredEntry(q,0);
-        if (q->right != NULL) _gen(" && ");
+        if (q->right != NULL) gen(output, false, " && ");
       };
-      if (!localOuter) _gen(")");
+      if (!localOuter) gen(output, false, ")");
     } else {
-      if (!localOuter) _gen("(");
+      if (!localOuter) gen(output, false, "(");
       require (p->source != NULL,"predEntry->source == NULL");
       require (p->source->inverted == 0,"dumpPredEntry p->source->inverted != 0");
       dumpAction(p->source->action,output,0,p->source->file,p->source->line,0);
-      if (!localOuter) _gen(")");
+      if (!localOuter) gen(output, false, ")");
     };
 
     if (inverted) {
-        _gen(")");
+        gen(output, false, ")");
     }
 }
 
@@ -621,9 +622,9 @@ dumpPredAction(ActionNode *anode,
       /* a reference to a predicate - possibly with an inverted source */
 
       if (predEntry->predLiteral != NULL) {
-        if (inverted) _gen("! /* inverted pred */ (");
+        if (inverted) gen(output, false, "! /* inverted pred */ (");
         dumpAction(predEntry->predLiteral,output,0,anode->file,anode->line,0);
-        if (inverted) _gen(")");
+        if (inverted) gen(output, false, ")");
       } else {
         workPred=predicate_dup(predEntry->pred);
         if (inverted) workPred->inverted=!workPred->inverted;
@@ -638,9 +639,9 @@ dumpPredAction(ActionNode *anode,
 void
 genPred(Predicate *p, Node *j,int suppress_sva)
 {
-  if ( FoundException && !suppress_sva) {_gen("(_sva=(");}    /* MR11 suppress_sva */
-  else {_gen("(");}
-  if ( GenLineInfo && j->file != -1 ) _gen("\n");
+  if ( FoundException && !suppress_sva) {gen(output, false, "(_sva=(");}    /* MR11 suppress_sva */
+  else {gen(output, false, "(");}
+  if ( GenLineInfo && j->file != -1 ) gen(output, false, "\n");
     if (p->source != NULL && p->source->ampersandPred != NULL) {
       if (p->source->ampersandPred->k == 1) {
 
@@ -649,14 +650,14 @@ genPred(Predicate *p, Node *j,int suppress_sva)
       ctx[0]=empty;
       ctx[1]=set_dup(p->source->ampersandPred->scontext[1]);
 
-      _gen("(");
+      gen(output, false, "(");
       genExprSets(&(ctx[0]), p->k);
-      _gen(") && ");
+      gen(output, false, ") && ");
       set_free(ctx[1]);
       } else {
-        _gen("( ");
+        gen(output, false, "( ");
         genExprTree(p->source->ampersandPred->tcontext,1);
-    _gen(" ) && ");
+    gen(output, false, " ) && ");
       };
     };
 
@@ -664,26 +665,26 @@ genPred(Predicate *p, Node *j,int suppress_sva)
                 p->expr, output, 0, -1 /*indicates no line info*/, j->line, 0);
 
   if ( FoundException && !suppress_sva)   /* MR11 suppress_sva */
-         {_gen("),_sva)");}    /* MR10 - get red of "meant ==" messages */
-  else {_gen(")");}
+         {gen(output, false, "),_sva)");}    /* MR10 - get red of "meant ==" messages */
+  else {gen(output, false, ")");}
 }
 
 void MR_distinctORcontextOpt(Predicate *p,Node *j,int in_and_expr)
 {
     Predicate   *q;
 
-    _gen(" /* MR10 Distinct OR context optimization */ \n");
+    gen(output, false, " /* MR10 Distinct OR context optimization */ \n");
 
     if (in_and_expr) {
-      gen("zzpf=0,\n");
+      gen(output, true, "zzpf=0,\n");
       for (q=p->down; q != NULL; q=q->right) {
-        gen("(  ");
+        gen(output, true, "(  ");
         genCombinedPredTreeContext(q);
-        _gen(" && (zzpf=1, ");
+        gen(output, false, " && (zzpf=1, ");
         genPred(q,j,0);
-        _gen("  )) ||\n");
+        gen(output, false, "  )) ||\n");
       };
-      gen("!zzpf)");
+      gen(output, true, "!zzpf)");
     } else {
       require (0,
             "MR_distinctORcontextOpt: can't get here when using MR_predSimplify");
@@ -700,7 +701,7 @@ void genPredTreeOrig( Predicate *p, Node *j, int in_and_expr )
 
   if ( ! noneHaveContext )                  /* MR10 context guards ignored when -prc off */
   {
-    _gen("(");
+    gen(output, false, "(");
     genPredTreeGate(p, in_and_expr);
   }
 
@@ -709,7 +710,7 @@ void genPredTreeOrig( Predicate *p, Node *j, int in_and_expr )
   if ( p->down==NULL )
   {
     genPred(p,j,0);
-    if ( ! noneHaveContext ) _gen(")");   /* MR10 context guards ignored when -prc off */
+    if ( ! noneHaveContext ) gen(output, false, ")");   /* MR10 context guards ignored when -prc off */
     return;
   }
 
@@ -719,30 +720,30 @@ void genPredTreeOrig( Predicate *p, Node *j, int in_and_expr )
     /* MR11 - make it work with AND with more than two children - like OR */
 
     Predicate *list;
-    _gen("(");
+    gen(output, false, "(");
     list = p->down;
     for (; list!=NULL; list=list->right)
     {
       genPredTreeOrig(list, j, 1);
-      if ( list->right!=NULL ) _gen("&&");
+      if ( list->right!=NULL ) gen(output, false, "&&");
     }
-    _gen(")");
-    if ( ! noneHaveContext ) _gen(")");    /* MR10 context guards ignored when -prc off */
+    gen(output, false, ")");
+    if ( ! noneHaveContext ) gen(output, false, ")");    /* MR10 context guards ignored when -prc off */
     return;
     };
 
   if ( p->expr == PRED_OR_LIST )
   {
     Predicate *list;
-    _gen("(");
+    gen(output, false, "(");
     list = p->down;
     for (; list!=NULL; list=list->right)
     {
       genPredTreeOrig(list, j, 0);
-      if ( list->right!=NULL ) _gen("||");
+      if ( list->right!=NULL ) gen(output, false, "||");
     }
-    _gen(")");
-    if ( ! noneHaveContext ) _gen(")");    /* MR10 context guards ignored when -prc off */
+    gen(output, false, ")");
+    if ( ! noneHaveContext ) gen(output, false, ")");    /* MR10 context guards ignored when -prc off */
     return;
   }
 
@@ -795,7 +796,7 @@ void genPredTree( Predicate *p, Node *j, int in_and_expr, int suppress_sva )
 
   if ( ! noneHaveContext ) {                 /* MR10 context guards ignored when -prc off */
 
-      _gen("(");
+      gen(output, false, "(");
 
             /* MR10 optimize OR predicates which are all leaves */
 
@@ -811,8 +812,8 @@ void genPredTree( Predicate *p, Node *j, int in_and_expr, int suppress_sva )
         };
         Tfree(groupTree);
         if (q == NULL) {
-          _gen("/* MR10 individual OR gates suppressed when all predicates are leaves");
-          _gen(" with identical context */\n");
+          gen(output, false, "/* MR10 individual OR gates suppressed when all predicates are leaves");
+          gen(output, false, " with identical context */\n");
           genPredTreeGate(p,in_and_expr);   /* use the parent's in_and_expr for this gate */
           identicalORcontextOptimization=1;
         } else {
@@ -834,8 +835,8 @@ void genPredTree( Predicate *p, Node *j, int in_and_expr, int suppress_sva )
         };
         Tfree(groupTree);
         if (q == NULL) {
-          _gen("/* MR12 individual AND gates suppressed when all predicates are leaves");
-          _gen(" with identical context */\n");
+          gen(output, false, "/* MR12 individual AND gates suppressed when all predicates are leaves");
+          gen(output, false, " with identical context */\n");
           genPredTreeGate(p,in_and_expr);   /* use the parent's in_and_expr for this gate */
           identicalANDcontextOptimization=1;
         } else {
@@ -851,7 +852,7 @@ void genPredTree( Predicate *p, Node *j, int in_and_expr, int suppress_sva )
   if ( p->down==NULL )
   {
     genPred(p,j,suppress_sva);
-    if ( ! noneHaveContext ) _gen(")");   /* MR10 context guards ignored when -prc off */
+    if ( ! noneHaveContext ) gen(output, false, ")");   /* MR10 context guards ignored when -prc off */
     return;
   }
 
@@ -861,7 +862,7 @@ void genPredTree( Predicate *p, Node *j, int in_and_expr, int suppress_sva )
   if ( p->expr == PRED_AND_LIST )
   {
     Predicate *list;
-    _gen("(");
+    gen(output, false, "(");
     list = p->down;
         for (; list != NULL; list=list->right) {
           if (identicalANDcontextOptimization) {
@@ -869,17 +870,17 @@ void genPredTree( Predicate *p, Node *j, int in_and_expr, int suppress_sva )
           } else {
           genPredTree(list, j, 1, suppress_sva);  /* in and context */
           };
-          if ( list->right!=NULL ) _gen("&&");
+          if ( list->right!=NULL ) gen(output, false, "&&");
         };
-    _gen(")");
-    if ( ! noneHaveContext ) _gen(")");    /* MR10 context guards ignored when -prc off */
+    gen(output, false, ")");
+    if ( ! noneHaveContext ) gen(output, false, ")");    /* MR10 context guards ignored when -prc off */
     return;
   }
 
   if ( p->expr == PRED_OR_LIST )
   {
     Predicate *list;
-    _gen("(");
+    gen(output, false, "(");
     list = p->down;
     for (; list!=NULL; list=list->right)
     {
@@ -888,10 +889,10 @@ void genPredTree( Predicate *p, Node *j, int in_and_expr, int suppress_sva )
             } else {
             genPredTree(list, j, 0, suppress_sva);
             };
-      if ( list->right!=NULL ) _gen("||");
+      if ( list->right!=NULL ) gen(output, false, "||");
     }
-    _gen(")");
-    if ( ! noneHaveContext ) _gen(")");    /* MR10 context guards ignored when -prc off */
+    gen(output, false, ")");
+    if ( ! noneHaveContext ) gen(output, false, ")");    /* MR10 context guards ignored when -prc off */
     return;
   }
 
@@ -919,9 +920,9 @@ Predicate *genPredTreeMainXX( Predicate *p, Node *j ,int in_and_expr)
     };
 
     if (InfoP) {
-       _gen("\n#if 0\n\n");
+       gen(output, false, "\n#if 0\n\n");
        MR_dumpPred(p,1);
-       _gen("#endif\n");
+       gen(output, false, "#endif\n");
     };
   genPredTree(p,j,in_and_expr,0);
   return p;
@@ -938,34 +939,34 @@ static void genExprTreeOriginal( Tree *t, int k )
 
   if ( t->token == ALT )
   {
-    _gen("("); genExprTreeOriginal(t->down, k); _gen(")");
+    gen(output, false, "("); genExprTreeOriginal(t->down, k); gen(output, false, ")");
     if ( t->right!=NULL )
     {
-      _gen("||");
+      gen(output, false, "||");
       on1line++;
-      if ( on1line > NumExprPerLine ) { on1line=0; _gen("\n"); }
-      _gen("("); genExprTreeOriginal(t->right, k); _gen(")");
+      if ( on1line > NumExprPerLine ) { on1line=0; gen(output, false, "\n"); }
+      gen(output, false, "("); genExprTreeOriginal(t->right, k); gen(output, false, ")");
     }
     return;
   }
-  if ( t->down!=NULL ) _gen("(");
-  _gen1("LA(%d)==",k);
-  if ( TokenString(t->token) == NULL ) _gen1("%d", t->token)
-  else _gen1("%s", TokenString(t->token));
+  if ( t->down!=NULL ) gen(output, false, "(");
+  gen(output, false, "LA(%d)==",k);
+  if ( TokenString(t->token) == NULL ) gen(output, false, "%d", t->token);
+  else gen(output, false, "%s", TokenString(t->token));
   if ( t->down!=NULL )
   {
-    _gen("&&");
+    gen(output, false, "&&");
     on1line++;
-    if ( on1line > NumExprPerLine ) { on1line=0; _gen("\n"); }
-    _gen("("); genExprTreeOriginal(t->down, k+1); _gen(")");
+    if ( on1line > NumExprPerLine ) { on1line=0; gen(output, false, "\n"); }
+    gen(output, false, "("); genExprTreeOriginal(t->down, k+1); gen(output, false, ")");
   }
-  if ( t->down!=NULL ) _gen(")");
+  if ( t->down!=NULL ) gen(output, false, ")");
   if ( t->right!=NULL )
   {
-    _gen("||");
+    gen(output, false, "||");
     on1line++;
-    if ( on1line > NumExprPerLine ) { on1line=0; _gen("\n"); }
-    _gen("("); genExprTreeOriginal(t->right, k); _gen(")");
+    if ( on1line > NumExprPerLine ) { on1line=0; gen(output, false, "\n"); }
+    gen(output, false, "("); genExprTreeOriginal(t->right, k); gen(output, false, ")");
   }
 }
 
@@ -975,9 +976,9 @@ static void MR_LAtokenString(int k,int token)
 
     ts=TokenString(token);
     if (ts == NULL) {
-      _gen2(" LA(%d)==%d",k,token);
+      gen(output, false, " LA(%d)==%d",k,token);
     } else {
-      _gen2(" LA(%d)==%s",k,ts);
+      gen(output, false, " LA(%d)==%s",k,ts);
     };
 }
 
@@ -1001,16 +1002,16 @@ static void MR_genOneLine(Tree *tree,int k)
        MR_LAtokenString(k,tree->token);
        if (tree->down != NULL &&
            tree->down->right == NULL) {
-          _gen(" &&");
+          gen(output, false, " &&");
           MR_genOneLine(tree->down,k+1);
        } else if (tree->down != NULL) {
-         _gen(" && (");
+         gen(output, false, " && (");
          MR_genOneLine(tree->down,k+1);
-         _gen(")");
+         gen(output, false, ")");
        };
     };
     if (tree->right != NULL) {
-      _gen(" ||");
+      gen(output, false, " ||");
       MR_genOneLine(tree->right,k);
     };
 }
@@ -1032,40 +1033,40 @@ static void MR_genMultiLine(Tree *tree,int k)
       across++;
       if (tree->down != NULL && tree->down->right == NULL) {
         if (across > 3) {
-          _gen("\n");
+          gen(output, false, "\n");
           across=0;
           lastkonline=0;
-          for (i=0 ; i < depth+k ; i++) _gen("   ");
-          _gen("&&");
+          for (i=0 ; i < depth+k ; i++) gen(output, false, "   ");
+          gen(output, false, "&&");
         } else {
-          _gen(" &&");
+          gen(output, false, " &&");
         };
         MR_genMultiLine(tree->down,k+1);
       } else if (tree->down != NULL) {
-        _gen("\n");
+        gen(output, false, "\n");
         lastkonline=0;
         across=0;
-        for (i=0 ; i < depth+k ; i++) _gen("   ");
-        _gen("&& (");
+        for (i=0 ; i < depth+k ; i++) gen(output, false, "   ");
+        gen(output, false, "&& (");
         MR_genMultiLine(tree->down,k+1);
-        _gen(")");
+        gen(output, false, ")");
       };
     };
     if (tree->right != NULL) {
       if (k < lastkonline) {
-        _gen("\n");
+        gen(output, false, "\n");
         across=0;
         lastkonline=0;
-        for (i=0; i < depth+k-1 ; i++) _gen("   ");
-        _gen("||");
+        for (i=0; i < depth+k-1 ; i++) gen(output, false, "   ");
+        gen(output, false, "||");
       } else if (across > 3 ) {
-        _gen("\n");
+        gen(output, false, "\n");
         across=0;
         lastkonline=0;
-        for (i=0; i < depth+k ; i++) _gen("   ");
-        _gen("||");
+        for (i=0; i < depth+k ; i++) gen(output, false, "   ");
+        gen(output, false, "||");
       } else {
-        _gen(" ||");
+        gen(output, false, " ||");
       };
       MR_genMultiLine(tree->right,k);
     };
@@ -1085,12 +1086,12 @@ static void genExprTree(Tree *tree,int k)
       if (count < 5) {
         MR_genOneLine(tree,k);
       } else {
-        _gen("\n");
+        gen(output, false, "\n");
         across=0;
         depth=0;
         lastkonline=0;
         MR_genMultiLine(tree,k);
-        _gen("\n");
+        gen(output, false, "\n");
       };
     };
 }
@@ -1138,14 +1139,14 @@ static int genExpr( Junction *j )
    */
   if ( j->ftree != NULL )
   {
-    _gen(" && !("); genExprTree(j->ftree, 1); _gen(")");
+    gen(output, false, " && !("); genExprTree(j->ftree, 1); gen(output, false, ")");
   }
 
   if ( ParseWithPredicates && j->predicate!=NULL )
   {
     Predicate *p = j->predicate;
     warn_about_using_gk_option();
-    _gen("&&");
+    gen(output, false, "&&");
     j->predicate=genPredTreeMain(p, (Node *)j);     /* MR10 */
   }
 
@@ -1159,7 +1160,7 @@ static int genExprSets( set *fset, int limit )
   unsigned *e, *g, firstTime=1;
 
     if (set_nil(fset[1])) {
-      _gen(" 0 /* MR13 empty set expression  - undefined rule ? infinite left recursion ? */ ");
+      gen(output, false, " 0 /* MR13 empty set expression  - undefined rule ? infinite left recursion ? */ ");
       MR_BadExprSets++;
     };
 
@@ -1170,23 +1171,23 @@ static int genExprSets( set *fset, int limit )
       if ( set_deg(fset[k])==1 )  /* too simple for a set? */
       {
         int e;
-        _gen1("(LA(%d)==",k);
+        gen(output, false, "(LA(%d)==",k);
         e = set_int(fset[k]);
-        if ( TokenString(e) == NULL ) _gen1("%d)", e)
-        else _gen1("%s)", TokenString(e));
+        if ( TokenString(e) == NULL ) gen(output, false, "%d)", e);
+        else gen(output, false, "%s)", TokenString(e));
       }
       else
       {
         NewSet();
         FillSet( fset[k] );
-        _gen3("(setwd%d[LA(%d)]&0x%x)", wordnum, k, 1<<setnum);
+        gen(output, false, "(setwd%d[LA(%d)]&0x%x)", wordnum, k, 1<<setnum);
       }
       if ( k>max_k ) max_k = k;
       if ( k == CLL_k ) break;
       k++;
-      if ( k<=limit && !set_nil(fset[k]) ) _gen(" && ");  /* MR11 */
+      if ( k<=limit && !set_nil(fset[k]) ) gen(output, false, " && ");  /* MR11 */
       on1line++;
-      if ( on1line > NumExprPerLine ) { on1line=0; _gen("\n"); }
+      if ( on1line > NumExprPerLine ) { on1line=0; gen(output, false, "\n"); }
     }
     return max_k;
   }
@@ -1196,21 +1197,22 @@ static int genExprSets( set *fset, int limit )
     if ( (e=g=set_pdq(fset[k])) == NULL ) fatal_internal("genExpr: cannot allocate IF expr pdq set");
     for (; *e!=nil; e++)
     {
-      if ( !firstTime ) _gen(" || ") else { _gen("("); firstTime = 0; }
+      if ( !firstTime ) gen(output, false, " || ");
+      else { gen(output, false, "("); firstTime = 0; }
       on1line++;
-      if ( on1line > NumExprPerLine ) { on1line=0; _gen("\n"); }
-      _gen1("LA(%d)==",k);
-      if ( TokenString(*e) == NULL ) _gen1("%d", *e)
-      else _gen1("%s", TokenString(*e));
+      if ( on1line > NumExprPerLine ) { on1line=0; gen(output, false, "\n"); }
+      gen(output, false, "LA(%d)==",k);
+      if ( TokenString(*e) == NULL ) gen(output, false, "%d", *e);
+      else gen(output, false, "%s", TokenString(*e));
     }
     free( (char *)g );
-    _gen(")");
+    gen(output, false, ")");
     if ( k>max_k ) max_k = k;
     if ( k == CLL_k ) break;
     k++;
-    if ( k <= limit && !set_nil(fset[k]) ) { firstTime=1; _gen(" && "); }   /* MR11 */
+    if ( k <= limit && !set_nil(fset[k]) ) { firstTime=1; gen(output, false, " && "); }   /* MR11 */
     on1line++;
-    if ( on1line > NumExprPerLine ) { on1line=0; _gen("\n"); }
+    if ( on1line > NumExprPerLine ) { on1line=0; gen(output, false, "\n"); }
   }
   return max_k;
 }
@@ -1239,9 +1241,9 @@ static set genBlk( Junction *q, int jtype, int *max_k, int *need_right_curly, in
             if (jtype != aLoopBlk && jtype != aOptBlk && jtype != aPlusBlk) {
           warnFL("(...)? as only alternative of block is unnecessary", FileStr[q->file], q->line);
             };
-            gen("zzGUESS\n"); /* guess anyway to make output code consistent */
-/* MR10 disable */  /**** gen("if ( !zzrv )\n"); ****/
-/* MR10 */          gen("if ( !zzrv ) {\n"); tabs++; (*need_right_curly)++;
+            gen(output, true, "zzGUESS\n"); /* guess anyway to make output code consistent */
+/* MR10 disable */  /**** gen(output, true, "if ( !zzrv )\n"); ****/
+/* MR10 */          gen(output, true, "if ( !zzrv ) {\n"); tabs++; (*need_right_curly)++;
         };
     TRANS(q->p1);
     return empty;   /* no decision to be made-->no error set */
@@ -1280,7 +1282,7 @@ static set genBlk( Junction *q, int jtype, int *max_k, int *need_right_curly, in
 /* MR23 */    if (FoundException) {
 /* MR23 */      /* code to restore state if a prev alt didn't follow guess */
 /* MR23 */      if ( a_guess_in_block && jtype != aPlusBlk) {
-/* MR23 */        gen("if ( !zzrv ) zzGUESS_DONE; /* MR28 */\n");
+/* MR23 */        gen(output, true, "if ( !zzrv ) zzGUESS_DONE; /* MR28 */\n");
 /* MR23 */      }
 /* MR23 */      break;
 /* MR23 */    };
@@ -1299,46 +1301,46 @@ static set genBlk( Junction *q, int jtype, int *max_k, int *need_right_curly, in
 /* MR10 */          };
 /* MR10 */        };
 
-    if ( alt != q ) gen("else ")
+    if ( alt != q ) gen(output, true, "else ");
     else
     {
       if ( DemandLookahead ) {
-        if ( !GenCC ) {gen1("LOOK(%d);\n", *max_k);}
-        else gen1("look(%d);\n", *max_k);
+        if ( !GenCC ) {gen(output, true, "LOOK(%d);\n", *max_k);}
+        else gen(output, true, "look(%d);\n", *max_k);
       }
     }
 
     if ( alt!=q )
     {
-      _gen("{\n");
+      gen(output, false, "{\n");
       tabs++;
       (*need_right_curly)++;
       /* code to restore state if a prev alt didn't follow guess */
       if ( a_guess_in_block )
-        gen("if ( !zzrv ) zzGUESS_DONE;\n");
+        gen(output, true, "if ( !zzrv ) zzGUESS_DONE;\n");
     }
     if ( first_item_is_guess_block((Junction *)alt->p1)!=NULL )
     {
       a_guess_in_block = 1;
-      gen("zzGUESS\n");
+      gen(output, true, "zzGUESS\n");
     }
-    gen("if ( ");
-    if ( first_item_is_guess_block((Junction *)alt->p1)!=NULL ) _gen("!zzrv && ");
+    gen(output, true, "if ( ");
+    if ( first_item_is_guess_block((Junction *)alt->p1)!=NULL ) gen(output, false, "!zzrv && ");
     genExpr(alt);
-    _gen(" ) ");
-    _gen("{\n");
+    gen(output, false, " ) ");
+    gen(output, false, "{\n");
     tabs++;
     TRANS(alt->p1);
     --tabs;
-    gen("}\n");
+    gen(output, true, "}\n");
 /* MR10 */        if (alt->p2 == NULL) {
 /* MR10 */          if (first_item_is_guess_block(alt)) {
-/* MR10 */            gen("/* MR10 */ else {\n");
+/* MR10 */            gen(output, true, "/* MR10 */ else {\n");
 /* MR10 */            tabs++;
 /* MR10 */        (*need_right_curly)++;
 /* MR10 */        /* code to restore state if a prev alt didn't follow guess */
-/* MR10 */            gen("/* MR10 */ if ( !zzrv ) zzGUESS_DONE;\n");
-/* MR10 */            gen("/* MR10 */ if (0) {}     /* last alternative of block is guess block */\n");
+/* MR10 */            gen(output, true, "/* MR10 */ if ( !zzrv ) zzGUESS_DONE;\n");
+/* MR10 */            gen(output, true, "/* MR10 */ if (0) {}     /* last alternative of block is guess block */\n");
 /* MR10 */          };
 /* MR10 */        };
   }
@@ -1572,21 +1574,21 @@ void genAction( ActionNode *p )
       if ( p->guardpred != NULL )
       {
                 Predicate *guardDup=predicate_dup(p->guardpred); /* MR10 */
-                gen("if (!");
+                gen(output, true, "if (!");
             guardDup=genPredTreeMain(guardDup, (Node *)p);
                 predicate_free(guardDup);
       }
 /* MR10 */  else if (p->ampersandPred != NULL) {
-/* MR10 */      gen("if (!");
+/* MR10 */      gen(output, true, "if (!");
 /* MR10 */      p->ampersandPred=genPredTreeMain(p->ampersandPred, (Node *)p);
 /* MR10 */  }
       else
       {
-        gen("if (!(");
+        gen(output, true, "if (!(");
         /* make sure that '#line n' is on front of line */
-        if ( GenLineInfo && p->file != -1 ) _gen("\n");
+        if ( GenLineInfo && p->file != -1 ) gen(output, false, "\n");
         dumpPredAction(p,p->action, output, 0, p->file, p->line, 0);
-        _gen(")");
+        gen(output, false, ")");
       }
 
 /* MR23 Change failed predicate macro to have three arguments:
@@ -1599,7 +1601,7 @@ void genAction( ActionNode *p )
    This gives the user more control of the error action.
 */
       tabs++;
-      gen3(") {zzfailed_pred(\"%s\",%s, { %s } );}\n",         /* MR23 */
+      gen(output, true, ") {zzfailed_pred(\"%s\",%s, { %s } );}\n",         /* MR23 */
           stringize(p->action),                          /* MR23 */
                     (p->pred_fail == NULL ?                          /* MR23/MR27 */
                         "0 /* report */" : "1 /* user action */"),   /* MR23/MR27 */
@@ -1612,13 +1614,13 @@ void genAction( ActionNode *p )
             if (! isNullAction(p->action) && !p->noHoist) {
             if ( FoundGuessBlk ) {
         if ( GenCC ) {
-                  gen("if ( !guessing ) {\n");
+                  gen(output, true, "if ( !guessing ) {\n");
                 } else {
-          gen("zzNON_GUESS_MODE {\n");
+          gen(output, true, "zzNON_GUESS_MODE {\n");
                 };
               };
         dumpActionPlus(p, p->action, output, tabs, p->file, p->line, 1); /* MR21 */
-        if ( FoundGuessBlk ) gen("}\n");
+        if ( FoundGuessBlk ) gen(output, true, "}\n");
             };
     }
   }
@@ -1667,14 +1669,14 @@ void genRuleRef( RuleRefNode *p )
     OutLineInfo(output,p->line,FileStr[p->file]);
 
   if ( GenCC && GenAST ) {
-    gen("_ast = NULL;\n");
+    gen(output, true, "_ast = NULL;\n");
   }
 
   if ( FoundGuessBlk && p->assign!=NULL && q->ret != NULL ) {      /* MR8 */
     if ( GenCC ) {
-          gen("if ( !guessing ) {\n");
+          gen(output, true, "if ( !guessing ) {\n");
         } else {
-          gen("zzNON_GUESS_MODE {\n");
+          gen(output, true, "zzNON_GUESS_MODE {\n");
         };
         tabs++;                                                      /* MR11 */
         genRuleRef_emittedGuessGuard=1;                              /* MR11 */
@@ -1689,7 +1691,7 @@ void genRuleRef( RuleRefNode *p )
 /****     if ( r2->noAST || p->astnode==ASTexclude )
 ****/
       {
-/****       _gen("_ast = NULL;\n");
+/****       gen(output, false, "_ast = NULL;\n");
 ****/
         parm = "&_ast";
       }
@@ -1697,7 +1699,7 @@ void genRuleRef( RuleRefNode *p )
 pointer after
 
       else {
-        _gen("_astp =
+        gen(output, false, "_astp =
 (_tail==NULL)?(&_sibling):(&(_tail->_right));\n");
         parm = "_astp";
       }
@@ -1706,37 +1708,37 @@ pointer after
     else {
       if ( r2->noAST || p->astnode==ASTexclude )
       {
-        _gen("_ast = NULL; ");
+        gen(output, false, "_ast = NULL; ");
         parm = "&_ast";
       }
       else parm = "zzSTR";
     }
     if ( p->assign!=NULL && q->ret!=NULL )                       /* MR8 */
     {
-      if ( !hasMultipleOperands(p->assign) ) {_gen1("%s = ",p->assign);} /* MR23 */
-      else _gen1("{ struct _rv%d _trv; _trv = ", r->rulenum);
+      if ( !hasMultipleOperands(p->assign) ) {gen(output, false, "%s = ",p->assign);} /* MR23 */
+      else gen(output, false, "{ struct _rv%d _trv; _trv = ", r->rulenum);
     }
     if ( FoundException ) {
-      _gen5("%s%s(%s,&_signal%s%s); ",
+      gen(output, false, "%s%s(%s,&_signal%s%s); ",
           RulePrefix,
           p->text,
           parm,
           (p->parms!=NULL)?",":"",
           (p->parms!=NULL)?p->parms:"");
       if ( p->ex_group!=NULL ) {
-        _gen("\n");
-        gen("if (_signal) {\n");
+        gen(output, false, "\n");
+        gen(output, true, "if (_signal) {\n");
         tabs++;
         dumpException(p->ex_group, 0);
         tabs--;
-        gen("}");
+        gen(output, true, "}");
       }
       else {
-        _gen1("if (_signal) goto %s_handler;", handler_id);
+        gen(output, false, "if (_signal) goto %s_handler;", handler_id);
       }
     }
     else {
-      _gen5("%s%s(%s%s%s);",
+      gen(output, false, "%s%s(%s%s%s);",
           RulePrefix,
           p->text,
           parm,
@@ -1747,35 +1749,35 @@ pointer after
     {
       /* rule has a ! or element does */
       /* still need to assign to #i so we can play with it */
-      _gen("\n");
-      gen2("_ast%d%d = (AST *)_ast;", BlkLevel-1, p->elnum);
+      gen(output, false, "\n");
+      gen(output, true, "_ast%d%d = (AST *)_ast;", BlkLevel-1, p->elnum);
     }
     else if ( !r2->noAST && p->astnode == ASTinclude )
     {
       /* rule doesn't have a ! and neither does element */
 /* MR10 */  if (FoundGuessBlk && !genRuleRef_emittedGuessGuard) {
-/* MR10 */    _gen("\n");
-/* MR10 */    if (GenCC) gen ("if (!guessing) {    /* MR10 */")
-/* MR10 */          else gen ("if (!zzguessing) {    /* MR10 */\n");
+/* MR10 */    gen(output, false, "\n");
+/* MR10 */    if (GenCC) gen(output, true, "if (!guessing) {");
+/* MR10 */    else gen(output, true, "if (!zzguessing) {\n");
 /* MR10 */    tabs++;
 /* MR10 */  };
       if ( GenCC ) {
-        _gen("\n");
-        gen("if ( _tail==NULL ) _sibling = _ast; else _tail->setRight(_ast);\n");
-        gen2("_ast%d%d = (AST *)_ast;\n", BlkLevel-1, p->elnum);
+        gen(output, false, "\n");
+        gen(output, true, "if ( _tail==NULL ) _sibling = _ast; else _tail->setRight(_ast);\n");
+        gen(output, true, "_ast%d%d = (AST *)_ast;\n", BlkLevel-1, p->elnum);
         tab();
       }
-      else _gen(" ");
+      else gen(output, false, " ");
             if ( GenCC ) {
-                _gen("ASTBase::"); }
-                else _gen("zz");
-      _gen("link(_root, &_sibling, &_tail);");
+                gen(output, false, "ASTBase::"); }
+                else gen(output, false, "zz");
+      gen(output, false, "link(_root, &_sibling, &_tail);");
 
 /* MR10 */  if (FoundGuessBlk && !genRuleRef_emittedGuessGuard) {     /* MR10 */
-/* MR10 */    _gen("\n");
+/* MR10 */    gen(output, false, "\n");
 /* MR10 */    tabs--;
-/* MR10 */    if (GenCC) gen ("};    /* MR10 */")
-/* MR10 */          else gen ("};    /* MR10 */");
+/* MR10 */    if (GenCC) gen(output, true, "};");
+/* MR10 */    else gen(output, true, "};");
 /* MR10 */  };
     }
   }
@@ -1783,45 +1785,45 @@ pointer after
   {
     if ( p->assign!=NULL && q->ret!=NULL )                       /* MR8 */
     {
-      if ( !hasMultipleOperands(p->assign) ) {_gen1("%s = ",p->assign);} /* MR23 */
-      else _gen1("{ struct _rv%d _trv; _trv = ", r->rulenum);
+      if ( !hasMultipleOperands(p->assign) ) {gen(output, false, "%s = ",p->assign);} /* MR23 */
+      else gen(output, false, "{ struct _rv%d _trv; _trv = ", r->rulenum);
     }
     if ( FoundException ) {
-      _gen4("%s%s(&_signal%s%s); ",
+      gen(output, false, "%s%s(&_signal%s%s); ",
           RulePrefix,
           p->text,
           (p->parms!=NULL)?",":"",
           (p->parms!=NULL)?p->parms:"");
       if ( p->ex_group!=NULL ) {
-        _gen("\n");
-        gen("if (_signal) {\n");
+        gen(output, false, "\n");
+        gen(output, true, "if (_signal) {\n");
         tabs++;
         dumpException(p->ex_group, 0);
         tabs--;
-        gen("}");
+        gen(output, true, "}");
       }
       else {
-        _gen1("if (_signal) goto %s_handler;", handler_id);
+        gen(output, false, "if (_signal) goto %s_handler;", handler_id);
       }
     }
     else {
-      _gen3("%s%s(%s);",
+      gen(output, false, "%s%s(%s);",
           RulePrefix,
           p->text,
           (p->parms!=NULL)?p->parms:"");
     }
-    if ( p->assign!=NULL && q->ret!=NULL ) _gen("\n");           /* MR8 */
+    if ( p->assign!=NULL && q->ret!=NULL ) gen(output, false, "\n");           /* MR8 */
   }
 
   if ( p->assign!=NULL && q->ret!=NULL) {                          /* MR8 */
     if ( hasMultipleOperands(p->assign) )                        /* MR23 */
     {
-      _gen("\n");
+      gen(output, false, "\n");
       dumpRetValAssign(p->assign, q->ret, p);                  /* MR30 */
-      _gen("}");
+      gen(output, false, "}");
     }
   }
-  _gen("\n");
+  gen(output, false, "\n");
 
   /* Handle element labels now */
   if ( p->el_label!=NULL )
@@ -1829,22 +1831,22 @@ pointer after
     if ( GenAST )
     {
       if ( GenCC ) {
-        gen3("%s_ast = _ast%d%d;\n", p->el_label, BlkLevel-1, p->elnum);
+        gen(output, true, "%s_ast = _ast%d%d;\n", p->el_label, BlkLevel-1, p->elnum);
       }
-      else {gen1("%s_ast = zzastCur;\n", p->el_label);}
+      else {gen(output, true, "%s_ast = zzastCur;\n", p->el_label);}
     }
         else if (!GenCC ) {
-      gen1("%s = zzaCur;\n", p->el_label);
+      gen(output, true, "%s = zzaCur;\n", p->el_label);
         }
   }
 
   if ( FoundGuessBlk && p->assign!=NULL && q->ret!=NULL ) {       /* MR8 */
     /* in guessing mode, don't branch to handler upon error */
         tabs--;                                                     /* MR11 */
-    gen("} else {\n");
+    gen(output, true, "} else {\n");
         tabs++;                                                     /* MR11 */
     if ( FoundException ) {
-      gen6("%s%s(%s%s&_signal%s%s);\n",
+      gen(output, true, "%s%s(%s%s&_signal%s%s);\n",
          RulePrefix,
          p->text,
          parm,
@@ -1853,7 +1855,7 @@ pointer after
          (p->parms!=NULL)?p->parms:"");
     }
     else {
-      gen5("%s%s(%s%s%s);\n",
+      gen(output, true, "%s%s(%s%s%s);\n",
          RulePrefix,
          p->text,
          parm,
@@ -1861,7 +1863,7 @@ pointer after
          (p->parms!=NULL)?p->parms:"");
     }
         tabs--;                                                     /* MR11 */
-    gen("}\n");
+    gen(output, true, "}\n");
   }
   TRANS(p->next)
 }
@@ -1968,31 +1970,31 @@ void genToken( TokNode *p )
     }
 
     if ( !FoundException ) {
-/* MR23 */    gen2("zzsetmatch(%s, %s);", set_name, set_nameErrSet);
+/* MR23 */    gen(output, true, "zzsetmatch(%s, %s);", set_name, set_nameErrSet);
     }
     else if ( p->ex_group==NULL ) {
             if ( p->use_def_MT_handler )
-                gen3("zzsetmatch_wdfltsig(%s,(ANTLRTokenType)%d,%s);",
+                gen(output, true, "zzsetmatch_wdfltsig(%s,(ANTLRTokenType)%d,%s);",
                      set_name,
                      p->token,
-                     tokenFollowSet(p))
+                     tokenFollowSet(p));
             else
-                gen2("zzsetmatch_wsig(%s, %s_handler);",
+                gen(output, true, "zzsetmatch_wsig(%s, %s_handler);",
                      set_name,
                      handler_id);
     }
     else
     {
-      gen1("if ( !_setmatch_wsig(%s) ) {\n", set_name);
+      gen(output, true, "if ( !_setmatch_wsig(%s) ) {\n", set_name);
       tabs++;
 /* MR6 */ if (FoundGuessBlk) {
-/* MR6 */   if ( GenCC ) {gen("if ( guessing ) goto fail;\n");}
-/* MR6 */   else gen("if ( zzguessing ) goto fail;\n");
+/* MR6 */   if ( GenCC ) {gen(output, true, "if ( guessing ) goto fail;\n");}
+/* MR6 */   else gen(output, true, "if ( zzguessing ) goto fail;\n");
 /* MR6 */ };
-      gen("_signal=MismatchedToken;\n");
+      gen(output, true, "_signal=MismatchedToken;\n");
       dumpException(p->ex_group, 0);
       tabs--;
-      gen("}\n");
+      gen(output, true, "}\n");
     }
     set_free(b);
     set_free(bErrSet);
@@ -2001,42 +2003,42 @@ void genToken( TokNode *p )
   {
     if ( FoundException ) {
       if ( p->use_def_MT_handler )
-        gen2("zzmatch_wdfltsig(%s,%s);",TokenString(p->token),tokenFollowSet(p))
+        gen(output, true, "zzmatch_wdfltsig(%s,%s);",TokenString(p->token),tokenFollowSet(p));
       else if ( p->ex_group==NULL )
       {
-        gen2("zzmatch_wsig(%s, %s_handler);",
+        gen(output, true, "zzmatch_wsig(%s, %s_handler);",
            TokenString(p->token),
            handler_id);
       }
       else
       {
 /* MR6 */   if (GenCC) {
-/* MR6 */     gen1("if ( !_match_wsig(%s) ) {\n", TokenString(p->token));
+/* MR6 */     gen(output, true, "if ( !_match_wsig(%s) ) {\n", TokenString(p->token));
 /* MR6 */   } else {
-/* MR6 */     gen1("if ( !_zzmatch_wsig(%s) ) {\n", TokenString(p->token));
+/* MR6 */     gen(output, true, "if ( !_zzmatch_wsig(%s) ) {\n", TokenString(p->token));
 /* MR6 */   };
         tabs++;
 /* MR6 */   if (FoundGuessBlk) {
-/* MR6 */       if ( GenCC ) {gen("if ( guessing ) goto fail;\n");}
-/* MR6 */     else gen("if ( zzguessing ) goto fail;\n");
+/* MR6 */       if ( GenCC ) {gen(output, true, "if ( guessing ) goto fail;\n");}
+/* MR6 */     else gen(output, true, "if ( zzguessing ) goto fail;\n");
 /* MR6 */   };
-        gen("_signal=MismatchedToken;\n");
+        gen(output, true, "_signal=MismatchedToken;\n");
         dumpException(p->ex_group, 0);
         tabs--;
-        gen("}\n");
+        gen(output, true, "}\n");
       }
     }
-    else gen1("zzmatch(%s);", TokenString(p->token));
+    else gen(output, true, "zzmatch(%s);", TokenString(p->token));
   }
   else {
         if ( FoundException ) {
             if ( p->use_def_MT_handler )
-        gen2("zzmatch_wdfltsig((ANTLRTokenType)%d,%s);",
-           p->token,tokenFollowSet(p))
+                gen(output, true, "zzmatch_wdfltsig((ANTLRTokenType)%d,%s);",
+                        p->token,tokenFollowSet(p));
             else
-                gen2("zzmatch_wsig(%d,%s_handler);",p->token,handler_id);
+                gen(output, true, "zzmatch_wsig(%d,%s_handler);",p->token,handler_id);
         }
-    else {gen1("zzmatch(%d);", p->token);}
+    else {gen(output, true, "zzmatch(%d);", p->token);}
   }
 
   a = findImmedAction( p->next );
@@ -2047,16 +2049,16 @@ void genToken( TokNode *p )
     if ( set_el(p->elnum, tokensRefdInBlock) || GenAST )
     {
 /* MR10 */  if ( FoundGuessBlk ) {
-/* MR10 */    gen("\n");
+/* MR10 */    gen(output, true, "\n");
 /* MR10 */    if (p->label_used_in_semantic_pred) {
-/* MR10 */    gen2(" _t%d%d = (ANTLRTokenPtr)LT(1);  /* MR10 */\n", BlkLevel-1, p->elnum);
+/* MR10 */    gen(output, true, " _t%d%d = (ANTLRTokenPtr)LT(1);  /* MR10 */\n", BlkLevel-1, p->elnum);
 /* MR10 */    } else {
-/* MR10 */    gen("if ( !guessing ) {\n"); tab();
-/* MR10 */    _gen2(" _t%d%d = (ANTLRTokenPtr)LT(1);\n", BlkLevel-1, p->elnum);
-/* MR10 */      gen("}\n");
+/* MR10 */    gen(output, true, "if ( !guessing ) {\n"); tab();
+/* MR10 */    gen(output, false, " _t%d%d = (ANTLRTokenPtr)LT(1);\n", BlkLevel-1, p->elnum);
+/* MR10 */      gen(output, true, "}\n");
 /* MR10 */    };
 /* MR10 */  } else {
-/* MR10 */    _gen2(" _t%d%d = (ANTLRTokenPtr)LT(1);", BlkLevel-1, p->elnum);
+/* MR10 */    gen(output, false, " _t%d%d = (ANTLRTokenPtr)LT(1);", BlkLevel-1, p->elnum);
 /* MR10 */  };
 /* MR10 */
     }
@@ -2067,8 +2069,8 @@ void genToken( TokNode *p )
  */
 
 /***    if ( LL_k>1 )                                    / * MR23 disabled */
-/***      if ( !DemandLookahead ) _gen(" labase++;");  / * MR23 disabled */
-/***    _gen("\n");                                      / * MR23 disabled */
+/***      if ( !DemandLookahead ) gen(output, false, " labase++;");  / * MR23 disabled */
+/***    gen(output, false, "\n");                                      / * MR23 disabled */
 /***    tab();                                           / * MR23 disabled */
   }
   if ( GenAST )
@@ -2076,25 +2078,25 @@ void genToken( TokNode *p )
     if ( FoundGuessBlk &&
         (ast_label_in_action || !(p->astnode == ASTexclude || r->noAST)) )
     {
-      if ( GenCC ) {_gen("if ( !guessing ) {\n"); tab();}
-      else {_gen("zzNON_GUESS_MODE {\n"); tab();}
+      if ( GenCC ) {gen(output, false, "if ( !guessing ) {\n"); tab();}
+      else {gen(output, false, "zzNON_GUESS_MODE {\n"); tab();}
     }
 
 /* MR27 addition when labels referenced when operator ! used */
 
     pushedCmodeAST = 0; /* MR27 */
     if (ast_label_in_action && (p->astnode == ASTexclude || r->noAST)) {
-      _gen("\n");
+      gen(output, false, "\n");
       if (GenCC) {
 /* MR13 */      if (NewAST) {
-/* MR13 */          gen4("_ast%d%d = newAST(_t%d%d); /* MR27 */\n", BlkLevel-1, p->elnum, BlkLevel-1, p->elnum);
+/* MR13 */          gen(output, true, "_ast%d%d = newAST(_t%d%d); /* MR27 */\n", BlkLevel-1, p->elnum, BlkLevel-1, p->elnum);
 /* MR13 */      } else {
-/* MR13 */          gen4("_ast%d%d = new AST(_t%d%d); /* MR27 */\n", BlkLevel-1, p->elnum, BlkLevel-1, p->elnum);
+/* MR13 */          gen(output, true, "_ast%d%d = new AST(_t%d%d); /* MR27 */\n", BlkLevel-1, p->elnum, BlkLevel-1, p->elnum);
 /* MR13 */      }
       }
       else {
         pushedCmodeAST = 1;
-        gen("zzastPush(zzmk_ast(zzastnew(),zzaCur)); /* MR27 */");
+        gen(output, true, "zzastPush(zzmk_ast(zzastnew(),zzaCur)); /* MR27 */");
       }
     }
 
@@ -2103,36 +2105,36 @@ void genToken( TokNode *p )
     if (!r->noAST )
     {
       if (GenCC && !(p->astnode == ASTexclude) ) {
-        _gen("\n");
+        gen(output, false, "\n");
 /* MR13 */      if (NewAST) {
-/* MR13 */          gen4("_ast%d%d = newAST(_t%d%d);\n", BlkLevel-1, p->elnum, BlkLevel-1, p->elnum);
+/* MR13 */          gen(output, true, "_ast%d%d = newAST(_t%d%d);\n", BlkLevel-1, p->elnum, BlkLevel-1, p->elnum);
 /* MR13 */      } else {
-/* MR13 */          gen4("_ast%d%d = new AST(_t%d%d);\n", BlkLevel-1, p->elnum, BlkLevel-1, p->elnum);
+/* MR13 */          gen(output, true, "_ast%d%d = new AST(_t%d%d);\n", BlkLevel-1, p->elnum, BlkLevel-1, p->elnum);
 /* MR13 */      }
         tab();
       }
       if ( GenCC && !(p->astnode == ASTexclude) )
-        {_gen2("_ast%d%d->", BlkLevel-1, p->elnum);}
-      else _gen(" ");
+        {gen(output, false, "_ast%d%d->", BlkLevel-1, p->elnum);}
+      else gen(output, false, " ");
       if ( p->astnode==ASTchild ) {
-        if ( !GenCC ) _gen("zz");
-        _gen("subchild(_root, &_sibling, &_tail);");
+        if ( !GenCC ) gen(output, false, "zz");
+        gen(output, false, "subchild(_root, &_sibling, &_tail);");
       }
       else if ( p->astnode==ASTroot ) {
-        if ( !GenCC ) _gen("zz");
-        _gen("subroot(_root, &_sibling, &_tail);");
+        if ( !GenCC ) gen(output, false, "zz");
+        gen(output, false, "subroot(_root, &_sibling, &_tail);");
       }
       if ( GenCC && !(p->astnode == ASTexclude) ) {
-        _gen("\n");
+        gen(output, false, "\n");
         tab();
       }
     }
     else if ( !GenCC ) {
-      if (! pushedCmodeAST) _gen(" zzastDPush;");
+      if (! pushedCmodeAST) gen(output, false, " zzastDPush;");
     }
     if ( FoundGuessBlk &&
         (ast_label_in_action || !(p->astnode == ASTexclude || r->noAST)) )
-      {gen("}\n"); tab();}
+      {gen(output, true, "}\n"); tab();}
   }
 
   /* Handle element labels now */
@@ -2140,7 +2142,7 @@ void genToken( TokNode *p )
   {
         int     done_NON_GUESSMODE=0;
 
-    _gen("\n");
+    gen(output, false, "\n");
 
 /* MR10 */    /* do Attrib / Token ptr for token label used in semantic pred */
 /* MR10 */    /* for these cases do assign even in guess mode                */
@@ -2148,15 +2150,15 @@ void genToken( TokNode *p )
 /* MR10 */    if (p->label_used_in_semantic_pred) {
 /* MR10 */      if ( GenCC ) {
 /* MR10 */        if ( set_el(p->elnum, tokensRefdInBlock) || GenAST ) {
-/* MR10 */          gen3("%s = _t%d%d;", p->el_label, BlkLevel-1, p->elnum);
+/* MR10 */          gen(output, true, "%s = _t%d%d;", p->el_label, BlkLevel-1, p->elnum);
 /* MR10 */        } else {
-/* MR10 */          gen1("%s = (ANTLRTokenPtr)LT(1);\n", p->el_label);
+/* MR10 */          gen(output, true, "%s = (ANTLRTokenPtr)LT(1);\n", p->el_label);
 /* MR10 */        };
 /* MR10 */      } else {
-/* MR10 */      gen1("%s = zzaCur;", p->el_label);
+/* MR10 */      gen(output, true, "%s = zzaCur;", p->el_label);
 /* MR10 */      };
-/* MR10 */      if (FoundGuessBlk) _gen("  /* MR10 */");
-/* MR10 */      _gen("\n");
+/* MR10 */      if (FoundGuessBlk) gen(output, false, "  /* MR10 */");
+/* MR10 */      gen(output, false, "\n");
 /* MR10 */    };
 
     /* Do Attrib / Token ptr */
@@ -2166,19 +2168,19 @@ void genToken( TokNode *p )
 /* MR10 */      if ( FoundGuessBlk ) {
 /* MR10 */        if (! done_NON_GUESSMODE) {
 /* MR10 */          done_NON_GUESSMODE=1;
-/* MR10 */          if ( GenCC ) {gen("if ( !guessing ) {\n"); tab();}
-/* MR10 */          else {gen("zzNON_GUESS_MODE {\n"); tab();}
+/* MR10 */          if ( GenCC ) {gen(output, true, "if ( !guessing ) {\n"); tab();}
+/* MR10 */          else {gen(output, true, "zzNON_GUESS_MODE {\n"); tab();}
 /* MR10 */        };
 /* MR10 */      };
 /* MR10 */
 /* MR10 */      if ( GenCC ) {
 /* MR10 */        if ( set_el(p->elnum, tokensRefdInBlock) || GenAST ) {
-/* MR10 */          gen3("%s = _t%d%d;\n", p->el_label, BlkLevel-1, p->elnum);
+/* MR10 */          gen(output, true, "%s = _t%d%d;\n", p->el_label, BlkLevel-1, p->elnum);
 /* MR10 */        } else {
-/* MR10 */          gen1("%s = (ANTLRTokenPtr)LT(1);\n", p->el_label);
+/* MR10 */          gen(output, true, "%s = (ANTLRTokenPtr)LT(1);\n", p->el_label);
 /* MR10 */        };
 /* MR10 */      } else {
-/* MR10 */        gen1("%s = zzaCur;\n", p->el_label);
+/* MR10 */        gen(output, true, "%s = zzaCur;\n", p->el_label);
 /* MR10 */      };
 /* MR10 */  };
 
@@ -2190,19 +2192,19 @@ void genToken( TokNode *p )
 /* MR10 */      if ( FoundGuessBlk ) {
 /* MR10 */        if (! done_NON_GUESSMODE) {
 /* MR10 */          done_NON_GUESSMODE=1;
-/* MR10 */          if ( GenCC ) {gen("if ( !guessing ) {\n"); tab();}
-/* MR10 */          else {gen("zzNON_GUESS_MODE {\n"); tab();}
+/* MR10 */          if ( GenCC ) {gen(output, true, "if ( !guessing ) {\n"); tab();}
+/* MR10 */          else {gen(output, true, "zzNON_GUESS_MODE {\n"); tab();}
 /* MR10 */        };
 /* MR10 */      };
 
       if ( GenCC ) {
-        gen3("%s_ast = _ast%d%d;\n", p->el_label, BlkLevel-1, p->elnum);
+        gen(output, true, "%s_ast = _ast%d%d;\n", p->el_label, BlkLevel-1, p->elnum);
       }
-      else {gen1("%s_ast = zzastCur;\n", p->el_label);}
+      else {gen(output, true, "%s_ast = zzastCur;\n", p->el_label);}
     }
 
 /* MR10 */  if (done_NON_GUESSMODE) {
-/* MR10 */    gen("}\n"); tab();
+/* MR10 */    gen(output, true, "}\n"); tab();
 /* MR10 */  };
 
   }
@@ -2211,7 +2213,7 @@ void genToken( TokNode *p )
   if ( a != NULL )  /* MR10 */ /* MR11 */
     {
       /* delay next token fetch until after action */
-    _gen("\n");
+    gen(output, false, "\n");
     if ( a->is_predicate)
     {
 
@@ -2235,31 +2237,29 @@ void genToken( TokNode *p )
 /* MR23 */    }
 
       if ( FoundGuessBlk ) {
-          if ( GenCC ) {gen("if ( !guessing ) {\n");}
-          else gen("zzNON_GUESS_MODE {\n");
+          if ( GenCC ) {gen(output, true, "if ( !guessing ) {\n");}
+          else gen(output, true, "zzNON_GUESS_MODE {\n");
       }
         dumpActionPlus(a, a->action, output, tabs, a->file, a->line, 1); /* MR21 */
-          if ( FoundGuessBlk ) gen("}\n");
+          if ( FoundGuessBlk ) gen(output, true, "}\n");
       a->done = 1; /* MR30 */
     }
 /***    a->done = 1;  MR30 Moved up into then branch for true actions, but not predicates ***/
     if ( !DemandLookahead ) {
       if ( GenCC ) {
-        if ( FoundException && p->use_def_MT_handler ) gen("if (!_signal)");
-        _gen(" consume();")
-                if ( FoundException && p->use_def_MT_handler )
-                    _gen(" _signal=NoSignal;");
-                _gen("\n");
-      }
-            else
-            {
-                if ( FoundException && p->use_def_MT_handler ) _gen("if (!_signal)");
-          _gen(" zzCONSUME;\n");
-                if ( FoundException && p->use_def_MT_handler ) _gen(" _signal=NoSignal;");
-                _gen("\n");
-            }
+        if ( FoundException && p->use_def_MT_handler ) gen(output, true, "if (!_signal)");
+        gen(output, false, " consume();");
+        if ( FoundException && p->use_def_MT_handler )
+            gen(output, false, " _signal=NoSignal;");
+            gen(output, false, "\n");
+        } else {
+            if ( FoundException && p->use_def_MT_handler ) gen(output, false, "if (!_signal)");
+            gen(output, false, " zzCONSUME;\n");
+            if ( FoundException && p->use_def_MT_handler ) gen(output, false, " _signal=NoSignal;");
+            gen(output, false, "\n");
+        }
     }
-    else gen("\n");
+    else gen(output, true, "\n");
     if (a->done) {      /* MR30 */
       TRANS( a->next );   /* MR30 */
     }           /* MR30 */
@@ -2271,19 +2271,19 @@ void genToken( TokNode *p )
   {
         if ( !DemandLookahead ) {
       if ( GenCC ) {
-        if (FoundException && p->use_def_MT_handler) _gen("if (!_signal)");
-        _gen(" consume();")
-        if (FoundException&&p->use_def_MT_handler) _gen(" _signal=NoSignal;");
-        _gen("\n");
+        if (FoundException && p->use_def_MT_handler) gen(output, false, "if (!_signal)");
+        gen(output, false, " consume();");
+        if (FoundException&&p->use_def_MT_handler) gen(output, false, " _signal=NoSignal;");
+        gen(output, false, "\n");
       }
       else {
-        if (FoundException && p->use_def_MT_handler) _gen("if (!_signal)");
-        _gen(" zzCONSUME;");
-        if ( FoundException && p->use_def_MT_handler ) _gen(" _signal=NoSignal;");
-        _gen("\n");
+        if (FoundException && p->use_def_MT_handler) gen(output, false, "if (!_signal)");
+        gen(output, false, " zzCONSUME;");
+        if ( FoundException && p->use_def_MT_handler ) gen(output, false, " _signal=NoSignal;");
+        gen(output, false, "\n");
       }
     }
-    else _gen("\n");
+    else gen(output, false, "\n");
     TRANS(p->next);
   }
 }
@@ -2328,16 +2328,16 @@ void genOptBlk( Junction *q )
       if ( q->p2 != NULL ) {tab(); makeErrorClause(q,f,max_k,0 /* use plus block bypass ? */ );}
   }
   else {
-    gen("/* MR23 skip error clause for {...} when exceptions in use */\n");
+    gen(output, true, "/* MR23 skip error clause for {...} when exceptions in use */\n");
   }
-  { int i; for (i=1; i<=need_right_curly; i++) {tabs--; gen("}\n");} }
+  { int i; for (i=1; i<=need_right_curly; i++) {tabs--; gen(output, true, "}\n");} }
   freeBlkFsets(q);
   --BlkLevel;
   BLOCK_Tail();
 
   if ( q->guess )
   {
-    gen("zzGUESS_DONE\n");
+    gen(output, true, "zzGUESS_DONE\n");
   }
 
   /* must duplicate if (alpha)?; one guesses (validates), the
@@ -2349,7 +2349,7 @@ void genOptBlk( Junction *q )
     BlkLevel++;
     f = genBlk(q, aSubBlk, &max_k, &need_right_curly, &lastAltEmpty /* MR23 */);
     if ( q->p2 != NULL ) {tab(); makeErrorClause(q,f,max_k,0 /* use plus block bypass ? */ );}
-    { int i; for (i=1; i<=need_right_curly; i++) {tabs--; gen("}\n");} }
+    { int i; for (i=1; i<=need_right_curly; i++) {tabs--; gen(output, true, "}\n");} }
     freeBlkFsets(q);
     --BlkLevel;
     BLOCK_Tail();
@@ -2390,10 +2390,10 @@ void genLoopBlk( Junction *begin, Junction *q, Junction *start, int max_k )
   if (singleAlt && !guessBlock)     /* MR10 */ /* only one alternative? */
   {
     if ( DemandLookahead ) {
-      if ( !GenCC ) {gen1("LOOK(%d);\n", max_k);}
-      else gen1("look(%d);\n", max_k);
+      if ( !GenCC ) {gen(output, true, "LOOK(%d);\n", max_k);}
+      else gen(output, true, "look(%d);\n", max_k);
     }
-    gen("while ( ");
+    gen(output, true, "while ( ");
     if ( begin!=NULL ) genExpr(begin);
     else genExpr(q);
     /* if no predicates have been hoisted for this single alt (..)*
@@ -2407,29 +2407,29 @@ void genLoopBlk( Junction *begin, Junction *q, Junction *start, int max_k )
 
       if ( a!=NULL )
       {
-        _gen("&&");
+        gen(output, false, "&&");
         a=genPredTreeMain(a, (Node *)q);    /* MR10 */
       }
 /* MR10 */  if (MRhoisting) {
 /* MR10 */    predicate_free(a);
 /* MR10 */  };
     }
-    _gen(" ) {\n");
+    gen(output, false, " ) {\n");
     tabs++;
     TRANS(q->p1);
-    if ( !GenCC ) gen1("zzLOOP(zztasp%d);\n", BlkLevel-1);
+    if ( !GenCC ) gen(output, true, "zzLOOP(zztasp%d);\n", BlkLevel-1);
     if ( DemandLookahead ) {
-      if ( !GenCC ) {gen1("LOOK(%d);\n", max_k);}
-      else gen1("look(%d);\n", max_k);
+      if ( !GenCC ) {gen(output, true, "LOOK(%d);\n", max_k);}
+      else gen(output, true, "look(%d);\n", max_k);
     }
     --tabs;
-    gen("}\n");
+    gen(output, true, "}\n");
     freeBlkFsets(q);
     q->visited = FALSE;
     tokensRefdInBlock = savetkref;
     return;
   }
-  gen("for (;;) {\n");        /* MR20 G. Hobbelt */
+  gen(output, true, "for (;;) {\n");        /* MR20 G. Hobbelt */
   tabs++;
 /* MR6                                  */
 /* MR6     "begin" can never be null when called from genLoopBegin  */
@@ -2445,15 +2445,15 @@ void genLoopBlk( Junction *begin, Junction *q, Junction *start, int max_k )
   {
     if ( DemandLookahead )
     {
-      if ( !GenCC ) {gen1("LOOK(%d);\n", max_k);}
-      else gen1("look(%d);\n", max_k);
+      if ( !GenCC ) {gen(output, true, "LOOK(%d);\n", max_k);}
+      else gen(output, true, "look(%d);\n", max_k);
     }
     /* The bypass arc of the (...)* predicts what to do when you fail, but
      * ONLY after having tested the loop start expression.  To avoid this,
      * we simply break out of the (...)* loop when we find something that
      * is not in the prediction of the loop (all alts thereof).
      */
-    gen("if ( !(");
+    gen(output, true, "if ( !(");
 
 /***  TJP says: It used to use the prediction expression for the bypass arc
       of the (...)*.  HOWEVER, if a non LL^1(k) decision was found, this
@@ -2464,7 +2464,7 @@ void genLoopBlk( Junction *begin, Junction *q, Junction *start, int max_k )
  ***/
 
             genExpr((Junction *)begin);
-            _gen(")) break;\n");
+            gen(output, false, ")) break;\n");
 
   }
 
@@ -2490,21 +2490,21 @@ void genLoopBlk( Junction *begin, Junction *q, Junction *start, int max_k )
 /* MR6 */
 /* MR6 */ if ( begin==NULL) {
 /* MR6 */   /* code for exiting loop "for sure" */
-/* MR6 */   gen("/* Suppressed by MR6 */ /*** else break; ***/\n");
+/* MR6 */   gen(output, true, "/* Suppressed by MR6 */ /*** else break; ***/\n");
 /* MR6 */ };
 
 /* MR10 */if (singleAlt && guessBlock) {
 /* MR10 */  tabs--;
-/* MR6 */   gen("} else break; /* MR6 code for exiting loop \"for sure\" */\n");
+/* MR6 */   gen(output, true, "} else break; /* MR6 code for exiting loop \"for sure\" */\n");
 /* MR10 */  need_right_curly--;
 /* MR10 */ } else {
-/* MR6 */   gen("else break; /* MR6 code for exiting loop \"for sure\" */\n");
+/* MR6 */   gen(output, true, "else break; /* MR6 code for exiting loop \"for sure\" */\n");
 /* MR10 */ };
 
-  { int i; for (i=1; i<=need_right_curly; i++) {tabs--; gen("}\n");} }
-  if ( !GenCC ) gen1("zzLOOP(zztasp%d);\n", BlkLevel-1);
+  { int i; for (i=1; i<=need_right_curly; i++) {tabs--; gen(output, true, "}\n");} }
+  if ( !GenCC ) gen(output, true, "zzLOOP(zztasp%d);\n", BlkLevel-1);
   --tabs;
-  gen("}\n");
+  gen(output, true, "}\n");
   q->visited = FALSE;
   tokensRefdInBlock = savetkref;
 }
@@ -2570,12 +2570,12 @@ void genLoopBegin( Junction *q )
 /* MR21 */    f = ComputeErrorSet(q,1,0 /* use plus block bypass ? */ );
 /* MR21 */      fArray[0]= empty;
 /* MR21 */    fArray[1]= set_dup(f);
-/* MR21 */      gen("if (");
+/* MR21 */      gen(output, true, "if (");
 /* MR21 */      genExprSets(fArray,1);  /* note: destroys set arguments */
-/* MR21 */      _gen(") { /* MR21 option -mrblksynerr */\n");
+/* MR21 */      gen(output, false, ") { /* MR21 option -mrblksynerr */\n");
 /* MR21 */      tabs++;
 /* MR21 */      tab();
-/* MR21 */      _gen("/* nothing */ }\n");
+/* MR21 */      gen(output, false, "/* nothing */ }\n");
 /* MR21 */      tab();
 /* MR21 */      makeErrorClause(q,f,1,0 /* use plus block bypass ? */ );  /* frees set */
 /* MR21 */      tabs--;
@@ -2662,33 +2662,33 @@ void genPlusBlk( Junction *q )
             require(MR_PredRuleRefStack.count == 0,"PredRuleRef stack not empty");
 
       if ( a!=NULL ) {
-        gen("if (");
+        gen(output, true, "if (");
         a=genPredTreeMain(a, (Node *)q);    /* MR10 */
-        _gen(") {\n");
+        gen(output, false, ") {\n");
       }
     }
-    gen("do {\n");
+    gen(output, true, "do {\n");
     tabs++;
     TRANS(q->p1);
-    if ( !GenCC ) gen1("zzLOOP(zztasp%d);\n", BlkLevel-1);
+    if ( !GenCC ) gen(output, true, "zzLOOP(zztasp%d);\n", BlkLevel-1);
     f = First(q, 1, aPlusBlk, &max_k);
     if ( DemandLookahead ) {
-      if ( !GenCC ) {gen1("LOOK(%d);\n", max_k);}
-      else gen1("look(%d);\n", max_k);
+      if ( !GenCC ) {gen(output, true, "LOOK(%d);\n", max_k);}
+      else gen(output, true, "look(%d);\n", max_k);
     }
     --tabs;
-    gen("} while ( ");
-    if ( q->parm!=NULL && q->predparm ) _gen1("(%s) && ", q->parm);
+    gen(output, true, "} while ( ");
+    if ( q->parm!=NULL && q->predparm ) gen(output, false, "(%s) && ", q->parm);
     genExpr(q);
     if ( ParseWithPredicates && a!=NULL )
     {
             if (! MR_comparePredicates(q->predicate,a)) {
-          _gen("&&");
+          gen(output, false, "&&");
           a=genPredTreeMain(a, (Node *)q);    /* MR10 */
             };
     }
-    _gen(" );\n");
-    if ( ParseWithPredicates && a!=NULL ) gen("}\n");
+    gen(output, false, " );\n");
+    if ( ParseWithPredicates && a!=NULL ) gen(output, true, "}\n");
     --BlkLevel;
     BLOCK_Tail();
     q->visited = FALSE;
@@ -2700,12 +2700,12 @@ void genPlusBlk( Junction *q )
 /* MR21 */    f = ComputeErrorSet(q,1,1 /* use plus block bypass ? */ );
 /* MR21 */      fArray[0]= empty;
 /* MR21 */    fArray[1]= set_dup(f);
-/* MR21 */      gen("if (");
+/* MR21 */      gen(output, true, "if (");
 /* MR21 */      genExprSets(fArray,1);  /* note: destroys set arguments */
-/* MR21 */      _gen(") { /* MR21 option -mrblksynerr */\n");
+/* MR21 */      gen(output, false, ") { /* MR21 option -mrblksynerr */\n");
 /* MR21 */      tabs++;
 /* MR21 */      tab();
-/* MR21 */      _gen("/* nothing */ }\n");
+/* MR21 */      gen(output, false, "/* nothing */ }\n");
 /* MR21 */      tab();
 /* MR21 */      makeErrorClause(q,f,1,1 /* use plus block bypass ? */ );  /* frees set */
 /* MR21 */      tabs--;
@@ -2716,7 +2716,7 @@ void genPlusBlk( Junction *q )
 /* MR10 */  };
     return;
   }
-  gen("do {\n");
+  gen(output, true, "do {\n");
   tabs++;
   f = genBlk(q, aPlusBlk, &max_k, &need_right_curly, &lastAltEmpty /* MR23 */);
 /* MR6                                        */
@@ -2724,16 +2724,16 @@ void genPlusBlk( Junction *q )
 /* MR6    Failed to turn off guess mode when leaving block    */
 /* MR6                                            */
 /* MR6  */ if ( has_guess_block_as_last_item(q) ) {
-/* MR10 */   gen("/* MR10 ()+ */ else {\n");
+/* MR10 */   gen(output, true, "/* MR10 ()+ */ else {\n");
 /* MR10 */   tabs++;
 /* MR10 */   need_right_curly++;
-/* MR10 */   gen("/* MR10 ()+ */ if ( !zzrv ) zzGUESS_DONE;\n");
-/* MR6  */   gen("/* MR10 ()+ */ if ( zzcnt > 1 ) break;\n");
+/* MR10 */   gen(output, true, "/* MR10 ()+ */ if ( !zzrv ) zzGUESS_DONE;\n");
+/* MR6  */   gen(output, true, "/* MR10 ()+ */ if ( zzcnt > 1 ) break;\n");
 /* MR10 */ } else {
-/* MR10 */   gen("/* MR10 ()+ */ else {\n");
+/* MR10 */   gen(output, true, "/* MR10 ()+ */ else {\n");
 /* MR10 */   tabs++;
 /* MR10 */   need_right_curly++;
-/* MR10 */   gen("if ( zzcnt > 1 ) break;\n");
+/* MR10 */   gen(output, true, "if ( zzcnt > 1 ) break;\n");
 /* MR10 */ };
 
 /* MR21 */  if (MR_BlkErr && 1 >= max_k) {
@@ -2752,18 +2752,18 @@ void genPlusBlk( Junction *q )
                         /* MR21 but I'm afraid to change it without additional checking */
             }
 
-  { int i; for (i=1; i<=need_right_curly; i++) {tabs--; gen("}\n");} }
+  { int i; for (i=1; i<=need_right_curly; i++) {tabs--; gen(output, true, "}\n");} }
   freeBlkFsets(q);
-  gen("zzcnt++;");
-  if ( !GenCC ) _gen1(" zzLOOP(zztasp%d);", BlkLevel-1);
-  _gen("\n");
+  gen(output, true, "zzcnt++;");
+  if ( !GenCC ) gen(output, false, " zzLOOP(zztasp%d);", BlkLevel-1);
+  gen(output, false, "\n");
   if ( DemandLookahead ) {
-    if ( !GenCC ) {gen1("LOOK(%d);\n", max_k);}
-    else gen1("look(%d);\n", max_k);
+    if ( !GenCC ) {gen(output, true, "LOOK(%d);\n", max_k);}
+    else gen(output, true, "look(%d);\n", max_k);
   }
   --tabs;
-  if ( q->parm!=NULL && q->predparm ) {gen1("} while (%s);\n", q->parm);}
-  else gen("} while ( 1 );\n");
+  if ( q->parm!=NULL && q->predparm ) {gen(output, true, "} while (%s);\n", q->parm);}
+  else gen(output, true, "} while ( 1 );\n");
   --BlkLevel;
   BLOCK_Tail();
   q->visited = FALSE;
@@ -2773,12 +2773,12 @@ void genPlusBlk( Junction *q )
 /* MR21 */    f = ComputeErrorSet(q,1,1 /* use plus block bypass ? */ );
 /* MR21 */      fArray[0]= empty;
 /* MR21 */    fArray[1]= set_dup(f);
-/* MR21 */      gen("if (");
+/* MR21 */      gen(output, true, "if (");
 /* MR21 */      genExprSets(fArray,1);  /* note: destroys set arguments */
-/* MR21 */      _gen(") { /* MR21 option -mrblksynerr */\n");
+/* MR21 */      gen(output, false, ") { /* MR21 option -mrblksynerr */\n");
 /* MR21 */      tabs++;
 /* MR21 */      tab();
-/* MR21 */      _gen("/* nothing */ }\n");
+/* MR21 */      gen(output, false, "/* nothing */ }\n");
 /* MR21 */      tab();
 /* MR21 */      makeErrorClause(q,f,1,1 /* use plus block bypass ? */ );  /* frees set */
 /* MR21 */      tabs--;
@@ -2840,20 +2840,20 @@ void genSubBlk( Junction *q )
    See multi-line note in genBlk near call to isEmptyAlt.
 */
   if (FoundException && lastAltEmpty) {
-    gen("/* MR23 skip error clause for (...| epsilon) when exceptions in use */\n");
+    gen(output, true, "/* MR23 skip error clause for (...| epsilon) when exceptions in use */\n");
   }
   else {
     if ( q->p2 != NULL ) {tab(); makeErrorClause(q,f,max_k,0 /* use plus block bypass ? */ );}
   }
 
-  { int i; for (i=1; i<=need_right_curly; i++) {tabs--; gen("}\n");} }
+  { int i; for (i=1; i<=need_right_curly; i++) {tabs--; gen(output, true, "}\n");} }
   freeBlkFsets(q);
   --BlkLevel;
   BLOCK_Tail();
 
   if ( q->guess )
   {
-    gen("zzGUESS_DONE\n");
+    gen(output, true, "zzGUESS_DONE\n");
   }
 
   /* must duplicate if (alpha)?; one guesses (validates), the
@@ -2865,7 +2865,7 @@ void genSubBlk( Junction *q )
     BlkLevel++;
     f = genBlk(q, aSubBlk, &max_k, &need_right_curly, &lastAltEmpty /* MR23 */);
     if ( q->p2 != NULL ) {tab(); makeErrorClause(q,f,max_k,0 /* use plus block bypass ? */);}
-    { int i; for (i=1; i<=need_right_curly; i++) {tabs--; gen("}\n");} }
+    { int i; for (i=1; i<=need_right_curly; i++) {tabs--; gen(output, true, "}\n");} }
     freeBlkFsets(q);
     --BlkLevel;
     BLOCK_Tail();
@@ -2877,7 +2877,7 @@ void genSubBlk( Junction *q )
 
 static int TnodesAllocatedPrevRule=0;
 
-/*
+/**
  * Generate code for a rule.
  *
  *    rule--> o-->o-Alternatives-o-->o
@@ -2972,7 +2972,7 @@ do {    /* MR10     Change recursion into iteration         */
 
             /* Emit initialization code later. */
 
-      gen1("struct _rv%d _retv;\n",r->rulenum);
+      gen(output, true, "struct _rv%d _retv;\n",r->rulenum);
     }
     else
     {
@@ -2982,10 +2982,10 @@ do {    /* MR10     Change recursion into iteration         */
       DumpType(q->ret, output);
             returnValueInitializer = getInitializer(q->ret);
             if (returnValueInitializer == NULL) {                  /* MR23 */
-            gen(" _retv;\n");                             /* MR1 MR3 */
+            gen(output, true, " _retv;\n");                             /* MR1 MR3 */
             }                                                      /* MR23 */
             else {                                                 /* MR23 */
-                gen1(" _retv = %s;\n", returnValueInitializer);    /* MR23 */
+                gen(output, true, " _retv = %s;\n", returnValueInitializer);    /* MR23 */
             }                                                      /* MR23 */
     }
   }
@@ -2996,25 +2996,25 @@ do {    /* MR10     Change recursion into iteration         */
       fflush(output);
     };
 
-  gen("zzRULE;\n");
+  gen(output, true, "zzRULE;\n");
   if ( FoundException )
   {
-    gen("int _sva=1;\n");
+    gen(output, true, "int _sva=1;\n");
   }
   if ( GenCC && GenAST )
-    gen("ASTBase *_ast = NULL, *_sibling = NULL, *_tail = NULL;\n");
+    gen(output, true, "ASTBase *_ast = NULL, *_sibling = NULL, *_tail = NULL;\n");
   if ( GenCC ) genTokenPointers(q);
   if ( GenCC&&GenAST ) genASTPointers(q);
   if ( q->el_labels!=NULL ) genElementLabels(q->el_labels);
-  if ( FoundException ) gen("int _signal=NoSignal;\n");
+  if ( FoundException ) gen(output, true, "int _signal=NoSignal;\n");
 
-  if ( !GenCC ) gen1("zzBLOCK(zztasp%d);\n", BlkLevel);
+  if ( !GenCC ) gen(output, true, "zzBLOCK(zztasp%d);\n", BlkLevel);
 
 /* MR10 */  /* move zzTRACEIN to before init action */
 
 /* MR10 */  if ( TraceGen ) {
-/* MR10 */    if ( GenCC ) {gen1("zzTRACEIN(\"%s\");\n", q->rname);}
-/* MR10 */    else gen1("zzTRACEIN((ANTLRChar *)\"%s\");\n", q->rname);
+/* MR10 */    if ( GenCC ) {gen(output, true, "zzTRACEIN(\"%s\");\n", q->rname);}
+/* MR10 */    else gen(output, true, "zzTRACEIN((ANTLRChar *)\"%s\");\n", q->rname);
 /* MR10 */  }
 
 /* MR7      Moved PURIFY() to after all local variables have been declared */
@@ -3031,7 +3031,7 @@ do {    /* MR10     Change recursion into iteration         */
   {                                                                /* MR7 */
     if (hasMultipleOperands(q->ret)) {                           /* MR23 */
       if (PURIFY == TRUE) {
-                gen1("PCCTS_PURIFY(_retv,sizeof(struct _rv%d))\n",r->rulenum); /* MR23 */
+                gen(output, true, "PCCTS_PURIFY(_retv,sizeof(struct _rv%d))\n",r->rulenum); /* MR23 */
             }
         }                                                            /* MR7 */
     else {                                                       /* MR7 */
@@ -3045,9 +3045,9 @@ do {    /* MR10     Change recursion into iteration         */
       returnValueInitializer = getInitializer(q->ret);         /* MR23 */
       if (returnValueInitializer == NULL) {                    /* MR23 */
           if (PURIFY == TRUE) {
-              gen("PCCTS_PURIFY(_retv,sizeof(");               /* MR23 */
+              gen(output, true, "PCCTS_PURIFY(_retv,sizeof(");               /* MR23 */
             DumpType(q->ret, output);                        /* MR7 */
-          gen("))\n");                                     /* MR7 */
+          gen(output, true, "))\n");                                     /* MR7 */
         }
       }                                                        /* MR23 */
     }                                                            /* MR7 */
@@ -3057,14 +3057,14 @@ do {    /* MR10     Change recursion into iteration         */
         }
 
   }
-  if ( !GenCC ) gen("zzMake0;\n");
-  if ( FoundException ) gen("*_retsignal = NoSignal;\n");
+  if ( !GenCC ) gen(output, true, "zzMake0;\n");
+  if ( FoundException ) gen(output, true, "*_retsignal = NoSignal;\n");
 
-  if ( !GenCC ) gen("{\n");
+  if ( !GenCC ) gen(output, true, "{\n");
 
   if ( has_guess_block_as_first_item((Junction *)q->p1) )
   {
-    gen("zzGUESS_BLOCK\n");
+    gen(output, true, "zzGUESS_BLOCK\n");
   }
 
   /* L o o k  F o r  I n i t  A c t i o n */
@@ -3085,15 +3085,16 @@ do {    /* MR10     Change recursion into iteration         */
   if ( q->p1 != NULL )
     if ( ((Junction *)q->p1)->p2 != NULL )
       {tab(); makeErrorClause((Junction *)q->p1,f,max_k,0 /* use plus block bypass ? */);}
-  { int i; for (i=1; i<=need_right_curly; i++) {tabs--; gen("}\n");} }
+  { int i; for (i=1; i<=need_right_curly; i++) {tabs--; gen(output, true, "}\n");} }
   freeBlkFsets((Junction *)q->p1);
   q->visited = FALSE;
   --BlkLevel;
-  if ( !GenCC ) gen1("zzEXIT(zztasp%d);\n", BlkLevel);
+  if ( !GenCC ) gen(output, true, "zzEXIT(zztasp%d);\n", BlkLevel);
 
     genTraceOut(q);
 
-  if ( q->ret!=NULL ) gen("return _retv;\n") else gen("return;\n");
+  if ( q->ret!=NULL ) gen(output, true, "return _retv;\n");
+   else gen(output, true, "return;\n");
   /* E r r o r  R e c o v e r y */
   NewSet();
   rk = empty;
@@ -3126,39 +3127,39 @@ do {    /* MR10     Change recursion into iteration         */
 
   if ( !FoundException || FoundGuessBlk )  /* MR20 G. Hobbelt */
   {                                          /* MR20 G. Hobbelt */
-  _gen("fail:\n");
-  if ( !GenCC ) gen("zzEXIT(zztasp1);\n");
+  gen(output, false, "fail:\n");
+  if ( !GenCC ) gen(output, true, "zzEXIT(zztasp1);\n");
   if ( FoundGuessBlk ) {
-      if ( !GenCC ) {gen("if ( zzguessing ) zzGUESS_FAIL;\n");}
-    else gen("if ( guessing ) zzGUESS_FAIL;\n");
+      if ( !GenCC ) {gen(output, true, "if ( zzguessing ) zzGUESS_FAIL;\n");}
+    else gen(output, true, "if ( guessing ) zzGUESS_FAIL;\n");
   }
   if ( q->erraction!=NULL )
     dumpAction(q->erraction, output, tabs, q->file, q->line, 1);
   if ( GenCC )
   {
-    gen1("syn(zzBadTok, %s, zzMissSet, zzMissTok, zzErrk);\n",
+    gen(output, true, "syn(zzBadTok, %s, zzMissSet, zzMissTok, zzErrk);\n",
        r->egroup==NULL?"(ANTLRChar *)\"\"":r->egroup);
   }
   else
   {
-    gen1("zzsyn(zzMissText, zzBadTok, %s, zzMissSet, zzMissTok, zzErrk, zzBadText);\n",
+    gen(output, true, "zzsyn(zzMissText, zzBadTok, %s, zzMissSet, zzMissTok, zzErrk, zzBadText);\n",
        r->egroup==NULL?"(ANTLRChar *)\"\"":r->egroup);
   }
-  gen3("%sresynch(setwd%d, 0x%x);\n", GenCC?"":"zz", wordnum, 1<<setnum);
+  gen(output, true, "%sresynch(setwd%d, 0x%x);\n", GenCC?"":"zz", wordnum, 1<<setnum);
 
   if ( q->ret!=NULL ) {
       genTraceOut(q);
-      gen("return _retv;\n");
+      gen(output, true, "return _retv;\n");
     } else if ( q->exceptions!=NULL ) {
       genTraceOut(q);
-      gen("return;\n");
+      gen(output, true, "return;\n");
     } else if (!FoundException) {       /* MR10 */
       genTraceOut(q);                   /* MR10 */
     };
 
   }                                        /* MR20 G. Hobbelt */
 
-  if ( !GenCC ) gen("}\n");
+  if ( !GenCC ) gen(output, true, "}\n");
 
   /* Gen code for exception handlers */
     /* make sure each path out contains genTraceOut() */
@@ -3166,30 +3167,30 @@ do {    /* MR10     Change recursion into iteration         */
   if ( q->exceptions!=NULL )
   {
 
-    gen("/* exception handlers */\n");
+    gen(output, true, "/* exception handlers */\n");
 
     dumpExceptions(q->exceptions);
 
         if ( !r->has_rule_exception )
         {
-            _gen("_handler:\n");
-            gen("zzdflthandlers(_signal,_retsignal);\n");
+            gen(output, false, "_handler:\n");
+            gen(output, true, "zzdflthandlers(_signal,_retsignal);\n");
         }
 /*  MR20 G. Gobbelt   The label "adios" is never referenced */
 
     if ( q->ret!=NULL ) {
             genTraceOut(q);
-            gen("return _retv;\n");
+            gen(output, true, "return _retv;\n");
         }
     else {
             genTraceOut(q);
-            gen("return;\n");
+            gen(output, true, "return;\n");
         }
   }
   else if ( FoundException )
   {
-      _gen("_handler:\n");
-      gen("zzdflthandlers(_signal,_retsignal);\n");
+      gen(output, false, "_handler:\n");
+      gen(output, true, "zzdflthandlers(_signal,_retsignal);\n");
 
 /* MR1                                                                      */
 /* MR1   7-Apr-97 Fix suggested by: John Bair (jbair@iftime.com)            */
@@ -3197,15 +3198,15 @@ do {    /* MR10     Change recursion into iteration         */
 
       if ( q->ret != NULL) {                                   /* MR1 */
             genTraceOut(q);                                          /* MR10 */
-            gen("return _retv;\n");                              /* MR1 */
+            gen(output, true, "return _retv;\n");                              /* MR1 */
       } else {                                               /* MR1 */
             genTraceOut(q);                                          /* MR10 */
-            gen("return;\n")    ;                            /* MR1 */
+            gen(output, true, "return;\n")    ;                            /* MR1 */
       };                                                 /* MR1 */
   }
 
   tabs--;
-  gen("}\n");
+  gen(output, true, "}\n");
 
 /* MR10     Tired of looking at stacks that are as deep as the number of    */
 /* MR10       rules.  Changes recursion to iteration.                       */
@@ -3232,8 +3233,6 @@ do {    /* MR10     Change recursion into iteration         */
 }
 
 
-/* This is for the function definition, not the declaration. */
-
 static void DumpFuncHeader( Junction *q, RuleEntry *r )
 {
 /*                                                            */
@@ -3243,27 +3242,27 @@ static void DumpFuncHeader( Junction *q, RuleEntry *r )
 
 
   /* A N S I */
-  _gen("\n");
+  gen(output, false, "\n");
   if ( q->ret!=NULL )
   {
     if ( hasMultipleOperands(q->ret) )                            /* MR23 */
     {
-      if (GenCC) gen2("%s::_rv%d\n", CurrentClassName, r->rulenum)
-      else gen1("struct _rv%d\n",r->rulenum);
+      if (GenCC) gen(output, true, "%s::_rv%d\n", CurrentClassName, r->rulenum);
+      else gen(output, true, "struct _rv%d\n",r->rulenum);
     }
     else
     {
       DumpType(q->ret, output);
-      gen("\n");
+      gen(output, true, "\n");
     }
   }
   else
   {
-    _gen("void\n");
+    gen(output, false, "void\n");
   }
 
-  if ( !GenCC ) gen2("%s%s(", RulePrefix, q->rname)
-  else gen3("%s::%s%s(", CurrentClassName, RulePrefix,q->rname);
+  if ( !GenCC ) gen(output, true, "%s%s(", RulePrefix, q->rname);
+  else gen(output, true, "%s::%s%s(", CurrentClassName, RulePrefix,q->rname);
 
       /* If we generate C++ method names, we must hide default arguments */
         /* which can appear in the parameter declaration list.             */
@@ -3273,8 +3272,8 @@ static void DumpFuncHeader( Junction *q, RuleEntry *r )
         /*         C++ standard for default paramters.                     */
 
   DumpANSIFunctionArgDef(output,q, 0 /* emit initializers ? */);
-  _gen("\n");
-  gen("{\n");
+  gen(output, false, "\n");
+  gen(output, true, "{\n");
 }
 
 void DumpANSIFunctionArgDef(FILE *f, Junction *q, int bInitializer)
@@ -3325,30 +3324,30 @@ void genHdr( int file )
 {
     int     i;
 
-  _gen("/*\n");
-  _gen(" * A n t l r  T r a n s l a t i o n  H e a d e r\n");
-  _gen(" *\n");
-  _gen(" * Terence Parr, Will Cohen, and Hank Dietz: 1989-2001\n");
-  _gen(" * Purdue University Electrical Engineering\n");
-  _gen(" * With AHPCRC, University of Minnesota\n");
-  _gen1(" * ANTLR Version %s\n", Version);
-  _gen(" *\n");
-/* MR10 */    _gen(" *  ");
+  gen(output, false, "/*\n");
+  gen(output, false, " * A n t l r  T r a n s l a t i o n  H e a d e r\n");
+  gen(output, false, " *\n");
+  gen(output, false, " * Terence Parr, Will Cohen, and Hank Dietz: 1989-2001\n");
+  gen(output, false, " * Purdue University Electrical Engineering\n");
+  gen(output, false, " * With AHPCRC, University of Minnesota\n");
+  gen(output, false, " * ANTLR Version %s\n", Version);
+  gen(output, false, " *\n");
+/* MR10 */    gen(output, false, " *  ");
 /* MR10 */    for (i=0 ; i < Save_argc ; i++) {
-/* MR10 */      _gen(" ");
-/* MR10 */      _gen1("%s", Save_argv[i]);
+/* MR10 */      gen(output, false, " ");
+/* MR10 */      gen(output, false, "%s", Save_argv[i]);
 /* MR10 */    };
-  _gen("\n");
-  _gen(" *\n");
-    _gen(" */\n\n");
+  gen(output, false, "\n");
+  gen(output, false, " *\n");
+    gen(output, false, " */\n\n");
   if (FirstAction != NULL ) dumpAction( FirstAction, output, 0, -1, 0, 1);    /* MR11 MR15b */
-  _gen1("#define ANTLR_VERSION  %s\n", VersionDef);
-  _gen("#include \"pcctscfg.h\"\n");
-  _gen("#include \"pccts_stdio.h\"\n");
+  gen(output, false, "#define ANTLR_VERSION  %s\n", VersionDef);
+  gen(output, false, "#include \"pcctscfg.h\"\n");
+  gen(output, false, "#include \"pccts_stdio.h\"\n");
   if ( strcmp(ParserName, DefaultParserName)!=0 )
-    _gen2("#define %s %s\n", DefaultParserName, ParserName);
+    gen(output, false, "#define %s %s\n", DefaultParserName, ParserName);
     if ( strcmp(ParserName, DefaultParserName)!=0 )
-    {_gen1("#include \"%s\"\n", RemapFileName);}
+    {gen(output, false, "#include \"%s\"\n", RemapFileName);}
     OutLineInfo(output,1,FileStr[file]);
   if ( GenCC ) {
     if ( UserTokenDefsFile != NULL )
@@ -3360,54 +3359,54 @@ void genHdr( int file )
   if ( HdrAction != NULL ) dumpAction( HdrAction, output, 0, -1, 0, 1);
   if ( !GenCC && FoundGuessBlk )
   {
-    _gen("#define ZZCAN_GUESS\n");
-    _gen("#include \"pccts_setjmp.h\"\n");  /* MR15 K.J. Cummings (cummings@peritus.com) */
+    gen(output, false, "#define ZZCAN_GUESS\n");
+    gen(output, false, "#include \"pccts_setjmp.h\"\n");  /* MR15 K.J. Cummings (cummings@peritus.com) */
   }
   if ( FoundException )
   {
-    _gen("#define EXCEPTION_HANDLING\n");
-    _gen1("#define NUM_SIGNALS %d\n", NumSignals);
+    gen(output, false, "#define EXCEPTION_HANDLING\n");
+    gen(output, false, "#define NUM_SIGNALS %d\n", NumSignals);
   }
-  if ( !GenCC && OutputLL_k > 1 ) _gen1("#define LL_K %d\n", OutputLL_k);
-  if ( GenAST&&!GenCC ) _gen("#define GENAST\n\n");
+  if ( !GenCC && OutputLL_k > 1 ) gen(output, false, "#define LL_K %d\n", OutputLL_k);
+  if ( GenAST&&!GenCC ) gen(output, false, "#define GENAST\n\n");
   if ( GenAST ) {
-    if ( GenCC ) {_gen1("#include \"%s\"\n\n", ASTBASE_H);}
-    else _gen("#include \"ast.h\"\n\n");
+    if ( GenCC ) {gen(output, false, "#include \"%s\"\n\n", ASTBASE_H);}
+    else gen(output, false, "#include \"ast.h\"\n\n");
   }
-  if ( !GenCC && DemandLookahead ) _gen("#define DEMAND_LOOK\n\n");
+  if ( !GenCC && DemandLookahead ) gen(output, false, "#define DEMAND_LOOK\n\n");
   /* ###WARNING: This will have to change when SetWordSize changes */
-  if ( !GenCC ) _gen1("#define zzSET_SIZE %lu\n", NumWords(TokenNum-1)*sizeof(unsigned));
+  if ( !GenCC ) gen(output, false, "#define zzSET_SIZE %lu\n", NumWords(TokenNum-1)*sizeof(unsigned));
     if (TraceGen) {
-      _gen("#ifndef zzTRACE_RULES\n");  /* MR20 */
-      _gen("#define zzTRACE_RULES\n");  /* MR20 */
-      _gen("#endif\n");                 /* MR22 */
+      gen(output, false, "#ifndef zzTRACE_RULES\n");  /* MR20 */
+      gen(output, false, "#define zzTRACE_RULES\n");  /* MR20 */
+      gen(output, false, "#endif\n");                 /* MR22 */
     };
-  if ( !GenCC ) {_gen("#include \"antlr.h\"\n");}
+  if ( !GenCC ) {gen(output, false, "#include \"antlr.h\"\n");}
   else {
-    _gen1("#include \"%s\"\n", APARSER_H);
-    _gen1("#include \"%s.h\"\n", CurrentClassName);
+    gen(output, false, "#include \"%s\"\n", APARSER_H);
+    gen(output, false, "#include \"%s.h\"\n", CurrentClassName);
   }
   if ( !GenCC ) {
     if ( UserDefdTokens )
-      {_gen1("#include %s\n", UserTokenDefsFile);}
+      {gen(output, false, "#include %s\n", UserTokenDefsFile);}
     /* still need this one as it has the func prototypes */
-    _gen1("#include \"%s\"\n", DefFileName);
+    gen(output, false, "#include \"%s\"\n", DefFileName);
   }
   /* still need this one as it defines the DLG interface */
-  if ( !GenCC ) _gen("#include \"dlgdef.h\"\n");
-  if ( LexGen && GenCC ) _gen1("#include \"%s\"\n", DLEXERBASE_H);
-  if ( GenCC ) _gen1("#include \"%s\"\n", ATOKPTR_H);
-  if ( !GenCC && LexGen ) _gen1("#include \"%s\"\n", ModeFileName);
+  if ( !GenCC ) gen(output, false, "#include \"dlgdef.h\"\n");
+  if ( LexGen && GenCC ) gen(output, false, "#include \"%s\"\n", DLEXERBASE_H);
+  if ( GenCC ) gen(output, false, "#include \"%s\"\n", ATOKPTR_H);
+  if ( !GenCC && LexGen ) gen(output, false, "#include \"%s\"\n", ModeFileName);
 
 /* MR10  Ofer Ben-Ami (gremlin@cs.huji.ac.il)           */
 /* MR10    Finally, a definition of the Purify macro    */
 
     if (PURIFY == TRUE) {                                                   /* MR23 */
-        _gen("\n/* MR23 In order to remove calls to PURIFY use the antlr"); /* MR23 */
-        _gen(" -nopurify option */\n\n");                                   /* MR23 */
-      _gen("#ifndef PCCTS_PURIFY\n");
-        _gen("#define PCCTS_PURIFY(r,s) memset((char *) &(r),'\\0',(s));\n");
-        _gen("#endif\n\n");
+        gen(output, false, "\n/* MR23 In order to remove calls to PURIFY use the antlr"); /* MR23 */
+        gen(output, false, " -nopurify option */\n\n");                                   /* MR23 */
+        gen(output, false, "#ifndef PCCTS_PURIFY\n");
+        gen(output, false, "#define PCCTS_PURIFY(r,s) memset((char *) &(r),'\\0',(s));\n");
+        gen(output, false, "#endif\n\n");
     }                                                                       /* MR23 */
 }
 
@@ -3419,11 +3418,11 @@ void genHdr1( int file )
   if ( GenAST )
   {
     if ( !GenCC ) {
-      _gen("#include \"ast.c\"\n");
-      _gen("zzASTgvars\n\n");
+      gen(output, false, "#include \"ast.c\"\n");
+      gen(output, false, "zzASTgvars\n\n");
     }
   }
-  if ( !GenCC ) _gen("ANTLR_INFO\n");
+  if ( !GenCC ) gen(output, false, "ANTLR_INFO\n");
   if ( BeforeActions != NULL )
   {
     for (p = BeforeActions->next; p!=NULL; p=p->next)
@@ -3437,15 +3436,15 @@ void genHdr1( int file )
 
   if ( GenCC )
   {
-    _gen1("\nvoid %s::\n", CurrentClassName);
-    _gen("zzdflthandlers( int _signal, int *_retsignal )\n");
-    _gen("{\n");
+    gen(output, false, "\nvoid %s::\n", CurrentClassName);
+    gen(output, false, "zzdflthandlers( int _signal, int *_retsignal )\n");
+    gen(output, false, "{\n");
   }
   else
   {
-    _gen("\nvoid\n");
-    _gen("zzdflthandlers( int _signal, int *_retsignal )\n");
-    _gen("{\n");
+    gen(output, false, "\nvoid\n");
+    gen(output, false, "zzdflthandlers( int _signal, int *_retsignal )\n");
+    gen(output, false, "{\n");
   }
   tabs++;
   if ( DefaultExGroup!=NULL )
@@ -3453,19 +3452,19 @@ void genHdr1( int file )
     dumpException(DefaultExGroup, 1);
     if ( !hasDefaultException(DefaultExGroup) )
     {
-      gen("default :\n");
+      gen(output, true, "default :\n");
       tabs++;
-      gen("*_retsignal = _signal;\n");
+      gen(output, true, "*_retsignal = _signal;\n");
       tabs--;
-      gen("}\n");
+      gen(output, true, "}\n");
     }
   }
   else {
-    gen("*_retsignal = _signal;\n");
+    gen(output, true, "*_retsignal = _signal;\n");
   }
 
   tabs--;
-  _gen("}\n\n");
+  gen(output, false, "}\n\n");
 }
 
 void genStdPCCTSIncludeFile( FILE *f,char *gate )    /* MR10 */
@@ -3584,29 +3583,32 @@ void genStdPCCTSIncludeFile( FILE *f,char *gate )    /* MR10 */
   fprintf(f,"#endif\n");
 }
 
-/* dump action 's' to file 'output' starting at "local" tab 'tabs'
-   Dump line information in front of action if GenLineInfo is set
-   If file == -1 then GenLineInfo is ignored.
-   The user may redefine the LineInfoFormatStr to his/her liking
-   most compilers will like the default, however.
-
-   June '93; changed so that empty lines are left alone so that
-   line information is correct for the compiler/debuggers.
-*/
+/**
+ * dump action 's' to file 'output' starting at "local" tab 'tabs'
+ * Dump line information in front of action if GenLineInfo is set
+ * If file == -1 then GenLineInfo is ignored.
+ * The user may redefine the LineInfoFormatStr to his/her liking
+ * most compilers will like the default, however.
+ *
+ * June '93; changed so that empty lines are left alone so that
+ * line information is correct for the compiler/debuggers.
+ */
 void dumpAction( char *s, FILE *output, int tabs, int file, int line,
 int final_newline )
 {
     int inDQuote, inSQuote;
-    require(s!=NULL,    "dumpAction: NULL action");
+    require(s!=NULL, "dumpAction: NULL action");
     require(output!=NULL, eMsg1("dumpAction: output FILE is NULL for %s",s));
 
-  if ( GenLineInfo && file != -1 )
-  {
+    if ( GenLineInfo && file != -1 )
+    {
         OutLineInfo(output,line,FileStr[file]);
-  }
+    }
     PastWhiteSpace( s );
-  /* don't print a tab if first non-white char is a # (preprocessor command) */
-  if ( *s!='#' ) {TAB;}
+    /* don't print a tab if first non-white char is a # (preprocessor command) */
+    if ( *s!='#' ) {
+        TAB;
+    }
     inDQuote = inSQuote = FALSE;
     while ( *s != '\0' )
     {
@@ -3628,20 +3630,20 @@ int final_newline )
         if ( *s == '\n' )
         {
             fputc('\n', output);
-      s++;
+            s++;
             PastWhiteSpace( s );
             if ( *s == '}' )
             {
                 --tabs;
-        TAB;
+                TAB;
                 fputc( *s++, output );
                 continue;
             }
             if ( *s == '\0' ) return;
-      if ( *s != '#' )  /* #define, #endif etc.. start at col 1 */
+            if ( *s != '#' )  /* #define, #endif etc.. start at col 1 */
             {
-        TAB;
-      }
+                TAB;
+            }
         }
         if ( *s == '}' && !(inSQuote || inDQuote) )
         {
@@ -3774,21 +3776,21 @@ static void makeErrorClause( Junction *q, set f, int max_k, int usePlusBlockBypa
 
   if ( FoundException )
   {
-    _gen("else {\n");
+    gen(output, false, "else {\n");
     tabs++;
     if ( FoundGuessBlk )
     {
-      if ( GenCC ) {gen("if ( guessing ) goto fail;\n");}
-      else gen("if ( zzguessing ) goto fail;\n");
+      if ( GenCC ) {gen(output, true, "if ( guessing ) goto fail;\n");}
+      else gen(output, true, "if ( zzguessing ) goto fail;\n");
     }
-    gen("if (_sva) _signal=NoViableAlt;\n");
-    gen("else _signal=NoSemViableAlt;\n");
+    gen(output, true, "if (_sva) _signal=NoViableAlt;\n");
+    gen(output, true, "else _signal=NoSemViableAlt;\n");
         if (q->outerEG != NULL) {
           handler_id=q->outerEG->altID;
         };
-    gen1("goto %s_handler;  /* MR7 */\n",handler_id);    /* MR7 */
+    gen(output, true, "goto %s_handler;  /* MR7 */\n",handler_id);    /* MR7 */
     tabs--;
-    gen("}\n");
+    gen(output, true, "}\n");
     return;
   }
 
@@ -3796,9 +3798,9 @@ static void makeErrorClause( Junction *q, set f, int max_k, int usePlusBlockBypa
   {
 /* MR13 */  nilf=set_nil(f);
           if ( GenCC ) {
-              _gen1("else {FAIL(1,err%d", DefErrSet1(1,&f,1,NULL));
+              gen(output, false, "else {FAIL(1,err%d", DefErrSet1(1,&f,1,NULL));
             } else {
-               _gen1("else {zzFAIL(1,zzerr%d", DefErrSet1(1,&f,1,NULL));
+               gen(output, false, "else {zzFAIL(1,zzerr%d", DefErrSet1(1,&f,1,NULL));
             };
         set_free(f);
   }
@@ -3806,8 +3808,8 @@ static void makeErrorClause( Junction *q, set f, int max_k, int usePlusBlockBypa
   {
     int i;
     set_free(f);
-    if ( GenCC ) {_gen1("else {FAIL(%d", max_k);}
-    else _gen1("else {zzFAIL(%d", max_k);
+    if ( GenCC ) {gen(output, false, "else {FAIL(%d", max_k);}
+    else gen(output, false, "else {zzFAIL(%d", max_k);
 
     ruleEntry = (RuleEntry *) hash_get(Rname,q->rname);
 
@@ -3819,17 +3821,17 @@ static void makeErrorClause( Junction *q, set f, int max_k, int usePlusBlockBypa
               f = ComputeErrorSet(q, i, usePlusBlockBypass /* use plus block bypass ? */ );
             }
 
-      if ( GenCC ) {_gen1(",err%d", DefErrSet( &f, 1, NULL ));}
-      else _gen1(",zzerr%d", DefErrSet( &f, 1, NULL ));
+      if ( GenCC ) {gen(output, false, ",err%d", DefErrSet( &f, 1, NULL ));}
+      else gen(output, false, ",zzerr%d", DefErrSet( &f, 1, NULL ));
 
       set_free(f);
     }
   }
-  _gen(",&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}\n");
+  gen(output, false, ",&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}\n");
 /* MR13 */  if (nilf) {
 /* MR13 */    errFL("empty error set for alt - probably because of undefined rule or infinite left recursion",
 /* MR13 */                 FileStr[q->file],q->line);
-/* MR13 */    gen(" /* MR13 empty error set for this alt - undef rule ? infinite left recursion ? */");
+/* MR13 */    gen(output, true, " /* MR13 empty error set for this alt - undef rule ? infinite left recursion ? */");
 /* MR13 */  };
 }
 
@@ -3890,10 +3892,10 @@ static void OutLineInfo(FILE *file,int line,char *fileName)
 
 void BlockPreambleOption(Junction *q, char * pSymbol)
 {
-  set f = empty;
+    set f = empty;
     if (pSymbol != NULL) {
         f = ComputeErrorSet(q, 1, 0 /* use plus block bypass ? */);
-      gen1("/** #FirstSetSymbol(%s) **/\n",pSymbol);
+        gen(output, true, "/** #FirstSetSymbol(%s) **/\n",pSymbol);
         DefErrSetWithSuffix (0 /* nil ok */, &f,0 /* no substitute */, pSymbol, "");
     }
     set_free(f);
@@ -3910,28 +3912,28 @@ int final_newline )
 
 void DumpInitializers(FILE* output, RuleEntry *r, char * pReturn)
 {
-  char *p = pReturn;
-  char *pDataType;
-  char *pSymbol;
-  char *pEqualSign;
-  char *pValue;
-  char *pSeparator;
-  int nest = 0;
-  char *q;
+    char *p = pReturn;
+    char *pDataType;
+    char *pSymbol;
+    char *pEqualSign;
+    char *pValue;
+    char *pSeparator;
+    int nest = 0;
+    char *q;
 
-  require(pReturn!=NULL, "DumpInitializer: invalid string");
+    require(pReturn!=NULL, "DumpInitializer: invalid string");
 
     while (*p != 0) {
-      p = endFormal(p,
+        p = endFormal(p,
                 &pDataType,
-              &pSymbol,
-              &pEqualSign,
-              &pValue,
-              &pSeparator,
-              &nest);
+                &pSymbol,
+                &pEqualSign,
+                &pValue,
+                &pSeparator,
+                &nest);
         if (nest != 0) return;
         if (pValue != NULL) {
-      tab();
+            tab();
             q = strBetween(pSymbol, pEqualSign, pSeparator);
             fprintf(output, "_retv.%s", q);
             q = strBetween(pValue, NULL, pSeparator);
@@ -3942,26 +3944,26 @@ void DumpInitializers(FILE* output, RuleEntry *r, char * pReturn)
 
 void DumpFormals(FILE* output, char * pReturn, int bInitializer)
 {
-  char *p = pReturn;
-  char *pDataType;
-  char *pSymbol;
-  char *pEqualSign;
-  char *pValue;
-  char *pSeparator;
-  int nest = 0;
+    char *p = pReturn;
+    char *pDataType;
+    char *pSymbol;
+    char *pEqualSign;
+    char *pValue;
+    char *pSeparator;
+    int nest = 0;
     char *q;
     int count = 0;
 
-  require(pReturn!=NULL, "DumpFormals: invalid string");
+    require(pReturn!=NULL, "DumpFormals: invalid string");
 
     while (*p != 0) {
-      p = endFormal(p,
+        p = endFormal(p,
                 &pDataType,
-              &pSymbol,
-              &pEqualSign,
-              &pValue,
-              &pSeparator,
-              &nest);
+                &pSymbol,
+                &pEqualSign,
+                &pValue,
+                &pSeparator,
+                &nest);
         if (nest != 0) return;
         if (count > 0) fprintf(output,",");
         if (pDataType != NULL && pSymbol != NULL) {
@@ -4032,8 +4034,8 @@ JUNCTION:
 
       case aSubBlk:
         {
-          n = j->p1;  /* MR26 */
-          goto NEXT;  /* MR26 */
+          n = j->p1;
+          goto NEXT;
         }
 
       case EndBlk:
