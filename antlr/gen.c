@@ -77,20 +77,28 @@ void (*C_JTrans[NumJuncTypes+1])() = {
 
 #define PastWhiteSpace(s) while (*(s) == ' ' || *(s) == '\t') {s++;}
 
+/** indentation detph */
 static int tabs = 0;
 
-/* MR6  Got tired of text running off page when using standard tab stops */
+/**
+ * Use this function instead of tab() when 'tabs' or 'output' are locally
+ * defined.
+ */
+static void indent(int tabs, FILE *output) {
+    int i;
+    if (TabWidth==0) {
+        for (i=0; i<tabs; i++) fputc('\t', output);
+    } else {
+        for (i=0; i<tabs*TabWidth; i++) fputc(' ', output);
+    };
+}
 
-#define TAB { int i;                              \
-        if (TabWidth==0) {                          \
-           for (i=0; i<tabs; i++) fputc('\t', output);                    \
-        } else {                        \
-     for (i=0; i<tabs*TabWidth; i++) fputc(' ',output);               \
-        };                              \
-      }
-
-static void tab( )
-TAB
+/**
+ * 'output' is declared in "proto.h".
+ */
+static void tab(void) {
+    indent(tabs, output);
+}
 
 static char *tokenFollowSet(TokNode *);
 static ActionNode *findImmedAction( Node * );
@@ -278,13 +286,12 @@ static void dumpException(ExceptionGroup *eg, int no_default_case)
   tabs--;
   gen(output, true, "}\n");
 
-    if (namedHandler) {                                             /* MR7 */
-      gen(output, true, "if (_signal != NoSignal)");                              /* MR7 */
-      gen(output, false, " goto %s_handler;\n",outerLabel);           /* MR7 */
-    } else if (altHandler) {                                        /* MR7 */
-      gen(output, true, "goto %s_handler;\n",outerLabel);             /* MR7 */
-    };
-
+  if (namedHandler) {                                             /* MR7 */
+    gen(output, true, "if (_signal != NoSignal)");                              /* MR7 */
+    gen(output, false, " goto %s_handler;\n",outerLabel);           /* MR7 */
+  } else if (altHandler) {                                        /* MR7 */
+    gen(output, true, "goto %s_handler;\n",outerLabel);             /* MR7 */
+  };
 }
 
 static void dumpExceptions(ListNode *list)
@@ -313,7 +320,8 @@ static void dumpExceptions(ListNode *list)
   }
 }
 
-/* For each element label that is found in a rule, generate a unique
+/**
+ * For each element label that is found in a rule, generate a unique
  * Attribute (and AST pointer if GenAST) variable.
  */
 void genElementLabels(ListNode *list)
@@ -347,7 +355,7 @@ void genElementLabels(ListNode *list)
   gen(output, true, ";\n");
 }
 
-/*
+/**
  * Generate a local variable allocation for each token or rule reference
  * in this block.
  */
@@ -497,20 +505,20 @@ void genCombinedPredTreeContext( Predicate *p )
   if (0 && ! MR_usingPredNames && ! MRhoisting) {
     genCombinedPredTreeContextOrig(p);
   } else {
-/* MR13 */    MR_pred_depth(p,&predDepth);
-/* MR13 */    if (predDepth == 1) {
-/* MR13 */
-/* MR13 */      set   scontext[2];
-/* MR13 */      scontext[0]=empty;
-/* MR13 */      scontext[1]=MR_compute_pred_set(p);
-/* MR13 */      if (set_nil(scontext[1])) {
-/* MR13 */        gen(output, false, " 1 /* MR12 no context (-prc off) */ ");
-/* MR13 */      } else {
-/* MR13 */        gen(output, false, "(");
-/* MR13 */        genExprSets(&scontext[0], 1);
-/* MR13 */        set_free(scontext[1]);
-/* MR13 */        gen(output, false, ")");
-/* MR13 */      };
+    MR_pred_depth(p,&predDepth);
+    if (predDepth == 1) {
+
+        set   scontext[2];
+        scontext[0]=empty;
+        scontext[1]=MR_compute_pred_set(p);
+        if (set_nil(scontext[1])) {
+            gen(output, false, " 1 /* MR12 no context (-prc off) */ ");
+        } else {
+            gen(output, false, "(");
+            genExprSets(&scontext[0], 1);
+            set_free(scontext[1]);
+            gen(output, false, ")");
+        };
 
     } else {
       t=MR_compute_pred_tree_context(p);
@@ -519,7 +527,7 @@ void genCombinedPredTreeContext( Predicate *p )
       } else {
         gen(output, false, "(");
         genExprTree(t, 1);
-        Tfree(t);   /* MR10 */
+        Tfree(t);
         gen(output, false, ")");
       };
     };
@@ -694,10 +702,10 @@ void MR_distinctORcontextOpt(Predicate *p,Node *j,int in_and_expr)
 void genPredTreeOrig( Predicate *p, Node *j, int in_and_expr )
 {
 
-/* MR10 */  int     allHaveContext=1;
-/* MR10 */  int     noneHaveContext=1;
+  int     allHaveContext=1;
+  int     noneHaveContext=1;
 
-/* MR10 */  MR_predContextPresent(p,&allHaveContext,&noneHaveContext);
+  MR_predContextPresent(p,&allHaveContext,&noneHaveContext);
 
   if ( ! noneHaveContext )                  /* MR10 context guards ignored when -prc off */
   {
@@ -3607,7 +3615,7 @@ int final_newline )
     PastWhiteSpace( s );
     /* don't print a tab if first non-white char is a # (preprocessor command) */
     if ( *s!='#' ) {
-        TAB;
+        indent(tabs, output);
     }
     inDQuote = inSQuote = FALSE;
     while ( *s != '\0' )
@@ -3635,14 +3643,14 @@ int final_newline )
             if ( *s == '}' )
             {
                 --tabs;
-                TAB;
+                indent(tabs, output);
                 fputc( *s++, output );
                 continue;
             }
             if ( *s == '\0' ) return;
             if ( *s != '#' )  /* #define, #endif etc.. start at col 1 */
             {
-                TAB;
+                indent(tabs, output);
             }
         }
         if ( *s == '}' && !(inSQuote || inDQuote) )
