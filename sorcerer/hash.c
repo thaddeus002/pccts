@@ -92,50 +92,6 @@ Entry *hash_get( Entry **table, char *key )
   return( NULL );
 }
 
-void hashStat( Entry **table )
-{
-  static unsigned short count[20];
-  int i,n=0,low=0, hi=0;
-  Entry **p;
-  float avg=0.0;
-
-  for (i=0; i<20; i++) count[i] = 0;
-  for (p=table; p<&(table[size]); p++)
-  {
-    Entry *q = *p;
-    int len;
-
-    if ( q != NULL && low==0 ) low = p-table;
-    len = 0;
-    if ( q != NULL ) fprintf(stderr, "[%d]", p-table);
-    while ( q != NULL )
-    {
-      len++;
-      n++;
-      fprintf(stderr, " %s", q->str);
-      q = q->next;
-      if ( q == NULL ) fprintf(stderr, "\n");
-    }
-    count[len]++;
-    if ( *p != NULL ) hi = p-table;
-  }
-
-  fprintf(stderr, "Storing %d recs used %d hash positions out of %d\n",
-          n, size-count[0], size);
-  fprintf(stderr, "%f %% utilization\n",
-          ((float)(size-count[0]))/((float)size));
-  for (i=0; i<20; i++)
-  {
-    if ( count[i] != 0 )
-    {
-      avg += (((float)(i*count[i]))/((float)n)) * i;
-      fprintf(stderr, "Bucket len %d == %d (%f %% of recs)\n",
-              i, count[i], ((float)(i*count[i]))/((float)n));
-    }
-  }
-  fprintf(stderr, "Avg bucket length %f\n", avg);
-  fprintf(stderr, "Range of hash function: %d..%d\n", low, hi);
-}
 
 /**
  * Add a string to the string table and return a pointer to it.

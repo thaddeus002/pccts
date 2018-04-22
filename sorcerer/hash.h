@@ -54,7 +54,6 @@ Entry *hash_get(Entry **, char *);
 Entry **newHashTable(void);
 Entry *hash_add(Entry **, char *, Entry *);
 char  *mystrdup(char *);
-void hashStat( Entry ** );
 
 #endif
 
