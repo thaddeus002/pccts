@@ -42,6 +42,7 @@
 #include "generic.h"
 #include "dlgdef.h"
 #include "logger.h"
+#include "gen.h"
 
 #define NumExprPerLine  4
 static int on1line=0;
