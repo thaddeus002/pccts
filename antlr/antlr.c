@@ -24,6 +24,7 @@
 #include "mode.h"
 #include "constants.h"
 #include "logger.h"
+#include "build.h"
 
 /* MR23 In order to remove calls to PURIFY use the antlr -nopurify option */
 

@@ -39,6 +39,7 @@
 #include "dlgdef.h"
 #include <ctype.h>
 #include "logger.h"
+#include "gen.h"
 
 static void complete_context_sets(RuleRefNode *, Predicate *);
 static void complete_context_trees(RuleRefNode *, Predicate *);

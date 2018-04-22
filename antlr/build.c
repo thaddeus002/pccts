@@ -39,6 +39,7 @@
 #include "hash.h"
 #include "generic.h"
 #include "dlgdef.h"
+#include "build.h"
 
 #define SetBlk(g, t, approx, first_set_symbol) {                    \
       ((Junction *)g.left)->jtype = t;                  \
@@ -46,6 +47,10 @@
       ((Junction *)g.left)->pFirstSetSymbol = first_set_symbol;   \
       ((Junction *)g.left)->end = (Junction *) g.right;         \
       ((Junction *)g.right)->jtype = EndBlk;}
+
+static Graph emptyAlt3(void);
+static TokNode *newTokNode(void);
+static RuleRefNode *newRNode(void);
 
 /**
  * Add the parameter string 'parm' to the parms field of a block-type junction
@@ -515,7 +520,7 @@ Graph emptyAlt()
  * by emptyAlt() as a special case and bypasses it. We don't
  * want this to happen for the optBlk.
  */
-Graph emptyAlt3( )
+static Graph emptyAlt3( )
 {
   Junction *j1, *j2, *j3;
   Graph g;
@@ -533,7 +538,7 @@ Graph emptyAlt3( )
 
 /* N o d e  A l l o c a t i o n */
 
-TokNode *newTokNode( )
+static TokNode *newTokNode( )
 {
   static TokNode *FreeList = NULL;
   TokNode *p, *newblk;
@@ -562,7 +567,7 @@ TokNode *newTokNode( )
   return p;
 }
 
-RuleRefNode *newRNode( )
+static RuleRefNode *newRNode( )
 {
   static RuleRefNode *FreeList = NULL;
   RuleRefNode *p, *newblk;
@@ -592,9 +597,9 @@ RuleRefNode *newRNode( )
   return p;
 }
 
-static int junctionSeqNumber=0;         /* MR10 */
+static int junctionSeqNumber=0;
 
-Junction *newJunction( void )
+Junction *newJunction(void)
 {
   static Junction *FreeList = NULL;
   Junction *p, *newblk;
@@ -671,4 +676,3 @@ char *makelocks( )
 
   return p;
 }
-

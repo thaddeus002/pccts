@@ -58,6 +58,7 @@
 #include "dlgdef.h"
 #include <ctype.h>
 #include "logger.h"
+#include "gen.h"
 
 static int tsize=TSChunk;   /* size of token str arrays */
 

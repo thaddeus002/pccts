@@ -37,6 +37,7 @@
 #include "hash.h"
 #include "generic.h"
 #include "logger.h"
+#include "gen.h"
 
 #define DLGErrorString "invalid token"
 
