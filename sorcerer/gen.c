@@ -62,7 +62,27 @@ static char *current_rule;
 static ListNode *labels_for_func = NULL;
 static AST *whichRule;
 static int tabs=0;
-#define TAB {int i=1; for (;i<=tabs;i++) {putc('\t', output);}}
+
+static void gen_rule( AST *t );
+static void gen_block( AST *q, int block_type );
+static void gen_alt( AST *t );
+static void gen_tree_pattern( AST *t );
+static void gen_element( AST *t );
+static void define_labels_in_block( AST *t );
+static void define_labels_in_alt( AST *t );
+static void define_labels_in_tree( AST *t );
+static void define_labels_in_element( AST *t );
+static set gen_prediction_expr( AST *alt, GLA *t );
+static void GenRulePrototype(FILE *f, AST *p, SymEntry *s, int decl_not_def);
+static AST *first_guess_block(AST *q);
+static void code_for_guess_block( AST *t, int *guess_block_in_prev_alt );
+
+static void indent(FILE *output) {
+    int i;
+    for (i=0; i<tabs; i++) {
+        putc('\t', output);
+    }
+}
 
 #define PastWhiteSpace(s) while (*(s) == ' ' || *(s) == '\t') {s++;}
 
@@ -91,7 +111,7 @@ void gen_info_hdr(FILE *f)
   fprintf(f, " */\n");
 }
 
-void gen_hdr_CPP(void)
+static void gen_hdr_CPP(void)
 {
   char CPPParser_h_Name[MaxFileName+1];
 
@@ -110,7 +130,7 @@ void gen_hdr_CPP(void)
   fprintf(output, "#include \"%s\"\n", CPPParser_h_Name);
 }
 
-void gen_hdr_C(void)
+static void gen_hdr_C(void)
 {
   if ( Inline ) return;
   gen_info_hdr(output);
@@ -152,13 +172,13 @@ void gen_hdr_C(void)
   if ( transform ) fprintf(output, "#include \"sorcerer.c\"\n");
 }
 
-void gen_hdr(void)
+static void gen_hdr(void)
 {
   if ( GenCPP ) gen_hdr_CPP();
   else gen_hdr_C();
 }
 
-void gen_hdr1(void)
+static void gen_hdr1(void)
 {
   if ( !Inline )
   {
@@ -224,7 +244,7 @@ void gen(AST *t)
   fclose(output);
 }
 
-void gen_rule( AST *t )
+static void gen_rule( AST *t )
 {
   SymEntry *s;
 
@@ -272,7 +292,7 @@ void gen_rule( AST *t )
     {
       RefVarRec *r = (RefVarRec *)p->elem;
       if ( !r->global ) {
-        TAB;
+        indent(output);
         dump_prefixed_decl("_save_", r->decl, output);
         if ( GenCPP ) fprintf(output, "=%s;\n", r->var);
         else fprintf(output, "=_parser->%s;\n", r->var);
@@ -284,7 +304,7 @@ void gen_rule( AST *t )
   if ( found_guess_block ) fprintf(output, "\t_GUESS_BLOCK;\n");
   if ( transform ) fprintf(output, "  *_result = NULL;\n");
   gen_block(t->down, BLOCK);
-  TAB;
+  indent(output);
   fprintf(output, "*_root = _t;\n");
 
   /* reset any ref vars defined in this routine */
@@ -304,7 +324,7 @@ void gen_rule( AST *t )
 
   /* set result of tree copying efforts if no ! on rule */
   if ( transform&&!t->no_copy ) {
-    TAB;
+    indent(output);
     /* The 'if' check in front of the *_result assignment ensures
      * that if someone sets the result before here, don't mess with
      * it.  This assignment is the default.
@@ -316,7 +336,7 @@ void gen_rule( AST *t )
   if ( s->rt!=NULL )
   {
     char *str = s->rt;
-    TAB;
+    indent(output);
     fprintf(output, "return ");
     DumpNextNameInDef(&str, output);
     fprintf(output, ";\n");
@@ -331,7 +351,7 @@ void gen_rule( AST *t )
  * The Lookahead of what follows (for CLOSURE and OPT) blocks, is stored
  * in the node which branches over the enclosed, optional block.
  */
-void gen_block( AST *q, int block_type )
+static void gen_block( AST *q, int block_type )
 {
   AST *t = q, *u, *g;
   GLA *start_state, *follow=NULL;
@@ -344,20 +364,20 @@ void gen_block( AST *q, int block_type )
 
   switch ( block_type ) {
   case PRED_OP :
-    TAB;
+    indent(output);
     fprintf(output, "{_SAVE; TREE_CONSTR_PTRS;\n");
     break;
   case CLOSURE :
-    TAB;
+    indent(output);
     fprintf(output, "{int _done=0;\n");
-    TAB;
+    indent(output);
     fprintf(output, "while ( !_done ) {\n");
     tabs++;
     break;
   case POS_CLOSURE :
-    TAB;
+    indent(output);
     fprintf(output, "{int _done=0;\n");
-    TAB;
+    indent(output);
     fprintf(output, "do {\n");
     tabs++;
   }
@@ -376,12 +396,12 @@ void gen_block( AST *q, int block_type )
   {
     require(start_state!=NULL, "gen_block: invalid GLA for block");
     if ( t!=q->down ) {
-      TAB;
+      indent(output);
       fprintf(output, "else {\n");
       need_right_curly++;
     }
     code_for_guess_block(t, &guess_block_in_prev_alt);
-    TAB;
+    indent(output);
     fprintf(output, "if (");
     /* To prevent/detect infinite recursion, ensure 'visited' flag is set
      * on node starting this alt
@@ -392,7 +412,7 @@ void gen_block( AST *q, int block_type )
     fprintf(output, " ) {\n");
     tabs++;
     gen_alt(t);
-    tabs--; TAB;
+    tabs--; indent(output);
     fprintf(output, "}\n");
     t = t->right;         /* move to next alt in AST */
     start_state = start_state->p2;  /* move to next alt in GLA */
@@ -409,10 +429,10 @@ void gen_block( AST *q, int block_type )
 
   if ( block_type == OPT || block_type == CLOSURE || block_type == POS_CLOSURE )
   {
-    TAB;
+    indent(output);
     fprintf(output, "else {\n");
     need_right_curly++;
-    TAB;
+    indent(output);
     fprintf(output, "if (");
     /* what follows the block? */
     q->start_state->visited = 1;
@@ -421,35 +441,35 @@ void gen_block( AST *q, int block_type )
     fprintf(output, " ) {\n");
     if ( block_type != OPT )
     {
-      tabs++; TAB;
+      tabs++; indent(output);
       fprintf(output, "_done = 1;\n");
       tabs--;
     }
-    TAB;
+    indent(output);
     fprintf(output, "}\n");
   }
 
   /* Generate error clause */
-  TAB;
+  indent(output);
   fprintf(output, "else {\n");
   /* generate the _GUESS_FAIL even if no (..)? found because calling
    * routine may be using STreeTest()
    */
   tabs++;
-  TAB;
+  indent(output);
   if ( GenCPP ) fprintf(output, "if ( guessing ) _GUESS_FAIL;\n");
   else fprintf(output, "if ( _parser->guessing ) _GUESS_FAIL;\n");
-  TAB;
+  indent(output);
   if ( GenCPP ) fprintf(output, "no_viable_alt(\"%s\", _t);\n", current_rule);
   else fprintf(output, "no_viable_alt(_parser, \"%s\", _t);\n", current_rule);
   tabs--;
-  TAB;
+  indent(output);
   fprintf(output, "}\n");
-  if ( transform ) { TAB; fprintf(output, " _tresult = _r;\n"); }
+  if ( transform ) { indent(output); fprintf(output, " _tresult = _r;\n"); }
 
   for (;need_right_curly>0; need_right_curly--)
   {
-    TAB;
+    indent(output);
     fprintf(output, "}\n");
   }
 
@@ -458,31 +478,31 @@ void gen_block( AST *q, int block_type )
     break;
   case CLOSURE :
     tabs--;
-    TAB; fprintf(output, "}\n");
+    indent(output); fprintf(output, "}\n");
 /*    if ( transform ) fprintf(output, " _tresult = _r;\n"); */
-    TAB; fprintf(output, "}\n");
+    indent(output); fprintf(output, "}\n");
     break;
   case POS_CLOSURE :
     tabs--;
-    TAB;
+    indent(output);
     fprintf(output, "} while ( !_done );\n");
-/*    if ( transform ) { TAB; fprintf(output, " _tresult = _r;\n"); } */
-    TAB;
+/*    if ( transform ) { indent(output); fprintf(output, " _tresult = _r;\n"); } */
+    indent(output);
     fprintf(output, "}\n");
     break;
   case PRED_OP :
-    TAB;
+    indent(output);
     fprintf(output, "_RESTORE;\n");
-/*    if ( transform ) { TAB; fprintf(output, " _tresult = _r;\n"); } */
-    TAB; fprintf(output, "}\n");
-    TAB; fprintf(output, "_GUESS_DONE;\n");
+/*    if ( transform ) { indent(output); fprintf(output, " _tresult = _r;\n"); } */
+    indent(output); fprintf(output, "}\n");
+    indent(output); fprintf(output, "_GUESS_DONE;\n");
     break;
   }
 
   test_block_consistency(q, block_type);
 }
 
-void gen_alt( AST *t )
+static void gen_alt( AST *t )
 {
   require(t!=NULL && t->token==ALT, "gen_alt: invalid alt");
 
@@ -494,16 +514,16 @@ void gen_alt( AST *t )
   /* find last element of alternative to see if it's a simple token */
   while ( t->right!=NULL ) { t = t->right; }
   if ( t->down==NULL && (t->token == Token || t->token == WILD) )
-    { TAB; go_right(1); }
+    { indent(output); go_right(1); }
 }
 
-void gen_tree_pattern( AST *t )
+static void gen_tree_pattern( AST *t )
 {
   while ( t != NULL )
   {
     /* could be root of a tree, check it */
     if ( t->down != NULL && (t->token==Token||t->token==WILD) ) {
-      TAB;
+      indent(output);
       fprintf(output, "{_SAVE; TREE_CONSTR_PTRS;\n");
     }
     gen_element(t);
@@ -511,23 +531,23 @@ void gen_tree_pattern( AST *t )
       if ( t->token == Token || t->token==WILD )
       {
         gen_tree_pattern(t->down);  /* only token/wildcard can be root of tree */
-        TAB;
+        indent(output);
         fprintf(output, "_RESTORE;");
         if ( transform ) fprintf(output, " _tresult = _r;");
         fprintf(output, "\n");
-        TAB; fprintf(output, "}\n");
+        indent(output); fprintf(output, "}\n");
         /* link in result of #(...) */
         if ( transform && !whichRule->no_copy ) {
-          TAB; fprintf(output, "_mkchild(&_r,&_s,&_e,_tresult);\n");
+          indent(output); fprintf(output, "_mkchild(&_r,&_s,&_e,_tresult);\n");
         }
-        TAB; go_right(1);
+        indent(output); go_right(1);
       }
     }
     t = t->right;
   }
 }
 
-void gen_element( AST *t )
+static void gen_element( AST *t )
 {
   char *res;
   require(t!=NULL, "gen_element: NULL tree pointer");
@@ -535,7 +555,7 @@ void gen_element( AST *t )
   switch ( t->token )
   {
       case Token :
-      TAB;
+      indent(output);
       if ( t->upper_range!=0 )
         fprintf(output, "_MATCHRANGE(%s,%s);",
             t->text, token_dict[t->upper_range]);
@@ -543,7 +563,7 @@ void gen_element( AST *t )
       fprintf(output, "\n");
       /* Make copy of token if transform && (copy or (labeled&&!copy)) */
       if ( transform && (t->label[0]!='\0'||!t->no_copy) ) {
-        TAB;
+        indent(output);
         if ( GenCPP )
           fprintf(output, "_tresult=_t->shallowCopy();\n");
         else
@@ -559,25 +579,25 @@ void gen_element( AST *t )
       if ( transform  ) {   /* label is output, label_in is input */
         if ( t->label[0]!='\0' )
         {
-          TAB;
+          indent(output);
           fprintf(output,
               "%s=(SORAST *)_tresult; %s_in=(SORAST *)_t;\n",
               t->label,t->label);
         }
       } else {
         if ( t->label[0]!='\0' )
-          { TAB; fprintf(output, "%s=(SORAST *)_t;\n", t->label); }
+          { indent(output); fprintf(output, "%s=(SORAST *)_t;\n", t->label); }
       }
       /* Move tree parser pointer */
-      if ( t->down != NULL ) { TAB; go_down(1); }
-      else if ( t->right != NULL ) { TAB; go_right(1); }
+      if ( t->down != NULL ) { indent(output); go_down(1); }
+      else if ( t->right != NULL ) { indent(output); go_right(1); }
       break;
     case WILD :
-      TAB;
+      indent(output);
       fprintf(output, "_WILDCARD;");
       /* Make copy of token or tree if transform */
       if ( transform ) {
-        TAB;
+        indent(output);
         if ( GenCPP )
           fprintf(output, "_tresult=_t->deepCopy();");
         else
@@ -594,20 +614,20 @@ void gen_element( AST *t )
       if ( transform  ) {
         if ( t->label[0]!='\0' )
         {
-          TAB;
+          indent(output);
           fprintf(output,
               "%s=(SORAST *)_tresult; %s_in=(SORAST *)_t;\n",
               t->label,t->label);
         }
       } else {
         if ( t->label[0]!='\0' )
-          { TAB; fprintf(output, "%s=(SORAST *)_t;\n", t->label); }
+          { indent(output); fprintf(output, "%s=(SORAST *)_t;\n", t->label); }
       }
-      if ( t->down != NULL ) { TAB; go_down(1); }
-      else if ( t->right != NULL ) { TAB; go_right(1); }
+      if ( t->down != NULL ) { indent(output); go_down(1); }
+      else if ( t->right != NULL ) { indent(output); go_right(1); }
       break;
     case NonTerm :
-      TAB;
+      indent(output);
       /* For nontransform mode, do labels first */
       if (t->label[0]!='\0')
         fprintf(output, "%s=(SORAST *)_t; ", t->label);
@@ -630,23 +650,23 @@ void gen_element( AST *t )
       fprintf(output, "\n");
       if (transform && t->label[0]!='\0')
         {
-          TAB;
+          indent(output);
           fprintf(output, "%s=(SORAST *)_tresult;\n", t->label);
         }
       /* Link in result of rule */
       if ( transform&&!t->no_copy ) {
-        TAB;
+        indent(output);
         fprintf(output, "_mkchild(&_r,&_s,&_e,_tresult);\n");
       }
       break;
     case Action :
       if ( !t->init_action && found_guess_block ) {
-        TAB;
+        indent(output);
         if ( GenCPP ) fprintf(output, "if ( !guessing ) {\n");
         else fprintf(output, "if ( !_parser->guessing ) {\n");
       }
       dumpAction(t->action, output, tabs, 0, 0, 1);
-      if ( !t->init_action && found_guess_block ) {TAB; fprintf(output, "}\n");}
+      if ( !t->init_action && found_guess_block ) {indent(output); fprintf(output, "}\n");}
       break;
     case CLOSURE :
       gen_block(t->down, CLOSURE);
@@ -679,7 +699,7 @@ void gen_element( AST *t )
 }
 
 /** walk the block of a rule and define all labels to be "SORAST *label_i" */
-void define_labels_in_block( AST *t )
+static void define_labels_in_block( AST *t )
 {
   require(t!=NULL, "define_labels_in_block: NULL tree pointer");
   require(t->token==BLOCK, "define_labels_in_block: invalid block");
@@ -691,7 +711,7 @@ void define_labels_in_block( AST *t )
   }
 }
 
-void define_labels_in_alt( AST *t )
+static void define_labels_in_alt( AST *t )
 {
   require(t!=NULL, "define_labels_in_alt: NULL tree pointer");
   require(t->token==ALT, "gen_alt: invalid alt");
@@ -699,7 +719,7 @@ void define_labels_in_alt( AST *t )
   define_labels_in_tree(t->down);
 }
 
-void define_labels_in_tree( AST *t )
+static void define_labels_in_tree( AST *t )
 {
   while ( t != NULL )
   {
@@ -715,7 +735,7 @@ void define_labels_in_tree( AST *t )
   }
 }
 
-void define_labels_in_element( AST *t )
+static void define_labels_in_element( AST *t )
 {
   require(t!=NULL, "define_labels_in_element: NULL tree pointer");
   switch ( t->token )
@@ -729,7 +749,7 @@ void define_labels_in_element( AST *t )
         require(s!=NULL, "define_labels_in_element: sym tab broken");
         if ( s->token==LABEL && !s->defined ) {
           s->defined = 1;
-          TAB;
+          indent(output);
           fprintf(output, "SORAST *%s=NULL", t->label);
           if ( transform ) fprintf(output, ",*%s_in=NULL", t->label);
           fprintf(output, ";\n");
@@ -774,7 +794,7 @@ void
 dumpAction( char *s, FILE *output, int tabs, int file, int line, int final_newline )
 {
     int inDQuote, inSQuote;
-    require(s!=NULL,    "dumpAction: NULL action");
+    require(s!=NULL, "dumpAction: NULL action");
     require(output!=NULL, eMsg1("dumpAction: output FILE is NULL for %s",s));
 
 /*  if ( GenLineInfo && file != -1 )
@@ -782,8 +802,10 @@ dumpAction( char *s, FILE *output, int tabs, int file, int line, int final_newli
     fprintf(output, LineInfoFormatStr, line, FileStr[file]);
   }*/
     PastWhiteSpace( s );
-  /* don't print a tab if first non-white char is a # (preprocessor command) */
-  if ( *s!='#' ) {TAB;}
+    /* don't print a tab if first non-white char is a # (preprocessor command) */
+    if ( *s!='#' ) {
+        indent(output);
+    }
     inDQuote = inSQuote = 0;
     while ( *s != '\0' )
     {
@@ -805,7 +827,7 @@ dumpAction( char *s, FILE *output, int tabs, int file, int line, int final_newli
         if ( *s == '\n' )
         {
             putc('\n', output);
-      s++;
+            s++;
             while (*s == '\n') {
                putc('\n', output);
                s++;
@@ -814,15 +836,15 @@ dumpAction( char *s, FILE *output, int tabs, int file, int line, int final_newli
             if ( *s == '}' )
             {
                 --tabs;
-        TAB;
+                indent(output);
                 putc( *s++, output );
                 continue;
             }
             if ( *s == '\0' ) return;
-      if ( *s != '#' )  /* #define, #endif etc.. start at col 1 */
+            if ( *s != '#' )  /* #define, #endif etc.. start at col 1 */
             {
-        TAB;
-      }
+                indent(output);
+            }
         }
         if ( *s == '}' && !(inSQuote || inDQuote) )
         {
@@ -838,7 +860,7 @@ dumpAction( char *s, FILE *output, int tabs, int file, int line, int final_newli
     if ( final_newline ) putc('\n', output);
 }
 
-char *find_predicate( AST *t )
+static char *find_predicate( AST *t )
 {
   if ( t==NULL ) return NULL;
   if ( t->token == Action )
@@ -859,7 +881,7 @@ char *find_predicate( AST *t )
  * Given a pointer to a tree pattern element (Token, BLOCK, etc...),
  * generate an expression that predicts when that path would match.
  */
-set gen_prediction_expr( AST *alt, GLA *t )
+static set gen_prediction_expr( AST *alt, GLA *t )
 {
   char *sempred;
   set a, rs;
@@ -890,14 +912,6 @@ set gen_prediction_expr( AST *alt, GLA *t )
             fprintf(output," !_gv &&");
         }
     }
-
-#if 0
-                /* The old code which was replaced */
-
-  if ( alt!=NULL && alt->down!=NULL && alt->down->token==PRED_OP &&
-     alt->down->down->token==BLOCK ) fprintf(output, " !_gv &&");
-
-#endif
 
   /* handle end of input first */
   if ( set_el(end_of_input, a) )
@@ -931,7 +945,7 @@ set gen_prediction_expr( AST *alt, GLA *t )
     set_rm(tok, a);
     if ( first ) first = 0;
     else fprintf(output, "||");
-    if ( num_on_line>=2 ) {num_on_line=0; fprintf(output,"\n"); TAB;}
+    if ( num_on_line>=2 ) {num_on_line=0; fprintf(output,"\n"); indent(output);}
     else num_on_line++;
     if ( tok==wild_card ) fprintf(output, "_t!=NULL");
     else if ( token_dict[tok]==0 )
@@ -959,11 +973,11 @@ set gen_prediction_expr( AST *alt, GLA *t )
   return rs;
 }
 
-/* Find all return types/parameters that require structs and def
+/**
+ * Find all return types/parameters that require structs and def
  * all rules with ret types.
  */
-void
-GenRulePrototypes(FILE *f, int tabs)
+void GenRulePrototypes(FILE *f, int tabs)
 {
   AST *p;
   SymEntry *s;
@@ -979,8 +993,7 @@ GenRulePrototypes(FILE *f, int tabs)
   }
 }
 
-void
-GenRulePrototype(FILE *f, AST *p, SymEntry *s, int decl_not_def)
+static void GenRulePrototype(FILE *f, AST *p, SymEntry *s, int decl_not_def)
 {
   require(s!=NULL&&s->definition!=NULL, "GenRulePrototype: no def for rule");
 
@@ -1020,12 +1033,11 @@ GenRulePrototype(FILE *f, AST *p, SymEntry *s, int decl_not_def)
   fprintf(f, "\n");
 }
 
-/*
+/**
  * For each referenced token, generate a #define in a file defined in
  * 'def_token_file'.
  */
-void
-gen_tokens_file(void)
+void gen_tokens_file(void)
 {
   FILE *f;
   ListNode *p;
@@ -1052,8 +1064,7 @@ gen_tokens_file(void)
   fclose(f);
 }
 
-AST *
-first_guess_block(AST *q)
+static AST *first_guess_block(AST *q)
 {
   require(q!=NULL&&q->token==ALT, "first_guess_block: non-ALT ptr");
 
@@ -1075,22 +1086,21 @@ first_guess_block(AST *q)
   return NULL;
 }
 
-void
-code_for_guess_block( AST *t, int *guess_block_in_prev_alt )
+static void code_for_guess_block( AST *t, int *guess_block_in_prev_alt )
 {
   if ( found_guess_block )
   {
     /* if previous alt had a guess block, check to turn it off */
     if ( *guess_block_in_prev_alt )
     {
-      TAB;
+      indent(output);
       if ( GenCPP ) fprintf(output, "if ( guessing ) _GUESS_DONE;\n");
       else fprintf(output, "if ( _parser->guessing ) _GUESS_DONE;\n");
     }
     /* if current alt has a guess block... */
     if ( first_guess_block(t)!=NULL )
     {
-      TAB;
+      indent(output);
       fprintf(output, "_GUESS;\n");
       *guess_block_in_prev_alt = 1;
     }
