@@ -33,6 +33,7 @@
 
 #include "hash.h"
 #include "generic.h"
+#include "egman.h"
 
 
 static ExceptionGroup **egArray=NULL;   /* ExceptionGroup by BlkLevel */
@@ -147,10 +148,6 @@ void egAdd(ExceptionGroup * eg)
       /*              )   exception ...                            */
       /*                                                           */
 
-#if 0
-      printf("BlkLevel=%d i=%d altnum=%d CurAltNum=%d altID=%s\n",
-        BlkLevel,i,innerAlt->curAltNum,CurAltNum_array[BlkLevel],eg->altID);
-#endif
       if (BlkLevel != i ||
           innerAlt->curAltNum == CurAltNum_array[BlkLevel]) {
         if (innerAlt->exception_label == NULL) {
@@ -183,10 +180,6 @@ void leAdd(LabelEntry * le)
 void altAdd(Junction *alt)
 {
   arrayCheck();
-#if 0
-  printf("BlkLevel=%d CurAltNum=%d\n",
-            BlkLevel,CurAltNum_array[BlkLevel]);
-#endif
   alt->curAltNum=CurAltNum_array[BlkLevel];
   alt->pendingLink=altArray[BlkLevel];
   altArray[BlkLevel]=alt;
@@ -262,7 +255,7 @@ void leFixup()
   };
 }
 
-/* always call altFixup() BEFORE egFixup() */
+    /* always call altFixup() BEFORE egFixup() */
 
 void altFixup()
 {

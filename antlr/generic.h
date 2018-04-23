@@ -31,6 +31,10 @@
  * \brief define types and macros for antlr.
  */
 
+#ifndef __GENERIC_H__
+#define __GENERIC_H__
+
+
 #include "syn.h"
 // for Entry
 #include "hash.h"
@@ -277,3 +281,5 @@ typedef Graph Attrib;
 
 #include "proto.h"
 
+
+#endif
