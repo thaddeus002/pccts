@@ -40,6 +40,7 @@
 #include "generic.h"
 #include "proto.h"
 #include "dlgdef.h"
+#include "logger.h"
 #include "build.h"
 
 #define SetBlk(g, t, approx, first_set_symbol) {                    \

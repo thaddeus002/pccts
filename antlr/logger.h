@@ -7,6 +7,23 @@
 #define __LOGGER_H_
 
 
+          /* E r r o r  M a c r o s */
+
+#define fatal(err)  fatalFL(err, __FILE__, __LINE__)
+#define fatal_internal(err) fatal_intern(err, __FILE__, __LINE__)
+
+
+#define eMsg1(s,a)  eMsg3(s,a,NULL,NULL)
+#define eMsg2(s,a,b)  eMsg3(s,a,b,NULL)
+
+        /* S a n i t y  C h e c k i n g */
+
+#ifndef require
+#define require(expr, err) {if ( !(expr) ) fatal_internal(err);}
+#endif
+
+
+
 /**
  * Print the log header indicating a filename and a line number.
  */

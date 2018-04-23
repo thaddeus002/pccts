@@ -56,20 +56,6 @@
 #define SET     TokenNum+2
 #define TREE_REF  TokenNum+3
 
-          /* E r r o r  M a c r o s */
-
-#define fatal(err)  fatalFL(err, __FILE__, __LINE__)
-#define fatal_internal(err) fatal_intern(err, __FILE__, __LINE__)
-
-
-#define eMsg1(s,a)  eMsg3(s,a,NULL,NULL)
-#define eMsg2(s,a,b)  eMsg3(s,a,b,NULL)
-
-        /* S a n i t y  C h e c k i n g */
-
-#ifndef require
-#define require(expr, err) {if ( !(expr) ) fatal_internal(err);}
-#endif
 
           /* L i s t  N o d e s */
 
@@ -77,8 +63,8 @@
  * A linked list of elements
  */
 typedef struct _ListNode {
-      void *elem;     /**< pointer to any kind of element */
-      struct _ListNode *next;
+    void *elem;     /**< pointer to any kind of element */
+    struct _ListNode *next;
 } ListNode;
 
 /**
@@ -86,39 +72,39 @@ typedef struct _ListNode {
  * reconciliation by ResolveFoCycles().
  */
 typedef struct _c {
-      int croot;      /**< cycle root */
-      set cyclicDep;  /**< cyclic dependents */
-      unsigned deg;   /**< degree of FOLLOW set of croot */
+    int croot;      /**< cycle root */
+    set cyclicDep;  /**< cyclic dependents */
+    unsigned deg;   /**< degree of FOLLOW set of croot */
 } Cycle;
 
 typedef struct _e {
-      int tok;      /**< error class name == TokenStr[tok] */
-      ListNode *elist;  /**< linked list of elements in error set */
-      set eset;
-      int setdeg;     /**< how big is the set */
-      int lexclass;   /**< which lex class is it in? */
+    int tok;      /**< error class name == TokenStr[tok] */
+    ListNode *elist;  /**< linked list of elements in error set */
+    set eset;
+    int setdeg;     /**< how big is the set */
+    int lexclass;   /**< which lex class is it in? */
 } ECnode;
 
 typedef struct _TCnode {
-      int tok;      /**< token class name */
-      ListNode *tlist;  /**< linked list of elements in token set */
-      set tset;
-      int lexclass;   /**< which lex class is it in? */
-      unsigned char dumped; /**< this def has been been dumped */
-      unsigned char dumpedComplement; /**< this def has been been dumped */
-      unsigned setnum;  /**< which set number is this guy? (if dumped) */
-      unsigned setnumComplement;     /* MR23 */
-      unsigned setnumErrSet;       /* MR23 which set is this #tokclass error set (if dumped) */
-      unsigned setnumErrSetComplement; /* MR23 */
+    int tok;      /**< token class name */
+    ListNode *tlist;  /**< linked list of elements in token set */
+    set tset;
+    int lexclass;   /**< which lex class is it in? */
+    unsigned char dumped; /**< this def has been been dumped */
+    unsigned char dumpedComplement; /**< this def has been been dumped */
+    unsigned setnum;  /**< which set number is this guy? (if dumped) */
+    unsigned setnumComplement;     /* MR23 */
+    unsigned setnumErrSet;       /* MR23 which set is this #tokclass error set (if dumped) */
+    unsigned setnumErrSetComplement; /* MR23 */
 } TCnode;
 
 typedef struct _ft {
-      char *token;  /**< id of token type to remap */
-      int tnum;     /**< move token type to which token position */
+    char *token;  /**< id of token type to remap */
+    int tnum;     /**< move token type to which token position */
 } ForcedToken;
 
 typedef struct _ContextGuardPredicates {    /* MR13 */
-            Predicate *pred;                /* MR13 */
+    Predicate *pred;                /* MR13 */
 } ContextGuardPredicates;           /* MR13 */
 
 #define newListNode (ListNode *) calloc(1, sizeof(ListNode));
@@ -130,74 +116,69 @@ typedef struct _ContextGuardPredicates {    /* MR13 */
         /* H a s h  T a b l e  E n t r i e s */
 
 typedef struct _t {       /* Token name or expression */
-      char *str;
-      struct _t *next;
-      int token;      /**< token number */
-      unsigned char classname;  /**< is it a err/tok class name or token */
-      TCnode *tclass;   /**< ptr to token class */
-      char *action;
-      char *akaString;
+    char *str;
+    struct _t *next;
+    int token;      /**< token number */
+    unsigned char classname;  /**< is it a err/tok class name or token */
+    TCnode *tclass;   /**< ptr to token class */
+    char *action;
+    char *akaString;
 } TermEntry;
 
 typedef struct _r {       /**< Rule name and ptr to start of rule */
-      char *str;
-      struct _t *next;
-      int rulenum;    /**< RulePtr[rulenum]== ptr to RuleBlk junction */
-      unsigned char noAST; /**< gen AST construction code? (def==gen code) */
-      char *egroup;   /**< which error group (err reporting stuff) */
-#if 0
-      /* MR27  This appears to never be used.  Delete this code later. */
-
-      ListNode *el_labels; /**< list of element labels ref in all of rule */
-#endif
-      ListNode *ast_labels_in_actions; /* MR27 */
-      unsigned char has_rule_exception;
-      char dontComputeErrorSet;    /* MR14 - don't compute error set
-                                          special for rule in alpha part of
-                                          (alpha)? beta block */
+    char *str;
+    struct _t *next;
+    int rulenum;    /**< RulePtr[rulenum]== ptr to RuleBlk junction */
+    unsigned char noAST; /**< gen AST construction code? (def==gen code) */
+    char *egroup;   /**< which error group (err reporting stuff) */
+    ListNode *ast_labels_in_actions; /* MR27 */
+    unsigned char has_rule_exception;
+    char dontComputeErrorSet;    /* MR14 - don't compute error set
+                                        special for rule in alpha part of
+                                        (alpha)? beta block */
 } RuleEntry;
 
 typedef struct _f {   /**< cache Fi/Fo set */
-      char *str;      /**< key == (rulename, computation, k) */
-      struct _f *next;
-      set fset;     /**< First/Follow of rule */
-      set rk;       /**< set of k's remaining to be done after ruleref */
-      int incomplete;   /**< only w/FOLLOW sets.  Use only if complete */
+    char *str;      /**< key == (rulename, computation, k) */
+    struct _f *next;
+    set fset;     /**< First/Follow of rule */
+    set rk;       /**< set of k's remaining to be done after ruleref */
+    int incomplete;   /**< only w/FOLLOW sets.  Use only if complete */
 } CacheEntry;
 
 /** element labels */
 typedef struct _LabelEntry {
-      char *str;
-      struct _f *next;
-      Node *elem;     /**< which element does it point to? */
-      ExceptionGroup *ex_group;
-      /* Is there an exception attached to label? */
-      ExceptionGroup *outerEG;                                 /* MR7 */
-      /* next EG if ex_group doesn't catch it MR7 */
-      struct _LabelEntry  *pendingLink;                        /* MR7 */
-      /* too lazy to use ListNode ?           MR7 */
-      int     curAltNum;                                       /* MR7 */
+    char *str;
+    struct _f *next;
+    Node *elem;     /**< which element does it point to? */
+    ExceptionGroup *ex_group;
+    /* Is there an exception attached to label? */
+    ExceptionGroup *outerEG;                                 /* MR7 */
+    /* next EG if ex_group doesn't catch it MR7 */
+    struct _LabelEntry  *pendingLink;                        /* MR7 */
+    /* too lazy to use ListNode ?           MR7 */
+    int     curAltNum;                                       /* MR7 */
 } LabelEntry;
 
 typedef struct _SignalEntry {
-      char *str;
-      struct _f *next;
-      int signum;     /**< unique signal number */
+    char *str;
+    struct _f *next;
+    int signum;     /**< unique signal number */
 } SignalEntry;
 
 typedef struct _PredEntry {       /* MR11 predicate name and ptr to string */
-      char              *str;
-      struct _PredEntry *next;
-      int               file;
-      int               line;
-      Predicate         *pred;
-      char              *predLiteral;
+    char              *str;
+    struct _PredEntry *next;
+    int               file;
+    int               line;
+    Predicate         *pred;
+    char              *predLiteral;
 } PredEntry;
 
 typedef struct _PointerStack {      /* MR10 */
-        int     count;
-        int     size;
-        void    **data;
+    int     count;
+    int     size;
+    void    **data;
 } PointerStack;
 
 #define newTermEntry(s)   (TermEntry *) newEntry(s, sizeof(TermEntry))
@@ -208,28 +189,28 @@ typedef struct _PointerStack {      /* MR10 */
 #define newPredEntry(s)     (PredEntry *) newEntry(s,sizeof(PredEntry))
 
 typedef struct _UserAction {
-      char *action;
-      int file, line;
+    char *action;
+    int file, line;
 } UserAction;
 
 
-          /* L e x i c a l  C l a s s */
+        /* L e x i c a l  C l a s s */
 
 /* to switch lex classes, switch ExprStr and Texpr (hash table) */
 typedef struct _lc {
-      char *classnum, **exprs;
-      Entry **htable;
+    char *classnum, **exprs;
+    Entry **htable;
 } LClass;
 
 typedef struct _exprOrder {
-      char *expr;
-      int lclass;
+    char *expr;
+    int lclass;
 } Expr;
 
 
 typedef Graph Attrib;
 
-            /* M a x i m u m s */
+        /* M a x i m u m s */
 
 /* MR20 Note G. Hobbelt These values are superceded by values in hash.h */
 
