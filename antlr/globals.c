@@ -36,6 +36,7 @@
 
 #include "hash.h"
 #include "generic.h"
+#include "proto.h"
 #include "constants.h"
 
 char Version[] = "1.33MR33" ; /* PCCTS version number */                     /* MRXXX */

@@ -39,6 +39,7 @@
 #include "constants.h"
 #include "hash.h"
 #include "generic.h"
+#include "proto.h"
 #include "logger.h"
 
 /* ick! globals.  Used by permute() to track which elements of a set have been used */

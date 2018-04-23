@@ -11,6 +11,8 @@
 #ifndef __EGMAN_H__
 #define __EGMAN_H__
 
+#include "syn.h"
+#include "generic.h"
 
 /**
  * Called to add an exception group for an alternative EG.

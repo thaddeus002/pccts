@@ -55,6 +55,7 @@
 #include "constants.h"
 #include "hash.h"
 #include "generic.h"
+#include "proto.h"
 #include "dlgdef.h"
 #include <ctype.h>
 #include "logger.h"

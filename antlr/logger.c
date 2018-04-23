@@ -149,8 +149,10 @@ void fatal_intern( char *err_, char *f, int l )
     exit(EXIT_FAILURE);
 }
 
-void cleanUp( void )
-{
+/**
+ * Close 'DefFile' if needed.
+ */
+void cleanUp(void) {
     if ( DefFile != NULL) fclose( DefFile );
 }
 

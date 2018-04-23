@@ -16,6 +16,7 @@
 #include <ctype.h>
 #include "hash.h"
 #include "generic.h"
+#include "proto.h"
 #define zzcr_attr(attr,tok,t)
 #define zzSET_SIZE 20
 #include "antlr.h"
@@ -26,6 +27,7 @@
 #include "logger.h"
 #include "build.h"
 #include "egman.h"
+
 
 /* MR23 In order to remove calls to PURIFY use the antlr -nopurify option */
 

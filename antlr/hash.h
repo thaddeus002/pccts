@@ -57,8 +57,8 @@
 
 /** Minimum hash table entry -- superclass */
 typedef struct _entry {
-  char *str;
-  struct _entry *next;
+    char *str;
+    struct _entry *next;
 } Entry;
 
 /**

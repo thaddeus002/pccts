@@ -33,6 +33,7 @@
 
 #include "hash.h"
 #include "generic.h"
+#include "proto.h"
 #include "egman.h"
 
 

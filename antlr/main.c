@@ -38,6 +38,7 @@
 #include <stdio.h>
 #include "hash.h"
 #include "generic.h"
+#include "proto.h"
 #include "constants.h"
 #include "stdpccts.h"
 #include "logger.h"
@@ -393,8 +394,6 @@ Opt options[] = {
 };
 
 void readDescr();
-void cleanUp();
-
 static void buildRulePtr( void );
 static void help( void );
 static void init( void );

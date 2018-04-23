@@ -49,4 +49,10 @@ void log_more(char *err, char *file, int line, ...);
 
 void dlgerror(const char *s);
 
+/**
+ * Close 'DefFile' if needed.
+ */
+void cleanUp(void);
+
+
 #endif

@@ -316,7 +316,6 @@ extern FILE * NextFile( void );
 extern char * outnameX( char *, char *);
 extern char * outname( char * );
 extern void fatal_intern( char *, char *, int );
-extern void cleanUp( void );
 extern char * eMsg3( char *, char *, char *, char * );
 extern char * eMsgd( char *, int );
 extern char * eMsgd2( char *, int, int );

@@ -279,7 +279,4 @@ typedef Graph Attrib;
 #define WildCardString          "WildCard"
 
 
-#include "proto.h"
-
-
 #endif
