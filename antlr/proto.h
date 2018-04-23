@@ -417,7 +417,6 @@ extern Junction * MR_nameToRuleBlk(char *);
 extern void MR_releaseResourcesUsedInRule(Node *);
 extern void MR_dumpTreeX(int depth,Tree *t,int across);
 extern void MR_dumpTreeF(FILE *f,int depth,Tree *t,int across);
-extern void DumpFcache(void);
 extern void MR_dumpTokenSet(FILE *f,int depth,set s);
 extern void MR_traceAmbSource(set *,Junction *,Junction *);
 extern void MR_traceAmbSourceK(Tree *,Junction *a1,Junction *a2);

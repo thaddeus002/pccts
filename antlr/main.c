@@ -43,6 +43,7 @@
 #include "stdpccts.h"
 #include "logger.h"
 #include "gen.h"
+#include "fcache.h"
 
 #define MAX_INT_STACK 50
 static int istack[MAX_INT_STACK];   /* Int stack */

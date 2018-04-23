@@ -34,48 +34,49 @@
 #include "hash.h"
 #include "generic.h"
 #include "proto.h"
+#include "fcache.h"
 
-CacheEntry *dumpFcache1(char *prev)
+static CacheEntry *dumpFcache1(char *prev)
 {
-  Entry   **table=Fcache;
+    Entry **table=Fcache;
 
-  int     low=0;
-  int     hi=0;
+    int low=0;
+    int hi=0;
 
-  CacheEntry  *least=NULL;
+    CacheEntry *least=NULL;
 
-  Entry   **p;
+    Entry **p;
 
-  for (p=table; p<&(table[HashTableSize]); p++) {
+    for (p=table; p<&(table[HashTableSize]); p++) {
 
-    CacheEntry *q =(CacheEntry *) *p;
+        CacheEntry *q =(CacheEntry *) *p;
 
-    if ( q != NULL && low==0 ) low = p-table;
-    while ( q != NULL ) {
+        if (q != NULL && low==0) low = p-table;
+        while (q != NULL) {
             if (strcmp(q->str,prev) > 0) {
-              if (least == NULL) {
-                least=q;
-              } else {
-                if (strcmp(q->str,least->str) < 0) {
-                  least=q;
+                if (least == NULL) {
+                    least=q;
+                } else {
+                    if (strcmp(q->str,least->str) < 0) {
+                        least=q;
+                    };
                 };
-              };
             };
-      q = q->next;
-    };
+            q = q->next;
+        };
 
-    if ( *p != NULL ) hi = p-table;
-  }
-  return least;
+        if ( *p != NULL ) hi = p-table;
+    }
+    return least;
 }
 
-void reportFcache(CacheEntry *q)
+static void reportFcache(CacheEntry *q)
 {
-    char        *qstr;
+    char *qstr;
 
     fprintf(stdout,"\nrule ");
     for (qstr=q->str; *qstr != '*' ; qstr++) {
-      fprintf(stdout,"%c",*qstr);
+        fprintf(stdout,"%c",*qstr);
     };
 
     qstr++;
@@ -90,18 +91,18 @@ void reportFcache(CacheEntry *q)
 
 void DumpFcache()
 {
-    char        *prev="";
-    int          n=0;
-    CacheEntry  *next;
+    char *prev="";
+    int n=0;
+    CacheEntry *next;
 
     fprintf(stdout,"\n\nDump of First/Follow Cache\n");
 
     for(;;) {
-      next=dumpFcache1(prev);
-      if (next == NULL) break;
-      reportFcache(next);
-      ++n;
-      prev=next->str;
+        next=dumpFcache1(prev);
+        if (next == NULL) break;
+        reportFcache(next);
+        ++n;
+        prev=next->str;
     };
     fprintf(stdout,"\nEnd dump of First/Follow Cache\n");
 }
