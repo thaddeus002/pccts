@@ -45,6 +45,13 @@
 #include "gen.h"
 #include "fcache.h"
 
+           /* S t a n d a r d  S i g n a l s */
+
+#define sigMismatchedToken    1
+#define sigNoViableAlt      2
+#define sigNoSemViableAlt   3
+
+
 #define MAX_INT_STACK 50
 static int istack[MAX_INT_STACK];   /* Int stack */
 static int isp = MAX_INT_STACK;

@@ -43,6 +43,8 @@
 #include "logger.h"
 #include "build.h"
 
+#define WildCardString "WildCard"
+
 #define SetBlk(g, t, approx, first_set_symbol) {                    \
       ((Junction *)g.left)->jtype = t;                  \
       ((Junction *)g.left)->approx = approx;                \

@@ -39,8 +39,8 @@
 #include "proto.h"
 #include "constants.h"
 
-char Version[] = "1.33MR33" ; /* PCCTS version number */                     /* MRXXX */
-char VersionDef[] = "13333";    /* same (except int equiv for preproc symbol) */ /* MRXXX */
+char Version[] = "1.33MR33" ; /* PCCTS version number */
+char VersionDef[] = "13333";    /* same (except int equiv for preproc symbol) */
 
 char LexStartSymbol[] = "START";/* Name of starting lexical class/automaton */
 char *RemapFileName = "remap.h";

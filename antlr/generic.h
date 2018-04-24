@@ -238,14 +238,6 @@ typedef Graph Attrib;
 
 #define NumPredefinedSignals 3
 
-           /* S t a n d a r d  S i g n a l s */
-
-#define sigNoSignal       0
-#define sigMismatchedToken    1
-#define sigNoViableAlt      2
-#define sigNoSemViableAlt   3
-
-
 
 /* AST token types */
 #define ASTexclude    0
@@ -253,11 +245,6 @@ typedef Graph Attrib;
 #define ASTroot     2
 #define ASTinclude    3   /* include subtree made by rule ref */
 
-
-#define PredictionVariable        "zzpr_expr"
-#define PredictionLexClassSuffix    "_zzpred"
-
-#define WildCardString          "WildCard"
 
 
 #endif
