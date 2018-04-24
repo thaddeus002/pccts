@@ -69,7 +69,7 @@ static void dumpExpr(FILE *f, char *e);
  * Used to convert native wordsize, which ANTLR uses (via set.c) to manipulate sets,
  * to bytes that are most portable size-wise.
  */
-static void DumpIntAsChars( FILE *f, char *format, unsigned wd )
+static void DumpIntAsChars(FILE *f, unsigned int wd)
 {
   int i;
   /* uses max of 32 bit unsigned integer for the moment */
@@ -82,7 +82,7 @@ static void DumpIntAsChars( FILE *f, char *format, unsigned wd )
   for (i=0; i<sizeof(unsigned); i++)
   {
     /* mask out the ith byte and shift down to the first 8 bits */
-    fprintf(f, format, (wd&byte_mask[i])>>(i*BitsPerByte));
+    fprintf(f, "0x%x", (wd&byte_mask[i])>>(i*BitsPerByte));
     if ( i<sizeof(unsigned)-1) fprintf(f, ",");
   }
 }
@@ -495,7 +495,7 @@ static int DefErrSetForC1(int nilOK, set *f, int subst, char * name, const char 
   while ( p < endp )
   {
     if ( e > 1 ) fprintf(ErrFile, ", ");
-    DumpIntAsChars(ErrFile, "0x%x", *p++);
+    DumpIntAsChars(ErrFile, *p++);
     if ( e == 3 )
     {
       if ( p < endp ) fprintf(ErrFile, ",");
@@ -551,7 +551,7 @@ static int DefErrSetForCC1(int nilOK, set *f, int subst, char *name, const char 
   while ( p < endp )
   {
     if ( e > 1 ) fprintf(Parser_c, ", ");
-    DumpIntAsChars(Parser_c, "0x%x", *p++);
+    DumpIntAsChars(Parser_c, *p++);
     if ( e == 3 )
     {
       if ( p < endp ) fprintf(Parser_c, ",");
