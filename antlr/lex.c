@@ -39,6 +39,7 @@
 #include "proto.h"
 #include "logger.h"
 #include "gen.h"
+#include "bits.h"
 
 #define DLGErrorString "invalid token"
 

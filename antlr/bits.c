@@ -44,13 +44,12 @@
 #include "dlgdef.h"
 #include "logger.h"
 #include "gen.h"
+#include "bits.h"
 
-/* char is only thing that is pretty much always known == 8 bits
- * This allows output of antlr (set stuff, anyway) to be androgynous (portable)
- */
-typedef unsigned char SetWordType;
+
 #define BitsPerByte   8
 #define BitsPerWord   BitsPerByte*sizeof(SetWordType)
+
 
 static SetWordType *setwd = NULL;
 int setnum = -1;
@@ -59,10 +58,18 @@ int wordnum = 0;
 int esetnum = 0;
 
 /**
+ * Define a new error set.  WARNING...set-implementation dependent.
+ */
+static int DefErrSetForC1(int nilOK, set *f, int subst, char * name, const char * suffix);
+static int isTermEntryTokClass(TermEntry *te);
+static void dumpExpr(FILE *f, char *e);
+
+
+/**
  * Used to convert native wordsize, which ANTLR uses (via set.c) to manipulate sets,
  * to bytes that are most portable size-wise.
  */
-void DumpIntAsChars( FILE *f, char *format, unsigned wd )
+static void DumpIntAsChars( FILE *f, char *format, unsigned wd )
 {
   int i;
   /* uses max of 32 bit unsigned integer for the moment */
@@ -94,14 +101,17 @@ void NewSetWd( )
   wordnum++;
 }
 
-void DumpSetWd( )
+static void DumpSetWdForC();
+static void DumpSetWdForCC();
+
+void DumpSetWd()
 {
-  if ( GenCC ) DumpSetWdForCC();
+  if (GenCC) DumpSetWdForCC();
   else DumpSetWdForC();
 }
 
 /** Dump the current setwd to ErrFile. 0..MaxTokenVal */
-void DumpSetWdForC( )
+static void DumpSetWdForC()
 {
   int i,c=1;
 
@@ -122,7 +132,7 @@ void DumpSetWdForC( )
  * Dump the current setwd to Parser.C file. 0..MaxTokenVal;
  * Only used if -CC on.
  */
-void DumpSetWdForCC( )
+static void DumpSetWdForCC()
 {
   int i,c=1;
 
@@ -401,7 +411,7 @@ void DumpRemainingTokSets()
  * replace a subset of an error set with an error class name if a subset is found
  * repeat process until no replacements made
  */
-void SubstErrorClass( set *f )
+static void SubstErrorClass( set *f )
 {
   int max, done = 0;
   ListNode *p;
@@ -434,6 +444,8 @@ void SubstErrorClass( set *f )
   }
 }
 
+static int DefErrSetForCC1(int nilOK, set *f, int subst, char *name, const char *suffix);
+
 int DefErrSet1(int nilOK, set *f, int subst, char *name )
 {
   if ( GenCC ) return DefErrSetForCC1(nilOK, f, subst, name, "_set");
@@ -454,7 +466,7 @@ int DefErrSetWithSuffix(int nilOK, set *f, int subst, char *name, const char* su
 /**
  * Define a new error set.  WARNING...set-implementation dependent.
  */
-int DefErrSetForC1(int nilOK, set *f, int subst, char * name, const char * suffix)
+static int DefErrSetForC1(int nilOK, set *f, int subst, char * name, const char * suffix)
 {
   unsigned *p, *endp;
   int e=1;
@@ -497,7 +509,7 @@ int DefErrSetForC1(int nilOK, set *f, int subst, char * name, const char * suffi
   return esetnum;
 }
 
-int DefErrSetForC( set *f, int subst, char *name )
+static int DefErrSetForC( set *f, int subst, char *name )
 {
   return DefErrSetForC1(0,f,subst,name, "_set");
 }
@@ -506,7 +518,7 @@ int DefErrSetForC( set *f, int subst, char *name )
  * Define a new error set.  WARNING...set-implementation dependent;
  * Only used when -CC on.
  */
-int DefErrSetForCC1(int nilOK, set *f, int subst, char *name, const char *suffix )
+static int DefErrSetForCC1(int nilOK, set *f, int subst, char *name, const char *suffix)
 {
   unsigned *p, *endp;
   int e=1;
@@ -553,7 +565,7 @@ int DefErrSetForCC1(int nilOK, set *f, int subst, char *name, const char *suffix
   return esetnum;
 }
 
-int DefErrSetForCC( set *f, int subst, char *name )
+static int DefErrSetForCC( set *f, int subst, char *name )
 {
   return DefErrSetForCC1(0,f,subst,name, "_set");
 }
@@ -827,7 +839,7 @@ void GenErrHdr( )
   fprintf(ErrFile, "\n};\n");
 }
 
-void dumpExpr( FILE *f, char *e )
+static void dumpExpr( FILE *f, char *e )
 {
   while ( *e!='\0' )
   {
@@ -840,7 +852,7 @@ void dumpExpr( FILE *f, char *e )
   }
 }
 
-int isTermEntryTokClass(TermEntry *te)
+static int isTermEntryTokClass(TermEntry *te)
 {
   ListNode *t;
   TCnode *p;

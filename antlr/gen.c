@@ -43,6 +43,7 @@
 #include "proto.h"
 #include "dlgdef.h"
 #include "logger.h"
+#include "bits.h"
 #include "gen.h"
 
 #define NumExprPerLine  4
