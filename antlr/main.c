@@ -45,6 +45,7 @@
 #include "gen.h"
 #include "fcache.h"
 #include "bits.h"
+#include "utils.h"
 
            /* S t a n d a r d  S i g n a l s */
 
@@ -52,10 +53,6 @@
 #define sigNoViableAlt      2
 #define sigNoSemViableAlt   3
 
-
-#define MAX_INT_STACK 50
-static int istack[MAX_INT_STACK];   /* Int stack */
-static int isp = MAX_INT_STACK;
 
 static int DontAcceptFiles = 0;     /* if stdin, don't read files */
 static int DontAcceptStdin = 0;     /* if files seen first, don't accept stdin */
@@ -73,17 +70,7 @@ typedef struct _Opt {
 
 void ProcessArgs(int, char **, Opt *);
 
-/**
- * Compare two string case insentive way.
- * \return true if the strings are equal
- */
-int ci_strequ(char *a, char *b)
-{
-  for ( ;*a != 0 && *b != 0; a++, b++) {
-    if (toupper(*a) != toupper(*b)) return 0;
-  }
-  return (*a == *b);
-}
+
 
 static void pStdin()
 {
@@ -197,12 +184,6 @@ static void pTreport( char *s, char *t )                             /* MR11 */
 {                                                    /* MR11 */
   TnodesReportThreshold = atoi(t);                         /* MR11 */
 }                                                      /* MR11 */
-
-void chkGTFlag()                                            /* 7-Apr-97 MR1 */
-{
-  if ( !GenAST )
-    warn("#-variable or other AST item referenced w/o -gt option");
-}
 
 
 static void pInfo(char *s, char *t)                         /* MR10 */
@@ -402,7 +383,7 @@ Opt options[] = {
     { NULL,  0, NULL }
 };
 
-void readDescr();
+static void readDescr();
 static void buildRulePtr( void );
 static void help( void );
 static void init( void );
@@ -773,7 +754,7 @@ static void buildRulePtr( )
 }
 
 
-void readDescr()
+static void readDescr()
 {
     zzerr = dlgerror;
     input = NextFile();
@@ -784,23 +765,23 @@ void readDescr()
 
 FILE *NextFile()
 {
-  FILE *f;
+    FILE *f;
 
-  for (;;)
-  {
-    CurFile++;
-    if ( CurFile >= NumFiles ) return(NULL);
-    if ( ci_strequ(FileStr[CurFile],"stdin")) return stdin;
-    f = fopen(FileStr[CurFile], "r");
-    if ( f == NULL )
+    for (;;)
     {
-      warnNoFL( eMsg1("file %s doesn't exist; ignored", FileStr[CurFile]) );
+        CurFile++;
+        if ( CurFile >= NumFiles ) return(NULL);
+        if ( ci_strequ(FileStr[CurFile],"stdin")) return stdin;
+        f = fopen(FileStr[CurFile], "r");
+        if ( f == NULL )
+        {
+            warnNoFL( eMsg1("file %s doesn't exist; ignored", FileStr[CurFile]) );
+        }
+        else
+        {
+            return(f);
+        }
     }
-    else
-    {
-      return(f);
-    }
-  }
 }
 
 /**
@@ -851,40 +832,6 @@ char *outnameX( char *fs ,char *suffix)
 }
 
 
-/**
- * Sprintf up to 3 strings.
- * \param s format
- * \param a1 first string
- * \param a2 second string
- * \param a3 third string
- * \return a statically allocated string (don't free it). Each call of
- * this function will override previous calls.
- */
-char *eMsg3( char *s, char *a1, char *a2, char *a3 )
-{
-  static char buf[250]; /* DANGEROUS as hell !!!!!! */
-
-  sprintf(buf, s, a1, a2, a3);
-  return( buf );
-}
-
-/** sprintf a decimal */
-char *eMsgd( char *s, int d )
-{
-  static char buf[250]; /* DANGEROUS as hell !!!!!! */
-
-  sprintf(buf, s, d);
-  return( buf );
-}
-
-char *eMsgd2( char *s, int d1,int d2)
-{
-  static char buf[250]; /* DANGEROUS as hell !!!!!! */
-
-  sprintf(buf, s, d1, d2);
-  return( buf );
-}
-
 void s_fprT(FILE *f, set e)
 {
   register unsigned *p;
@@ -903,7 +850,7 @@ void s_fprT(FILE *f, set e)
 }
 
 /** Return the token name or regular expression for a token number. */
-char *TerminalString( int token )
+char *TerminalString(int token)
 {
   static char imag_name[20];
 
@@ -919,40 +866,6 @@ char *TerminalString( int token )
   return imag_name;
 }
 
-                    /* S i m p l e  I n t  S t a c k */
-
-void pushint(int i)
-{
-  require(isp>0, "pushint: stack overflow");
-  istack[--isp] = i;
-}
-
-int popint()
-{
-  require(isp<MAX_INT_STACK, "popint: stack underflow");
-  return istack[isp++];
-}
-
-int istacksize( )
-{
-  return MAX_INT_STACK-isp;
-}
-
-void istackreset( )
-{
-  isp = MAX_INT_STACK;
-}
-
-int istackempty( )
-{
-  return isp==MAX_INT_STACK;
-}
-
-int topint( )
-{
-  require(isp<MAX_INT_STACK, "topint: stack underflow");
-  return istack[isp];
-}
 
 void ProcessArgs( int argc, char **argv, Opt *options )
 {
@@ -1126,16 +1039,6 @@ static void ensure_no_C_file_collisions(char *class_c_file)
 }
 
 
-UserAction *newUserAction(char *s)
-{
-  UserAction *ua = (UserAction *) calloc(1, sizeof(UserAction));
-  require(ua!=NULL, "cannot allocate UserAction");
-
-  ua->action = (char *) calloc(strlen(LATEXT(1))+1, sizeof(char));
-  strcpy(ua->action, s);
-  return ua;
-}
-
 /* Added by TJP September 1994 */
 /* Take in file.h and return file_h; names w/o '.'s are left alone */
 char *gate_symbol(char *name)
@@ -1149,14 +1052,4 @@ char *gate_symbol(char *name)
     if ( *p=='.' ) *p = '_';
   }
   return buf;
-}
-
-char *makeAltID(int blockid, int altnum)
-{
-  static char buf[100];
-  char *p;
-  sprintf(buf, "_blk%d_alt%d", blockid, altnum);
-  p = (char *)malloc(strlen(buf)+1);
-  strcpy(p, buf);
-  return p;
 }

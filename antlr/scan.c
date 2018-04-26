@@ -23,6 +23,51 @@
 #include "mode.h"
 #include "logger.h"
 
+
+#define MAX_INT_STACK 50
+static int istack[MAX_INT_STACK];   /* Int stack */
+static int isp = MAX_INT_STACK;
+
+
+static void chkGTFlag()
+{
+  if (!GenAST)
+    warn("#-variable or other AST item referenced w/o -gt option");
+}
+
+
+                    /* S i m p l e  I n t  S t a c k */
+
+static void pushint(int i)
+{
+  require(isp>0, "pushint: stack overflow");
+  istack[--isp] = i;
+}
+
+static int popint()
+{
+  require(isp<MAX_INT_STACK, "popint: stack underflow");
+  return istack[isp++];
+}
+
+static void istackreset()
+{
+  isp = MAX_INT_STACK;
+}
+
+static int istackempty()
+{
+  return isp==MAX_INT_STACK;
+}
+
+static int topint()
+{
+  require(isp<MAX_INT_STACK, "topint: stack underflow");
+  return istack[isp];
+}
+
+
+
 LOOKAHEAD
 
 void zzerraction()

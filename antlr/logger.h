@@ -71,5 +71,21 @@ void dlgerror(const char *s);
  */
 void cleanUp(void);
 
+/**
+ * Sprintf up to 3 strings.
+ * \param s format
+ * \param a1 first string
+ * \param a2 second string
+ * \param a3 third string
+ * \return a statically allocated string (don't free it). Each call of
+ * this function will override previous calls.
+ */
+char *eMsg3(char *s, char *a1, char *a2, char *a3);
+
+/** sprintf a decimal */
+char *eMsgd(char *s, int d);
+
+char *eMsgd2(char *s, int d1,int d2);
+
 
 #endif

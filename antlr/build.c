@@ -41,6 +41,7 @@
 #include "proto.h"
 #include "dlgdef.h"
 #include "logger.h"
+#include "utils.h"
 #include "build.h"
 
 #define WildCardString "WildCard"

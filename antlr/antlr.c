@@ -54,6 +54,29 @@ static int class_nest_level = 0;
 
 
 
+static UserAction *newUserAction(char *s)
+{
+  UserAction *ua = (UserAction *) calloc(1, sizeof(UserAction));
+  require(ua!=NULL, "cannot allocate UserAction");
+
+  ua->action = (char *) calloc(strlen(LATEXT(1))+1, sizeof(char));
+  strcpy(ua->action, s);
+  return ua;
+}
+
+
+static char *makeAltID(int blockid, int altnum)
+{
+  static char buf[100];
+  char *p;
+  sprintf(buf, "_blk%d_alt%d", blockid, altnum);
+  p = (char *)malloc(strlen(buf)+1);
+  strcpy(p, buf);
+  return p;
+}
+
+
+
 void grammar()
 {
   zzRULE;

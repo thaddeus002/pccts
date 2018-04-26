@@ -13,6 +13,7 @@
 #ifndef __BITS_H__
 #define __BITS_H__
 
+#include "../common/set.h"
 
 /**
  * char is only thing that is pretty much always known == 8 bits

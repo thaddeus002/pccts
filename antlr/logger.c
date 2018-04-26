@@ -205,3 +205,43 @@ void dlgerror(const char *s)
     fprintf(stderr, " lexical error: %s (text was '%s')\n",
             ((s == NULL) ? "Lexical error" : s), zzlextext);
 }
+
+
+/**
+ * Sprintf up to 3 strings.
+ * \param s format
+ * \param a1 first string
+ * \param a2 second string
+ * \param a3 third string
+ * \return a statically allocated string (don't free it). Each call of
+ * this function will override previous calls.
+ */
+char *eMsg3(char *s, char *a1, char *a2, char *a3)
+{
+  static char buf[250]; /* DANGEROUS as hell !!!!!! */
+
+  sprintf(buf, s, a1, a2, a3);
+  return( buf );
+}
+
+/** sprintf a decimal */
+char *eMsgd(char *s, int d)
+{
+  static char buf[250]; /* DANGEROUS as hell !!!!!! */
+
+  sprintf(buf, s, d);
+  return( buf );
+}
+
+char *eMsgd2(char *s, int d1,int d2)
+{
+  static char buf[250]; /* DANGEROUS as hell !!!!!! */
+
+  sprintf(buf, s, d1, d2);
+  return( buf );
+}
+
+
+
+
+
