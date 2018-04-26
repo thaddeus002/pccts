@@ -41,6 +41,7 @@
 #include "generic.h"
 #include "proto.h"
 #include "logger.h"
+#include "pred.h"
 
 /* ick! globals.  Used by permute() to track which elements of a set have been used */
 

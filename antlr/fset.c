@@ -42,6 +42,7 @@
 #include "dlgdef.h"
 #include "logger.h"
 #include "gen.h"
+#include "pred.h"
 
 static void ensure_predicates_cover_ambiguous_lookahead_sequences
                                     (Junction *, Junction *, char *, Tree *);

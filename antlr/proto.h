@@ -237,9 +237,6 @@ extern PointerStack MR_RuleBlkWithHaltStack;
 
 extern int tokenActionActive;
 
-extern char *PRED_OR_LIST;
-extern char *PRED_AND_LIST;
-
 #define STRICMP stricmp
 
 
@@ -318,18 +315,11 @@ extern void addFoLink( Node *, char *, Junction * );
 extern void GenCrossRef( Junction * );
 extern void defErr( char *, long, long, long, long, long, long );
 extern char * pcctsBaseName(char *);
-extern Predicate *find_predicates(Node *);
-extern Predicate *MR_find_predicates_and_supp(Node *);
-extern int predicateLookaheadDepth(ActionNode *);
-extern void predicate_free(Predicate *);
-extern Predicate * predicate_dup(Predicate *);
-extern Predicate * predicate_dup_without_context(Predicate *);
 extern void GenRulePrototypes(FILE *, Junction *);
 extern Junction *analysis_point(Junction *);
 extern Tree *make_tree_from_sets(set *, set *);
 extern Tree *tdup_chain(Tree *);
 extern Tree *tdif(Tree *, Predicate *, set *, set *);
-extern set covered_set(Predicate *);
 extern void AmbiguityDialog(Junction *, int, Junction *, Junction *, int *, int *);
 extern void GenRuleFuncRedefs(FILE *, Junction *);
 extern void GenPredefinedSymbolRedefs(FILE *);
@@ -347,7 +337,6 @@ extern char *gate_symbol(char *name);
 extern char* hideDefaultArgs(const char* pdecl);
 extern Predicate *computePredFromContextGuard(Graph,int *msgDone);
 extern void recomputeContextGuard(Predicate *);
-extern Predicate *new_pred(void);
 extern Predicate * MR_find_in_aSubBlk(Junction *alt);
 extern Predicate * MR_predFlatten(Predicate *p);
 extern Predicate * MR_predSimplifyALL(Predicate *p);

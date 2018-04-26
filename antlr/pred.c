@@ -33,14 +33,15 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
 #include "constants.h"
 #include "hash.h"
 #include "generic.h"
 #include "proto.h"
 #include "dlgdef.h"
-#include <ctype.h>
 #include "logger.h"
 #include "gen.h"
+#include "pred.h"
 
 static void complete_context_sets(RuleRefNode *, Predicate *);
 static void complete_context_trees(RuleRefNode *, Predicate *);
@@ -48,14 +49,13 @@ static void complete_context_trees(RuleRefNode *, Predicate *);
 char *PRED_AND_LIST = "AND";
 char *PRED_OR_LIST = "OR";
 
-/*
+/**
  * In C mode, return the largest constant integer found as the
  * sole argument to LATEXT(i).
  *
  * In C++ mode, return the largest constant integer found as the
  * sole argument to LT(i) given that the char before is nonalpha.
  */
-
 int predicateLookaheadDepth(ActionNode *a)
 {
   int max_k=0;
@@ -141,7 +141,7 @@ int predicateLookaheadDepth(ActionNode *a)
  * behind the block because that predicate could depend on things set in
  * one of the nonoptional blocks
  */
-Predicate *find_in_aSubBlk( Junction *alt )
+static Predicate *find_in_aSubBlk( Junction *alt )
 {
   Predicate *a, *head=NULL, *tail=NULL, *root=NULL;
   Junction *p = alt;
@@ -186,17 +186,17 @@ Predicate *find_in_aSubBlk( Junction *alt )
   return root;
 }
 
-Predicate *find_in_aOptBlk( Junction *alt )
+static Predicate *find_in_aOptBlk( Junction *alt )
 {
   return find_in_aSubBlk( alt );
 }
 
-Predicate *find_in_aLoopBegin( Junction *alt )
+static Predicate *find_in_aLoopBegin( Junction *alt )
 {
   return find_in_aSubBlk( (Junction *) alt->p1 ); /* get preds in alts */
 }
 
-Predicate *find_in_aPlusBlk( Junction *alt )
+static Predicate *find_in_aPlusBlk( Junction *alt )
 {
   require(alt!=NULL&&alt->p2!=NULL, "invalid aPlusBlk");
   return find_in_aSubBlk( alt );
@@ -375,17 +375,13 @@ Predicate *find_predicates( Node *alt )
             else
             {
               ConstrainSearch = 0;
-/* MR11 */                  if (p->ampersandPred != NULL) {
-/* MR11 */            TRAV(p,
-/* MR11 */               pred->k,
-/* MR11 */               &(pred->completionTree), t);
-/* MR11 */                  } else {
-                  TRAV(p->next,
-                     pred->k,
-                     &(pred->completionTree), t);
-                            };
+              if (p->ampersandPred != NULL) {
+                TRAV(p, pred->k, &(pred->completionTree), t);
+              } else {
+                TRAV(p->next, pred->k, &(pred->completionTree), t);
+              };
               pred->tcontext = t;
-                            MR_check_pred_too_long(pred,pred->completionTree);
+              MR_check_pred_too_long(pred,pred->completionTree);
 #ifdef DBG_PRED
               fprintf(stderr, "LL(%d) context:", pred->k);
               preorder(t);
@@ -591,8 +587,7 @@ static void complete_context_sets(RuleRefNode *p, Predicate *a)
 #endif
 }
 
-static void
-complete_context_trees(RuleRefNode *p, Predicate *a)
+static void complete_context_trees(RuleRefNode *p, Predicate *a)
 {
   set rk2;
   int k2;
@@ -684,7 +679,7 @@ void predicate_free(Predicate *p)
 
 /* MR10 predicate_dup() */
 
-Predicate * predicate_dup_xxx(Predicate *p, int contextToo)
+static Predicate * predicate_dup_xxx(Predicate *p, int contextToo)
 {
   Predicate     *q;
 

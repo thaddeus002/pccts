@@ -27,6 +27,7 @@
 #include "logger.h"
 #include "build.h"
 #include "egman.h"
+#include "pred.h"
 
 
 /* MR23 In order to remove calls to PURIFY use the antlr -nopurify option */

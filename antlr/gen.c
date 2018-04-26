@@ -44,6 +44,7 @@
 #include "dlgdef.h"
 #include "logger.h"
 #include "bits.h"
+#include "pred.h"
 #include "gen.h"
 
 #define NumExprPerLine  4

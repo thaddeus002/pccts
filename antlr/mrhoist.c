@@ -37,6 +37,7 @@
 #include "proto.h"
 #include "dlgdef.h"
 #include "logger.h"
+#include "pred.h"
 
 void dumppred(Predicate *);
 
