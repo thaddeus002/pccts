@@ -38,6 +38,7 @@
 #include "generic.h"
 #include "proto.h"
 #include "constants.h"
+#include "misc.h"
 
 char Version[] = "1.33MR33" ; /* PCCTS version number */
 char VersionDef[] = "13333";    /* same (except int equiv for preproc symbol) */

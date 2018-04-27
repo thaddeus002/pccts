@@ -46,7 +46,7 @@
 #include "gen.h"
 #include "bits.h"
 #include "utils.h"
-
+#include "misc.h"
 
 #define BitsPerByte   8
 #define BitsPerWord   BitsPerByte*sizeof(SetWordType)

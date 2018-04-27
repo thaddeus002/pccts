@@ -277,30 +277,6 @@ extern char * outname( char * );
 extern void fatal_intern( char *, char *, int );
 extern void s_fprT( FILE *, set );
 extern char * TerminalString( int );
-extern void lexclass( char * );
-extern void lexmode( int );
-extern int hasAction( char * );
-extern void setHasAction( char *, char * );
-extern int addTname( char * );
-extern int addTexpr( char * );
-extern int Tnum( char * );
-extern void Tklink( char *, char * );
-extern void list_add( ListNode **, void * );
-extern void list_free( ListNode **, int freeData );
-extern void list_apply( ListNode *, void (*)(void *) );
-extern int list_search_cstring (ListNode *, char *);
-extern char * Fkey( char *, int, int );
-extern void FoPush( char *, int );
-extern void FoPop( int );
-extern void RegisterCycle( char *, int );
-extern void ResolveFoCycles( int );
-extern void pJunc( Junction * );
-extern void pRuleRef( RuleRefNode * );
-extern void pToken( TokNode * );
-extern void pAction( ActionNode * );
-extern void FoLink( Node * );
-extern void addFoLink( Node *, char *, Junction * );
-extern void GenCrossRef( Junction * );
 extern void defErr( char *, long, long, long, long, long, long );
 extern char * pcctsBaseName(char *);
 extern Junction *analysis_point(Junction *);
@@ -308,10 +284,7 @@ extern Tree *make_tree_from_sets(set *, set *);
 extern Tree *tdup_chain(Tree *);
 extern Tree *tdif(Tree *, Predicate *, set *, set *);
 extern void AmbiguityDialog(Junction *, int, Junction *, Junction *, int *, int *);
-extern ForcedToken *newForcedToken(char *, int);
-extern void RemapForcedTokens(void);
 extern char *TokenOrExpr(int);
-extern int addForcedTname( char *, int );
 extern char *OutMetaName(char *);
 extern void OutFirstSetSymbol(Junction *q, char *);
 extern char *gate_symbol(char *name);
@@ -377,18 +350,6 @@ extern void MR_backTraceDumpItem(FILE *,int skip,Node *n);
 extern void MR_backTraceDumpItemReset(void);
 extern Junction * MR_junctionWithoutP2(Junction *);
 extern void MR_setConstrainPointer(set *);
-extern char* getInitializer(char *);
-extern char *endFormal(char *pStart,
-             char **ppDataType,
-             char **ppSymbol,
-             char **ppEqualSign,
-             char **ppValue,
-             char **ppSeparator,
-             int *pNext);
-extern char *strBetween(char *pStart,
-            char *pNext,
-            char *pStop);
-extern int hasMultipleOperands(char *);
 
 /* MR20 G. Hobbelt  Create proper externs for dlg variables */
 

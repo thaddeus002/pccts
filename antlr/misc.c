@@ -59,6 +59,7 @@
 #include <ctype.h>
 #include "logger.h"
 #include "gen.h"
+#include "misc.h"
 
 static int tsize=TSChunk;   /* size of token str arrays */
 
@@ -463,7 +464,7 @@ void Tklink( char *token, char *expr )
  * a pointer to the last element.  (i.e. length(list) = #elemIn(list)+1).
  * Elements are appended to the list.
  */
-void list_add( ListNode **list, void *e )
+void list_add(ListNode **list, void *e)
 {
   ListNode *p, *tail;
   require(e!=NULL, "list_add: attempting to add NULL list element");
@@ -489,7 +490,6 @@ void list_add( ListNode **list, void *e )
 
 /* MR10 list_free() frees the ListNode elements in the list       */
 /* MR10   if freeData then free the data elements of the list too */
-
 void list_free(ListNode **list,int freeData)
 {
   ListNode *p;
@@ -516,7 +516,6 @@ void list_apply( ListNode *list, void (*f)(void *) )
   for (p = list->next; p!=NULL; p=p->next) (*f)( p->elem );
 }
 
-/* MR27 */
 
 int list_search_cstring(ListNode *list, char * cstring)
 {
@@ -599,19 +598,9 @@ void FoPush( char *rule, int k )
     ++(FoTOS[k]);
     *(FoTOS[k]) = r->rulenum;
   }
-  {
-    /*
-****    int *p;
-****    fprintf(stderr, "FoStack[k=%d]:\n", k);
-****    for (p=FoStack[k]; p<=FoTOS[k]; p++)
-****    {
-****      fprintf(stderr, "\t%s\n", RulePtr[*p]->rname);
-****    }
-    */
-  }
 }
 
-/* Pop one rule off of the FOLLOW stack.  TOS ptr is NULL if empty. */
+/** Pop one rule off of the FOLLOW stack.  TOS ptr is NULL if empty. */
 void FoPop( int k )
 {
   require(k<=CLL_k, "FoPop: tried to access non-existent stack");
@@ -694,7 +683,7 @@ void RegisterCycle( char *rule, int k )
  *    endfor
  * endwhile
  */
-void ResolveFoCycles( int k )
+void ResolveFoCycles(int k)
 {
   ListNode *p, *q;
   Cycle *c;
@@ -847,7 +836,7 @@ static void pBlk( Junction *q, int btype )
   q->end->pvisited = FALSE;
 }
 
-/* How to print out a junction */
+/** How to print out a junction */
 void pJunc( Junction *q )
 {
   int dum_k;
@@ -968,7 +957,7 @@ void pJunc( Junction *q )
   q->pvisited = FALSE;
 }
 
-/* How to print out a rule reference node */
+/** How to print out a rule reference node */
 void pRuleRef( RuleRefNode *p )
 {
   require(p!=NULL, "pRuleRef: NULL node");
@@ -978,18 +967,20 @@ void pRuleRef( RuleRefNode *p )
   PRINT(p->next);
 }
 
-/* How to print out a terminal node */
+/** How to print out a terminal node */
 void pToken( TokNode *p )
 {
   require(p!=NULL, "pToken: NULL node");
   require(p->ntype==nToken, "pToken: not token node");
 
   if ( p->wild_card ) printf(" .");
+
+
   printf( " %s", TerminalString(p->token));
   PRINT(p->next);
 }
 
-/* How to print out a terminal node */
+/** How to print out a terminal node */
 void pAction( ActionNode *p )
 {
   require(p!=NULL, "pAction: NULL node");
@@ -999,6 +990,8 @@ void pAction( ActionNode *p )
 }
 
           /* F i l l  F o l l o w  L i s t s */
+
+static void addFoLink( Node *p, char *rname, Junction *r );
 
 /*
  * Search all rules for all rule reference nodes, q to rule, r.
@@ -1129,7 +1122,7 @@ void FoLink( Node *p )
  * always points to the most recently added follow-link.  At the end, it should
  * point to the last reference found in the grammar (starting from the 1st rule).
  */
-void addFoLink( Node *p, char *rname, Junction *r )
+static void addFoLink( Node *p, char *rname, Junction *r )
 {
   Junction *j;
   require(r!=NULL,        "addFoLink: incorrect rule graph");
@@ -1144,7 +1137,7 @@ void addFoLink( Node *p, char *rname, Junction *r )
   r->end->p1 = (Node *) j;  /* reset head to point to new node */
 }
 
-void GenCrossRef( Junction *p )
+void GenCrossRef(Junction *p)
 {
   set a;
   Junction *j;
@@ -1208,8 +1201,7 @@ void GenCrossRef( Junction *p )
  *  Don't care if it is a valid string literal or not, just find the end
  *  Start with pointer to leading "\""
  */
-
-char * skipStringLiteral(char *pCurrent)
+static char *skipStringLiteral(char *pCurrent)
 {
   char *p = pCurrent;
   if (*p == 0) return p;
@@ -1233,8 +1225,7 @@ char * skipStringLiteral(char *pCurrent)
  *  Don't care if it is a valid character literal or not, just find the end
  *  Start with pointer to leading "'"
  */
-
-char * skipCharLiteral(char *pStart)
+static char * skipCharLiteral(char *pStart)
 {
   char *p = pStart;
   if (*p == 0) return p;
@@ -1254,14 +1245,14 @@ char * skipCharLiteral(char *pStart)
   return p;
 }
 
-char * skipSpaces(char *pStart)
+static char *skipSpaces(char *pStart)
 {
   char *p = pStart;
   while (*p != 0 && isspace(*p)) p++;
   return p;
 }
 
-char * skipToSeparatorOrEqualSign(char *pStart, int *pNest)
+static char *skipToSeparatorOrEqualSign(char *pStart, int *pNest)
 {
   char *p = pStart;
 
@@ -1317,7 +1308,7 @@ EXIT:
   return p;
 }
 
-char * skipToSeparator(char *pStart, int *pNest)
+static char *skipToSeparator(char *pStart, int *pNest)
 {
   char * p = pStart;
   for ( ; ; ) {
@@ -1330,8 +1321,7 @@ char * skipToSeparator(char *pStart, int *pNest)
 }
 
 /* skip to just past the "=" separating the declaration from the initialization value */
-
-char * getInitializer(char *pStart)
+char *getInitializer(char *pStart)
 {
   char *p;
   char *pDataType;
@@ -1356,31 +1346,13 @@ char * getInitializer(char *pStart)
   return strBetween(pValue, NULL, pSeparator);
 }
 
-/*
-   Examines the string from pStart to pEnd-1.
-   If the string has 0 length or is entirely white space
-   returns 1.  Otherwise 0.
-*/
-
-int isWhiteString(const char *pStart, const char *pEnd)
-{
-  const char *p;
-  for (p = pStart; p < pEnd; p++) {
-    if (! isspace(*p)) return 0;
-  }
-  return 1;
-}
 
 /*
-   This replaces HasComma() which couldn't distinguish
-
-        foo ["a,b"]
-
-   from:
-
-        foo[a,b]
-
-*/
+ *  This replaces HasComma() which couldn't distinguish
+ *       foo ["a,b"]
+ *  from:
+ *       foo[a,b]
+ */
 
 int hasMultipleOperands(char *pStart)
 {
@@ -1400,19 +1372,18 @@ int hasMultipleOperands(char *pStart)
 static char strBetweenWorkArea[MAX_STR_BETWEEN_WORK_AREA];
 
 
-/*
-  strBetween(pStart, pNext, pStop)
-
-    Creates a null terminated string by copying the text between two pointers
-  to a work area.  The start of the string is pStart.  The end of the string
-  is the character before pNext, or if pNext is null then the character before
-  pStop.  Trailing spaces are not included in the copy operation.
-
-  This is used when a string contains several parts.  The pNext part may be
-  optional.  The pStop will stop the scan when the optional part is not present
-  (is a null pointer).
-*/
-
+/**
+ * strBetween(pStart, pNext, pStop)
+ *
+ * Creates a null terminated string by copying the text between two pointers
+ * to a work area.  The start of the string is pStart.  The end of the string
+ * is the character before pNext, or if pNext is null then the character before
+ * pStop.  Trailing spaces are not included in the copy operation.
+ *
+ * This is used when a string contains several parts.  The pNext part may be
+ * optional.  The pStop will stop the scan when the optional part is not present
+ * (is a null pointer).
+ */
 char *strBetween(char *pStart, char *pNext, char *pStop)
 {
   char *p;
@@ -1468,10 +1439,8 @@ char *strBetween(char *pStart, char *pNext, char *pStop)
                 This is non-zero for any kind of error.  This is zero
                 for a successful parse of this portion of the formal
                 list.
-
 */
-
-char * endFormal(char *pStart,
+char *endFormal(char *pStart,
                  char **ppDataType,
                  char **ppSymbol,
                  char **ppEqualSign,

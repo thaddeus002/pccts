@@ -46,6 +46,7 @@
 #include "bits.h"
 #include "pred.h"
 #include "lex.h"
+#include "misc.h"
 #include "gen.h"
 
 #define NumExprPerLine  4

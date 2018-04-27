@@ -41,6 +41,7 @@
 #include "gen.h"
 #include "bits.h"
 #include "utils.h"
+#include "misc.h"
 #include "lex.h"
 
 #define DLGErrorString "invalid token"

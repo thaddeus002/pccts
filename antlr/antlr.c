@@ -29,6 +29,7 @@
 #include "egman.h"
 #include "pred.h"
 #include "utils.h"
+#include "misc.h"
 
 
 /* MR23 In order to remove calls to PURIFY use the antlr -nopurify option */
