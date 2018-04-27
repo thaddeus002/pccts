@@ -18,6 +18,11 @@ extern char *FileStr[MaxNumFiles];/* Ptr to array of file names on command-line 
 extern int NumFiles;     /* current grammar file number */
 
 
+/*void require(int expr, char *err) {
+    if ( !(expr) ) fatal_intern(err, NULL, 0);
+}*/
+
+
 typedef enum {
     WARNING,
     ERROR,
@@ -135,7 +140,15 @@ void fatalFL(char *err, char *f, int l )
     exit(EXIT_FAILURE);
 }
 
-void fatal_intern( char *err_, char *f, int l )
+
+/** TODO : replace fatalFL or remove this function */
+void fatale(char *err, char *file, int line) {
+    fprintf(stderr, "%s(%d): %s\n", __FILE__, line, err);
+    exit(EXIT_FAILURE);
+}
+
+/** TODO : replace fatalFL or remove this function */
+void fatal_intern(char *err_, char *f, int l)
 {
     hdrLog(f, l);
     fprintf(stderr, " #$%%*&@# internal error: %s\n", err_);
@@ -155,11 +168,6 @@ void fatal_intern( char *err_, char *f, int l )
 void cleanUp(void) {
     if ( DefFile != NULL) fclose( DefFile );
 }
-
-
-/*void require(int expr, char *err) {
-    if ( !(expr) ) fatal_intern(err, NULL, 0);
-}*/
 
 
 /**
@@ -240,8 +248,4 @@ char *eMsgd2(char *s, int d1,int d2)
   sprintf(buf, s, d1, d2);
   return( buf );
 }
-
-
-
-
 

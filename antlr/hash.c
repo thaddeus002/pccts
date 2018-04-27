@@ -45,39 +45,37 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include "logger.h"
 #include "hash.h"
 
-#define fatal(err)                              \
-      {fprintf(stderr, "%s(%d):", __FILE__, __LINE__);        \
-      fprintf(stderr, " %s\n", err); exit(-1);}
-
-#define require(expr, err) {if ( !(expr) ) fatal(err);}
 
 /** number of entries in the table */
-static unsigned size = HashTableSize;
+static unsigned int size = HashTableSize;
 
 
-/** Hash 's' using 'size'. */
-static unsigned int hash(char *s, unsigned int size) {
+/**
+ * Hash 's' using 'size'.
+ * \param s the string to hash
+ * \param size max of return value + 1
+ */
+static unsigned int hash(const char *s, unsigned int size) {
+    unsigned int h = 0;
 
-  unsigned int h = 0;
-
-  while ( *s != '\0' ) {
-    h = (h<<1) + *s++;
-  }
-  return (h % size);
+    while ( *s != '\0' ) {
+        h = (h<<1) + *s++;
+    }
+    return (h % size);
 }
 
 
 /** create the hash table and string table for terminals (string table only once) */
 HashTable newHashTable()
 {
-  HashTable table;
+    HashTable table;
 
-  table = calloc(size, sizeof(Entry *));
-  require( table != NULL, "cannot allocate hash table");
-  return table;
+    table = calloc(size, sizeof(Entry *));
+    require( table != NULL, "cannot allocate hash table");
+    return table;
 }
 
 void killHashTable(HashTable table)
@@ -88,11 +86,14 @@ void killHashTable(HashTable table)
 
 /**
  * Given a table, add 'rec' with key 'key' (add to front of list).
+ * \param table the hash table
+ * \param key key to use to retrieve the record (will give the hash)
+ * \param rec the record to store
  * \return ptr to entry
  */
 Entry *hash_add(HashTable table, char *key, Entry *rec)
 {
-  unsigned h=0;
+  unsigned int h=0;
   char *p=key;
   require(table!=NULL && key!=NULL && rec!=NULL, "add: invalid addition");
 
@@ -102,7 +103,12 @@ Entry *hash_add(HashTable table, char *key, Entry *rec)
   return rec;
 }
 
-/** Return ptr to 1st entry found in table under key (return NULL if none found) */
+/**
+ * Return ptr to 1st entry found in table under key (return NULL if none found)
+ * \param table the hashtable
+ * \param key finding key
+ * \return the last Entry stored with Entry.str == key;
+ */
 Entry *hash_get(HashTable table, char *key)
 {
   unsigned h=0;
@@ -110,7 +116,7 @@ Entry *hash_get(HashTable table, char *key)
   Entry *q;
   require(table!=NULL && key!=NULL, "get: invalid table and/or key");
 
-  h=hash(p,size);
+  h=hash(p, size);
   for (q = table[h]; q != NULL; q = q->next)
   {
     if ( !strcmp(key, q->str) ) return( q );

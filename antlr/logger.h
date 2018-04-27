@@ -7,6 +7,7 @@
 #define __LOGGER_H_
 
 
+
           /* E r r o r  M a c r o s */
 
 #define fatal(err)  fatalFL(err, __FILE__, __LINE__)
@@ -18,9 +19,7 @@
 
         /* S a n i t y  C h e c k i n g */
 
-#ifndef require
 #define require(expr, err) {if ( !(expr) ) fatal_internal(err);}
-#endif
 
 
 
