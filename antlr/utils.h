@@ -19,7 +19,11 @@
  */
 int ci_strequ(char *a, char *b);
 
+/** check to see if string e is a word in string s */
+int strmember(char *s, char *e);
 
+/** given "s" yield s -- DESTRUCTIVE (we modify s if starts with " else return s) */
+char *StripQuotes(char *s);
 
 
 #endif

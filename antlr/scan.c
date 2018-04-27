@@ -22,6 +22,7 @@
 #include "dlgdef.h"
 #include "mode.h"
 #include "logger.h"
+#include "utils.h"
 
 
 #define MAX_INT_STACK 50

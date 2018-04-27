@@ -46,6 +46,7 @@
 #include "fcache.h"
 #include "bits.h"
 #include "utils.h"
+#include "lex.h"
 
            /* S t a n d a r d  S i g n a l s */
 

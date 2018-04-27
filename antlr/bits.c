@@ -45,6 +45,7 @@
 #include "logger.h"
 #include "gen.h"
 #include "bits.h"
+#include "utils.h"
 
 
 #define BitsPerByte   8
