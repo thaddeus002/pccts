@@ -181,12 +181,6 @@ typedef struct _PointerStack {      /* MR10 */
     void    **data;
 } PointerStack;
 
-#define newTermEntry(s)   (TermEntry *) newEntry(s, sizeof(TermEntry))
-#define newRuleEntry(s)   (RuleEntry *) newEntry(s, sizeof(RuleEntry))
-#define newCacheEntry(s)  (CacheEntry *) newEntry(s, sizeof(CacheEntry))
-#define newLabelEntry(s)  (LabelEntry *) newEntry(s, sizeof(LabelEntry))
-#define newSignalEntry(s) (SignalEntry *) newEntry(s, sizeof(SignalEntry))
-#define newPredEntry(s)     (PredEntry *) newEntry(s,sizeof(PredEntry))
 
 typedef struct _UserAction {
     char *action;

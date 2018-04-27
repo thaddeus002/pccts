@@ -124,3 +124,31 @@ Entry *hash_get(HashTable table, char *key)
   return( NULL );
 }
 
+
+/**
+ * Given a string, this function allocates and returns a pointer to a
+ * hash table record of size 'sz' whose "str" pointer is reset to a position
+ * in the string table.
+ * \param text the entry's text. must not be NULL.
+ * \param sz size of the new Entry TODO what this means ?
+ */
+Entry *newEntry(char *text, int sz)
+{
+  Entry *p;
+  require(text!=NULL, "new: NULL terminal");
+
+  p = (Entry *) calloc(1,sz);
+
+  if ( p == NULL )
+  {
+    fatal_internal("newEntry: out of memory for terminals\n");
+    exit(EXIT_FAILURE);
+  }
+
+  p->str = strdup(text);
+  // TODO log a warning if p->str==NULL
+
+  return(p);
+}
+
+

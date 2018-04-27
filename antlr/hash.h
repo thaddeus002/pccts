@@ -61,6 +61,14 @@ typedef struct _entry {
     struct _entry *next;
 } Entry;
 
+#define newTermEntry(s)   (TermEntry *) newEntry(s, sizeof(TermEntry))
+#define newRuleEntry(s)   (RuleEntry *) newEntry(s, sizeof(RuleEntry))
+#define newCacheEntry(s)  (CacheEntry *) newEntry(s, sizeof(CacheEntry))
+#define newLabelEntry(s)  (LabelEntry *) newEntry(s, sizeof(LabelEntry))
+#define newSignalEntry(s) (SignalEntry *) newEntry(s, sizeof(SignalEntry))
+#define newPredEntry(s)   (PredEntry *) newEntry(s,sizeof(PredEntry))
+
+
 /**
  * A HashTable is a collection of Entry classed by hash of str.
  */
@@ -80,6 +88,15 @@ Entry *hash_add(HashTable table, char *key, Entry *rec);
 
 /** Return ptr to 1st entry found in table under key (return NULL if none found) */
 Entry *hash_get(HashTable table, char *key);
+
+/**
+ * Given a string, this function allocates and returns a pointer to a
+ * hash table record of size 'sz' whose "str" pointer is reset to a position
+ * in the string table.
+ * \param text the entry's text. must not be NULL.
+ * \param sz size of the new Entry TODO what this means ?
+ */
+Entry *newEntry(char *text, int sz);
 
 
 #endif

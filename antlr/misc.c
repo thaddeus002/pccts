@@ -41,9 +41,8 @@
  *    void  Tklink(char *, char *); Link a name with an expression
  *    int   hasAction(expr);    Does expr already have action assigned?
  *    void  setHasAction(expr);   Indicate that expr now has an action
- *    Entry *newEntry(char *,int);  Create new table entry with certain size
  *    void  list_add(ListNode **list, char *e)
- *    void    list_free(ListNode **list, int freeData);   *** MR10 ***
+ *    void  list_free(ListNode **list, int freeData);   *** MR10 ***
  *    void  list_apply(ListNode *list, void (*f)())
  *    void  lexclass(char *m);    switch to new/old lexical class
  *    void  lexmode(int i);     switch to old lexical class i
@@ -115,7 +114,11 @@ static Expr *newExpr( char *e )
   return p;
 }
 
-/* switch to lexical class/mode m.  This amounts to creating a new
+static int LexClassIndex(char *cl);
+
+
+/**
+ * switch to lexical class/mode m.  This amounts to creating a new
  * lex mode if one does not already exist and making ExprStr point
  * to the correct char string array.  We must also switch Texpr tables.
  *
@@ -167,8 +170,8 @@ void lexmode(int i)
   CurrentLexClass = i;
 }
 
-/* return index into lclass array of lexical class. return -1 if nonexistent */
-int LexClassIndex( char *cl )
+/** return index into lclass array of lexical class. return -1 if nonexistent */
+static int LexClassIndex(char *cl)
 {
   int i;
 
@@ -331,14 +334,14 @@ static void RemapForcedTokensInSyntaxDiagram(Node *p)
   }
 }
 
-/*
+/**
  * Add a token name.  Return the token number associated with it.  If it already
  * exists, then return the token number assigned to it.
  *
  * Track the order in which tokens are found so that the DLG output maintains
  * that order.  It also lets us map token numbers to strings.
  */
-int addTname( char *token )
+int addTname(char *token)
 {
   TermEntry *p;
   require(token!=NULL, "addTname: invalid token name");
@@ -351,7 +354,8 @@ int addTname( char *token )
   return p->token;
 }
 
-/* This is the same as addTname except we force the TokenNum to be tnum.
+/**
+ * This is the same as addTname except we force the TokenNum to be tnum.
  * We don't have to use the Forced token stuff as no tokens will have
  * been defined with #tokens when this is called.  This is only called
  * when a #tokdefs meta-op is used.
@@ -369,7 +373,7 @@ int addForcedTname( char *token, int tnum )
   return p->token;
 }
 
-/*
+/**
  * Add a token expr.  Return the token number associated with it.  If it already
  * exists, then return the token number assigned to it.
  */
@@ -388,7 +392,7 @@ int addTexpr( char *expr )
   return p->token;
 }
 
-/* return the token number of 'term'.  Return 0 if no 'term' exists */
+/** return the token number of 'term'.  Return 0 if no 'term' exists */
 int Tnum( char *term )
 {
   TermEntry *p;
@@ -400,7 +404,8 @@ int Tnum( char *term )
   else return p->token;
 }
 
-/* associate a Name with an expr.  If both have been already assigned
+/**
+ * associate a Name with an expr.  If both have been already assigned
  * token numbers, then an error is reported.  Add the token or expr
  * that has not been added if no error.  This 'represents' the #token
  * ANTLR pseudo-op.  If both have not been defined, define them both
@@ -450,32 +455,6 @@ void Tklink( char *token, char *expr )
   }
 }
 
-/**
- * Given a string, this function allocates and returns a pointer to a
- * hash table record of size 'sz' whose "str" pointer is reset to a position
- * in the string table.
- * \param text the entry's text. must not be NULL.
- * \param sz size of the new Entry TODO what this means ?
- */
-// TODO move this to hash.c
-Entry *newEntry( char *text, int sz )
-{
-  Entry *p;
-  require(text!=NULL, "new: NULL terminal");
-
-  p = (Entry *) calloc(1,sz);
-
-  if ( p == NULL )
-  {
-    fatal_internal("newEntry: out of memory for terminals\n");
-    exit(EXIT_FAILURE);
-  }
-
-  p->str = strdup(text);
-  // TODO log a warning if p->str==NULL
-
-  return(p);
-}
 
 /**
  * add an element to a list.
