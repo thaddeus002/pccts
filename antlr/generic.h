@@ -103,9 +103,9 @@ typedef struct _ft {
     int tnum;     /**< move token type to which token position */
 } ForcedToken;
 
-typedef struct _ContextGuardPredicates {    /* MR13 */
-    Predicate *pred;                /* MR13 */
-} ContextGuardPredicates;           /* MR13 */
+typedef struct _ContextGuardPredicates {
+    Predicate *pred;
+} ContextGuardPredicates;
 
 #define newListNode (ListNode *) calloc(1, sizeof(ListNode));
 #define newCycle  (Cycle *) calloc(1, sizeof(Cycle));
@@ -175,7 +175,7 @@ typedef struct _PredEntry {       /* MR11 predicate name and ptr to string */
     char              *predLiteral;
 } PredEntry;
 
-typedef struct _PointerStack {      /* MR10 */
+typedef struct _PointerStack {
     int     count;
     int     size;
     void    **data;
@@ -206,14 +206,6 @@ typedef Graph Attrib;
 
         /* M a x i m u m s */
 
-/* MR20 Note G. Hobbelt These values are superceded by values in hash.h */
-
-#ifndef HashTableSize
-#define HashTableSize 253
-#endif
-#ifndef StrTableSize
-#define StrTableSize  15000 /* all tokens, nonterminals, rexprs stored here */
-#endif
 #define MaxLexClasses 50    /* how many automatons */
 /* TokenStart and EofToken are ignored if #tokdefs meta-op is used */
 #define TokenStart    2   /* MUST be in 1 + EofToken */

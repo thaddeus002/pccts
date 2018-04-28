@@ -52,7 +52,7 @@
 #endif
 
 #ifndef StrTableSize
-#define StrTableSize 1000000
+#define StrTableSize 1000000 /* all tokens, nonterminals, rexprs stored here */
 #endif
 
 /** Minimum hash table entry -- superclass */
