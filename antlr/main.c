@@ -1039,19 +1039,3 @@ static void ensure_no_C_file_collisions(char *class_c_file)
     }
   }
 }
-
-
-/* Added by TJP September 1994 */
-/* Take in file.h and return file_h; names w/o '.'s are left alone */
-char *gate_symbol(char *name)
-{
-  static char buf[100];
-  char *p;
-  sprintf(buf, "%s", name);
-
-  for (p=buf; *p!='\0'; p++)
-  {
-    if ( *p=='.' ) *p = '_';
-  }
-  return buf;
-}

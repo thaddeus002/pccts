@@ -225,6 +225,25 @@ static char *StripPath( char *fileName )
   return(p);
 }
 
+
+/**
+ * Take in "file.h" and return "file_h".
+ * names without '.'s are left alone.
+ */
+static char *gate_symbol(char *name)
+{
+  static char buf[100];
+  char *p;
+  sprintf(buf, "%s", name);
+
+  for (p=buf; *p!='\0'; p++)
+  {
+    if ( *p=='.' ) *p = '_';
+  }
+  return buf;
+}
+
+
 static void GenRulePrototypes(FILE *f, Junction *p);
 
 /**

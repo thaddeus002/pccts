@@ -287,7 +287,6 @@ extern void AmbiguityDialog(Junction *, int, Junction *, Junction *, int *, int 
 extern char *TokenOrExpr(int);
 extern char *OutMetaName(char *);
 extern void OutFirstSetSymbol(Junction *q, char *);
-extern char *gate_symbol(char *name);
 extern char* hideDefaultArgs(const char* pdecl);
 extern Predicate *computePredFromContextGuard(Graph,int *msgDone);
 extern void recomputeContextGuard(Predicate *);
