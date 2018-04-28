@@ -39,7 +39,6 @@
 #include "logger.h"
 #include "pred.h"
 
-void dumppred(Predicate *);
 
 /**
  * Try to determine whether predicate "first" is true for
@@ -50,8 +49,8 @@ void dumppred(Predicate *);
  */
 int MR_secondPredicateUnreachable(Predicate *first,Predicate *second)
 {
-  Predicate     *f;
-  Predicate     *s;
+  Predicate *f;
+  Predicate *s;
 
   if (first == NULL) {
     return 1;
@@ -175,7 +174,7 @@ B_next_f:
   return 0; /* MR20 MSVC 5.0 complains about missing return statement */
 }
 
-void MR_xxxIndent(FILE *f,int depth)
+static void MR_xxxIndent(FILE *f,int depth)
 {
   int   i;
 
@@ -184,23 +183,20 @@ void MR_xxxIndent(FILE *f,int depth)
   };
 }
 
-void MR_stderrIndent(int depth)
-{
-  MR_xxxIndent(stderr,depth);
-}
-
-void MR_outputIndent(int depth)
+static void MR_outputIndent(int depth)
 {
   MR_xxxIndent(output,depth);
 }
 
-void MR_set_reuse(set *s)
+static void MR_set_reuse(set *s)
 {
   set_free(*s);
   *s=empty;
 }
 
-void MR_dumpPredRuleRefStack(FILE *iounit,int indent)
+static Junction * MR_ruleReferenced(RuleRefNode *rrn);
+
+static void MR_dumpPredRuleRefStack(FILE *iounit,int indent)
 {
     int             i;
     int             j;
@@ -226,7 +222,7 @@ void MR_dumpPredRuleRefStack(FILE *iounit,int indent)
     };
 }
 
-void MR_dumpTreeF(FILE *f,int depth,Tree *tree,int across)
+static void MR_dumpTreeF(FILE *f,int depth,Tree *tree,int across)
 {
   int     newAcross=across;
 
@@ -260,7 +256,7 @@ void MR_dumpTreeF(FILE *f,int depth,Tree *tree,int across)
     MR_dumpTreeF(f,depth,tree->right,newAcross+1);
 }
 
-void MR_dumpTreeX(int depth,Tree *tree,int across)
+static void MR_dumpTreeX(int depth,Tree *tree,int across)
 {
   MR_dumpTreeF(output,depth,tree,across);
 }
@@ -425,7 +421,7 @@ int MR_predicate_context_completed(Predicate *p)
          MR_predicate_context_completed(p->right);
 }
 
-Node * MR_advance(Node *n)
+static Node *MR_advance(Node *n)
 {
     if (n == NULL) return NULL;
     switch (n->ntype) {
@@ -435,21 +431,9 @@ Node * MR_advance(Node *n)
       case nAction:     return ((ActionNode *)n)->next;
       default:          return NULL;
     };
-    return NULL; /* MSVC 5.0 complains about missing return statement */
+    return NULL;
 }
 
-Junction * MR_find_endRule(Node *n)
-{
-    Node    *next;
-    if (n == NULL) return NULL;
-    for (next=n; next != NULL; next=MR_advance(next)) {
-      if (next->ntype == nJunction &&
-            ( (Junction *) next)->jtype == EndRule) {
-        break;
-      };
-    };
-    return (Junction *)next;
-}
 
 /**
  * Intersection:  a branch which is shorter is chosen
@@ -458,7 +442,7 @@ Junction * MR_find_endRule(Node *n)
  * AND: a branch which is longer is chosen over the one
  * which is shorter: (A B C) AND (A B) yields (A B C)
  */
-Tree *MR_computeTreeIntersection(Tree *l,Tree *r)
+static Tree *MR_computeTreeIntersection(Tree *l,Tree *r)
 {
     Tree    *result=NULL;
     Tree    **tail;
@@ -553,7 +537,7 @@ Tree *MR_computeTreeAND(Tree *l,Tree *r)
     return result;
 }
 
-void MR_union_plain_sets1(Predicate *p,set *theUnion)
+static void MR_union_plain_sets1(Predicate *p,set *theUnion)
 {
   if (p == NULL) return;
   MR_union_plain_sets1(p->down,theUnion);
@@ -562,7 +546,7 @@ void MR_union_plain_sets1(Predicate *p,set *theUnion)
   return;
 }
 
-set MR_union_plain_sets(Predicate *p)
+static set MR_union_plain_sets(Predicate *p)
 {
   set   theUnion;
 
@@ -577,7 +561,9 @@ set MR_union_plain_sets(Predicate *p)
    in fact the opposite: (A B) with (A) gives (A)
 */
 
-Tree *MR_compute_pred_tree_ctxXX(Predicate *p)
+static Tree *MR_remove_epsilon_from_tree(Tree *t);
+
+static Tree *MR_compute_pred_tree_ctxXX(Predicate *p)
 {
     Tree        *result=NULL;
     Predicate   *q;
@@ -672,7 +658,7 @@ set MR_compute_pred_set(Predicate *p)
     };
 }
 
-set MR_First(int ck,Junction *j,set *incomplete)
+static set MR_First(int ck,Junction *j,set *incomplete)
 {
     Junction    *p;
     set         tokensUsed;
@@ -707,7 +693,7 @@ void MR_cleanup_pred_trees(Predicate *p)
 
 /* does NOT return canonical tree */
 
-Tree * MR_remove_epsilon_from_tree(Tree *t)
+static Tree *MR_remove_epsilon_from_tree(Tree *t)
 {
   if (t == NULL) return NULL;
 
@@ -726,13 +712,13 @@ Tree * MR_remove_epsilon_from_tree(Tree *t)
   };
 }
 
-void MR_complete_set(int predDepth,set *tokensUsed,set *incomplete)
+static void MR_complete_set(int predDepth,set *tokensUsed,set *incomplete)
 {
     int             i;
     RuleRefNode     *ruleRef;
-  set             rk2;
+    set             rk2;
     set             b;
-  int             k2;
+    int             k2;
     Junction        *save_MR_RuleBlkWithHalt;
 
     if (set_int(*incomplete) > (unsigned) predDepth) {
@@ -784,7 +770,7 @@ void MR_complete_set(int predDepth,set *tokensUsed,set *incomplete)
     };
 }
 
-void MR_complete_tree(int predDepth,Tree **t,set *incomplete)
+static void MR_complete_tree(int predDepth,Tree **t,set *incomplete)
 {
     int             i;
     RuleRefNode     *ruleRef;
@@ -824,25 +810,25 @@ void MR_complete_tree(int predDepth,Tree **t,set *incomplete)
       rk2=empty;
 
       while ( !set_nil(*incomplete) ) {
-    k2 = set_int(*incomplete);
+        k2 = set_int(*incomplete);
         if (k2 > (unsigned) predDepth) break;       /* <=== another exit from loop */
-    set_rm(k2,*incomplete);
-    u = NULL;
+        set_rm(k2,*incomplete);
+        u = NULL;
 
         TRAV(ruleRef->next,k2,&rk2,u);
 
-      /* any subtrees missing k2 tokens, add u onto end */
+        /* any subtrees missing k2 tokens, add u onto end */
 
-    *t=tlink(*t,u,k2);
+        *t=tlink(*t,u,k2);
         Tfree(u);
       }
 
-    set_orin(incomplete,rk2);         /* remember what we couldn't do */
+      set_orin(incomplete,rk2);         /* remember what we couldn't do */
       set_free(rk2);
 
       if (MR_RuleBlkWithHalt != NULL) MR_RuleBlkWithHalt->end->halt=FALSE;
 
-    if (set_int(*incomplete) > (unsigned) predDepth) break;    /* <=== another exit from loop */
+      if (set_int(*incomplete) > (unsigned) predDepth) break;    /* <=== another exit from loop */
     };
 
     MR_RuleBlkWithHalt=save_MR_RuleBlkWithHalt;
@@ -853,7 +839,7 @@ void MR_complete_tree(int predDepth,Tree **t,set *incomplete)
     ConstrainSearch=saveConstrainSearch;
 }
 
-void MR_complete_predicates(int predDepth,Predicate *pred)
+static void MR_complete_predicates(int predDepth,Predicate *pred)
 {
   if (pred == NULL) return;
   if (pred->expr != PRED_AND_LIST &&
@@ -865,7 +851,7 @@ void MR_complete_predicates(int predDepth,Predicate *pred)
   MR_complete_predicates(predDepth,pred->right);
 }
 
-Junction * MR_junctionWithoutP2(Junction *j)
+static Junction *MR_junctionWithoutP2(Junction *j)
 {
   Junction  *thisAlt;
 
@@ -934,9 +920,8 @@ next_s:
   return 1;
 }
 
-/* this does not compare sources - only contexts ! */
-
-int MR_identicalContext(Predicate *p,Predicate *q)
+/** this does not compare sources - only contexts ! */
+static int MR_identicalContext(Predicate *p,Predicate *q)
 {
   if (p->k != q->k) return 0;
   require ( (p->tcontext == NULL) == (q->tcontext == NULL),
@@ -948,7 +933,7 @@ int MR_identicalContext(Predicate *p,Predicate *q)
   };
 }
 
-void MR_reportSetSuppression(int predDepth,
+static void MR_reportSetSuppression(int predDepth,
             set predSet,set plainSet,Junction *jPred,Junction *jPlain,Predicate *p)
 {
   if (InfoP) {
@@ -975,7 +960,7 @@ void MR_reportSetSuppression(int predDepth,
   };
 }
 
-void MR_reportSetRestriction(int predDepth,set predSet,set plainSet,
+static void MR_reportSetRestriction(int predDepth,set predSet,set plainSet,
             Junction *jPred,Junction *jPlain,Predicate *origPred,Predicate *newPred)
 {
   set       intersect;
@@ -1016,8 +1001,7 @@ void MR_reportSetRestriction(int predDepth,set predSet,set plainSet,
 }
 
 /* don't use Pass3 by itself unless you know that inverted is not important */
-
-Predicate * MR_removeRedundantPredPass3(Predicate *p)
+static Predicate *MR_removeRedundantPredPass3(Predicate *p)
 {
   Predicate     *q;
 
@@ -1049,7 +1033,7 @@ Predicate * MR_removeRedundantPredPass3(Predicate *p)
   return p;
 }
 
-void MR_removeRedundantPredPass2(Predicate *p)
+static void MR_removeRedundantPredPass2(Predicate *p)
 {
   Predicate     *q;
 
@@ -1099,8 +1083,7 @@ void MR_removeRedundantPredPass2(Predicate *p)
              | B                        // 4 - suppresses line 2
              ;
 */
-
-void MR_apply_restriction1(Predicate *pred,set *plainSet,int *changed)
+static void MR_apply_restriction1(Predicate *pred,set *plainSet,int *changed)
 {
   if (pred == NULL) return;
   MR_apply_restriction1(pred->right,plainSet,changed);
@@ -1123,7 +1106,7 @@ void MR_apply_restriction1(Predicate *pred,set *plainSet,int *changed)
   };
 }
 
-void MR_orin_plainSet(Predicate *p,set plainSet)
+static void MR_orin_plainSet(Predicate *p,set plainSet)
 {
   if (p == NULL) return;
   MR_orin_plainSet(p->down,plainSet);
@@ -1131,9 +1114,9 @@ void MR_orin_plainSet(Predicate *p,set plainSet)
   set_orin(&p->plainSet,plainSet);
 }
 
-Predicate   *PRED_SUPPRESS;
+Predicate *PRED_SUPPRESS;
 
-Predicate * MR_find_in_aSubBlk(Junction *alt)
+Predicate *MR_find_in_aSubBlk(Junction *alt)
 {
     Predicate       *root=NULL;
     Predicate       **tail=NULL;
@@ -1481,7 +1464,7 @@ int MR_pointerStackPush(PointerStack *ps,void *dataPointer)
   return ps->count-1;
 }
 
-void * MR_pointerStackPop(PointerStack *ps)
+void *MR_pointerStackPop(PointerStack *ps)
 {
   void  *dataPointer;
 
@@ -1493,11 +1476,6 @@ void * MR_pointerStackPop(PointerStack *ps)
   return dataPointer;
 }
 
-void * MR_pointerStackTop(PointerStack *ps)
-{
-  require(ps->count > 0,"MR_pointerStackTop underflow");
-  return ps->data[ps->count-1];
-}
 
 void MR_pointerStackReset(PointerStack *ps)
 {
@@ -1527,12 +1505,12 @@ Junction *MR_nameToRuleBlk(char *name)
     };
 }
 
-Junction * MR_ruleReferenced(RuleRefNode *rrn)
+static Junction * MR_ruleReferenced(RuleRefNode *rrn)
 {
     return MR_nameToRuleBlk(rrn->text);
 }
 
-void MR_comparePredLeaves(Predicate *me,Predicate *myParent,Predicate *him,Predicate *hisParent)
+static void MR_comparePredLeaves(Predicate *me,Predicate *myParent,Predicate *him,Predicate *hisParent)
 {
     if (me == NULL) return;
     if (me == him) {
@@ -1610,7 +1588,7 @@ void MR_comparePredLeaves(Predicate *me,Predicate *myParent,Predicate *him,Predi
     };
 }
 
-void MR_removeRedundantPredPass1(Predicate *me,Predicate *myParent)
+static void MR_removeRedundantPredPass1(Predicate *me,Predicate *myParent)
 {
     if (me == NULL) return;
     if (me->redundant) {
@@ -1630,8 +1608,7 @@ void MR_removeRedundantPredPass1(Predicate *me,Predicate *myParent)
     };
 }
 
-/* pretty much ignores things with the inverted bit set */
-
+/** pretty much ignores things with the inverted bit set */
 Predicate *MR_predFlatten(Predicate *p)
 {
     if (p == NULL) return NULL;
@@ -1692,7 +1669,7 @@ Predicate *MR_predFlatten(Predicate *p)
 
 static char *alwaysFalseWarning=NULL;
 
-Predicate *checkPredicateConflict(Predicate *p)
+static Predicate *checkPredicateConflict(Predicate *p)
 {
   if (p->isConst) {
     if (p->constValue == 1) {
@@ -1723,7 +1700,7 @@ Predicate *checkPredicateConflict(Predicate *p)
 }
 
 
-int MR_countPredNodes(Predicate *p)
+static int MR_countPredNodes(Predicate *p)
 {
   if (p == NULL) return 0;
   return 1 + MR_countPredNodes(p->down) + MR_countPredNodes(p->right);
@@ -1804,9 +1781,8 @@ int MR_allPredLeaves(Predicate *p)
   return 1;
 }
 
-/* make sure it works for the last rule in a file */
-
-int MR_offsetFromRule(Node *n)
+/** make sure it works for the last rule in a file */
+static int MR_offsetFromRule(Node *n)
 {
   Junction  *j;
   int       offset=(-1);
@@ -1835,7 +1811,7 @@ int MR_offsetFromRule(Node *n)
 static char ruleNameStatic1[ruleNameMax];
 static char ruleNameStatic2[ruleNameMax+10];
 
-char * MR_ruleNamePlusOffset(Node *n)
+char *MR_ruleNamePlusOffset(Node *n)
 {
     int     offset=MR_offsetFromRule(n);
 
@@ -1887,7 +1863,7 @@ int MR_all_leaves_same_height(Tree *t,int depth)
   };
 }
 
-void MR_projectTreeOntoSet(Tree *tree,int ck,set *ckset)
+static void MR_projectTreeOntoSet(Tree *tree,int ck,set *ckset)
 {
     if (tree == NULL) return;
 
@@ -1905,7 +1881,7 @@ void MR_projectTreeOntoSet(Tree *tree,int ck,set *ckset)
     };
 }
 
-int MR_comparePredicates(Predicate *a,Predicate *b)
+int MR_comparePredicates(Predicate *a, Predicate *b)
 {
   Predicate     *p;
   Predicate     *q;
@@ -1944,7 +1920,7 @@ NEXT_P:
   return 1;
 }
 
-/*
+/**
  *  action->inverted can be set only when a predicate symbol appears in
  *      a rule:  "rule : <<!XXX>>? X".  It cannot be set under any
  *      other circumstances.  In particular it cannot be set by
@@ -1987,7 +1963,6 @@ NEXT_P:
  *    necessary.  Expansion of references is performed by predPrimary when
  *    a new predicate symbol is created by referring to others in the pred expr.
  */
-
 Predicate *MR_unfold(Predicate *pred)
 {
   Predicate     *result;
@@ -2023,10 +1998,11 @@ Predicate *MR_unfold(Predicate *pred)
   return pred;
 }
 
-/* this should be called immediately after MR_unfold() and
-   at no other times
-*/
-
+/**
+ * this should be called immediately after MR_unfold() and
+ * at no other times.
+ * TODO make it static and call it in MR_unfold()
+ */
 void MR_simplifyInverted(Predicate *pred,int inverted)
 {
   int       newInverted;
@@ -2053,7 +2029,6 @@ void MR_simplifyInverted(Predicate *pred,int inverted)
 }
 
 /* only remove it from AND and OR nodes, not leaves */
-
 void MR_clearPredEntry(Predicate *p)
 {
    if (p == NULL) return;
@@ -2098,7 +2073,7 @@ void MR_orphanRules(FILE *f)
 static int      *mergeChain;
 static Tree     *mergeTree;
 
-Tree *MR_merge_tree_contexts_client(Tree *t,int chain[])
+static Tree *MR_merge_tree_contexts_client(Tree *t,int chain[])
 {
   if (t == NULL)  return NULL;
   if (chain[0] == 0) {
@@ -2114,7 +2089,7 @@ Tree *MR_merge_tree_contexts_client(Tree *t,int chain[])
   return t;
 }
 
-void MR_iterateOverTreeContexts(Tree *t,int chain[])
+static void MR_iterateOverTreeContexts(Tree *t,int chain[])
 {
   if (t == NULL) return;
   chain[0]=t->token;
@@ -2127,9 +2102,9 @@ void MR_iterateOverTreeContexts(Tree *t,int chain[])
   chain[0]=0;
 }
 
-Tree *MR_merge_tree_contexts(Tree *t)
+static Tree *MR_merge_tree_contexts(Tree *t)
 {
-    int     h=MR_max_height_of_tree(t);
+    int h=MR_max_height_of_tree(t);
 
     mergeTree=t;
     mergeChain=(int *) calloc(h+1,sizeof(int));
@@ -2214,7 +2189,7 @@ int                 MR_SuppressSearch=0;
 static int          suppressSucceeded;
 static Predicate *  suppressPredicate;
 
-int MR_isChain(Tree *t)
+static int MR_isChain(Tree *t)
 {
   Tree  *u;
 
@@ -2224,7 +2199,7 @@ int MR_isChain(Tree *t)
   return 1;
 }
 
-int MR_suppressK_client(Tree *tree,int tokensInChain[])
+static int MR_suppressK_client(Tree *tree,int tokensInChain[])
 {
   int       i;
   set       *save_fset;
@@ -2266,8 +2241,6 @@ int MR_suppressK_client(Tree *tree,int tokensInChain[])
   incomplete=empty;
   t=NULL;
 
-/***  constrain = &(fset[1]); ***/
-
   MR_setConstrainPointer(&(fset[1])); /* MR18 */
 
   MR_pointerStackReset(&MR_BackTraceStack);
@@ -2290,7 +2263,7 @@ int MR_suppressK_client(Tree *tree,int tokensInChain[])
   return suppressSucceeded;
 }
 
-Tree * MR_iterateOverTreeSuppressK(Tree *t,int chain[])
+static Tree *MR_iterateOverTreeSuppressK(Tree *t,int chain[])
 {
   if (t == NULL) return NULL;
   t->right=MR_iterateOverTreeSuppressK(t->right,&chain[0]);
@@ -2320,7 +2293,7 @@ Tree * MR_iterateOverTreeSuppressK(Tree *t,int chain[])
 
 /* @@@ */
 
-Predicate * MR_suppressK(Node *j,Predicate *p)
+Predicate *MR_suppressK(Node *j,Predicate *p)
 {
   Predicate     *result;
   int           guardPred=0;
@@ -2456,7 +2429,7 @@ void MR_suppressSearchReport()
   }
 }
 
-void MR_markCompromisedRule(Node *n)
+static void MR_markCompromisedRule(Node *n)
 {
   RuleEntry     *q;
   Node          *mark=NULL;
@@ -2533,7 +2506,6 @@ void MR_dumpRuleSet(set s)
       fprintf(stderr,"RulePtr[] not yet initialized");
     } else {
       for (cursor=origin; *cursor != nil ; cursor++) {
-/****   if (cursor != origin) fprintf(stderr,","); ****/
         fprintf(stderr,"    %s",RulePtr[*cursor]->rname);
         fprintf(stderr,"\n");
       };
