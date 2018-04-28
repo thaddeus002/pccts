@@ -275,8 +275,6 @@ extern FILE * NextFile( void );
 extern char * outnameX( char *, char *);
 extern char * outname( char * );
 extern void fatal_intern( char *, char *, int );
-extern void s_fprT( FILE *, set );
-extern char * TerminalString( int );
 extern void defErr( char *, long, long, long, long, long, long );
 extern char * pcctsBaseName(char *);
 extern Junction *analysis_point(Junction *);

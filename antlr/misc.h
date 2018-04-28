@@ -274,4 +274,12 @@ char *endFormal(char *pStart,
                  char **ppSeparator,
                  int *pNest);
 
+
+void s_fprT(FILE *f, set e);
+
+
+/** Return the token name or regular expression for a token number. */
+char *TerminalString(int token);
+
+
 #endif

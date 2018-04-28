@@ -762,7 +762,7 @@ static void readDescr()
     input = NextFile();
     if ( input==NULL ) fatal("No grammar description found (exiting...)");
     ANTLR(grammar(), input);
-    tnodes_used_in_guard_predicates_etc=TnodesInUse;    /* MR10 */
+    tnodes_used_in_guard_predicates_etc=TnodesInUse;
 }
 
 FILE *NextFile()
@@ -775,12 +775,9 @@ FILE *NextFile()
         if ( CurFile >= NumFiles ) return(NULL);
         if ( ci_strequ(FileStr[CurFile],"stdin")) return stdin;
         f = fopen(FileStr[CurFile], "r");
-        if ( f == NULL )
-        {
+        if ( f == NULL ) {
             warnNoFL( eMsg1("file %s doesn't exist; ignored", FileStr[CurFile]) );
-        }
-        else
-        {
+        } else {
             return(f);
         }
     }
@@ -807,7 +804,6 @@ FILE *NextFile()
  *
  * Use malloc() for new string.
  */
-
 char *outname(char *fs)
 {
     if ( GenCC) {
@@ -831,41 +827,6 @@ char *outnameX( char *fs ,char *suffix)
   require(strlen(buf) + 2 < (size_t)MaxFileName, "outname: filename too big");
     strcat(buf,suffix);
   return( buf );
-}
-
-
-void s_fprT(FILE *f, set e)
-{
-  register unsigned *p;
-  unsigned *q;
-
-  if ( set_nil(e) ) return;
-  if ( (q=p=set_pdq(e)) == NULL ) fatal_internal("Can't alloc space for set_pdq");
-  fprintf(f, "{");
-  while ( *p != nil )
-  {
-    fprintf(f, " %s", TerminalString(*p));
-    p++;
-  }
-  fprintf(f, " }");
-  free((char *)q);
-}
-
-/** Return the token name or regular expression for a token number. */
-char *TerminalString(int token)
-{
-  static char imag_name[20];
-
-  /* look in all lexclasses for the token */
-  if ( TokenString(token) != NULL ) return TokenString(token);
-  for (int j=0; j<NumLexClasses; j++)
-  {
-    lexmode(j);
-    if ( ExprString(token) != NULL ) return ExprString(token);
-  }
-
-  sprintf(imag_name,"UnknownToken#%d",token);
-  return imag_name;
 }
 
 

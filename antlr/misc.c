@@ -59,6 +59,7 @@
 #include <ctype.h>
 #include "logger.h"
 #include "gen.h"
+#include "syn.h"
 #include "misc.h"
 
 static int tsize=TSChunk;   /* size of token str arrays */
@@ -1526,4 +1527,40 @@ char *endFormal(char *pStart,
 EXIT:
   if (*p == ',') p++;
   return p;
+}
+
+
+void s_fprT(FILE *f, set e)
+{
+  register unsigned *p;
+  unsigned *q;
+
+  if ( set_nil(e) ) return;
+  if ( (q=p=set_pdq(e)) == NULL ) fatal_internal("Can't alloc space for set_pdq");
+  fprintf(f, "{");
+  while ( *p != nil )
+  {
+    fprintf(f, " %s", TerminalString(*p));
+    p++;
+  }
+  fprintf(f, " }");
+  free((char *)q);
+}
+
+
+/** Return the token name or regular expression for a token number. */
+char *TerminalString(int token)
+{
+  static char imag_name[20];
+
+  /* look in all lexclasses for the token */
+  if ( TokenString(token) != NULL ) return TokenString(token);
+  for (int j=0; j<NumLexClasses; j++)
+  {
+    lexmode(j);
+    if ( ExprString(token) != NULL ) return ExprString(token);
+  }
+
+  sprintf(imag_name,"UnknownToken#%d",token);
+  return imag_name;
 }

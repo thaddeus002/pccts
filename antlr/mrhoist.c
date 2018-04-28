@@ -38,6 +38,7 @@
 #include "dlgdef.h"
 #include "logger.h"
 #include "pred.h"
+#include "misc.h"
 
 
 /**
