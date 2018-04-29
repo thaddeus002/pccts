@@ -90,10 +90,10 @@ static void pStdin()
 
 static void pFile( char *s )
 {
-  if ( *s=='-' ) { warnNoFL( eMsg1("invalid option: '%s'",s) ); return; }
+  if ( *s=='-' ) { warnNoFL(eMsg("invalid option: '%s'",s)); return; }
   if ( DontAcceptFiles )
   {
-    warnNoFL(eMsg1("file '%s' ignored as '-' (stdin option) was specified first",s));
+    warnNoFL(eMsg("file '%s' ignored as '-' (stdin option) was specified first",s));
     return;
   }
 
@@ -116,16 +116,16 @@ static void pFileList( char *s, char *t )
   char *flp = &Fn_in_Fl[0];
   int fnl, left = MaxFLArea, i;
 
-  if ( *t=='-' ) { warnNoFL( eMsg1("invalid option: '%s'",t) ); return; }
+  if ( *t=='-' ) { warnNoFL(eMsg("invalid option: '%s'",t)); return; }
   if ( DontAcceptFiles )
   {
-    warnNoFL(eMsg1("file '%s' ignored as '-' (stdin option) was specified first",t));
+    warnNoFL(eMsg("file '%s' ignored as '-' (stdin option) was specified first",t));
     return;
   }
 
         if ((fl = fopen(t, "r")) == NULL)
   {
-    warnNoFL(eMsg1("file '%s' can't be opened", t));
+    warnNoFL(eMsg("file '%s' can't be opened", t));
     return;
   }
         for (;;)
@@ -208,7 +208,7 @@ static void pInfo(char *s, char *t)                         /* MR10 */
     } else if (q=='f') {
       InfoF=1;
     } else {
-      warnNoFL(eMsgd("unrecognized -info option \"%c\"",(int)*p));
+      warnNoFL(eMsg("unrecognized -info option \"%c\"",(int)*p));
     };
   };
 }
@@ -463,7 +463,7 @@ int main( int argc, char *argv[] )
         MR_AmbAidDepth=1;
     } else {
         if (MR_AmbAidDepth > CLL_k || MR_AmbAidDepth <= 0) {
-            warnNoFL(eMsgd(
+            warnNoFL(eMsg(
                     "Ambiguity aid depth (\"-aad ...\") must be a number between 1 and max(k,ck)=%d",CLL_k));
             MR_AmbAidDepth=1;
         };
@@ -523,7 +523,7 @@ int main( int argc, char *argv[] )
     {
         FILE *f = fopen(OutMetaName(stdpccts), "w");
         if ( f==NULL ) {
-            warnNoFL( eMsg1("can't create %s",OutMetaName(stdpccts)) );
+            warnNoFL(eMsg("can't create %s",OutMetaName(stdpccts)));
         } else {
 #ifdef SPECIAL_FOPEN
             special_fopen_actions(OutMetaName(stdpccts));
@@ -650,10 +650,10 @@ int main( int argc, char *argv[] )
     if (MR_AmbAidRule != NULL && MR_matched_AmbAidRule==0) {
         RuleEntry *q = (RuleEntry *) hash_get(Rname,MR_AmbAidRule);
         if (MR_AmbAidLine == 0 && q == NULL) {
-            warnNoFL(eMsg2("there is no rule \"%s\" so \"-aa %s\" will never match",
+            warnNoFL(eMsg("there is no rule \"%s\" so \"-aa %s\" will never match",
                     MR_AmbAidRule,MR_AmbAidRule));
         } else {
-            warnNoFL(eMsg1("there was no ambiguity that matched \"-aa %s\"",MR_AmbAidRule));
+            warnNoFL(eMsg("there was no ambiguity that matched \"-aa %s\"",MR_AmbAidRule));
         };
     };
     if (AlphaBetaTrace) {
@@ -777,7 +777,7 @@ FILE *NextFile()
         if ( ci_strequ(FileStr[CurFile],"stdin")) return stdin;
         f = fopen(FileStr[CurFile], "r");
         if ( f == NULL ) {
-            warnNoFL( eMsg1("file %s doesn't exist; ignored", FileStr[CurFile]) );
+            warnNoFL(eMsg("file %s doesn't exist; ignored", FileStr[CurFile]));
         } else {
             return(f);
         }
@@ -996,7 +996,7 @@ static void ensure_no_C_file_collisions(char *class_c_file)
     if ( strcmp(outname(FileStr[i]), class_c_file)==0 )
 #endif
     {
-      fatal(eMsg1("class def output file conflicts with parser output file: %s",
+      fatal(eMsg("class def output file conflicts with parser output file: %s",
             outname(FileStr[i])));
     }
   }

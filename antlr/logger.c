@@ -216,36 +216,17 @@ void dlgerror(const char *s)
 
 
 /**
- * Sprintf up to 3 strings.
- * \param s format
- * \param a1 first string
- * \param a2 second string
- * \param a3 third string
+ * Print an error message with variable arg list in a string.
+ * \param err format
  * \return a statically allocated string (don't free it). Each call of
  * this function will override previous calls.
  */
-char *eMsg3(char *s, char *a1, char *a2, char *a3)
-{
-  static char buf[250]; /* DANGEROUS as hell !!!!!! */
+char *eMsg(char *err, ...) {
+    va_list ap;
+    static char buf[250]; /* DANGEROUS as hell !!!!!! */
 
-  sprintf(buf, s, a1, a2, a3);
-  return( buf );
+    va_start(ap, err);
+    vsprintf(buf, err, ap);
+    va_end(ap);
+    return(buf);
 }
-
-/** sprintf a decimal */
-char *eMsgd(char *s, int d)
-{
-  static char buf[250]; /* DANGEROUS as hell !!!!!! */
-
-  sprintf(buf, s, d);
-  return( buf );
-}
-
-char *eMsgd2(char *s, int d1,int d2)
-{
-  static char buf[250]; /* DANGEROUS as hell !!!!!! */
-
-  sprintf(buf, s, d1, d2);
-  return( buf );
-}
-

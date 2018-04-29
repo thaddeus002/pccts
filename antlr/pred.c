@@ -108,7 +108,7 @@ int predicateLookaheadDepth(ActionNode *a)
       if ( !a->frmwarned )
       {
         a->frmwarned = 1;
-        warnFL(eMsg1("predicate: %s missing, bad, or with i=0; assuming i=1",
+        warnFL(eMsg("predicate: %s missing, bad, or with i=0; assuming i=1",
                GenCC?"LT(i)":"LATEXT(i)"),
              FileStr[a->file], a->line);
       }
@@ -119,12 +119,12 @@ int predicateLookaheadDepth(ActionNode *a)
 /* MR10 */    if ( !a->frmwarned )
 /* MR10 */        {
 /* MR10 */      a->frmwarned = 1;
-/* MR11 */ errFL(eMsgd2("predicate refers to lookahead token %d. Semantic lookahead is limited to max(k,ck)==%d",
+/* MR11 */ errFL(eMsg("predicate refers to lookahead token %d. Semantic lookahead is limited to max(k,ck)==%d",
 /* MR10 */                        max_k,CLL_k),
 /* MR10 */                        FileStr[a->file],a->line);
 /* MR10 */          if (max_k >= OutputLL_k) {
 /* MR10 */            if (!GenCC) {
-/* MR10 */              errFL(eMsgd("    the lookahead buffer size in C mode is %d token(s) (including the one just recognized)",
+/* MR10 */              errFL(eMsg("    the lookahead buffer size in C mode is %d token(s) (including the one just recognized)",
 /* MR10 */                        OutputLL_k),
 /* MR10 */                        FileStr[a->file],a->line);
 /* MR10 */            };
@@ -449,7 +449,7 @@ Predicate *find_predicates( Node *alt )
       RuleEntry *q = (RuleEntry *) hash_get(Rname, p->text);
       if ( q == NULL )
       {
-        warnFL( eMsg1("rule %s not defined",p->text), FileStr[p->file], p->line );
+        warnFL(eMsg("rule %s not defined",p->text), FileStr[p->file], p->line);
         return NULL;
       }
       r = RulePtr[q->rulenum];

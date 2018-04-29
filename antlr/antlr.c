@@ -156,7 +156,7 @@ void grammar()
                 zzsave_dlg_state(&dst);
                 fname = strdup(LATEXT(1));
                 f = fopen(StripQuotes(fname), "r");
-                if ( f==NULL ) {warn(eMsg1("cannot open token defs file '%s'", fname+1));}
+                if ( f==NULL ) {warn(eMsg("cannot open token defs file '%s'", fname+1));}
                 else {
                   ANTLRm(enum_file(fname+1), f, PARSE_ENUM_FILE);
                   UserDefdTokens = 1;
@@ -514,7 +514,7 @@ void rule()
     zzmatch(NonTerminal);
     q=NULL;
     if ( hash_get(Rname, LATEXT(1))!=NULL ) {
-      err(eMsg1("duplicate rule definition: '%s'",LATEXT(1)));
+      err(eMsg("duplicate rule definition: '%s'",LATEXT(1)));
       CannotContinue=TRUE;
     }
     else
@@ -635,7 +635,7 @@ void rule()
       list_add(&(e->elist), strdup(q->str));
     }
     else {
-      warn(eMsg1("default errclass for '%s' would conflict with token/errclass/tokclass",a));
+      warn(eMsg("default errclass for '%s' would conflict with token/errclass/tokclass",a));
       if ( q->egroup == NULL ) a[0] = (char)tolower(a[0]);
       free((char *)e);
     }
@@ -850,7 +850,7 @@ void aPred()
 
             predEntry=(PredEntry *) hash_get(Pname,name);
   if (predEntry != NULL) {
-  warnFL(eMsg1("#pred %s previously defined - ignored",name),
+  warnFL(eMsg("#pred %s previously defined - ignored",name),
   FileStr[action_file],action_line);
   name=NULL;
 };
@@ -1079,7 +1079,7 @@ Predicate *predPrimary()
     zzCONSUME;
     predEntry=(PredEntry *) hash_get(Pname,name);
     if (predEntry == NULL) {
-      warnFL(eMsg1("no previously defined #pred with name \"%s\"",name),
+      warnFL(eMsg("no previously defined #pred with name \"%s\"",name),
       FileStr[CurFile],zzline);
       name=NULL;
       _retv=NULL;
@@ -1182,7 +1182,7 @@ void error()
   if ( Tnum( (t=StripQuotes(t)) ) == 0 )
   {
     if ( hash_get(Texpr, t) != NULL )
-    warn(eMsg1("errclass name conflicts with regular expression  '%s'",t));
+    warn(eMsg("errclass name conflicts with regular expression  '%s'",t));
     e->tok = addTname( t );
     set_orel(e->tok, &imag_tokens);
     require((p=(TermEntry *)hash_get(Tname, t)) != NULL,
@@ -1192,7 +1192,7 @@ void error()
   }
   else
   {
-  warn(eMsg1("redefinition of errclass or conflict w/token or tokclass '%s'; ignored",t));
+  warn(eMsg("redefinition of errclass or conflict w/token or tokclass '%s'; ignored",t));
   free( (char *)e );
   go=0;
 }
@@ -1307,7 +1307,7 @@ void tclass()
   }
   else
   {
-  warn(eMsg1("redefinition of tokclass or conflict w/token '%s'; ignored",t));
+  warn(eMsg("redefinition of tokclass or conflict w/token '%s'; ignored",t));
   free( (char *)e );
   go=0;
 }
@@ -1337,7 +1337,7 @@ void tclass()
   /* MR23 */         if (p!= NULL && akaString != NULL) {
     /* MR23 */           if (p->akaString != NULL) {
       /* MR23 */             if (strcmp(p->akaString,akaString) != 0) {
-        /* MR23 */                warnFL(eMsg2("this #tokclass statment conflicts with a previous #tokclass %s(\"%s\") statement",
+        /* MR23 */                warnFL(eMsg("this #tokclass statment conflicts with a previous #tokclass %s(\"%s\") statement",
         /* MR23 */                              t,p->akaString),
         /* MR23 */                          FileStr[save_file],save_line);
         /* MR23 */             };
@@ -1573,7 +1573,7 @@ void token()
     if (te != NULL && akaString != NULL) {
       if (te->akaString != NULL) {
         if (strcmp(te->akaString,akaString) != 0) {
-          warnFL(eMsg2("this #token statment conflicts with a previous #token %s(\"%s\") statement",
+          warnFL(eMsg("this #token statment conflicts with a previous #token %s(\"%s\") statement",
           t,te->akaString),
           FileStr[save_file],save_line);
         };
@@ -1838,11 +1838,11 @@ LabelEntry *element_label()
   if ( t==NULL ) t = (TermEntry *) hash_get(Texpr, lab);
   if ( t==NULL ) r = (RuleEntry *) hash_get(Rname, lab);
   if ( t!=NULL ) {
-    err(eMsg1("label definition clashes with token/tokclass definition: '%s'", lab));
+    err(eMsg("label definition clashes with token/tokclass definition: '%s'", lab));
     _retv = NULL;
   }
   else if ( r!=NULL ) {
-    err(eMsg1("label definition clashes with rule definition: '%s'", lab));
+    err(eMsg("label definition clashes with rule definition: '%s'", lab));
     _retv = NULL;
   }
   else {
@@ -1858,7 +1858,7 @@ LabelEntry *element_label()
     _retv = l;
   }
   else {
-  err(eMsg1("label definitions must be unique per rule: '%s'", lab));
+  err(eMsg("label definitions must be unique per rule: '%s'", lab));
   _retv = NULL;
 }
 }
@@ -2587,7 +2587,7 @@ Node *element(int old_not,int first_on_line,int use_def_MT_handler)
                               /* MR10 */              act->guardpred = pred;
                               /* MR10 */                  };
                             /* MR10 */                  if (pred->k != semDepth) {
-                              /* MR10 */                     warn(eMsgd2("length of guard (%d) does not match the length of semantic predicate (%d)",
+                              /* MR10 */                     warn(eMsg("length of guard (%d) does not match the length of semantic predicate (%d)",
                               /* MR10 */                                  pred->k,semDepth));
                               /* MR10 */                  };
                           }
@@ -2749,7 +2749,7 @@ ExceptionGroup *exception_group()
       label = (LabelEntry *) hash_get(Elabel, LATEXT(1)+1);
       if ( label==NULL )
       {
-        err(eMsg1("unknown label in exception handler: '%s'", LATEXT(1)+1));
+        err(eMsg("unknown label in exception handler: '%s'", LATEXT(1)+1));
       }
  zzCONSUME;
 
@@ -2811,14 +2811,14 @@ ExceptionGroup *exception_group()
   if ( label!=NULL ) {
     /* Record ex group in sym tab for this label */
     if ( label->ex_group!=NULL ) {
-      err(eMsg1("duplicate exception handler for label '%s'",label->str));
+      err(eMsg("duplicate exception handler for label '%s'",label->str));
     } else {
       label->ex_group = _retv;
       /* Label the exception group itself */
       _retv->label = label->str;
       /* Make the labelled element pt to the exception also */
       /* MR6 */   if (label->elem == NULL) {
-        /* MR6 */      err(eMsg1("reference in exception handler to undefined label '%s'",label->str));
+        /* MR6 */      err(eMsg("reference in exception handler to undefined label '%s'",label->str));
         /* MR6 */   } else {
         switch ( label->elem->ntype ) {
           case nRuleRef :
@@ -3058,7 +3058,7 @@ void defines(char * fname)
       if ( Tnum( t ) == 0 ) {
       addForcedTname( t, v );
     } else {
-    warnFL(eMsg1("redefinition of token %s; ignored",t), fname,zzline);
+    warnFL(eMsg("redefinition of token %s; ignored",t), fname,zzline);
   };
 };
  zzCONSUME;
@@ -3118,7 +3118,7 @@ void enum_def(char * fname)
   if ( v>maxt ) maxt=v;       /* MR3 */
   if ( Tnum( t ) == 0 ) addForcedTname( t, v );
   else {
-    warnFL(eMsg1("redefinition of token %s; ignored",t), fname,zzline);
+    warnFL(eMsg("redefinition of token %s; ignored",t), fname,zzline);
   }
   {
     zzBLOCK(zztasp2);
@@ -3182,7 +3182,7 @@ void enum_def(char * fname)
             if ( v>maxt ) maxt=v;       /* MR3 */
             if ( Tnum( t ) == 0 ) addForcedTname( t, v );
             else {
-              warnFL(eMsg1("redefinition of token %s; ignored",t), fname,zzline);
+              warnFL(eMsg("redefinition of token %s; ignored",t), fname,zzline);
             }
           }
           else {
@@ -3243,7 +3243,7 @@ static void chkToken(char *t, char *e, char *a, int tnum)
     if ( t!=NULL ) {
         p = (TermEntry *) hash_get(Tname, t);
         if ( p!=NULL && p->classname ) {
-            err(eMsg1("redefinition of #tokclass '%s' to #token not allowed; ignored",t));
+            err(eMsg("redefinition of #tokclass '%s' to #token not allowed; ignored",t));
             if ( a!=NULL ) free((char *)a);
             return;
         }
@@ -3256,14 +3256,14 @@ static void chkToken(char *t, char *e, char *a, int tnum)
         if ( UserDefdTokens ) {     /* if #tokdefs, must not define new */
             p = (TermEntry *) hash_get(Tname, t);
             if ( p == NULL) {
-                err(eMsg1("new token definition '%s' not allowed - only #token with name already defined by #tokdefs file allowed",t));
+                err(eMsg("new token definition '%s' not allowed - only #token with name already defined by #tokdefs file allowed",t));
                 return;
             };
         }
         Tklink(t, e);
         if ( a!=NULL ) {
             if ( hasAction(e) ) {
-                err(eMsg1("redefinition of action for %s; ignored",e));
+                err(eMsg("redefinition of action for %s; ignored",e));
             }
             else setHasAction(e, a);
         }
@@ -3272,16 +3272,16 @@ static void chkToken(char *t, char *e, char *a, int tnum)
         if ( UserDefdTokens ) {
             p = (TermEntry *) hash_get(Tname, t);
             if (p == NULL) {
-                err(eMsg1("new token definition '%s' not allowed - only #token with name already defined by #tokdefs file allowed",t));
+                err(eMsg("new token definition '%s' not allowed - only #token with name already defined by #tokdefs file allowed",t));
             };
             return;
         }
         if ( Tnum( t ) == 0 ) addTname( t );
 else {
-  err(eMsg1("redefinition of token %s; ignored",t));
+  err(eMsg("redefinition of token %s; ignored",t));
 }
 if ( a!=NULL ) {
-  err(eMsg1("action cannot be attached to a token name (%s); ignored",t));
+  err(eMsg("action cannot be attached to a token name (%s); ignored",t));
   free((char *)a);
 }
 }
@@ -3289,10 +3289,10 @@ else if ( e!=NULL ) {
 if ( Tnum( e ) == 0 ) addTexpr( e );
 else {
   if ( hasAction(e) ) {
-    err(eMsg1("redefinition of action for expr %s; ignored",e));
+    err(eMsg("redefinition of action for expr %s; ignored",e));
   }
   else if ( a==NULL ) {
-    err(eMsg1("redefinition of expr %s; ignored",e));
+    err(eMsg("redefinition of expr %s; ignored",e));
   }
 }
 if ( a!=NULL ) setHasAction(e, a);
@@ -3305,7 +3305,7 @@ if ( t!=NULL && tnum>0 )
 {
 if ( set_el(tnum, reserved_positions) )
 {
-  err(eMsgd("a token has already been forced to token number %d; ignored", tnum));
+  err(eMsg("a token has already been forced to token number %d; ignored", tnum));
 }
 else
 {

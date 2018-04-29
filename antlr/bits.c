@@ -192,7 +192,7 @@ static set Efirst( char *rule, ECnode *eclass )
 
   if ( q == NULL )
   {
-    warnNoFL(eMsg2("undefined rule '%s' referenced in errclass '%s'; ignored",
+    warnNoFL(eMsg("undefined rule '%s' referenced in errclass '%s'; ignored",
             rule, TokenString(eclass->tok)));
     return empty;
   }
@@ -256,7 +256,7 @@ static void doEclass( char *eclass )
       {
         if ( strcmp((char *)e->elem, TokenString(p->tok))==0 )
         {
-          warnNoFL(eMsg1("self-referential error class '%s'; ignored",
+          warnNoFL(eMsg("self-referential error class '%s'; ignored",
                    (char *)e->elem));
           continue;
         }
@@ -267,17 +267,17 @@ static void doEclass( char *eclass )
     }
     if ( t!=0 )
     {
-      if (isTermEntryTokClass(q))  {      /* MR23 */
-          tcnode = q->tclass;         /* MR23 */
-        set_orin(&p->eset, tcnode->tset); /* MR23 */
-        deg = set_deg(p->eset);       /* MR23 */
-      }                   /* MR23 */
+      if (isTermEntryTokClass(q))  {
+        tcnode = q->tclass;
+        set_orin(&p->eset, tcnode->tset);
+        deg = set_deg(p->eset);
+      }
       else {
         set_orel(t, &p->eset);
         deg++;
       }
     }
-    else warnNoFL(eMsg2("undefined token '%s' referenced in errclass '%s'; ignored",
+    else warnNoFL(eMsg("undefined token '%s' referenced in errclass '%s'; ignored",
               (char *)e->elem, TokenString(p->tok)));
   }
   p->setdeg = deg;
@@ -332,24 +332,24 @@ void ComputeTokSets( )
           require(q2!=NULL, "ComputeTokSets: no token def");
 
                 if (set_el(q1->token,imag_tokens)) {
-errNoFL(eMsg2("can't define #tokclass %s using #tokclass or #errclass %s",
-                        TokenString(p->tok),(char *)e1->elem) );
+                  errNoFL(eMsg("can't define #tokclass %s using #tokclass or #errclass %s",
+                  TokenString(p->tok),(char *)e1->elem) );
                 }
                 if (set_el(q2->token,imag_tokens)) {
-errNoFL(eMsg2("can't define #tokclass %s using #tokclass or #errclass %s",
-                        TokenString(p->tok),(char *)e2->elem) );
+                  errNoFL(eMsg("can't define #tokclass %s using #tokclass or #errclass %s",
+                  TokenString(p->tok),(char *)e2->elem) );
                 }
                 if (q1->token > q2->token) {
-errNoFL(eMsg3("for #tokclass %s %s..%s - first token number > second token number",
-                        TokenString(p->tok),(char *)e1->elem,(char *)e2->elem) );
+                  errNoFL(eMsg("for #tokclass %s %s..%s - first token number > second token number",
+                  TokenString(p->tok),(char *)e1->elem,(char *)e2->elem) );
                   for (i=q2->token; i<=q1->token; i++) { set_orel(i, &p->tset); }
                 } else {
                   for (i=q1->token; i<=q2->token; i++) { set_orel(i, &p->tset); }
                 }
             } else {
                 q = (TermEntry *) hash_get(Tname, tokstr);
-          require(q!=NULL, "ComputeTokSets: no token def");
-          set_orel(q->token, &p->tset);
+                require(q!=NULL, "ComputeTokSets: no token def");
+                set_orel(q->token, &p->tset);
             }
     }
   }
@@ -656,7 +656,7 @@ void GenParser_c_Hdr()
           fprintf(Parser_c, ",\n\t/* %02d */\t\"\"", i);
         }
         else
-          fatal_internal(eMsgd("No label or expr for token %d",i));
+          fatal_internal(eMsg("No label or expr for token %d",i));
       }
     }
   }
@@ -833,7 +833,7 @@ void GenErrHdr( )
           fprintf(ErrFile, ",\n\t/* %02d */\t\"\"", i);
         }
         else
-          fatal_internal(eMsgd("No label or expr for token %d",i));
+          fatal_internal(eMsg("No label or expr for token %d",i));
       }
     }
   }

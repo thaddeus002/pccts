@@ -1668,8 +1668,8 @@ static void genRuleRef( RuleRefNode *p )
   r = (RuleEntry *) hash_get(Rname, p->text);
   if ( r == NULL )
   {
-    warnFL( eMsg1("rule %s not defined",
-            p->text), FileStr[p->file], p->line );
+    warnFL(eMsg("rule %s not defined",
+            p->text), FileStr[p->file], p->line);
     return;
   }
 
@@ -3607,7 +3607,7 @@ int final_newline )
 {
     int inDQuote, inSQuote;
     require(s!=NULL, "dumpAction: NULL action");
-    require(output!=NULL, eMsg1("dumpAction: output FILE is NULL for %s",s));
+    require(output!=NULL, eMsg("dumpAction: output FILE is NULL for %s",s));
 
     if ( GenLineInfo && file != -1 )
     {

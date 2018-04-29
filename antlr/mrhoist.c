@@ -1689,10 +1689,10 @@ static Predicate *checkPredicateConflict(Predicate *p)
       if (alwaysFalseWarning != CurRule) {
         alwaysFalseWarning=CurRule;
         if (InfoP) {
-          warnNoFL(eMsg1("one (or more) predicate expression hoisted into rule \"%s\" are always false \
+          warnNoFL(eMsg("one (or more) predicate expression hoisted into rule \"%s\" are always false \
 - see output file for more information",CurRule));
         } else {
-          warnNoFL(eMsg1("one (or more) predicate expressions hoisted into rule \"%s\" are always false \
+          warnNoFL(eMsg("one (or more) predicate expressions hoisted into rule \"%s\" are always false \
 - use \"-info p\" for more information",CurRule));
         };
       };

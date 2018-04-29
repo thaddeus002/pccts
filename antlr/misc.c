@@ -137,7 +137,7 @@ void lexclass( char *m )
 
   if ( hash_get(Tname, m) != NULL )
   {
-    warn(eMsg1("lexclass name conflicts with token/errclass label '%s'",m));
+    warn(eMsg("lexclass name conflicts with token/errclass label '%s'",m));
   }
   /* does m already exist? */
   i = LexClassIndex(m);
@@ -190,7 +190,7 @@ int hasAction( char *expr )
   require(expr!=NULL, "hasAction: invalid expr");
 
   p = (TermEntry *) hash_get(Texpr, expr);
-  require(p!=NULL, eMsg1("hasAction: expr '%s' doesn't exist",expr));
+  require(p!=NULL, eMsg("hasAction: expr '%s' doesn't exist",expr));
   return (p->action!=NULL);
 }
 
@@ -200,7 +200,7 @@ void setHasAction( char *expr, char *action )
   require(expr!=NULL, "setHasAction: invalid expr");
 
   p = (TermEntry *) hash_get(Texpr, expr);
-  require(p!=NULL, eMsg1("setHasAction: expr '%s' doesn't exist",expr));
+  require(p!=NULL, eMsg("setHasAction: expr '%s' doesn't exist",expr));
   p->action = action;
 }
 
@@ -422,8 +422,8 @@ void Tklink( char *token, char *expr )
   q = (TermEntry *) hash_get(Texpr, expr);
   if ( p != NULL && q != NULL ) /* both defined */
   {
-    warn( eMsg2("token name %s and rexpr %s already defined; ignored",
-          token, expr) );
+    warn(eMsg("token name %s and rexpr %s already defined; ignored",
+          token, expr));
     return;
   }
   if ( p==NULL && q==NULL )   /* both not defined */
@@ -547,7 +547,7 @@ char *Fkey( char *rule, int computation, int k )
   if ( k > 99 )                                                       /* MR10 */
     fatal("k>99 is too big for this implementation of ANTLR!\n");   /* MR10 */
   if ( (i=strlen(rule)) > MaxRuleName )                               /* MR10 */
-    fatal( eMsgd("rule name > max of %d\n", MaxRuleName) );         /* MR10 */
+    fatal(eMsg("rule name > max of %d\n", MaxRuleName));         /* MR10 */
   strcpy(key,rule);
 
 /* MR10 */     key[i]='*';
@@ -573,7 +573,7 @@ void FoPush( char *rule, int k )
 
   /*fprintf(stderr, "FoPush(%s)\n", rule);*/
   r = (RuleEntry *) hash_get(Rname, rule);
-  if ( r == NULL ) {fatal_internal( eMsg1("rule %s must be defined but isn't", rule) );}
+  if ( r == NULL ) {fatal_internal(eMsg("rule %s must be defined but isn't", rule));}
   if ( FoStack[k] == NULL )   /* Does the kth stack exist yet? */
   {
     /*fprintf(stderr, "allocating FoStack\n");*/
@@ -591,10 +591,10 @@ void FoPush( char *rule, int k )
     require(valid(FoStack[k]), "FoPush: invalid FoStack");
 #endif
     if ( FoTOS[k] >= &(FoStack[k][FoStackSize-1]) )
-      fatal( eMsgd("exceeded max depth of FOLLOW recursion (%d)\n",
-            FoStackSize) );
+      fatal(eMsg("exceeded max depth of FOLLOW recursion (%d)\n",
+            FoStackSize));
     require(FoTOS[k]>=FoStack[k],
-        eMsg1("FoPush: FoStack stack-ptr is playing out of its sandbox",
+        eMsg("FoPush: FoStack stack-ptr is playing out of its sandbox",
             rule));
     ++(FoTOS[k]);
     *(FoTOS[k]) = r->rulenum;
@@ -640,9 +640,9 @@ void RegisterCycle( char *rule, int k )
   /*fprintf(stderr, "RegisterCycle(%s)\n", rule);*/
   /* Find cycle start */
   r = (RuleEntry *) hash_get(Rname, rule);
-  require(r!=NULL,eMsg1("rule %s must be defined but isn't", rule));
+  require(r!=NULL,eMsg("rule %s must be defined but isn't", rule));
   require(FoTOS[k]>=FoStack[k]&&FoTOS[k]<=&(FoStack[k][FoStackSize-1]),
-      eMsg1("RegisterCycle(%s): FoStack stack-ptr is playing out of its sandbox",
+      eMsg("RegisterCycle(%s): FoStack stack-ptr is playing out of its sandbox",
           rule));
 
 #ifdef MEMCHK
@@ -709,7 +709,7 @@ void ResolveFoCycles(int k)
       /*fprintf(stderr, "\n");*/
       f = (CacheEntry *)
           hash_get(Fcache, Fkey(RulePtr[c->croot]->rname,'o',k));
-      require(f!=NULL, eMsg1("FOLLOW(%s) must be in cache but isn't", RulePtr[c->croot]->rname) );
+      require(f!=NULL, eMsg("FOLLOW(%s) must be in cache but isn't", RulePtr[c->croot]->rname) );
       if ( (d=set_deg(f->fset)) > c->deg )
       {
         /*fprintf(stderr, "Fo(%s) has changed\n", RulePtr[c->croot]->rname);*/
@@ -727,7 +727,7 @@ void ResolveFoCycles(int k)
           /*fprintf(stderr, "updating Fo(%s)\n", RulePtr[r]->rname);*/
           g = (CacheEntry *)
               hash_get(Fcache, Fkey(RulePtr[r]->rname,'o',k));
-          require(g!=NULL, eMsg1("FOLLOW(%s) must be in cache but isn't", RulePtr[r]->rname) );
+          require(g!=NULL, eMsg("FOLLOW(%s) must be in cache but isn't", RulePtr[r]->rname) );
           set_orin(&(g->fset), f->fset);
           g->incomplete = FALSE;
         }
@@ -1033,7 +1033,7 @@ void FoLink( Node *p )
 
   if ( p==NULL ) return;
   require(p->ntype>=1 && p->ntype<=NumNodeTypes,
-      eMsgd("FoLink: invalid diagram node: ntype==%d",p->ntype));
+      eMsg("FoLink: invalid diagram node: ntype==%d",p->ntype));
   switch ( p->ntype )
   {
     case nJunction :
@@ -1062,29 +1062,29 @@ void FoLink( Node *p )
       q = (RuleEntry *) hash_get(Rname, r->text);
       if ( q == NULL )
       {
-        warnFL( eMsg1("rule %s not defined",r->text), FileStr[r->file], r->line );
+        warnFL(eMsg("rule %s not defined",r->text), FileStr[r->file], r->line );
       }
       else
       {
         if ( r->parms!=NULL && RulePtr[q->rulenum]->pdecl==NULL )
         {
-          warnFL( eMsg1("rule %s accepts no parameter(s)", r->text),
+          warnFL(eMsg("rule %s accepts no parameter(s)", r->text),
               FileStr[r->file], r->line );
         }
         if ( r->parms==NULL && RulePtr[q->rulenum]->pdecl!=NULL )
         {
-          warnFL( eMsg1("rule %s requires parameter(s)", r->text),
-              FileStr[r->file], r->line );
+          warnFL(eMsg("rule %s requires parameter(s)", r->text),
+              FileStr[r->file], r->line);
         }
         if ( r->assign!=NULL && RulePtr[q->rulenum]->ret==NULL )
         {
-          warnFL( eMsg1("rule %s yields no return value(s)", r->text),
-              FileStr[r->file], r->line );
+          warnFL(eMsg("rule %s yields no return value(s)", r->text),
+              FileStr[r->file], r->line);
         }
         if ( r->assign==NULL && RulePtr[q->rulenum]->ret!=NULL )
         {
-          warnFL( eMsg1("rule %s returns a value(s)", r->text),
-              FileStr[r->file], r->line );
+          warnFL(eMsg("rule %s returns a value(s)", r->text),
+              FileStr[r->file], r->line);
         }
         if ( !r->linked )
         {

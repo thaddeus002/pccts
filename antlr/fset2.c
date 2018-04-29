@@ -1277,7 +1277,7 @@ int contextGuardOK(Node *p,int h,int *hmax)
       if (h > *hmax) *hmax=h;
       tn=(TokNode *)p;
       if (tn->el_label != NULL) {
-        warnFL(eMsg1("a label (\"%s\") for a context guard element is meaningless",tn->el_label),
+        warnFL(eMsg("a label (\"%s\") for a context guard element is meaningless",tn->el_label),
                              FileStr[p->file],p->line);
       };
       return contextGuardOK( ( (TokNode *) p)->next,h,hmax);
@@ -1342,7 +1342,7 @@ Predicate *computePredFromContextGuard(Graph blk,int *msgDone)    /* MR10 */
       return NULL;
     };
     if (hmax > CLL_k) {                                     /* MR10 */
-      errFL(eMsgd2("guard is %d tokens long - lookahead is limited to max(k,ck)==%d", /* MR10 */
+      errFL(eMsg("guard is %d tokens long - lookahead is limited to max(k,ck)==%d", /* MR10 */
       hmax,CLL_k),                                        /* MR10 */
       FileStr[junc->file],junc->line);                    /* MR10 */
       *msgDone=1;                                           /* MR10 */

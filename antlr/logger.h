@@ -14,8 +14,6 @@
 #define fatal_internal(err) fatal_intern(err, __FILE__, __LINE__)
 
 
-#define eMsg1(s,a)  eMsg3(s,a,NULL,NULL)
-#define eMsg2(s,a,b)  eMsg3(s,a,b,NULL)
 
         /* S a n i t y  C h e c k i n g */
 
@@ -71,20 +69,11 @@ void dlgerror(const char *s);
 void cleanUp(void);
 
 /**
- * Sprintf up to 3 strings.
- * \param s format
- * \param a1 first string
- * \param a2 second string
- * \param a3 third string
+ * Print an error message with variable arg list in a string.
+ * \param err format
  * \return a statically allocated string (don't free it). Each call of
  * this function will override previous calls.
  */
-char *eMsg3(char *s, char *a1, char *a2, char *a3);
-
-/** sprintf a decimal */
-char *eMsgd(char *s, int d);
-
-char *eMsgd2(char *s, int d1,int d2);
-
+char *eMsg(char *err, ...);
 
 #endif

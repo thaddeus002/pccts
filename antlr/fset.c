@@ -299,7 +299,7 @@ set rRuleRef( RuleRefNode *p, int k, set *rk_out )
 
   if ( q == NULL )
   {
-    warnFL( eMsg1("rule %s not defined",p->text), FileStr[p->file], p->line );
+    warnFL(eMsg("rule %s not defined",p->text), FileStr[p->file], p->line);
     REACH(p->next, k, rk_out, a);
         if (MR_MaintainBackTrace) MR_pointerStackPop(&MR_BackTraceStack);
     return a;
@@ -310,15 +310,15 @@ set rRuleRef( RuleRefNode *p, int k, set *rk_out )
 /* MR9    Perhaps can use hash table to find rule ?        */
 
 /* MR9 */    if (RulePtr == NULL) {
-/* MR9 */        fatalFL(eMsg2("Rule %s uses rule %s via RulePtr before it has been initialized",
+/* MR9 */        fatalFL(eMsg("Rule %s uses rule %s via RulePtr before it has been initialized",
 /* MR9 */                                p->rname,q->str),FileStr[p->file],p->line);
 /* MR9 */    };
 
   r = RulePtr[q->rulenum];
   if ( r->lock[k] )
   {
-    errNoFL( eMsg2("infinite left-recursion to rule %s from rule %s",
-            r->rname, p->rname) );
+    errNoFL(eMsg("infinite left-recursion to rule %s from rule %s",
+            r->rname, p->rname));
 
         if (MR_MaintainBackTrace) MR_pointerStackPop(&MR_BackTraceStack);
 

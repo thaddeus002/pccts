@@ -569,7 +569,7 @@ static void act58()
 static void act59()
 {
     NLA = 136;
-    warn(eMsg1("unknown meta-op: %s",LATEXT(1))); zzskip();
+    warn(eMsg("unknown meta-op: %s",LATEXT(1))); zzskip();
 }
 
 static unsigned char shift0[257] = {
@@ -1167,14 +1167,14 @@ static void act102()
     zzbegexpr[0] = ' ';
     zzbegexpr[1] = ' ';
     if ( zzbufovf ) {
-      err( eMsgd("action buffer overflow; size %d",ZZLEXBUFSIZE));
+        err(eMsg("action buffer overflow; size %d",ZZLEXBUFSIZE));
     }
 
     /* MR1  10-Apr-97  MR1  Previously unable to put right shift operator */
     /* MR1          in DLG action     */
     /* MR1      Doesn't matter what kind of action it is - reset*/
 
-    tokenActionActive=0;     /* MR1 */
+    tokenActionActive=0;
 }
 
 
@@ -1187,7 +1187,7 @@ static void act103()
     NLATEXT[1] = ' ';
     zzbegexpr[0] = '\0';
     if ( zzbufovf ) {
-      err( eMsgd("predicate buffer overflow; size %d",ZZLEXBUFSIZE));
+        err(eMsg("predicate buffer overflow; size %d",ZZLEXBUFSIZE));
     };
 
   list_apply(CurActionLabels, (void (*)(void *))mark_label_used_in_sem_pred);
@@ -1205,7 +1205,7 @@ static void act104()
         NLATEXT[0] = ' ';
         zzbegexpr[0] = ' ';
         if ( zzbufovf ) {
-          err( eMsgd("parameter buffer overflow; size %d",ZZLEXBUFSIZE));
+            err(eMsg("parameter buffer overflow; size %d",ZZLEXBUFSIZE));
         }
       }
       else {
@@ -1398,7 +1398,7 @@ static void act116()
   /* MR10 */                      /*  it is a forward reference (to a rule)          */
   /* MR10 */
   /* MR10 */            if ( GenCC && (el->elem == NULL || el->elem->ntype==nRuleRef) )
-  /* MR10 */              { err(eMsg1("There are no token ptrs for rule references: '$%s'",&zzbegexpr[1])); }
+  /* MR10 */              { err(eMsg("There are no token ptrs for rule references: '$%s'",&zzbegexpr[1])); }
   /* MR10 */
   /* MR10 */            if ( !GenCC && (el->elem == NULL || el->elem->ntype==nRuleRef) && GenAST) {
   /* MR10 */                          err("You can no longer use attributes returned by rules when also using ASTs");
@@ -1413,7 +1413,7 @@ static void act116()
   /* MR10 */                      };
 }
 else
-warn(eMsg1("$%s not parameter, return value, (defined) element label",&zzbegexpr[1]));
+warn(eMsg("$%s not parameter, return value, (defined) element label",&zzbegexpr[1]));
 }
 zzmore();
   }

@@ -53,7 +53,7 @@ void genLexDescr()
 {
   ListNode *p;
   FILE *dlgFile = fopen(OutMetaName(DlgFileName), "w");
-  require(dlgFile!=NULL, eMsg1("genLexFile: cannot open %s", OutMetaName(DlgFileName)) );
+  require(dlgFile!=NULL, eMsg("genLexFile: cannot open %s", OutMetaName(DlgFileName)) );
 #ifdef SPECIAL_FOPEN
   special_fopen_actions(OutMetaName(DlgFileName));               /* MR1 */
 #endif
@@ -188,7 +188,7 @@ static void dumpLexClasses(FILE *dlgFile)
       if ( q->lclass != i ) continue;
       lexmode(i);
       t = (TermEntry *) hash_get(Texpr, q->expr);
-      require(t!=NULL, eMsg1("genLexDescr: rexpr %s not in hash table",q->expr) );
+      require(t!=NULL, eMsg("genLexDescr: rexpr %s not in hash table",q->expr) );
       if ( t->token == EpToken ) continue;
       fprintf(dlgFile, "%s\n\t<<\n", StripQuotes(q->expr));
       /* replace " killed by StripQuotes() */
@@ -261,7 +261,7 @@ void genDefFile(void)
     if ( MR_Inhibit_Tokens_h_Gen) return;
 
   DefFile = fopen(OutMetaName(DefFileName), "w");
-  require(DefFile!=NULL, eMsg1("genDefFile: cannot open %s", OutMetaName(DefFileName)) );
+  require(DefFile!=NULL, eMsg("genDefFile: cannot open %s", OutMetaName(DefFileName)) );
 #ifdef SPECIAL_FOPEN
   special_fopen_actions(OutMetaName(DefFileName));               /* MR1 */
 #endif
@@ -315,7 +315,7 @@ void genDefFile(void)
               }
               if ( j>=NumLexClasses )
               {
-                warnNoFL(eMsg1("token label has no associated rexpr: %s",TokenString(i)));
+                warnNoFL(eMsg("token label has no associated rexpr: %s",TokenString(i)));
               }
                     };
         }
@@ -362,7 +362,7 @@ void GenRemapFile(void)
     int i;
 
     f = fopen(OutMetaName(RemapFileName), "w");
-    require(f!=NULL, eMsg1("GenRemapFile: cannot open %s", OutMetaName(RemapFileName)) );
+    require(f!=NULL, eMsg("GenRemapFile: cannot open %s", OutMetaName(RemapFileName)) );
 #ifdef SPECIAL_FOPEN
     special_fopen_actions(OutMetaName(RemapFileName));           /* MR1 */
 #endif

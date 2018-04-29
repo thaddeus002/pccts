@@ -553,7 +553,7 @@ static TokNode *newTokNode( )
   {
     newblk = (TokNode *)calloc(TokenBlockAllocSize, sizeof(TokNode));
     if ( newblk == NULL )
-      fatal_internal(eMsg1("out of memory while building rule '%s'",CurRule));
+      fatal_internal(eMsg("out of memory while building rule '%s'",CurRule));
     for (p=newblk; p<&(newblk[TokenBlockAllocSize]); p++)
     {
       p->next = (Node *)FreeList; /* add all new token nodes to FreeList */
@@ -582,7 +582,7 @@ static RuleRefNode *newRNode( )
   {
     newblk = (RuleRefNode *)calloc(RRefBlockAllocSize, sizeof(RuleRefNode));
     if ( newblk == NULL )
-      fatal_internal(eMsg1("out of memory while building rule '%s'",CurRule));
+      fatal_internal(eMsg("out of memory while building rule '%s'",CurRule));
     for (p=newblk; p<&(newblk[RRefBlockAllocSize]); p++)
     {
       p->next = (Node *)FreeList; /* add all new rref nodes to FreeList */
@@ -614,7 +614,7 @@ Junction *newJunction(void)
   {
     newblk = (Junction *)calloc(JunctionBlockAllocSize, sizeof(Junction));
     if ( newblk == NULL )
-      fatal_internal(eMsg1("out of memory while building rule '%s'",CurRule));
+      fatal_internal(eMsg("out of memory while building rule '%s'",CurRule));
     for (p=newblk; p<&(newblk[JunctionBlockAllocSize]); p++)
     {
       p->p1 = (Node *)FreeList; /* add all new Junction nodes to FreeList */
@@ -648,7 +648,7 @@ ActionNode *newActionNode( )
   {
     newblk = (ActionNode *)calloc(ActionBlockAllocSize, sizeof(ActionNode));
     if ( newblk == NULL )
-      fatal_internal(eMsg1("out of memory while building rule '%s'",CurRule));
+      fatal_internal(eMsg("out of memory while building rule '%s'",CurRule));
     for (p=newblk; p<&(newblk[ActionBlockAllocSize]); p++)
     {
       p->next = (Node *)FreeList; /* add all new Action nodes to FreeList */
