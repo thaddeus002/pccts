@@ -405,7 +405,7 @@ void MR_check_pred_too_long(Predicate *p,set completion)
       ! p->source->predTooLong) {
     if ( !set_nil(completion)) {
       p->source->predTooLong=1;
-      warnFL("It is unusual (but ok) for a semantic predicate to test context past the end of its own rule",
+      warning("It is unusual (but ok) for a semantic predicate to test context past the end of its own rule",
                                 FileStr[p->source->file],p->source->line);
     };
   };

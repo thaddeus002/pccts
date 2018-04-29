@@ -91,17 +91,29 @@ void hdrLog(char *f,int l) {
 
 void warnNoFL(char *err)
 {
-    fprintf(stderr, "warning: %s\n", err);
+    warning(err, NULL, 0);
 }
 
+
 /**
- * \param f filename
- * \param l line number
+ * Log a warning message.
  */
-void warnFL(char *err,char *f,int l)
-{
-    hdrLog(f, l);
-    fprintf(stderr, " warning: %s\n", err);
+void warningNoFL(char *err, ...) {
+    va_list ap;
+    va_start(ap, err);
+    log_message_va(WARNING, err, NULL, 0, ap);
+    va_end(ap);
+}
+
+
+/**
+ * Log a warning message.
+ */
+void warning(char *err, char *file, int line, ...) {
+    va_list ap;
+    va_start(ap, line);
+    log_message_va(WARNING, err, file, line, ap);
+    va_end(ap);
 }
 
 void warn(char *err)
@@ -181,16 +193,6 @@ void fatalNM(char *err, char *file, int line, ...) {
     exit(EXIT_FAILURE);
 }
 
-
-/**
- * Log a warning message.
- */
-void warning(char *err, char *file, int line, ...) {
-    va_list ap;
-    va_start(ap, line);
-    log_message_va(WARNING, err, file, line, ap);
-    va_end(ap);
-}
 
 /**
  * Add an info on a new line to stderr.

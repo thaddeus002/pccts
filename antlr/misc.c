@@ -1062,29 +1062,29 @@ void FoLink( Node *p )
       q = (RuleEntry *) hash_get(Rname, r->text);
       if ( q == NULL )
       {
-        warnFL(eMsg("rule %s not defined",r->text), FileStr[r->file], r->line );
+        warning("rule %s not defined", FileStr[r->file], r->line, r->text);
       }
       else
       {
         if ( r->parms!=NULL && RulePtr[q->rulenum]->pdecl==NULL )
         {
-          warnFL(eMsg("rule %s accepts no parameter(s)", r->text),
-              FileStr[r->file], r->line );
+          warning("rule %s accepts no parameter(s)",
+              FileStr[r->file], r->line, r->text);
         }
         if ( r->parms==NULL && RulePtr[q->rulenum]->pdecl!=NULL )
         {
-          warnFL(eMsg("rule %s requires parameter(s)", r->text),
-              FileStr[r->file], r->line);
+          warning("rule %s requires parameter(s)",
+              FileStr[r->file], r->line, r->text);
         }
         if ( r->assign!=NULL && RulePtr[q->rulenum]->ret==NULL )
         {
-          warnFL(eMsg("rule %s yields no return value(s)", r->text),
-              FileStr[r->file], r->line);
+          warning("rule %s yields no return value(s)",
+              FileStr[r->file], r->line, r->text);
         }
         if ( r->assign==NULL && RulePtr[q->rulenum]->ret!=NULL )
         {
-          warnFL(eMsg("rule %s returns a value(s)", r->text),
-              FileStr[r->file], r->line);
+          warning("rule %s returns a value(s)",
+              FileStr[r->file], r->line, r->text);
         }
         if ( !r->linked )
         {

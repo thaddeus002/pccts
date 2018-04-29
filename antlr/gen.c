@@ -936,7 +936,7 @@ static Predicate *genPredTreeMainXX( Predicate *p, Node *j ,int in_and_expr)
 
     MR_predContextPresent(p,&allHaveContext,&noneHaveContext);
     if (!noneHaveContext & !allHaveContext) {
-      warnFL("predicate contains elements both with and without context",
+      warning("predicate contains elements both with and without context",
                 FileStr[j->file],j->line);
     };
 
@@ -1255,13 +1255,13 @@ static set genBlk( Junction *q, int jtype, int *max_k, int *need_right_curly, in
   {
     if (first_item_is_guess_block((Junction *)q->p1)!=NULL )
     {
-            if (jtype != aLoopBlk && jtype != aOptBlk && jtype != aPlusBlk) {
-          warnFL("(...)? as only alternative of block is unnecessary", FileStr[q->file], q->line);
-            };
-            gen(output, true, "zzGUESS\n"); /* guess anyway to make output code consistent */
+      if (jtype != aLoopBlk && jtype != aOptBlk && jtype != aPlusBlk) {
+          warning("(...)? as only alternative of block is unnecessary", FileStr[q->file], q->line);
+      };
+      gen(output, true, "zzGUESS\n"); /* guess anyway to make output code consistent */
 /* MR10 disable */  /**** gen(output, true, "if ( !zzrv )\n"); ****/
 /* MR10 */          gen(output, true, "if ( !zzrv ) {\n"); tabs++; (*need_right_curly)++;
-        };
+    };
     TRANS(q->p1);
     return empty;   /* no decision to be made-->no error set */
   }
@@ -1313,7 +1313,7 @@ static set genBlk( Junction *q, int jtype, int *max_k, int *need_right_curly, in
 /* MR10 */        if (alt->p2 == NULL &&
 /* MR10 */               ( q->jtype == aSubBlk || q->jtype == RuleBlk) ) {
 /* MR10 */          if (first_item_is_guess_block(alt)) {
-/* MR10 */               warnFL("(...)? as last alternative of block is unnecessary",
+/* MR10 */               warning("(...)? as last alternative of block is unnecessary",
 /* MR10 */                                FileStr[alt->file],alt->line);
 /* MR10 */          };
 /* MR10 */        };
@@ -1668,8 +1668,8 @@ static void genRuleRef( RuleRefNode *p )
   r = (RuleEntry *) hash_get(Rname, p->text);
   if ( r == NULL )
   {
-    warnFL(eMsg("rule %s not defined",
-            p->text), FileStr[p->file], p->line);
+    warning("rule %s not defined", FileStr[p->file], p->line,
+            p->text);
     return;
   }
 

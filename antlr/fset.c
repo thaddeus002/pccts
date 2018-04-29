@@ -128,7 +128,7 @@ set rJunc( Junction *p, int k, set *rk )
     if (MR_MaintainBackTrace) MR_pointerStackPush(&MR_BackTraceStack,p);
 
 /* MR14 */    if (AlphaBetaTrace && p->alpha_beta_guess_end) {
-/* MR14 */         warnFL(
+/* MR14 */         warning(
 /* MR14 */           "not possible to compute follow set for alpha in an \"(alpha)? beta\" block.  ",
 /* MR14 */                 FileStr[p->file],p->line);
 /* MR14 */         MR_alphaBetaTraceReport();
@@ -299,7 +299,7 @@ set rRuleRef( RuleRefNode *p, int k, set *rk_out )
 
   if ( q == NULL )
   {
-    warnFL(eMsg("rule %s not defined",p->text), FileStr[p->file], p->line);
+    warning("rule %s not defined", FileStr[p->file], p->line, p->text);
     REACH(p->next, k, rk_out, a);
         if (MR_MaintainBackTrace) MR_pointerStackPop(&MR_BackTraceStack);
     return a;

@@ -407,7 +407,7 @@ Tree *tJunc( Junction *p, int k, set *rk )
 #endif
 
 /* MR14 */    if (AlphaBetaTrace && p->alpha_beta_guess_end) {
-/* MR14 */         warnFL(
+/* MR14 */         warning(
 /* MR14 */           "not possible to compute follow set for alpha in an \"(alpha)? beta\" block.  ",
 /* MR14 */                 FileStr[p->file],p->line);
 /* MR14 */         MR_alphaBetaTraceReport();
@@ -1277,8 +1277,7 @@ int contextGuardOK(Node *p,int h,int *hmax)
       if (h > *hmax) *hmax=h;
       tn=(TokNode *)p;
       if (tn->el_label != NULL) {
-        warnFL(eMsg("a label (\"%s\") for a context guard element is meaningless",tn->el_label),
-                             FileStr[p->file],p->line);
+        warning("a label (\"%s\") for a context guard element is meaningless",FileStr[p->file],p->line,tn->el_label);
       };
       return contextGuardOK( ( (TokNode *) p)->next,h,hmax);
     } else if (p->ntype == nAction) {

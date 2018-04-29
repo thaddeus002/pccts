@@ -108,30 +108,29 @@ int predicateLookaheadDepth(ActionNode *a)
       if ( !a->frmwarned )
       {
         a->frmwarned = 1;
-        warnFL(eMsg("predicate: %s missing, bad, or with i=0; assuming i=1",
-               GenCC?"LT(i)":"LATEXT(i)"),
-             FileStr[a->file], a->line);
+        warning("predicate: %s missing, bad, or with i=0; assuming i=1",
+             FileStr[a->file], a->line, GenCC?"LT(i)":"LATEXT(i)");
       }
     }
   }
 
-/* MR10 */    if ( max_k > CLL_k) {
-/* MR10 */    if ( !a->frmwarned )
-/* MR10 */        {
-/* MR10 */      a->frmwarned = 1;
-/* MR11 */ errFL(eMsg("predicate refers to lookahead token %d. Semantic lookahead is limited to max(k,ck)==%d",
-/* MR10 */                        max_k,CLL_k),
-/* MR10 */                        FileStr[a->file],a->line);
-/* MR10 */          if (max_k >= OutputLL_k) {
-/* MR10 */            if (!GenCC) {
-/* MR10 */              errFL(eMsg("    the lookahead buffer size in C mode is %d token(s) (including the one just recognized)",
-/* MR10 */                        OutputLL_k),
-/* MR10 */                        FileStr[a->file],a->line);
-/* MR10 */            };
-/* MR10 */          };
-/* MR10 */        };
-/* MR10 */        max_k= CLL_k;
-/* MR10 */    };
+  if ( max_k > CLL_k) {
+  if ( !a->frmwarned )
+  {
+    a->frmwarned = 1;
+    errFL(eMsg("predicate refers to lookahead token %d. Semantic lookahead is limited to max(k,ck)==%d",
+                        max_k,CLL_k),
+                        FileStr[a->file],a->line);
+    if (max_k >= OutputLL_k) {
+      if (!GenCC) {
+        errFL(eMsg("    the lookahead buffer size in C mode is %d token(s) (including the one just recognized)",
+                    OutputLL_k),
+                    FileStr[a->file],a->line);
+      };
+    };
+  };
+  max_k= CLL_k;
+  };
 
   PREDENTRY_EXIT:
   return max_k;
@@ -370,8 +369,8 @@ Predicate *find_predicates( Node *alt )
 
             if ( first_item_is_guess_block((Junction *)p->next) )
             {
-                            warnFL("cannot compute context of predicate in front of (..)? block",
-                            FileStr[p->file], p->line);
+                warning("cannot compute context of predicate in front of (..)? block",
+                        FileStr[p->file], p->line);
             }
             else
             {
@@ -398,8 +397,8 @@ Predicate *find_predicates( Node *alt )
             */
             if ( first_item_is_guess_block((Junction *)p->next) )
             {
-                        warnFL("cannot compute context of predicate in front of (..)? block",
-                                             FileStr[p->file], p->line);
+                warning("cannot compute context of predicate in front of (..)? block",
+                        FileStr[p->file], p->line);
             }
             else
             {
@@ -449,7 +448,7 @@ Predicate *find_predicates( Node *alt )
       RuleEntry *q = (RuleEntry *) hash_get(Rname, p->text);
       if ( q == NULL )
       {
-        warnFL(eMsg("rule %s not defined",p->text), FileStr[p->file], p->line);
+        warning("rule %s not defined", FileStr[p->file], p->line, p->text);
         return NULL;
       }
       r = RulePtr[q->rulenum];

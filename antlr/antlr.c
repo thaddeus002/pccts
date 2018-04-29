@@ -850,8 +850,8 @@ void aPred()
 
             predEntry=(PredEntry *) hash_get(Pname,name);
   if (predEntry != NULL) {
-  warnFL(eMsg("#pred %s previously defined - ignored",name),
-  FileStr[action_file],action_line);
+  warning("#pred %s previously defined - ignored",
+            FileStr[action_file], action_line, name);
   name=NULL;
 };
   {
@@ -884,12 +884,12 @@ void aPred()
       }
       if (predLiteral != NULL && name != NULL) {
 
-                      /*
+       /*
         *  predExpr may be NULL due to syntax errors
         *    or simply omitted by the user
         */
 
-                      predEntry=newPredEntry(name);
+        predEntry=newPredEntry(name);
         predEntry->file=save_file;
         predEntry->line=save_line;
         predExpr=MR_predFlatten(predExpr);
@@ -1079,8 +1079,8 @@ Predicate *predPrimary()
     zzCONSUME;
     predEntry=(PredEntry *) hash_get(Pname,name);
     if (predEntry == NULL) {
-      warnFL(eMsg("no previously defined #pred with name \"%s\"",name),
-      FileStr[CurFile],zzline);
+      warning("no previously defined #pred with name \"%s\"",
+              FileStr[CurFile], zzline, name);
       name=NULL;
       _retv=NULL;
     } else {
@@ -1337,9 +1337,7 @@ void tclass()
   /* MR23 */         if (p!= NULL && akaString != NULL) {
     /* MR23 */           if (p->akaString != NULL) {
       /* MR23 */             if (strcmp(p->akaString,akaString) != 0) {
-        /* MR23 */                warnFL(eMsg("this #tokclass statment conflicts with a previous #tokclass %s(\"%s\") statement",
-        /* MR23 */                              t,p->akaString),
-        /* MR23 */                          FileStr[save_file],save_line);
+        /* MR23 */                warning("this #tokclass statment conflicts with a previous #tokclass %s(\"%s\") statement", FileStr[save_file], save_line, t, p->akaString);
         /* MR23 */             };
       /* MR23 */            } else {
       /* MR23 */              p->akaString=akaString;
@@ -1573,9 +1571,8 @@ void token()
     if (te != NULL && akaString != NULL) {
       if (te->akaString != NULL) {
         if (strcmp(te->akaString,akaString) != 0) {
-          warnFL(eMsg("this #token statment conflicts with a previous #token %s(\"%s\") statement",
-          t,te->akaString),
-          FileStr[save_file],save_line);
+          warning("this #token statment conflicts with a previous #token %s(\"%s\") statement",
+                FileStr[save_file], save_line, t, te->akaString);
         };
       } else {
         te->akaString=akaString;
@@ -3058,7 +3055,7 @@ void defines(char * fname)
       if ( Tnum( t ) == 0 ) {
       addForcedTname( t, v );
     } else {
-    warnFL(eMsg("redefinition of token %s; ignored",t), fname,zzline);
+    warning("redefinition of token %s; ignored", fname, zzline, t);
   };
 };
  zzCONSUME;
@@ -3118,7 +3115,7 @@ void enum_def(char * fname)
   if ( v>maxt ) maxt=v;       /* MR3 */
   if ( Tnum( t ) == 0 ) addForcedTname( t, v );
   else {
-    warnFL(eMsg("redefinition of token %s; ignored",t), fname,zzline);
+    warning("redefinition of token %s; ignored", fname, zzline, t);
   }
   {
     zzBLOCK(zztasp2);
@@ -3182,7 +3179,7 @@ void enum_def(char * fname)
             if ( v>maxt ) maxt=v;       /* MR3 */
             if ( Tnum( t ) == 0 ) addForcedTname( t, v );
             else {
-              warnFL(eMsg("redefinition of token %s; ignored",t), fname,zzline);
+              warning("redefinition of token %s; ignored", fname, zzline, t);
             }
           }
           else {

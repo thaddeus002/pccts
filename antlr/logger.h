@@ -28,8 +28,6 @@ void hdrLog(char *f,int l);
 
 void warnNoFL(char *err);
 
-void warnFL(char *err,char *f,int l);
-
 void warn(char *err);
 
 void errNoFL(char *err);

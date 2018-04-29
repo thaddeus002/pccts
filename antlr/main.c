@@ -396,10 +396,10 @@ static void CompleteContextGuards(void);
 
 
 static void report_numericPredLabels(ActionNode *a)
-{                                                                           /* MR10 */
-  warnFL("numeric references to attributes (e.g. $i or $i.j) in semantic pred will be null during guess mode",  /* MR10 */
-            FileStr[a->file],a->line);                                      /* MR10 */
-}                                                                           /* MR10 */
+{ /* MR10 */
+  warning("numeric references to attributes (e.g. $i or $i.j) in semantic pred will be null during guess mode",
+            FileStr[a->file],a->line);
+}
 
                 /* M a i n */
 
