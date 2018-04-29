@@ -41,6 +41,7 @@
 #include "dlgdef.h"
 #include "logger.h"
 #include "gen.h"
+#include "mrhoist.h"
 #include "pred.h"
 
 static void complete_context_sets(RuleRefNode *, Predicate *);

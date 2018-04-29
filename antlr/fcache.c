@@ -34,6 +34,7 @@
 #include "hash.h"
 #include "generic.h"
 #include "proto.h"
+#include "mrhoist.h"
 #include "fcache.h"
 
 static CacheEntry *dumpFcache1(char *prev)

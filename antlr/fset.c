@@ -44,6 +44,7 @@
 #include "gen.h"
 #include "pred.h"
 #include "misc.h"
+#include "mrhoist.h"
 
 static void ensure_predicates_cover_ambiguous_lookahead_sequences
                                     (Junction *, Junction *, char *, Tree *);

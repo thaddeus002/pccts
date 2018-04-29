@@ -39,6 +39,7 @@
 #include "logger.h"
 #include "pred.h"
 #include "misc.h"
+#include "mrhoist.h"
 
 
 /**
