@@ -26,11 +26,12 @@
  */
 void hdrLog(char *f,int l);
 
-void warnNoFL(char *err);
-
 void warn(char *err);
 
-void errNoFL(char *err);
+/**
+ * Log an error message.
+ */
+void errorNoFL(char *err, ...);
 
 void err(char *err);
 
@@ -42,6 +43,11 @@ void fatal_intern(char *err_, char *f, int l);
  * Log an error message and quit the program.
  */
 void fatalNM(char *err, char *file, int line, ...);
+
+/**
+ * Log a warning message.
+ */
+void warningNoFL(char *err, ...);
 
 /**
  * Log a warning message.

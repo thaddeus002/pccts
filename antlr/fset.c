@@ -317,8 +317,8 @@ set rRuleRef( RuleRefNode *p, int k, set *rk_out )
   r = RulePtr[q->rulenum];
   if ( r->lock[k] )
   {
-    errNoFL(eMsg("infinite left-recursion to rule %s from rule %s",
-            r->rname, p->rname));
+    errorNoFL("infinite left-recursion to rule %s from rule %s",
+            r->rname, p->rname);
 
         if (MR_MaintainBackTrace) MR_pointerStackPop(&MR_BackTraceStack);
 

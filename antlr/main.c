@@ -79,7 +79,7 @@ static void pStdin()
 {
   if ( DontAcceptStdin )
   {
-    warnNoFL("'-' (stdin) ignored as files were specified first");
+    warningNoFL("'-' (stdin) ignored as files were specified first");
     return;
   }
 
@@ -90,10 +90,10 @@ static void pStdin()
 
 static void pFile( char *s )
 {
-  if ( *s=='-' ) { warnNoFL(eMsg("invalid option: '%s'",s)); return; }
+  if ( *s=='-' ) { warningNoFL("invalid option: '%s'",s); return; }
   if ( DontAcceptFiles )
   {
-    warnNoFL(eMsg("file '%s' ignored as '-' (stdin option) was specified first",s));
+    warningNoFL("file '%s' ignored as '-' (stdin option) was specified first",s);
     return;
   }
 
@@ -116,16 +116,16 @@ static void pFileList( char *s, char *t )
   char *flp = &Fn_in_Fl[0];
   int fnl, left = MaxFLArea, i;
 
-  if ( *t=='-' ) { warnNoFL(eMsg("invalid option: '%s'",t)); return; }
+  if ( *t=='-' ) { warningNoFL("invalid option: '%s'",t); return; }
   if ( DontAcceptFiles )
   {
-    warnNoFL(eMsg("file '%s' ignored as '-' (stdin option) was specified first",t));
+    warningNoFL("file '%s' ignored as '-' (stdin option) was specified first",t);
     return;
   }
 
         if ((fl = fopen(t, "r")) == NULL)
   {
-    warnNoFL(eMsg("file '%s' can't be opened", t));
+    warningNoFL("file '%s' can't be opened", t);
     return;
   }
         for (;;)
@@ -151,7 +151,7 @@ static void pLLK( char *s, char *t )
 {
   LL_k = atoi(t);
   if ( LL_k <= 0 ) {
-    warnNoFL("must have at least one token of lookahead (setting to 1)");
+    warningNoFL("must have at least one token of lookahead (setting to 1)");
     LL_k = 1;
   }
 }
@@ -160,7 +160,7 @@ static void pCk( char *s, char *t )
 {
   CLL_k = atoi(t);
   if ( CLL_k <= 0 ) {
-    warnNoFL("must have at least one token of look-ahead (setting to 1)");
+    warningNoFL("must have at least one token of look-ahead (setting to 1)");
     CLL_k = 1;
   }
 }
@@ -208,7 +208,7 @@ static void pInfo(char *s, char *t)                         /* MR10 */
     } else if (q=='f') {
       InfoF=1;
     } else {
-      warnNoFL(eMsg("unrecognized -info option \"%c\"",(int)*p));
+      warningNoFL("unrecognized -info option \"%c\"",(int)*p);
     };
   };
 }
@@ -240,7 +240,7 @@ static void pDL(void)
 {
   DemandLookahead = 1;
   if ( GenCC ) {
-    warnNoFL("-gk does not work currently in C++ mode; -gk turned off");
+    warningNoFL("-gk does not work currently in C++ mode; -gk turned off");
     DemandLookahead = 0;
   }
 }
@@ -271,13 +271,7 @@ static void pOut( char *s, char *t )
 
 static void pPred( )
 {
-  warnNoFL("-pr is no longer used (predicates employed if present); see -prc, -mrhoist, -mrhoistk");
-/*
-**  if ( DemandLookahead )
-**    warnNoFL("-gk conflicts with -pr; -gk turned off");
-**  DemandLookahead = 0;
-**  HoistPredicateContext = 0;
-*/
+  warningNoFL("-pr is no longer used (predicates employed if present); see -prc, -mrhoist, -mrhoistk");
 }
 
 static void pPredCtx( char *s, char *t )
@@ -286,7 +280,7 @@ static void pPredCtx( char *s, char *t )
   else if ( ci_strequ(t,"off")) HoistPredicateContext = 0;
   if ( DemandLookahead )
   {
-    warnNoFL("-gk incompatible with semantic predicate usage; -gk turned off");
+    warningNoFL("-gk incompatible with semantic predicate usage; -gk turned off");
     DemandLookahead = 0;
   }
 }
@@ -320,7 +314,7 @@ static void pTRes(char *s, char *t)
   TreeResourceLimit = atoi(t);
   if ( TreeResourceLimit <= 0 )
   {
-    warnNoFL("analysis resource limit (# of tree nodes) must be greater than 0");
+    warningNoFL("analysis resource limit (# of tree nodes) must be greater than 0");
     TreeResourceLimit = -1; /* set to no limit */
   }
 }
@@ -434,14 +428,14 @@ int main( int argc, char *argv[] )
     };
 
     if (HoistPredicateContext && ! MRhoisting) {
-        warnNoFL("When using predicate context (-prc on) -mrhoist on is recommended");
+        warningNoFL("When using predicate context (-prc on) -mrhoist on is recommended");
     }
 
     /* Fix lookahead depth */
     /* Compressed lookahead must always be larger than or equal to full lookahead */
     if ( CLL_k < LL_k  && CLL_k>0 )
     {
-        warnNoFL("must have compressed lookahead >= full LL(k) lookahead (setting -ck to -k)");
+        warningNoFL("must have compressed lookahead >= full LL(k) lookahead (setting -ck to -k)");
         CLL_k = LL_k;
     }
     if ( CLL_k == -1 ) CLL_k = LL_k;
@@ -453,9 +447,9 @@ int main( int argc, char *argv[] )
     };
 
     if (MR_BlkErr) {
-        warnNoFL("The -mrblkerr option is EXPERIMENTAL");
+        warningNoFL("The -mrblkerr option is EXPERIMENTAL");
         if (LL_k > 1) {
-            warnNoFL("The -mrblkerr option is designed only for k=1 ck=1 grammars");
+            warningNoFL("The -mrblkerr option is designed only for k=1 ck=1 grammars");
         }
     };
 
@@ -463,8 +457,8 @@ int main( int argc, char *argv[] )
         MR_AmbAidDepth=1;
     } else {
         if (MR_AmbAidDepth > CLL_k || MR_AmbAidDepth <= 0) {
-            warnNoFL(eMsg(
-                    "Ambiguity aid depth (\"-aad ...\") must be a number between 1 and max(k,ck)=%d",CLL_k));
+            warningNoFL(
+                    "Ambiguity aid depth (\"-aad ...\") must be a number between 1 and max(k,ck)=%d",CLL_k);
             MR_AmbAidDepth=1;
         };
         if (MR_AmbAidDepth == 0) {
@@ -485,9 +479,9 @@ int main( int argc, char *argv[] )
     if ( CannotContinue ) {cleanUp(); zzDIE;}
     if ( GenCC && no_classes_found ) fatal("required grammar class not found (exiting...)");
     if ( WarningLevel>1 && HdrAction == NULL )
-        warnNoFL("no #header action was found");
+        warningNoFL("no #header action was found");
     if ( FoundAtOperator && ! FoundExceptionGroup) {
-        warnNoFL("found the exception operator '@' - but no exception group was found");
+        warningNoFL("found the exception operator '@' - but no exception group was found");
     };
     EpToken = addTname(EPSTR);    /* add imaginary token epsilon */
     set_orel(EpToken, &imag_tokens);
@@ -523,7 +517,7 @@ int main( int argc, char *argv[] )
     {
         FILE *f = fopen(OutMetaName(stdpccts), "w");
         if ( f==NULL ) {
-            warnNoFL(eMsg("can't create %s",OutMetaName(stdpccts)));
+            warningNoFL("can't create %s",OutMetaName(stdpccts));
         } else {
 #ifdef SPECIAL_FOPEN
             special_fopen_actions(OutMetaName(stdpccts));
@@ -545,7 +539,7 @@ int main( int argc, char *argv[] )
 
     if ( CodeGen ) {
         if ( SynDiag == NULL ) {
-            warnNoFL("no grammar description recognized");
+            warningNoFL("no grammar description recognized");
             cleanUp();
             zzDIE;
         } else if ( !GenCC ) {
@@ -608,13 +602,13 @@ int main( int argc, char *argv[] )
     MR_orphanRules(stderr);
     if (LTinTokenAction && WarningLevel >= 2) {
         if (GenCC) {
-            warnNoFL("At least one <<action>> following a token match contains a reference to LT(...)\n      this will reference the immediately preceding token,\n      not the one which follows as is the case with semantic predicates.");
+            warningNoFL("At least one <<action>> following a token match contains a reference to LT(...)\n      this will reference the immediately preceding token,\n      not the one which follows as is the case with semantic predicates.");
         }
-        warnNoFL("At least one <<action>> following a token match contains a reference to LA(...) or LATEXT(...)\n      this will reference the immediately preceding token,\n      not the one which follows as is the case with semantic predicates.");
+        warningNoFL("At least one <<action>> following a token match contains a reference to LA(...) or LATEXT(...)\n      this will reference the immediately preceding token,\n      not the one which follows as is the case with semantic predicates.");
     }
 
     if ( PrintOut ) {
-        if ( SynDiag == NULL ) {warnNoFL("no grammar description recognized");}
+        if ( SynDiag == NULL ) {warningNoFL("no grammar description recognized");}
         else PRINT(SynDiag);
     }
 
@@ -650,10 +644,10 @@ int main( int argc, char *argv[] )
     if (MR_AmbAidRule != NULL && MR_matched_AmbAidRule==0) {
         RuleEntry *q = (RuleEntry *) hash_get(Rname,MR_AmbAidRule);
         if (MR_AmbAidLine == 0 && q == NULL) {
-            warnNoFL(eMsg("there is no rule \"%s\" so \"-aa %s\" will never match",
-                    MR_AmbAidRule,MR_AmbAidRule));
+            warningNoFL("there is no rule \"%s\" so \"-aa %s\" will never match",
+                    MR_AmbAidRule,MR_AmbAidRule);
         } else {
-            warnNoFL(eMsg("there was no ambiguity that matched \"-aa %s\"",MR_AmbAidRule));
+            warningNoFL("there was no ambiguity that matched \"-aa %s\"",MR_AmbAidRule);
         };
     };
     if (AlphaBetaTrace) {
@@ -777,7 +771,7 @@ FILE *NextFile()
         if ( ci_strequ(FileStr[CurFile],"stdin")) return stdin;
         f = fopen(FileStr[CurFile], "r");
         if ( f == NULL ) {
-            warnNoFL(eMsg("file %s doesn't exist; ignored", FileStr[CurFile]));
+            warningNoFL("file %s doesn't exist; ignored", FileStr[CurFile]);
         } else {
             return(f);
         }

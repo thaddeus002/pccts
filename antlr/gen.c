@@ -181,7 +181,7 @@ static void warn_about_using_gk_option()
 
   if ( !DemandLookahead || warned_already ) return;
   warned_already = 1;
-  warnNoFL("-gk option could cause trouble for <<...>>? predicates");
+  warningNoFL("-gk option could cause trouble for <<...>>? predicates");
 }
 
 void freeBlkFsets( Junction *q )
@@ -1680,7 +1680,7 @@ static void genRuleRef( RuleRefNode *p )
   q = RulePtr[r->rulenum];  /* find definition of ref'd rule */  /* MR8 */
 
   r2 = (RuleEntry *) hash_get(Rname, p->rname);
-  if ( r2 == NULL ) {warnNoFL("Rule hash table is screwed up beyond belief"); return;}
+  if ( r2 == NULL ) {warningNoFL("Rule hash table is screwed up beyond belief"); return;}
 
     OutLineInfo(output,p->line,FileStr[p->file]);
 
@@ -1907,7 +1907,7 @@ static void genToken( TokNode *p )
     handler_id = p->altstart->exception_label;
 
   r = (RuleEntry *) hash_get(Rname, p->rname);
-  if ( r == NULL ) {warnNoFL("Rule hash table is screwed up beyond belief"); return;}
+  if ( r == NULL ) {warningNoFL("Rule hash table is screwed up beyond belief"); return;}
 
 /*
  * MR27 Has the element label been referenced as an AST (with the # operator) ?
@@ -2929,7 +2929,7 @@ do {    /* MR10     Change recursion into iteration         */
   CurRule=q->rname;
 
   r = (RuleEntry *) hash_get(Rname, q->rname);
-  if ( r == NULL ) warnNoFL("Rule hash table is screwed up beyond belief");
+  if ( r == NULL ) warningNoFL("Rule hash table is screwed up beyond belief");
   if ( q->file != file )    /* open new output file if need to */
   {
 /* MR6                                */

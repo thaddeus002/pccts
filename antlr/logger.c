@@ -89,10 +89,6 @@ void hdrLog(char *f,int l) {
     fprintf(stderr, ErrHdr, f, l);
 }
 
-void warnNoFL(char *err)
-{
-    warning(err, NULL, 0);
-}
 
 /**
  * Log a warning message.
@@ -122,10 +118,6 @@ void warn(char *err)
     fprintf(stderr, " warning: %s\n", err);
 }
 
-void errNoFL(char *err)
-{
-    fprintf(stderr, " error: %s\n", err);
-}
 
 void err(char *err)
 {
@@ -133,6 +125,16 @@ void err(char *err)
     if ( CurFile >= NumFiles && CurFile >= 1 ) CurFile--;
     hdrLog(FileStr[CurFile], zzline);
     fprintf(stderr, " error: %s\n", err);
+}
+
+/**
+ * Log an error message.
+ */
+void errorNoFL(char *err, ...) {
+    va_list ap;
+    va_start(ap, err);
+    log_message_va(ERROR, err, NULL, 0, ap);
+    va_end(ap);
 }
 
 /**

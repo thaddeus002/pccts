@@ -192,8 +192,8 @@ static set Efirst( char *rule, ECnode *eclass )
 
   if ( q == NULL )
   {
-    warnNoFL(eMsg("undefined rule '%s' referenced in errclass '%s'; ignored",
-            rule, TokenString(eclass->tok)));
+    warningNoFL("undefined rule '%s' referenced in errclass '%s'; ignored",
+            rule, TokenString(eclass->tok));
     return empty;
   }
   r = RulePtr[q->rulenum];
@@ -256,8 +256,8 @@ static void doEclass( char *eclass )
       {
         if ( strcmp((char *)e->elem, TokenString(p->tok))==0 )
         {
-          warnNoFL(eMsg("self-referential error class '%s'; ignored",
-                   (char *)e->elem));
+          warningNoFL("self-referential error class '%s'; ignored",
+                   (char *)e->elem);
           continue;
         }
         else
@@ -277,8 +277,8 @@ static void doEclass( char *eclass )
         deg++;
       }
     }
-    else warnNoFL(eMsg("undefined token '%s' referenced in errclass '%s'; ignored",
-              (char *)e->elem, TokenString(p->tok)));
+    else warningNoFL("undefined token '%s' referenced in errclass '%s'; ignored",
+              (char *)e->elem, TokenString(p->tok));
   }
   p->setdeg = deg;
 }
@@ -332,16 +332,16 @@ void ComputeTokSets( )
           require(q2!=NULL, "ComputeTokSets: no token def");
 
                 if (set_el(q1->token,imag_tokens)) {
-                  errNoFL(eMsg("can't define #tokclass %s using #tokclass or #errclass %s",
-                  TokenString(p->tok),(char *)e1->elem) );
+                  errorNoFL("can't define #tokclass %s using #tokclass or #errclass %s",
+                  TokenString(p->tok),(char *)e1->elem);
                 }
                 if (set_el(q2->token,imag_tokens)) {
-                  errNoFL(eMsg("can't define #tokclass %s using #tokclass or #errclass %s",
-                  TokenString(p->tok),(char *)e2->elem) );
+                  errorNoFL("can't define #tokclass %s using #tokclass or #errclass %s",
+                  TokenString(p->tok),(char *)e2->elem);
                 }
                 if (q1->token > q2->token) {
-                  errNoFL(eMsg("for #tokclass %s %s..%s - first token number > second token number",
-                  TokenString(p->tok),(char *)e1->elem,(char *)e2->elem) );
+                  errorNoFL("for #tokclass %s %s..%s - first token number > second token number",
+                  TokenString(p->tok),(char *)e1->elem,(char *)e2->elem);
                   for (i=q2->token; i<=q1->token; i++) { set_orel(i, &p->tset); }
                 } else {
                   for (i=q1->token; i<=q2->token; i++) { set_orel(i, &p->tset); }

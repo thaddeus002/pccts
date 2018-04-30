@@ -159,7 +159,7 @@ void genLexDescr()
 
   /* dump all regular expression rules/actions (skip sentinel node) */
   if ( ExprOrder == NULL ) {
-    warnNoFL("no regular expressions found in grammar");
+    warningNoFL("no regular expressions found in grammar");
   }
   else dumpLexClasses(dlgFile);
   fprintf(dlgFile, "%%%%\n");
@@ -315,7 +315,7 @@ void genDefFile(void)
               }
               if ( j>=NumLexClasses )
               {
-                warnNoFL(eMsg("token label has no associated rexpr: %s",TokenString(i)));
+                warningNoFL("token label has no associated rexpr: %s",TokenString(i));
               }
                     };
         }
