@@ -31,7 +31,7 @@
 #include "utils.h"
 #include "misc.h"
 #include "mrhoist.h"
-
+#include "fset2.h"
 
 /* MR23 In order to remove calls to PURIFY use the antlr -nopurify option */
 

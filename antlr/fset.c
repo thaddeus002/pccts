@@ -45,6 +45,7 @@
 #include "pred.h"
 #include "misc.h"
 #include "mrhoist.h"
+#include "fset2.h"
 #include "fset.h"
 
 static void ensure_predicates_cover_ambiguous_lookahead_sequences

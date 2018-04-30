@@ -49,6 +49,7 @@
 #include "lex.h"
 #include "misc.h"
 #include "mrhoist.h"
+#include "fset2.h"
 
            /* S t a n d a r d  S i g n a l s */
 

@@ -40,6 +40,7 @@
 #include "constants.h"
 #include "misc.h"
 #include "fset.h"
+#include "fset2.h"
 
 char Version[] = "1.33MR33" ; /* PCCTS version number */
 char VersionDef[] = "13333";    /* same (except int equiv for preproc symbol) */

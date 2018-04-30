@@ -89,8 +89,6 @@ extern ListNode *BeforeActions, *AfterActions, *LexActions;
 extern ListNode *LexMemberActions;
 extern ListNode *LexPrefixActions;
 
-extern set *fset;   /* for constrained search */
-extern int maxk;    /* for constrained search */
 extern int Save_argc;
 extern char **Save_argv;
 extern ListNode *eclasses, *tclasses;
@@ -142,13 +140,8 @@ extern char *RulePrefix;
 extern int GenStdPccts;
 extern char *stdpccts;
 extern int ParseWithPredicates;
-extern int ConstrainSearch;
 extern int PURIFY;
 extern set MR_CompromisedRules;
-extern int MR_AmbSourceSearch;
-extern int MR_AmbSourceSearchGroup;
-extern int MR_AmbSourceSearchChoice;
-extern int MR_AmbSourceSearchLimit;
 extern int MR_usingPredNames;
 extern int MR_ErrorSetComputationActive;
 extern char *MR_AmbAidRule;
@@ -156,7 +149,6 @@ extern int   MR_AmbAidLine;
 extern int   MR_AmbAidMultiple;
 extern int MR_AmbAidDepth;
 extern int MR_skipped_e3_report;
-extern int MR_matched_AmbAidRule;
 extern int MR_Inhibit_Tokens_h_Gen;
 extern int NewAST;
 extern int tmakeInParser;
@@ -238,55 +230,19 @@ extern int tokenActionActive;
 
 #define STRICMP stricmp
 
-
-extern Tree *tmake(Tree *root, ...);
-
 extern int STRICMP(const char*, const char*);
 extern Junction * newJunction( void );
-extern void preorder( Tree * );
-extern Tree * tnode( int );
-extern void _Tfree( Tree * );
-extern Tree * tdup( Tree * );
-extern int is_single_tuple( Tree * );
-extern Tree * tappend( Tree *, Tree * );
-extern void Tfree( Tree * );
-extern Tree * tlink( Tree *, Tree *, int );
-extern Tree * tshrink( Tree * );
-extern Tree * tflatten( Tree * );
-extern Tree * tJunc( Junction *, int, set * );
-extern Tree * tRuleRef( RuleRefNode *, int, set * );
-extern Tree * tToken( TokNode *, int, set * );
-extern Tree * tAction( ActionNode *, int, set * );
-extern int tmember( Tree *, Tree * );
-extern int tmember_constrained( Tree *, Tree * );
-extern Tree * tleft_factor( Tree * );
-extern Tree * trm_perm( Tree *, Tree * );
-extern void tcvt( set *, Tree * );
-extern Tree * permute( int, int );
-extern Tree * VerifyAmbig( Junction *, Junction *, unsigned **, set *, Tree **, Tree **, int * );
 extern FILE * NextFile( void );
 extern char * outnameX( char *, char *);
 extern char * outname( char * );
 extern void fatal_intern( char *, char *, int );
 extern void defErr( char *, long, long, long, long, long, long );
 extern char * pcctsBaseName(char *);
-extern Tree *make_tree_from_sets(set *, set *);
-extern Tree *tdup_chain(Tree *);
-extern Tree *tdif(Tree *, Predicate *, set *, set *);
 extern void AmbiguityDialog(Junction *, int, Junction *, Junction *, int *, int *);
 extern char *TokenOrExpr(int);
 extern char *OutMetaName(char *);
 extern void OutFirstSetSymbol(Junction *q, char *);
 extern char* hideDefaultArgs(const char* pdecl);
-extern Predicate *computePredFromContextGuard(Graph,int *msgDone);
-extern void recomputeContextGuard(Predicate *);
-extern void MR_backTraceReport(void);
-extern void MR_traceAmbSource(set *,Junction *,Junction *);
-extern void MR_traceAmbSourceK(Tree *,Junction *a1,Junction *a2);
-extern void MR_traceAmbSourceKclient(void);
-extern void MR_backTraceDumpItem(FILE *,int skip,Node *n);
-extern void MR_backTraceDumpItemReset(void);
-extern void MR_setConstrainPointer(set *);
 
 /* MR20 G. Hobbelt  Create proper externs for dlg variables */
 

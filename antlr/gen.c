@@ -49,6 +49,7 @@
 #include "misc.h"
 #include "mrhoist.h"
 #include "fset.h"
+#include "fset2.h"
 #include "gen.h"
 
 #define NumExprPerLine  4

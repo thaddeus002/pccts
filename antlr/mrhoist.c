@@ -40,6 +40,7 @@
 #include "pred.h"
 #include "misc.h"
 #include "fset.h"
+#include "fset2.h"
 #include "mrhoist.h"
 
 

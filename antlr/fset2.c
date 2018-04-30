@@ -45,6 +45,7 @@
 #include "misc.h"
 #include "mrhoist.h"
 #include "fset.h"
+#include "fset2.h"
 
 /* ick! globals.  Used by permute() to track which elements of a set have been used */
 
@@ -64,7 +65,7 @@ static int tmember_of_context(Tree *, Predicate *);
  * Then each sibling
  */
 
-void preorder( Tree *tree )
+void preorder(Tree *tree)
 {
   if ( tree == NULL ) return;
   if ( tree->down != NULL ) fprintf(stderr, " (");
@@ -76,7 +77,7 @@ void preorder( Tree *tree )
   preorder(tree->right);
 }
 
-int MR_tree_matches_constraints(int k,set * constrain,Tree *t)
+static int MR_tree_matches_constraints(int k,set * constrain,Tree *t)
 {
   int       i;
   Tree      *u;
@@ -121,7 +122,7 @@ int MR_tree_matches_constraints(int k,set * constrain,Tree *t)
 static int pruneCount=0;
 static int prunePeak=200;
 
-Tree *prune( Tree *t, int k )
+static Tree *prune( Tree *t, int k )
 {
     pruneCount++;
     if (pruneCount > prunePeak+100) {
@@ -149,8 +150,8 @@ Tree *prune( Tree *t, int k )
     return t;
 }
 
-/* build a tree (root child1 child2 ... NULL) */
-Tree *tmake(Tree *root, ...)
+/** build a tree (root child1 child2 ... NULL) */
+static Tree *tmake(Tree *root, ...)
 {
   Tree *w;
   va_list ap;
@@ -178,8 +179,7 @@ Tree *tmake(Tree *root, ...)
   return root;
 }
 
-Tree *
-tnode( int tok )
+Tree *tnode(int tok)
 {
   Tree *p, *newblk;
   static int n=0;
@@ -242,8 +242,7 @@ static Tree *eofnode( int k )
 }
 
 
-
-void _Tfree( Tree *t )
+static void _Tfree( Tree *t )
 {
   if ( t!=NULL )
   {
@@ -266,17 +265,6 @@ Tree *tdup( Tree *t )
   return u;
 }
 
-/** tree duplicate (assume tree is a chain downwards) */
-Tree *tdup_chain( Tree *t )
-{
-  Tree *u;
-
-  if ( t == NULL ) return NULL;
-  u = tnode(t->token);
-  u->v.rk = t->v.rk;
-  u->down = tdup(t->down);
-  return u;
-}
 
 Tree *tappend( Tree *t, Tree *u )
 {
@@ -341,7 +329,7 @@ Tree *tlink( Tree *t, Tree *u, int remaining_k )
 }
 
 /** remove as many ALT nodes as possible while still maintaining semantics */
-Tree *tshrink( Tree *t )
+Tree *tshrink(Tree *t)
 {
   if ( t == NULL ) return NULL;
   t->down = tshrink( t->down );
@@ -376,7 +364,7 @@ Tree *tshrink( Tree *t )
   return t;
 }
 
-Tree *tflatten( Tree *t )
+Tree *tflatten(Tree *t)
 {
   if ( t == NULL ) return NULL;
   t->down = tflatten( t->down );
@@ -396,7 +384,7 @@ Tree *tflatten( Tree *t )
   return t;
 }
 
-Tree *tJunc( Junction *p, int k, set *rk )
+Tree *tJunc(Junction *p, int k, set *rk)
 {
   Tree *t=NULL, *u=NULL;
   Junction *alt;
@@ -536,7 +524,7 @@ Tree *tJunc( Junction *p, int k, set *rk )
   return tmake(tnode(ALT), t, u, NULL);
 }
 
-Tree *tRuleRef( RuleRefNode *p, int k, set *rk_out )
+Tree *tRuleRef(RuleRefNode *p, int k, set *rk_out)
 {
   int k2;
   Tree *t=NULL, *u=NULL;
@@ -598,7 +586,7 @@ Tree *tRuleRef( RuleRefNode *p, int k, set *rk_out )
   return t;
 }
 
-Tree *tToken( TokNode *p, int k, set *rk )
+Tree *tToken(TokNode *p, int k, set *rk)
 {
   Tree *t=NULL, *tset=NULL, *u;
 
@@ -717,7 +705,7 @@ Tree *tToken( TokNode *p, int k, set *rk )
   return tset;
 }
 
-Tree *tAction( ActionNode *p, int k, set *rk )
+Tree *tAction(ActionNode *p, int k, set *rk)
 {
   Tree        *t=NULL;
     set         *save_fset=NULL;
@@ -852,9 +840,8 @@ EXIT:
   return t;
 }
 
-/* see if e exists in s as a possible input permutation (e is always a chain) */
-
-int tmember( Tree *e, Tree *s )
+/** see if e exists in s as a possible input permutation (e is always a chain) */
+static int tmember(Tree *e, Tree *s)
 {
   if ( e==NULL||s==NULL ) return 0;
 /** fprintf(stderr, "tmember(");
@@ -873,11 +860,12 @@ int tmember( Tree *e, Tree *s )
   return tmember(e, s->right);
 }
 
-/* see if e exists in s as a possible input permutation (e is always a chain);
+/**
+ * see if e exists in s as a possible input permutation (e is always a chain);
  * Only check s to the depth of e.  In other words, 'e' can be a shorter
  * sequence than s.
  */
-int tmember_constrained( Tree *e, Tree *s)
+static int tmember_constrained( Tree *e, Tree *s)
 {
   if ( e==NULL||s==NULL ) return 0;
 /** fprintf(stderr, "tmember_constrained(");
@@ -897,8 +885,8 @@ int tmember_constrained( Tree *e, Tree *s)
   return tmember_constrained(e, s->right);
 }
 
-/* combine (? (A t) ... (A u) ...) into (? (A t u)) */
-Tree *tleft_factor( Tree *t )
+/** combine (? (A t) ... (A u) ...) into (? (A t u)) */
+Tree *tleft_factor(Tree *t)
 {
   Tree *u, *v, *trail, *w;
 
@@ -930,14 +918,9 @@ Tree *tleft_factor( Tree *t )
   return t;
 }
 
-/* remove the permutation p from t if present */
+/** remove the permutation p from t if present */
 Tree *trm_perm( Tree *t, Tree *p )
 {
-  /*
-  fprintf(stderr, "trm_perm(");
-  preorder(t); fprintf(stderr, ",");
-  preorder(p); fprintf(stderr, " )\n");
-  */
   if ( t == NULL || p == NULL ) return NULL;
   if ( t->token == ALT )
   {
@@ -967,18 +950,19 @@ Tree *trm_perm( Tree *t, Tree *p )
   return t;
 }
 
-/* add the permutation 'perm' to the LL_k sets in 'fset' */
-void tcvt( set *fset, Tree *perm )
+/** add the permutation 'perm' to the LL_k sets in 'fset' */
+static void tcvt(set *fset, Tree *perm)
 {
   if ( perm==NULL ) return;
   set_orel(perm->token, fset);
   tcvt(fset+1, perm->down);
 }
 
-/* for each element of ftbl[k], make it the root of a tree with permute(ftbl[k+1])
+/**
+ * for each element of ftbl[k], make it the root of a tree with permute(ftbl[k+1])
  * as a child.
  */
-Tree *permute( int k, int max_k )
+static Tree *permute( int k, int max_k )
 {
   Tree *t, *u;
 
@@ -997,13 +981,14 @@ Tree *permute( int k, int max_k )
   return u;
 }
 
-/* Compute LL(k) trees for alts alt1 and alt2 of p.
+/**
+ * Compute LL(k) trees for alts alt1 and alt2 of p.
  * function result is tree of ambiguous input permutations
  *
  * ALGORITHM may change to look for something other than LL_k size
  * trees ==> maxk will have to change.
  */
-Tree *VerifyAmbig( Junction *alt1, Junction *alt2, unsigned **ft, set *fs, Tree **t, Tree **u, int *numAmbig )
+Tree *VerifyAmbig(Junction *alt1, Junction *alt2, unsigned **ft, set *fs, Tree **t, Tree **u, int *numAmbig)
 {
   set rk;
   Tree *perm, *ambig=NULL;
@@ -1120,7 +1105,7 @@ Tree *VerifyAmbig( Junction *alt1, Junction *alt2, unsigned **ft, set *fs, Tree 
   return ambig;
 }
 
-static Tree *bottom_of_chain( Tree *t )
+static Tree *bottom_of_chain(Tree *t)
 {
     if ( t==NULL ) return NULL;
     for (; t->down != NULL; t=t->down) {;}
@@ -1130,7 +1115,7 @@ static Tree *bottom_of_chain( Tree *t )
 /**
  * Make a tree from k sets where the degree of the first k-1 sets is 1.
  */
-Tree *make_tree_from_sets( set *fset1, set *fset2 )
+Tree *make_tree_from_sets(set *fset1, set *fset2)
 {
   set inter;
   int i;
@@ -1172,7 +1157,7 @@ Tree *make_tree_from_sets( set *fset1, set *fset2 )
  * Create and return the tree of lookahead k-sequences that are in t, but not
  * in the context of predicates in predicate list p.
  */
-Tree *tdif( Tree *ambig_tuples, Predicate *p, set *fset1, set *fset2 )
+Tree *tdif(Tree *ambig_tuples, Predicate *p, set *fset1, set *fset2)
 {
   unsigned **ft;
   Tree *dif=NULL;
@@ -1255,7 +1240,7 @@ static int tmember_of_context( Tree *t, Predicate *p )
   return 0;
 }
 
-int is_single_tuple( Tree *t )
+int is_single_tuple(Tree *t)
 {
   if ( t == NULL ) return 0;
   if ( t->right != NULL ) return 0;
@@ -1267,7 +1252,7 @@ int is_single_tuple( Tree *t )
 /* MR10 Check that a context guard contains only allowed things */
 /* MR10   (mainly token references).                            */
 
-int contextGuardOK(Node *p,int h,int *hmax)
+static int contextGuardOK(Node *p,int h,int *hmax)
 {
     Junction     *j;
     TokNode      *tn;
@@ -1306,7 +1291,7 @@ Fail:
     return 0;
 }
 
-/*
+/**
  * Look at a (...)? generalized-predicate context-guard and compute
  * either a lookahead set (k==1) or a lookahead tree for k>1.  The
  * k level is determined by the guard itself rather than the LL_k
@@ -1316,7 +1301,7 @@ Fail:
  *   --o-->TOKEN-->o-->o-->TOKEN-->o-- ... -->o-->TOKEN-->o--
  * An error is printed for any other type.
  */
-Predicate *computePredFromContextGuard(Graph blk,int *msgDone)    /* MR10 */
+Predicate *computePredFromContextGuard(Graph blk,int *msgDone)
 {
     Junction *junc = (Junction *)blk.left, *p;
     Tree        *t=NULL;
@@ -1433,7 +1418,7 @@ static    set         *matchSets[2]={NULL,NULL};
 static    int         *tokensInChain=NULL;
 static    Junction    *MR_AmbSourceSearchJ[2];
 
-void MR_traceAmbSourceKclient()
+static void MR_traceAmbSourceKclient()
 {
   int       i;
   set       *save_fset;
@@ -1460,10 +1445,7 @@ void MR_traceAmbSourceKclient()
   save_fset=fset;
   save_ConstrainSearch=ConstrainSearch;
 
-
-
   for (i=0 ; i < 2 ; i++) {
-
 
     fset=matchSets[i];
 
@@ -1497,7 +1479,7 @@ void MR_traceAmbSourceKclient()
   MR_AmbSourceSearchChoice=0;
 }
 
-Tree *tTrunc(Tree *t,int depth)
+static Tree *tTrunc(Tree *t,int depth)
 {
     Tree    *u;
 
@@ -1515,7 +1497,7 @@ Tree *tTrunc(Tree *t,int depth)
     return u;
 }
 
-void MR_iterateOverTree(Tree *t,int chain[])
+static void MR_iterateOverTree(Tree *t,int chain[])
 {
   if (t == NULL) return;
   chain[0]=t->token;
@@ -1817,7 +1799,7 @@ EXIT:
 }
 
 
-static PointerStack     previousBackTrace={0,0,NULL};
+static PointerStack previousBackTrace={0,0,NULL};
 
 void MR_backTraceReport()
 {
