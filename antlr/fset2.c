@@ -44,6 +44,7 @@
 #include "pred.h"
 #include "misc.h"
 #include "mrhoist.h"
+#include "fset.h"
 
 /* ick! globals.  Used by permute() to track which elements of a set have been used */
 

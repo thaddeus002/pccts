@@ -114,8 +114,7 @@ void warn(char *err)
 {
     /* back up the file number if we hit an error at the end of the last file */
     if ( CurFile >= NumFiles && CurFile >= 1 ) CurFile--;
-    hdrLog(FileStr[CurFile], zzline);
-    fprintf(stderr, " warning: %s\n", err);
+    warning(err, FileStr[CurFile], zzline);
 }
 
 
@@ -123,8 +122,7 @@ void err(char *err)
 {
     /* back up the file number if we hit an error at the end of the last file */
     if ( CurFile >= NumFiles && CurFile >= 1 ) CurFile--;
-    hdrLog(FileStr[CurFile], zzline);
-    fprintf(stderr, " error: %s\n", err);
+    errorFL(err, FileStr[CurFile], zzline);
 }
 
 /**

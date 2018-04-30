@@ -45,11 +45,12 @@
 #include "pred.h"
 #include "misc.h"
 #include "mrhoist.h"
+#include "fset.h"
 
 static void ensure_predicates_cover_ambiguous_lookahead_sequences
                                     (Junction *, Junction *, char *, Tree *);
 
-/*
+/**
  * What tokens are k tokens away from junction q?
  *
  * Follow both p1 and p2 paths (unless RuleBlk) to collect the tokens k away from this
@@ -106,10 +107,9 @@ static void ensure_predicates_cover_ambiguous_lookahead_sequences
  * turns off this path by setting a new 'ignore' flag for
  * the alt and then resetting it afterwards.
  */
-
-set rJunc( Junction *p, int k, set *rk )
+set rJunc(Junction *p, int k, set *rk)
 {
-  set     a, b;
+  set a, b;
 
   require(p!=NULL,        "rJunc: NULL node");
   require(p->ntype==nJunction,  "rJunc: not junction");
@@ -403,7 +403,7 @@ set rToken( TokNode *p, int k, set *rk )
   return a;
 }
 
-set rAction( ActionNode *p, int k, set *rk )
+set rAction(ActionNode *p, int k, set *rk)
 {
   set a;
 
@@ -430,18 +430,18 @@ set rAction( ActionNode *p, int k, set *rk )
         /* A m b i g u i t y  R e s o l u t i o n */
 
 
-void dumpAmbigMsg(set *fset, FILE *f, int want_nls)
+static void dumpAmbigMsg(set *fset, FILE *f, int want_nls)
 {
   int i;
 
-  set     copy;               /* MR11 */
+  set copy;
 
   if ( want_nls ) fprintf(f, "\n\t");
   else fprintf(f, " ");
 
   for (i=1; i<=CLL_k; i++)
   {
-        copy=set_dup(fset[i]);  /* MR11 */
+    copy=set_dup(fset[i]);
 
     if ( i>1 )
     {
@@ -464,7 +464,6 @@ void dumpAmbigMsg(set *fset, FILE *f, int want_nls)
         set_free(copy);
   }
   fprintf(f, "\n");
-
 }
 
 static void verify_context(Predicate *predicate)
@@ -506,7 +505,7 @@ static void verify_context(Predicate *predicate)
     verify_context(predicate->right);       /* MR10 */
 }
 
-/*
+/**
  * If delta is the set of ambiguous lookahead sequences, then make sure that
  * the predicate(s) for productions alt1,alt2 cover the sequences in delta.
  *
@@ -615,7 +614,7 @@ static void ensure_predicates_cover_ambiguous_lookahead_sequences
   else fatal_internal("productions have no lookahead in predicate checking routine");
 }
 
-void MR_doPredicatesHelp(int inGuessBlock,Junction *alt1,Junction *alt2,int jtype,char *sub)
+static void MR_doPredicatesHelp(int inGuessBlock,Junction *alt1,Junction *alt2,int jtype,char *sub)
 {
     Predicate   *p1;
     Predicate   *p2;
@@ -853,9 +852,9 @@ void MR_doPredicatesHelp(int inGuessBlock,Junction *alt1,Junction *alt2,int jtyp
     };
 }
 
-static  int     totalOverflow=0;                /* MR9 */
+static int totalOverflow=0;                /* MR9 */
 
-void HandleAmbiguity( Junction *block, Junction *alt1, Junction *alt2, int jtype )
+static void HandleAmbiguity(Junction *block, Junction *alt1, Junction *alt2, int jtype)
 {
   unsigned **ftbl;
   set *fset, b;
@@ -1295,10 +1294,11 @@ void HandleAmbiguity( Junction *block, Junction *alt1, Junction *alt2, int jtype
   free((char *)ftbl);
 }
 
-/* Don't analyze alpha block of (alpha)?beta; if (alpha)? then analyze
+/**
+ * Don't analyze alpha block of (alpha)?beta; if (alpha)? then analyze
  * Return the 1st node of the beta block if present else return j.
  */
-Junction *analysis_point( Junction *j )
+Junction *analysis_point(Junction *j)
 {
   Junction *gblock;
 
@@ -1372,14 +1372,14 @@ Junction *analysis_point( Junction *j )
   return j;
 }
 
-set First( Junction *j, int k, int jtype, int *max_k )
+set First(Junction *j, int k, int jtype, int *max_k)
 {
   Junction *alt1, *alt2;
   set a, rk, fCurBlk;
   int savek;
   int p1, p2;
 
-    int     save_maintainBackTrace;
+  int save_maintainBackTrace;
 
   require(j->ntype==nJunction, "First: non junction passed");
 
@@ -1413,13 +1413,6 @@ set First( Junction *j, int k, int jtype, int *max_k )
 
         if ( k==CLL_k )
         {
-#ifdef NOT_USED
-***         int save_LL_k = LL_k;
-***         int save_CLL_k = CLL_k;
-***         /* Get new LL_k from interactive feature if enabled */
-***         if ( AImode )
-***           AmbiguityDialog(j, jtype, alt1, alt2, &CLL_k, &LL_k);
-#endif
           *max_k = CLL_k;
                     save_maintainBackTrace=MR_MaintainBackTrace;
                     if (AlphaBetaTrace) MR_MaintainBackTrace=0;
