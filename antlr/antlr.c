@@ -1619,10 +1619,10 @@ void block(set * toksrefd,set * rulesrefd)
     if (!actionNode->is_predicate )
     {
       actionNode->init_action = TRUE;
-      /* MR12c */     if (actionNode->noHoist) {
-        /* MR12c */           errFL("<<nohoist>> appears as init-action - use <<>> <<nohoist>>",
-        /* MR12c */                       FileStr[actionNode->file],actionNode->line);
-        /* MR12c */         };
+        if (actionNode->noHoist) {
+          errorFL("<<nohoist>> appears as init-action - use <<>> <<nohoist>>",
+                    FileStr[actionNode->file],actionNode->line);
+        }
     }
   }
   ((Junction *)g.left)->blockid = CurBlockID;
@@ -2570,14 +2570,14 @@ Node *element(int old_not,int first_on_line,int use_def_MT_handler)
                               /* MR13 */                    height=MR_max_height_of_tree(pred->tcontext);
                               /* MR13 */                    equal_height=MR_all_leaves_same_height(pred->tcontext,height);
                               /* MR13 */                    if (! equal_height) {
-                                /* MR13 */                       errFL("in guarded predicates all tokens in the guard must be at the same height",
+                                /* MR13 */                       errorFL("in guarded predicates all tokens in the guard must be at the same height",
                                 /* MR13 */                              FileStr[act->file],act->line);
                                 /* MR13 */                    };
                               /* MR13 */                  }
                             /* MR10 */                  if (ampersandStyle) {
                               /* MR10 */              act->ampersandPred = pred;
                               /* MR11 */                    if (! HoistPredicateContext) {
-                                /* MR11 */                      errFL("without \"-prc on\" (guard)? && <<pred>>? ... doesn't make sense",
+                                /* MR11 */                      errorFL("without \"-prc on\" (guard)? && <<pred>>? ... doesn't make sense",
                                 /* MR11 */                              FileStr[act->file],act->line);
                                 /* MR11 */                    };
                               /* MR10 */                  } else {

@@ -1288,10 +1288,9 @@ int contextGuardOK(Node *p,int h,int *hmax)
       require (p->ntype == nJunction,"Unexpected ntype");
       j=(Junction *) p;
       if (j->jtype != Generic &&
-          j->jtype != aSubBlk &&        /* pretty sure this one is allowed */
-/****     j->jtype != aOptBlk && ****/  /* pretty sure this one is allowed */ /* MR11 not any more ! */
-          j->jtype != EndBlk) {
-        errFL("A context guard may not contain an option block: {...} or looping block: (...)* or (...)+",
+        j->jtype != aSubBlk &&        /* pretty sure this one is allowed */
+        j->jtype != EndBlk) {
+        errorFL("A context guard may not contain an option block: {...} or looping block: (...)* or (...)+",
                   FileStr[p->file],p->line);
         contextGuardOK(j->p1,h,hmax);
         return 0;
@@ -1300,7 +1299,7 @@ int contextGuardOK(Node *p,int h,int *hmax)
       return contextGuardOK(j->p2,h,hmax) | contextGuardOK(j->p1,h,hmax);
     };
 Fail:
-    errFL("A context guard may contain only Token references - guard will be ignored",
+    errorFL("A context guard may contain only Token references - guard will be ignored",
                              FileStr[p->file],p->line);
     contextGuardOK( ( (ActionNode *) p)->next,h,hmax);
     return 0;
@@ -1336,17 +1335,16 @@ Predicate *computePredFromContextGuard(Graph blk,int *msgDone)    /* MR10 */
       return NULL;                                          /* MR10 */
     };                                                      /* MR10 */
     if (hmax == 0) {
-      errFL("guard is 0 tokens long",FileStr[junc->file],junc->line);          /* MR11 */
+      errorFL("guard is 0 tokens long",FileStr[junc->file],junc->line);          /* MR11 */
       *msgDone=1;
       return NULL;
     };
-    if (hmax > CLL_k) {                                     /* MR10 */
-      errFL(eMsg("guard is %d tokens long - lookahead is limited to max(k,ck)==%d", /* MR10 */
-      hmax,CLL_k),                                        /* MR10 */
-      FileStr[junc->file],junc->line);                    /* MR10 */
-      *msgDone=1;                                           /* MR10 */
-      return NULL;                                          /* MR10 */
-    };                                                      /* MR10 */
+    if (hmax > CLL_k) { /* MR10 */
+      errorFL("guard is %d tokens long - lookahead is limited to max(k,ck)==%d",
+                FileStr[junc->file], junc->line, hmax, CLL_k);
+      *msgDone=1;
+      return NULL;
+    };
 
   rk = empty;
   p = junc;

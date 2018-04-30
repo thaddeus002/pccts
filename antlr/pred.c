@@ -118,14 +118,12 @@ int predicateLookaheadDepth(ActionNode *a)
   if ( !a->frmwarned )
   {
     a->frmwarned = 1;
-    errFL(eMsg("predicate refers to lookahead token %d. Semantic lookahead is limited to max(k,ck)==%d",
-                        max_k,CLL_k),
-                        FileStr[a->file],a->line);
+    errorFL("predicate refers to lookahead token %d. Semantic lookahead is limited to max(k,ck)==%d",
+                FileStr[a->file], a->line, max_k, CLL_k);
     if (max_k >= OutputLL_k) {
       if (!GenCC) {
-        errFL(eMsg("    the lookahead buffer size in C mode is %d token(s) (including the one just recognized)",
-                    OutputLL_k),
-                    FileStr[a->file],a->line);
+        errorFL("    the lookahead buffer size in C mode is %d token(s) (including the one just recognized)",
+                    FileStr[a->file], a->line, OutputLL_k);
       };
     };
   };

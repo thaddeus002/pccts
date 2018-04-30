@@ -3726,12 +3726,12 @@ static void dumpRetValAssign( char *retval, char *ret_def, RuleRefNode * ruleRef
     if ( *retval == ',' ) retval++;
   }
   if (*retval == '\0' && *q != '\0') {
-/* MR30 */    errFL("Fewer output values than output formals for rule reference",
-/* MR30 */                 FileStr[ruleRef->file],ruleRef->line);
+    errorFL("Fewer output values than output formals for rule reference",
+                FileStr[ruleRef->file],ruleRef->line);
   }
   if (*retval != '\0' && *q == '\0') {
-/* MR30 */    errFL("More output actuals than output formals for rule reference",
-/* MR30 */                 FileStr[ruleRef->file],ruleRef->line);
+    errorFL("More output actuals than output formals for rule reference",
+                FileStr[ruleRef->file],ruleRef->line);
   }
 }
 
@@ -3838,7 +3838,7 @@ static void makeErrorClause( Junction *q, set f, int max_k, int usePlusBlockBypa
   }
   gen(output, false, ",&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}\n");
   if (nilf) {
-    errFL("empty error set for alt - probably because of undefined rule or infinite left recursion",
+    errorFL("empty error set for alt - probably because of undefined rule or infinite left recursion",
             FileStr[q->file],q->line);
     gen(output, true, " /* MR13 empty error set for this alt - undef rule ? infinite left recursion ? */");
   };

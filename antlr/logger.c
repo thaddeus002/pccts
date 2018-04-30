@@ -94,7 +94,6 @@ void warnNoFL(char *err)
     warning(err, NULL, 0);
 }
 
-
 /**
  * Log a warning message.
  */
@@ -104,7 +103,6 @@ void warningNoFL(char *err, ...) {
     log_message_va(WARNING, err, NULL, 0, ap);
     va_end(ap);
 }
-
 
 /**
  * Log a warning message.
@@ -129,12 +127,6 @@ void errNoFL(char *err)
     fprintf(stderr, " error: %s\n", err);
 }
 
-void errFL(char *err,char *f,int l)
-{
-    hdrLog(f, l);
-    fprintf(stderr, " error: %s\n", err);
-}
-
 void err(char *err)
 {
     /* back up the file number if we hit an error at the end of the last file */
@@ -143,6 +135,15 @@ void err(char *err)
     fprintf(stderr, " error: %s\n", err);
 }
 
+/**
+ * Log an error message.
+ */
+void errorFL(char *err, char *file, int line, ...) {
+    va_list ap;
+    va_start(ap, line);
+    log_message_va(ERROR, err, file, line, ap);
+    va_end(ap);
+}
 
 void fatalFL(char *err, char *f, int l )
 {

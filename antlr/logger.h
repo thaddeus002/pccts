@@ -32,8 +32,6 @@ void warn(char *err);
 
 void errNoFL(char *err);
 
-void errFL(char *err,char *f,int l);
-
 void err(char *err);
 
 void fatalFL(char *err_, char *f, int l);
@@ -49,6 +47,11 @@ void fatalNM(char *err, char *file, int line, ...);
  * Log a warning message.
  */
 void warning(char *err, char *file, int line, ...);
+
+/**
+ * Log an error message.
+ */
+void errorFL(char *err, char *file, int line, ...);
 
 /**
  * Add an info on a new line to stderr.
