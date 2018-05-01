@@ -285,8 +285,6 @@ extern void _inf_zzgettok();
 #endif  /* ZZINF_LOOK */
 
 
-#ifdef LL_K
-
 #define ANTLR_INFO  \
   Attrib zzempty_attr(void) {static Attrib a; return a;} \
   Attrib zzconstr_attr(int _tok, char *_text) \
@@ -296,20 +294,6 @@ extern void _inf_zzgettok();
   Attrib zzaStack[ZZA_STACKSIZE]; DemandLookData \
   InfLookData \
     zzGuessData
-
-#else
-
-#define ANTLR_INFO                        \
-  Attrib zzempty_attr(void) {static Attrib a; return a;}      \
-  Attrib zzconstr_attr(int _tok, char *_text)       \
-    {Attrib a; zzcr_attr((&a),_tok,_text); return a;}   \
-  int zzasp=ZZA_STACKSIZE;            \
-  char zzStackOvfMsg[]="fatal: attrib/AST stack overflow %s(%d)!\n";      \
-  Attrib zzaStack[ZZA_STACKSIZE]; DemandLookData        \
-  InfLookData                                                             \
-    zzGuessData
-
-#endif /* LL_k */
 
 
 #ifdef ZZINF_LOOK
