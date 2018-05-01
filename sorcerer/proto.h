@@ -83,7 +83,6 @@ extern int NoCtor; /* MR23 */
                            /* F u n c t i o n s */
 
 extern int main( int, char *[] );
-extern int stricmp(const char *, const char *);   /* MR20 */
 extern void help( void );
 extern FILE * NextFile( void );
 extern void pushint( int );

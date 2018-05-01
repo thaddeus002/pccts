@@ -228,7 +228,6 @@ extern PointerStack MR_RuleBlkWithHaltStack;
 
 extern int tokenActionActive;
 
-extern int stricmp(const char*, const char*);
 extern Junction * newJunction( void );
 extern FILE * NextFile( void );
 extern char * outnameX( char *, char *);

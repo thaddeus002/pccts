@@ -527,12 +527,7 @@ ensure_no_C_file_collisions(char *class_c_file)
 
   for (i=0; i<NumFiles; i++)
   {
-#ifdef PCCTS_CASE_INSENSITIVE_FILE_NAME
-    /* assume that file names are case insensitive */
-    if ( stricmp(outname(FileStr[i]), class_c_file)==0 )
-#else
     if ( strcmp(outname(FileStr[i]), class_c_file)==0 )
-#endif
     {
       fatal(eMsg1("class def output file conflicts with parser output file: %s",
             outname(FileStr[i])));
