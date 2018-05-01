@@ -27,29 +27,6 @@
 
 
 void grammar();
-void class_def();
-void rule(void);
-void laction();
-void lmember();
-void lprefix();
-void aPred();
-extern Predicate * predOrExpr();
-extern Predicate * predAndExpr();
-extern Predicate * predPrimary();
-void aLexclass();
-void error();
-void tclass();
-void token();
-void block(set * toksrefd,set * rulesrefd);
-void alt(set * toksrefd,set * rulesrefd);
-extern LabelEntry * element_label();
-extern Node * element(int old_not,int first_on_line,int use_def_MT_handler);
-void default_exception_handler();
-extern ExceptionGroup * exception_group();
-extern ExceptionHandler * exception_handler();
-void enum_file(char * fname);
-void defines(char * fname);
-void enum_def(char * fname);
 
 #endif
 

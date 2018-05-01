@@ -45,18 +45,15 @@ char    *CurPredName=NULL;
 #define PCCTS_PURIFY(r,s) memset((char *) &(r),'\0',(s));
 #endif
 
-ANTLR_INFO
 
-
-/* MR20 G. Hobbelt For Borland C++ 4.x & 5.x compiling with ALL warnings enabled */
-#if defined(__TURBOC__)
-#pragma warn -aus  /* unused assignment of 'xxx' */
-#endif
+int zzasp=ZZA_STACKSIZE;
+char zzStackOvfMsg[]="fatal: attrib/AST stack overflow %s(%d)!\n";
+Attrib zzaStack[ZZA_STACKSIZE];
 
 
 static void chkToken(char *, char *, char *, int);
 
-static int isDLGmaxToken(char *Token);             /* MR3 */
+static int isDLGmaxToken(char *Token);
 
 static int class_nest_level = 0;
 
@@ -85,6 +82,28 @@ static char *makeAltID(int blockid, int altnum)
   return p;
 }
 
+static void class_def();
+static void rule();
+static void laction();
+static void lmember();
+static void lprefix();
+static void aPred();
+static Predicate *predOrExpr();
+static Predicate *predAndExpr();
+static Predicate *predPrimary();
+static void aLexclass();
+static void error();
+static void tclass();
+static void token();
+static void block(set *toksrefd, set *rulesrefd);
+static void alt(set *toksrefd, set *rulesrefd);
+static Node *element(int old_not,int first_on_line,int use_def_MT_handler);
+static void default_exception_handler();
+static ExceptionGroup *exception_group();
+static ExceptionHandler *exception_handler();
+static void enum_file(char *fname);
+static void defines(char *fname);
+static void enum_def(char *fname);
 
 
 void grammar()
@@ -414,7 +433,7 @@ fail:
   }
 }
 
-void class_def()
+static void class_def()
 {
   zzRULE;
   zzBLOCK(zztasp1);
@@ -500,7 +519,7 @@ fail:
   }
 }
 
-void rule()
+static void rule()
 {
   zzRULE;
   zzBLOCK(zztasp1);
@@ -678,8 +697,8 @@ void rule()
   if ( q!=NULL ) q->rulenum = NumRules;
   zzaArg(zztasp1,7) = r;
 
-  /* MR23 */      CurBlockID_array[BlkLevel] = (-1);
-  /* MR23 */      CurAltNum_array[BlkLevel] = (-1);
+  CurBlockID_array[BlkLevel] = (-1);
+  CurAltNum_array[BlkLevel] = (-1);
   --BlkLevel;
   altFixup();leFixup();egFixup();
   zzmatch(107);
@@ -737,7 +756,7 @@ fail:
   }
 }
 
-void laction()
+static void laction()
 {
   zzRULE;
   zzBLOCK(zztasp1);
@@ -763,7 +782,7 @@ fail:
   }
 }
 
-void lmember()
+static void lmember()
 {
   zzRULE;
   zzBLOCK(zztasp1);
@@ -773,16 +792,16 @@ void lmember()
   zzmatch(109); zzCONSUME;
   zzmatch(Action);
 
-  /* MR1 */   if (! GenCC) {
-    /* MR1 */     err("Use #lexmember only in C++ mode (to insert code in DLG class header");
-    /* MR1 */         } else {
-    /* MR1 */     a = (char *) calloc(strlen(LATEXT(1))+1, sizeof(char));
-    /* MR1 */     require(a!=NULL, "rule lmember: cannot allocate action");
-    /* MR1 */     strcpy(a, LATEXT(1));
-    /* MR1 */     list_add(&LexMemberActions, a);
-    /* MR1 */   };
-  /* MR1 */
- zzCONSUME;
+  if (! GenCC) {
+    err("Use #lexmember only in C++ mode (to insert code in DLG class header");
+  } else {
+    a = (char *) calloc(strlen(LATEXT(1))+1, sizeof(char));
+    require(a!=NULL, "rule lmember: cannot allocate action");
+    strcpy(a, LATEXT(1));
+    list_add(&LexMemberActions, a);
+  };
+
+  zzCONSUME;
 
   zzEXIT(zztasp1);
   return;
@@ -794,7 +813,7 @@ fail:
   }
 }
 
-void lprefix()
+static void lprefix()
 {
   zzRULE;
   zzBLOCK(zztasp1);
@@ -804,16 +823,16 @@ void lprefix()
   zzmatch(110); zzCONSUME;
   zzmatch(Action);
 
-  /* MR1 */   if (! GenCC) {
-    /* MR1 */     err("Use #lexprefix only in C++ mode (to insert code in DLG class header");
-    /* MR1 */         } else {
-    /* MR1 */     a = (char *) calloc(strlen(LATEXT(1))+1, sizeof(char));
-    /* MR1 */     require(a!=NULL, "rule lprefix: cannot allocate action");
-    /* MR1 */     strcpy(a, LATEXT(1));
-    /* MR1 */     list_add(&LexPrefixActions, a);
-    /* MR1 */   };
-  /* MR1 */
- zzCONSUME;
+  if (! GenCC) {
+    err("Use #lexprefix only in C++ mode (to insert code in DLG class header");
+  } else {
+    a = (char *) calloc(strlen(LATEXT(1))+1, sizeof(char));
+    require(a!=NULL, "rule lprefix: cannot allocate action");
+    strcpy(a, LATEXT(1));
+    list_add(&LexPrefixActions, a);
+  };
+
+  zzCONSUME;
 
   zzEXIT(zztasp1);
   return;
@@ -825,7 +844,7 @@ fail:
   }
 }
 
-void aPred()
+static void aPred()
 {
   zzRULE;
   zzBLOCK(zztasp1);
@@ -850,11 +869,11 @@ void aPred()
 
   /* don't free - referenced in predicates */
 
-            CurPredName=(char *)calloc(1,strlen(name) + 10);
+  CurPredName=(char *)calloc(1,strlen(name) + 10);
   strcat(CurPredName,"#pred ");
   strcat(CurPredName,name);
 
-            predEntry=(PredEntry *) hash_get(Pname,name);
+  predEntry=(PredEntry *) hash_get(Pname,name);
   if (predEntry != NULL) {
   warning("#pred %s previously defined - ignored",
             FileStr[action_file], action_line, name);
@@ -963,7 +982,7 @@ fail:
   }
 }
 
-Predicate *predOrExpr()
+static Predicate *predOrExpr()
 {
   Predicate *   _retv;
   zzRULE;
@@ -1015,7 +1034,7 @@ fail:
   }
 }
 
-Predicate *predAndExpr()
+static Predicate *predAndExpr()
 {
   Predicate *   _retv;
   zzRULE;
@@ -1067,7 +1086,7 @@ fail:
   }
 }
 
-Predicate *predPrimary()
+static Predicate *predPrimary()
 {
   Predicate *   _retv;
   zzRULE;
@@ -1130,7 +1149,7 @@ fail:
   }
 }
 
-void aLexclass()
+static void aLexclass()
 {
   zzRULE;
   zzBLOCK(zztasp1);
@@ -1151,7 +1170,7 @@ fail:
   }
 }
 
-void error()
+static void error()
 {
   zzRULE;
   zzBLOCK(zztasp1);
@@ -1283,7 +1302,7 @@ fail:
   }
 }
 
-void tclass()
+static void tclass()
 {
   zzRULE;
   zzBLOCK(zztasp1);
@@ -1325,9 +1344,8 @@ void tclass()
       zzmatch(114); zzCONSUME;
       zzmatch(QuotedTerm);
       akaString=strdup(StripQuotes(LATEXT(1)));
-      /* MR11 */                   save_file=CurFile;save_line=zzline;
-      /* MR23 */
- zzCONSUME;
+      save_file=CurFile;save_line=zzline;
+      zzCONSUME;
 
       zzmatch(115); zzCONSUME;
     }
@@ -1446,7 +1464,7 @@ fail:
   }
 }
 
-void token()
+static void token()
 {
   zzRULE;
   zzBLOCK(zztasp1);
@@ -1456,7 +1474,7 @@ void token()
   char *akaString=NULL; TermEntry *te;int save_file=0,save_line=0;
   zzmatch(120);
   tokenActionActive=1;
- zzCONSUME;
+  zzCONSUME;
 
   {
     zzBLOCK(zztasp2);
@@ -1595,7 +1613,7 @@ fail:
   }
 }
 
-void block(set * toksrefd,set * rulesrefd)
+static void block(set *toksrefd, set *rulesrefd)
 {
   zzRULE;
   zzBLOCK(zztasp1);
@@ -1702,7 +1720,7 @@ fail:
   }
 }
 
-void alt(set * toksrefd,set * rulesrefd)
+static void alt(set * toksrefd,set * rulesrefd)
 {
   zzRULE;
   zzBLOCK(zztasp1);
@@ -1821,7 +1839,7 @@ fail:
   }
 }
 
-LabelEntry *element_label()
+static LabelEntry *element_label()
 {
   LabelEntry *   _retv;
   zzRULE;
@@ -1876,7 +1894,7 @@ fail:
   }
 }
 
-Node *element(int old_not,int first_on_line,int use_def_MT_handler)
+static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
 {
   Node *   _retv;
   zzRULE;
@@ -2708,7 +2726,7 @@ fail:
   }
 }
 
-void default_exception_handler()
+static void default_exception_handler()
 {
   zzRULE;
   zzBLOCK(zztasp1);
@@ -2725,7 +2743,7 @@ fail:
   }
 }
 
-ExceptionGroup *exception_group()
+static ExceptionGroup *exception_group()
 {
   ExceptionGroup *   _retv;
   zzRULE;
@@ -2869,7 +2887,7 @@ fail:
   }
 }
 
-ExceptionHandler *exception_handler()
+static ExceptionHandler *exception_handler()
 {
   ExceptionHandler *   _retv;
   zzRULE;
@@ -2946,7 +2964,7 @@ fail:
   }
 }
 
-void enum_file(char * fname)
+static void enum_file(char * fname)
 {
   zzRULE;
   zzBLOCK(zztasp1);
@@ -3027,7 +3045,7 @@ fail:
   }
 }
 
-void defines(char * fname)
+static void defines(char * fname)
 {
   zzRULE;
   zzBLOCK(zztasp1);
@@ -3081,7 +3099,7 @@ fail:
   }
 }
 
-void enum_def(char * fname)
+static void enum_def(char * fname)
 {
   zzRULE;
   zzBLOCK(zztasp1);
@@ -3349,13 +3367,13 @@ static int match_rexpr(char *s, char **nxt)
   return 1;
 }
 
-/*
-* Walk a string "{ A .. Z }" where A..Z is a space separated list
-* of token references (either labels or reg exprs).  Return a
-* string "inlineX_set" for some unique integer X.  Basically,
-* we pretend as if we had seen "#tokclass inlineX { A .. Z }"
-* on the input stream outside of an action.
-*/
+/**
+ * Walk a string "{ A .. Z }" where A..Z is a space separated list
+ * of token references (either labels or reg exprs).  Return a
+ * string "inlineX_set" for some unique integer X.  Basically,
+ * we pretend as if we had seen "#tokclass inlineX { A .. Z }"
+ * on the input stream outside of an action.
+ */
 char *inline_set(char *s)
 {
   char *nxt;
@@ -3382,9 +3400,10 @@ char *inline_set(char *s)
   return "inlineX_set";
 }
 
-/* ANTLR/DLG-specific syntax error message generator
-* (define USER_ZZSYN when compiling so don't get 2 definitions : also define in err.h)
-*/
+/**
+ * ANTLR/DLG-specific syntax error message generator
+ * (define USER_ZZSYN when compiling so don't get 2 definitions : also define in err.h)
+ */
 void zzsyn(char *text, int tok, char *egroup, SetWordType *eset, int etok,
 int k, char *bad_text)
 {
