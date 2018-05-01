@@ -259,21 +259,15 @@ char    **Save_argv;        /* MR10 */
 int   EpToken=0;      /* Imaginary Epsilon token number */
 int   WildCardToken=0;
 int   CurFile= -1;    /* Index into FileStr table */
-char    *CurPredName=NULL;  /* MR11 */
 char  *CurRule=NULL;    /* Pointer to current rule name */
-int     CurRuleDebug=0;     /* MR13 debug flag */
 RuleEntry *CurRuleNode=NULL;/* Pointer to current rule node in syntax tree */
 char  *CurRetDef=NULL;  /* Pointer to current return type definition */
 char  *CurParmDef=NULL; /* Pointer to current parameter definition */
-Junction *CurRuleBlk=NULL;  /* Pointer to current block node for enclosing block */
-ListNode *CurExGroups=NULL; /* Current list of exception groups for rule/alts */
-ListNode *CurElementLabels=NULL;
 ListNode *CurAstLabelsInActions=NULL; /* MR27 */
 
 /* MR10  used by <<>>? to set "label_used_in_semantic_pred"  */
 /* MR10  this will force LT(i) assignment even in guess mode */
 
-ListNode *CurActionLabels=NULL;     /* MR10 Element Labels appearing in last action */
 int      numericActionLabel=0 ;     /* MR10 << ... $1 ... >> or << ... $1 ... >>?   */
 ListNode *NumericPredLabels=NULL;   /* MR10 << ... $1 ... >>?  ONLY                 */
 ListNode *ContextGuardPredicateList=NULL;  /* MR13 for re-evaluating predicates
@@ -378,7 +372,6 @@ char  *UserTokenDefsFile;
 int   UserDefdTokens=0; /* found #tokdefs? */
 char  *OutputDirectory=TopDirectory;
 ExceptionGroup *DefaultExGroup = NULL;
-int   NumSignals = NumPredefinedSignals;
 int   ContextGuardTRAV=0;
 
 char    *MR_AmbAidRule=NULL;        /* MR11 */

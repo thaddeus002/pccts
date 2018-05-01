@@ -396,6 +396,8 @@ static void report_numericPredLabels(ActionNode *a)
             FileStr[a->file],a->line);
 }
 
+static char *pcctsBaseName(char *n);
+
                 /* M a i n */
 
 int main( int argc, char *argv[] )
@@ -779,6 +781,24 @@ FILE *NextFile()
     }
 }
 
+
+static char *outnameX( char *fs ,char *suffix)
+{
+  static char buf[MaxFileName+1];
+  char *p;
+  require(fs!=NULL&&*fs!='\0', "outname: NULL filename");
+
+  p = buf;
+  strcpy(buf, fs);
+  while ( *p != '\0' )  {p++;}      /* Stop on '\0' */
+  while ( *p != '.' && p != buf ) {--p;}  /* Find '.' */
+  if ( p != buf ) *p = '\0';        /* Found '.' */
+  require(strlen(buf) + 2 < (size_t)MaxFileName, "outname: filename too big");
+    strcat(buf,suffix);
+  return( buf );
+}
+
+
 /**
  * Return a string corresponding to the output file name associated
  * with the input file name passed in.
@@ -807,22 +827,6 @@ char *outname(char *fs)
     } else {
         return outnameX(fs,".c");
     };
-}
-
-char *outnameX( char *fs ,char *suffix)
-{
-  static char buf[MaxFileName+1];
-  char *p;
-  require(fs!=NULL&&*fs!='\0', "outname: NULL filename");
-
-  p = buf;
-  strcpy(buf, fs);
-  while ( *p != '\0' )  {p++;}      /* Stop on '\0' */
-  while ( *p != '.' && p != buf ) {--p;}  /* Find '.' */
-  if ( p != buf ) *p = '\0';        /* Found '.' */
-  require(strlen(buf) + 2 < (size_t)MaxFileName, "outname: filename too big");
-    strcat(buf,suffix);
-  return( buf );
 }
 
 
@@ -956,7 +960,7 @@ char *OutMetaName(char *n)
   return newname;
 }
 
-char *pcctsBaseName(char *n) /* MR32 */
+static char *pcctsBaseName(char *n) /* MR32 */
 {
     static char newname[MaxFileName+1];
     static char* dir_sym = DirectorySymbol;

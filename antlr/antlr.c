@@ -33,6 +33,12 @@
 #include "mrhoist.h"
 #include "fset2.h"
 
+ListNode *CurExGroups=NULL; /* Current list of exception groups for rule/alts */
+ListNode *CurElementLabels=NULL;
+Junction *CurRuleBlk=NULL;  /* Pointer to current block node for enclosing block */
+char    *CurPredName=NULL;
+
+
 /* MR23 In order to remove calls to PURIFY use the antlr -nopurify option */
 
 #ifndef PCCTS_PURIFY

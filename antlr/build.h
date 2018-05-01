@@ -176,3 +176,5 @@ ActionNode *newActionNode();
  * of lookahead.
  */
 char *makelocks();
+
+Junction *newJunction(void);

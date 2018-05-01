@@ -25,6 +25,8 @@
 #include "utils.h"
 #include "misc.h"
 
+ListNode *CurActionLabels=NULL;     /* MR10 Element Labels appearing in last action */
+
 
 #define MAX_INT_STACK 50
 static int istack[MAX_INT_STACK];   /* Int stack */

@@ -52,6 +52,9 @@
 #include "fset2.h"
 #include "gen.h"
 
+#define NumPredefinedSignals 3
+int NumSignals = NumPredefinedSignals;
+
 #define NumExprPerLine  4
 static int on1line=0;
 static set tokensRefdInBlock;

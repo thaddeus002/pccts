@@ -61,6 +61,7 @@
 #include "gen.h"
 #include "syn.h"
 #include "fset.h"
+#include "build.h"
 #include "misc.h"
 
 static int tsize=TSChunk;   /* size of token str arrays */

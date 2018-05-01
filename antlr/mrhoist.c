@@ -41,6 +41,7 @@
 #include "misc.h"
 #include "fset.h"
 #include "fset2.h"
+#include "build.h"
 #include "mrhoist.h"
 
 

@@ -13,6 +13,7 @@
 #define __GEN_H__
 
 
+
           /* T r a n s l a t i o n  T a b l e s */
 
 /** C_Trans[node type] == pointer to function that knows how to translate that node. */

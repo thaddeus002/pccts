@@ -222,8 +222,6 @@ typedef Graph Attrib;
 
 #define MaxClassDeclStuff   256    /* MR10 */
 
-#define NumPredefinedSignals 3
-
 
 /* AST token types */
 #define ASTexclude    0

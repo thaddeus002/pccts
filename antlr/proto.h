@@ -52,15 +52,10 @@ extern void (**fpTrans)();
 extern void (**fpJTrans)();
 extern int BlkLevel;
 extern int CurFile;
-extern char *CurPredName;
 extern char *CurRule;
-extern int  CurRuleDebug;
-extern Junction *CurRuleBlk;
 extern RuleEntry *CurRuleNode;
-extern ListNode *CurElementLabels;
 extern ListNode *CurAstLabelsInActions;
 extern ListNode *ContextGuardPredicateList;
-extern ListNode *CurActionLabels;
 extern int numericActionLabel;
 extern ListNode *NumericPredLabels;
 extern char *FileStr[];
@@ -213,13 +208,11 @@ extern char *OutputDirectory;
 extern int DontCopyTokens;
 extern int LTinTokenAction;
 extern set AST_nodes_refd_in_actions;
-extern ListNode *CurExGroups;
 extern int CurBlockID;
 extern int CurAltNum;
 extern Junction *CurAltStart;
 extern Junction *OuterAltStart;
 extern ExceptionGroup *DefaultExGroup;
-extern int NumSignals;
 extern int ContextGuardTRAV;
 extern Junction *MR_RuleBlkWithHalt;
 extern PointerStack MR_BackTraceStack;
@@ -228,18 +221,9 @@ extern PointerStack MR_RuleBlkWithHaltStack;
 
 extern int tokenActionActive;
 
-extern Junction * newJunction( void );
 extern FILE * NextFile( void );
-extern char * outnameX( char *, char *);
 extern char * outname( char * );
-extern void fatal_intern( char *, char *, int );
-extern void defErr( char *, long, long, long, long, long, long );
-extern char * pcctsBaseName(char *);
-extern void AmbiguityDialog(Junction *, int, Junction *, Junction *, int *, int *);
-extern char *TokenOrExpr(int);
 extern char *OutMetaName(char *);
-extern void OutFirstSetSymbol(Junction *q, char *);
-extern char* hideDefaultArgs(const char* pdecl);
 
 /* MR20 G. Hobbelt  Create proper externs for dlg variables */
 
