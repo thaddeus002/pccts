@@ -80,11 +80,10 @@ extern char CurClassName[];
 extern int GenCPP;
 extern int NoCtor; /* MR23 */
 
-#define STRICMP stricmp
                            /* F u n c t i o n s */
 
 extern int main( int, char *[] );
-extern int STRICMP(const char *, const char *);   /* MR20 */
+extern int stricmp(const char *, const char *);   /* MR20 */
 extern void help( void );
 extern FILE * NextFile( void );
 extern void pushint( int );

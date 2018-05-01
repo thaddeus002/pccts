@@ -529,7 +529,7 @@ ensure_no_C_file_collisions(char *class_c_file)
   {
 #ifdef PCCTS_CASE_INSENSITIVE_FILE_NAME
     /* assume that file names are case insensitive */
-    if ( STRICMP(outname(FileStr[i]), class_c_file)==0 )
+    if ( stricmp(outname(FileStr[i]), class_c_file)==0 )
 #else
     if ( strcmp(outname(FileStr[i]), class_c_file)==0 )
 #endif
@@ -544,8 +544,7 @@ ensure_no_C_file_collisions(char *class_c_file)
    MR10: Changed to remove directory information from n only if
    MR10: if OutputDirectory was changed by user (-o option)
 */
-char *
-OutMetaName(char *n)
+char *OutMetaName(char *n)
 {
     static char *dir_sym = DirectorySymbol;
     static char newname[MaxFileName+1];

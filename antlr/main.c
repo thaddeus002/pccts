@@ -986,7 +986,7 @@ static void ensure_no_C_file_collisions(char *class_c_file)
 
 #ifdef PCCTS_CASE_INSENSITIVE_FILE_NAME
     /* assume that file names are case insensitive */
-    if ( STRICMP(outname(FileStr[i]), class_c_file)==0 )
+    if ( stricmp(outname(FileStr[i]), class_c_file)==0 )
 #else
     if ( strcmp(outname(FileStr[i]), class_c_file)==0 )
 #endif
