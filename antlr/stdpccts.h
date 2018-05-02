@@ -15,12 +15,9 @@
 #define ANTLR_VERSION 13333
 #endif
 
-#include <stdio.h>
 
-#include <ctype.h>
 #define zzcr_attr(attr,tok,t)
 #define zzSET_SIZE 20
 #include "antlr.h"
-#include "tokens.h"
 #include "dlgdef.h"
 #endif

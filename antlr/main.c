@@ -36,6 +36,7 @@
 /* To set a breakpoint for fatal error look for "fatal_intern" */
 
 #include <stdio.h>
+#include <ctype.h>
 #include "hash.h"
 #include "generic.h"
 #include "proto.h"
@@ -50,6 +51,7 @@
 #include "misc.h"
 #include "mrhoist.h"
 #include "fset2.h"
+#include "tokens.h"
 
            /* S t a n d a r d  S i g n a l s */
 
