@@ -43,9 +43,7 @@
 #include "support.h"
 #include "automata.h"
 
-#ifndef ANTLR_VERSION
 #define ANTLR_VERSION 13333
-#endif
 
 #define zzSET_SIZE 8
 #include "antlr.h"

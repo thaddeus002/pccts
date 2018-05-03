@@ -8,7 +8,6 @@
  * ANTLR Version 1.33MR33
  */
 
-#define ANTLR_VERSION 13333
 #include <stdio.h>
 #include <string.h> // strdup()
 

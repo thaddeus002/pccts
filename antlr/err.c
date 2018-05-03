@@ -10,18 +10,11 @@
  * ANTLR Version 1.33MR33
  */
 
-#define ANTLR_VERSION 13333
 
-#include <stdio.h>
-
-#include "hash.h"
 #include "generic.h"
 #define zzcr_attr(attr,tok,t)
 #define zzSET_SIZE 20
 #include "antlr.h"
-#include "tokens.h"
-#include "dlgdef.h"
-#include "err.h"
 
 ANTLRChar *zztokens[157]={
   /* 00 */  "Invalid",

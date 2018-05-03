@@ -10,9 +10,9 @@
  *
  */
 
-#define ANTLR_VERSION 13333
 #include "constants.h"
 #include <stdio.h>
+#include <stdbool.h>
 
 #include <ctype.h>
 #include "dlg_p.h"
@@ -53,8 +53,8 @@ set used_chars;    /* used to label trans. arcs */
 set used_classes;    /* classes or chars used to label trans. arcs */
 set normal_chars;    /* mask to get rid elements that aren't used
 in set */
-int flag_paren = FALSE;
-int flag_brace = FALSE;
+int flag_paren = false;
+int flag_brace = false;
 int mode_counter = 0;  /* keep track of number of %%names */
 
 
@@ -75,7 +75,7 @@ void grammar(char *version, char *mode_file)
   {
   p_head(version, mode_file);
   p_class_hdr(version);
-  func_action = FALSE;
+  func_action = false;
   {
     zzBLOCK(zztasp2);
     zzMake0;
@@ -119,7 +119,7 @@ void grammar(char *version, char *mode_file)
   }
   if ( gen_cpp ) p_includes();
   start_states();
-  func_action = FALSE; p_tables(); p_tail();
+  func_action = false; p_tables(); p_tail();
   {
     zzBLOCK(zztasp2);
     zzMake0;
@@ -196,7 +196,7 @@ void do_conversion()
   zzBLOCK(zztasp1);
   zzMake0;
   {
-  new_automaton_mode(); func_action = TRUE;
+  new_automaton_mode(); func_action = true;
   rule_list();
 
   dfa_class_nop[mode_counter] =
@@ -207,7 +207,7 @@ void do_conversion()
   make_dfa_model_node(dfa_class_nop[mode_counter]);
   nfa_to_dfa(zzaArg(zztasp1,1 ).l);
   ++mode_counter;
-  func_action = FALSE;
+  func_action = false;
   zzEXIT(zztasp1);
   return;
 fail:

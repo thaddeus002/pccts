@@ -11,13 +11,8 @@
  * ANTLR Version 1.33MR33
  */
 
-#ifndef ANTLR_VERSION
-#define ANTLR_VERSION 13333
-#endif
-
 
 #define zzcr_attr(attr,tok,t)
 #define zzSET_SIZE 20
-#include "antlr.h"
-#include "dlgdef.h"
+
 #endif

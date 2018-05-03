@@ -52,9 +52,6 @@
 #define err(err)                                \
       {found_error=1; fprintf(stderr, ErrHdr, FileStr[CurFile], zzline);        \
       fprintf(stderr, " error: %s\n", err);}
-#define errNoCR( err )                              \
-      {found_error=1; fprintf(stderr, ErrHdr, FileStr[CurFile], zzline);        \
-      fprintf(stderr, " error: %s", err);}
 #define eMsg1(s,a)  eMsg3(s,a,NULL,NULL)
 #define eMsg2(s,a,b)  eMsg3(s,a,b,NULL)
 

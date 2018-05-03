@@ -32,6 +32,7 @@
 #include "misc.h"
 #include "mrhoist.h"
 #include "fset2.h"
+#include "err.h"
 
 ListNode *CurExGroups=NULL; /* Current list of exception groups for rule/alts */
 ListNode *CurElementLabels=NULL;

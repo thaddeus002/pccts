@@ -37,11 +37,14 @@
 
 #include <stdio.h>
 #include <ctype.h>
+#include <string.h>
 #include "hash.h"
 #include "generic.h"
 #include "proto.h"
 #include "constants.h"
 #include "stdpccts.h"
+#include "antlr.h" // for ANTLR()
+#include "dlgdef.h"
 #include "logger.h"
 #include "gen.h"
 #include "fcache.h"
