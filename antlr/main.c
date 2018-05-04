@@ -67,7 +67,10 @@
 static int DontAcceptFiles = 0;     /* if stdin, don't read files */
 static int DontAcceptStdin = 0;     /* if files seen first, don't accept stdin */
 
-static int tnodes_used_in_guard_predicates_etc;     /* MR10 */
+static int tnodes_used_in_guard_predicates_etc;
+
+char LexStartSymbol[] = "START"; /* Name of starting lexical class/automaton */
+
 
     /* C m d - L i n e  O p t i o n  S t r u c t  &  F u n c s */
 

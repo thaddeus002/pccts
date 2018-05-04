@@ -45,13 +45,11 @@
 char Version[] = "1.33MR33" ; /* PCCTS version number */
 char VersionDef[] = "13333";    /* same (except int equiv for preproc symbol) */
 
-char LexStartSymbol[] = "START";/* Name of starting lexical class/automaton */
 char *RemapFileName = "remap.h";
 char *DlgFileName = "parser.dlg";
 char *DefFileName = "tokens.h";
 char *ErrFileName = "err.c";
 char *ModeFileName = "mode.h";
-char *StdMsgName = NULL;
 
 char *ParserName = DefaultParserName;
 
