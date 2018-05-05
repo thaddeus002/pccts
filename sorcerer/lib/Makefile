@@ -12,11 +12,6 @@ libs : $(OBJ) $(SRC)
 clean:
 	rm -f *.o core
 
-scrub:
-	rm -f *.o core
+scrub: clean
 
-ci:
-	ci -u $(SRC) *.h makefile
-
-co:
-	co -l $(SRC) *.h makefile
+.PHONY: clean scrub
