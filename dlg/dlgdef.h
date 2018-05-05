@@ -36,8 +36,6 @@
 #ifndef ZZDLGDEF_H
 #define ZZDLGDEF_H
 
-#include "pcctscfg.h"
-
 #ifndef zzchar_t
 #ifdef ZZWCHAR_T
 #define zzchar_t wchar_t

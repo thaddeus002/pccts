@@ -10,6 +10,7 @@
 
 #include <stdio.h>
 #include <string.h> // strdup()
+#include <stdlib.h>
 
 #include "hash.h"
 #include "generic.h"

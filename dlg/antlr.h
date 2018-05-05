@@ -39,7 +39,6 @@
 #ifndef ANTLR_H
 #define ANTLR_H
 
-#include "pcctscfg.h"
 #include <string.h>
 
 

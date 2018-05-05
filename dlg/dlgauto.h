@@ -31,8 +31,6 @@
 #define ZZDEFAUTO_H
 
 
-#include "pcctscfg.h"
-
 zzchar_t  *zzlextext; /* text of most recently matched token */
 zzchar_t  *zzbegexpr; /* beginning of last reg expr recogn. */
 zzchar_t  *zzendexpr; /* beginning of last reg expr recogn. */

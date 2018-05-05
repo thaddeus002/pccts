@@ -52,6 +52,11 @@
 #include "fset2.h"
 #include "gen.h"
 
+/* User may redefine how line information looks */
+#ifndef LineInfoFormatStr
+#define LineInfoFormatStr "#line %d \"%s\"\n"
+#endif
+
 #define NumPredefinedSignals 3
 int NumSignals = NumPredefinedSignals;
 

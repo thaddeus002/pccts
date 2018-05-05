@@ -56,6 +56,7 @@
 #ifndef __GATE_SET_H
 #define __GATE_SET_H
 
+#include <stdlib.h>
 
 /* Define usable bits per unsigned int word */
 #define BytesPerWord    sizeof(unsigned)

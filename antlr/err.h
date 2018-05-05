@@ -38,7 +38,6 @@
 #ifndef ERR_H
 #define ERR_H
 
-#include "pcctscfg.h"
 #include <stdlib.h>
 #include <assert.h>
 #include <string.h>
