@@ -57,6 +57,11 @@
 #include "sym.h"
 #include "proto.h"
 
+/* User may redefine how line information looks */
+#ifndef LineInfoFormatStr
+#define LineInfoFormatStr "#line %d \"%s\"\n"
+#endif
+
 static int outfile = -1;
 static char *current_rule;
 static ListNode *labels_for_func = NULL;

@@ -1,4 +1,3 @@
-
 /* parser.dlg -- DLG Description of scanner
  *
  * Generated from: sor.g
@@ -10,7 +9,6 @@
  */
 
 #define ANTLR_VERSION 13333
-#include "pcctscfg.h"
 #include <stdio.h>
 
 /*  23-Sep-97   thm     Accomodate user who needs to redefine ZZLEXBUFSIZE  */

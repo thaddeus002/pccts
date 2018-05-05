@@ -13,7 +13,6 @@
 #define ANTLR_VERSION  13333
 #endif
 
-#include "pcctscfg.h"
 #include <stdio.h>
 
 /*  23-Sep-97   thm     Accomodate user who needs to redefine ZZLEXBUFSIZE  */

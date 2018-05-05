@@ -27,8 +27,6 @@
  * 1989-2000
  */
 
-#include "pcctscfg.h"
-
 #include <stdarg.h>
 
 /* ensure that tree manipulation variables are current after a rule
