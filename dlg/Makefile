@@ -10,12 +10,11 @@
 # Lafayette, Indiana
 #
 
-PCCTS_H=../h
 COMMON=../common
 COMMON_H=../common
 
 CC ?= gcc
-CPPFLAGS += -I$(PCCTS_H) -I$(COMMON_H) -DUSER_ZZSYN -DZZLEXBUFSIZE=32000
+CPPFLAGS += -I$(COMMON_H) -DUSER_ZZSYN -DZZLEXBUFSIZE=32000
 
 #ifndef PREFIX
 PREFIX=/usr/local

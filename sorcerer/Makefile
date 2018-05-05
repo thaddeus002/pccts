@@ -6,13 +6,12 @@ PCCTS=..
 BIN = $(PCCTS)/bin
 ANTLR = $(BIN)/antlr
 DLG = $(BIN)/dlg
-PCCTS_H = $(PCCTS)/h
 COMMON=$(PCCTS)/common
 COMMON_H=$(PCCTS)/common
 
 CC=cc
 COPT=-g
-CFLAGS = $(COPT) -Ih -I$(PCCTS_H) -I$(COMMON_H) -DZZLEXBUFSIZE=32000
+CFLAGS = $(COPT) -Ih -I$(COMMON_H) -DZZLEXBUFSIZE=32000
 AFLAGS = -gh -k 2 -gt
 DFLAGS = -C2
 SRC = sor.c scan.c err.c main.c globals.c gen.c $(COMMON)/set.c hash.c look.c cpp.c
