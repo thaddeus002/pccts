@@ -31,7 +31,7 @@
 #define ZZCHARBUF_H
 
 #include "pcctscfg.h"
-#include "pccts_string.h"
+#include <string.h>
 
 #ifndef D_TextSize
 #define D_TextSize  30
