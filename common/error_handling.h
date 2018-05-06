@@ -19,8 +19,6 @@
  * this system and expect to make other tools available as they are
  * completed.
  *
- * Has grown to hold all kinds of stuff (error_handling.h is increasingly misnamed)
- *
  * ANTLR 1.33
  * Terence Parr
  * Parr Research Corporation
@@ -32,6 +30,8 @@
  * \file error_handling.h
  *
  * Standard error handling mechanism
+ *
+ * Has grown to hold all kinds of stuff (error_handling.h is increasingly misnamed)
  */
 
 
@@ -97,7 +97,8 @@ void zzconsumeUntil(SetWordType *st)
 {
     int     tmp;                                                     /* MR7 */
     while ( !zzset_el( (tmp=LA(1)), st) && tmp!=1 /* Eof */) {       /* MR7 */
-                                                      zzCONSUME; }   /* MR7 */
+        zzCONSUME;
+    }   /* MR7 */
 }
 
 /*                                                                          */
@@ -227,7 +228,7 @@ void zzsave_antlr_state(zzantlr_state *buf)
 /* MR6  Gunnar Rxnning (gunnar@candleweb.no)                                */
 /* MR6    Additional state needs to be saved/restored                       */
 
-    buf->inf_tokens = zzinf_tokens;                                  /* MR6 */
+  buf->inf_tokens = zzinf_tokens;                                  /* MR6 */
   buf->inf_text = zzinf_text;                                      /* MR6 */
   buf->inf_text_buffer = zzinf_text_buffer;                        /* MR6 */
   buf->inf_line = zzinf_line;                                  /* MR6 */
