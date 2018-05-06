@@ -46,6 +46,133 @@
 
 #define DLGErrorString "invalid token"
 
+/* list of PCCTS supplied support symbols; these are renamed when more than
+ * one ANTLR-generated parsers are linked together to avoid name conflicts.
+ * Can't use '##' ANSIC preprocessor concat operator with K&R and:
+ *    #define zzskip  zzparser ## skip
+ * will not work for ANSI/C++ as 'zzparserskip' is created w/o zzparser
+ * being substituted--ack!!!
+ */
+char *StandardSymbols[] = {
+/* ANTLR stuff */
+  "zzStackOvfMsg",
+  "zzasp",
+  "zzaStack",
+  "inf_tokens",
+  "inf_text",
+  "inf_text_buffer",
+  "inf_text_buffer_ptr",
+  "inf_text_buffer_size",
+  "inf_labase",
+  "inf_last",
+  "inf_lap",
+  "zztokenLA",
+  "zztextLA",
+  "zzlap",
+  "zzlabase",
+  "zztoktext",
+  "zztoken",
+  "zzdirty",
+  "zzguessing",
+  "zzguess_start",
+  "zzresynch",
+  "zzinf_tokens",
+  "zzinf_text",
+  "zzinf_text_buffer",
+  "zzinf_labase",
+  "zzinf_last",
+  "zzfill_inf_look",
+  "zzFAIL",
+  "zzsave_antlr_state",
+  "zzrestore_antlr_state",
+  "zzsyn",
+  "zzset_el",
+  "zzset_deg",
+  "zzedecode",
+  "_zzsetmatch",
+  "_zzmatch",
+  "_inf_zzgettok",
+  "zzconsumeUntil",
+  "zzconsumeUntilToken",
+  "_zzmatch_wsig",
+  "_zzsetmatch_wsig",
+  "_zzmatch_wdfltsig",
+  "_zzsetmatch_wdfltsig",
+  "zzdflthandlers",
+  /* DLG stuff */
+  "zzreal_line",
+  "zzcharfull",
+  "zzerr",
+  "zzlextext",
+  "zzbegexpr",
+  "zzendexpr",
+  "zzbufsize",
+  "zzbegcol",
+  "zzendcol",
+  "zzline",
+  "zzchar",
+  "zzbufovf",
+  "zzrdstream",
+  "zzrdfunc",
+  "zzrdstr",
+  "zzclose_stream",
+  "zzsave_dlg_state",
+  "zzrestore_dlg_state",
+  "zzmode",
+  "zzskip",
+  "zzmore",
+  "zzreplchar",
+  "zzreplstr",
+  "zzgettok",
+  "zzadvance",
+  "zzerrstd",
+  "zzerr_in",
+  "zzconstr_attr",
+  "zzempty_attr",
+  "zzerraction",
+  "zztokens",     /* list of token regular expressions */
+  "dfa",
+  "accepts",
+  "actions",
+  "zzTraceOptionValue",       /* MR10 */
+  "zzTraceGuessOptionValue",  /* MR10 */
+  "zzTraceCurrentRuleName",   /* MR10 */
+  "zzTraceDepth",             /* MR10 */
+  "zzGuessSeq",               /* MR10 */
+  "zzSyntaxErrCount",         /* MR11 */
+  "zzLexErrCount",            /* MR11 */
+  "zzTraceGuessDone",         /* MR13 - BJS */
+  "zzTraceGuessFail",         /* MR13 - BJS */
+  "zzTraceGuessOption",       /* MR13 - BJS */
+  "zzTraceIn",                /* MR13 - BJS */
+  "zzTraceOption",            /* MR13 - BJS */
+  "zzTraceOut",               /* MR13 - BJS */
+  "zzTraceReset",             /* MR13 - BJS */
+  NULL    /* must be present */
+};
+
+
+/* list of PCCTS supplied support functions; these are renamed when more than
+ * one ANTLR-generated parsers are linked together to avoid name conflicts.
+ */
+char *ASTSymbols[] = {
+  "AST",
+  "zzast_sp",
+  "zzastStack",
+  "zzlink",
+  "zzastnew",
+  "zzsubchild",
+  "zzsubroot",
+  "zzpre_ast",
+  "zzfree_ast",
+  "zztmake",
+  "zzdup_ast",
+  "zztfree",
+  "zzdouble_link",
+  NULL    /* must be present */
+};
+
+
 static void dumpLexClasses(FILE *dlgFile);
 
 /** Generate a complete lexical description of the lexemes found in the grammar */

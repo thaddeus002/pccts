@@ -51,6 +51,10 @@
 #define BitsPerByte   8
 #define BitsPerWord   BitsPerByte*sizeof(SetWordType)
 
+/* C++ output stuff */
+FILE  *Parser_h;      /* where subclass of ANTLRParser goes */
+FILE  *Parser_c;      /* where code for subclass of ANTLRParser goes */
+
 
 static SetWordType *setwd = NULL;
 int setnum = -1;

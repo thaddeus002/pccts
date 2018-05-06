@@ -57,6 +57,10 @@
 #include "fset2.h"
 #include "tokens.h"
 
+char  Parser_h_Name[MaxFileName+1] = "";
+char  Parser_c_Name[MaxFileName+1] = "";
+
+
            /* S t a n d a r d  S i g n a l s */
 
 #define sigMismatchedToken    1

@@ -15,6 +15,10 @@
 
 #include "../common/set.h"
 
+extern FILE *Parser_h;
+extern FILE *Parser_c;
+
+
 /**
  * char is only thing that is pretty much always known == 8 bits
  * This allows output of antlr (set stuff, anyway) to be androgynous (portable)

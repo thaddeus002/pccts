@@ -220,8 +220,6 @@ typedef Graph Attrib;
 #define TIChunk     TSChunk /* expand TokenInd by same as TokenStr to mirror them */
 #define FoStackSize   100   /* deepest FOLLOW recursion possible */
 
-#define MaxClassDeclStuff   256    /* MR10 */
-
 
 /* AST token types */
 #define ASTexclude    0

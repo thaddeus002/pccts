@@ -34,6 +34,8 @@
 #include "fset2.h"
 #include "err.h"
 
+#define MaxClassDeclStuff   256
+
 ListNode *CurExGroups=NULL; /* Current list of exception groups for rule/alts */
 ListNode *CurElementLabels=NULL;
 Junction *CurRuleBlk=NULL;  /* Pointer to current block node for enclosing block */
