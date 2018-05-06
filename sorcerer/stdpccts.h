@@ -38,7 +38,6 @@ ListNode *refvars;  /* any ref vars defined for this rule */ \
 unsigned char is_root; /* this token is a root #( A ... ) */
 #define zzcr_ast(node, cur, _tok, _text)  \
 {(node)->token=_tok; strncpy((node)->text, _text,MaxAtom);}
-#define USER_ZZSYN
 #define zzAST_DOUBLE
 extern int define_num;
 #define LL_K 2

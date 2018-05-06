@@ -845,9 +845,9 @@ int dump_nfas(int first_node, int last_node)
 }
 #endif
 
-/* DLG-specific syntax error message generator
-* (define USER_ZZSYN when compiling so don't get 2 definitions)
-*/
+/*
+ * DLG-specific syntax error message generator
+ */
 void zzsyn(char *text, int tok, char *egroup, SetWordType *eset, int etok, int k, char *bad_text)
 {
     fprintf(stderr, ErrHdr, file_str[0]!=NULL?file_str[0]:"stdin", zzline);

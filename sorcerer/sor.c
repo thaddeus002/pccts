@@ -36,7 +36,6 @@ ListNode *refvars;  /* any ref vars defined for this rule */ \
 unsigned char is_root; /* this token is a root #( A ... ) */
 #define zzcr_ast(node, cur, _tok, _text)  \
 {(node)->token=_tok; strncpy((node)->text, _text,MaxAtom);}
-#define USER_ZZSYN
 #define zzAST_DOUBLE
 extern int define_num;
 #define LL_K 2
@@ -1772,9 +1771,9 @@ fail:
     }
 }
 
-/* SORCERER-specific syntax error message generator
-* (define USER_ZZSYN when compiling so don't get 2 definitions)
-*/
+/*
+ * SORCERER-specific syntax error message generator
+ */
 void
 zzsyn(char *text, int tok, char *egroup, SetWordType *eset, int etok, int k, char *bad_text)
 {

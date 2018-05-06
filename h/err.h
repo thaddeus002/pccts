@@ -342,7 +342,6 @@ void zzedecode(SetWordType *a)
   if ( zzset_deg(a)>1 ) fprintf(stderr, " }");
 }
 
-#ifndef USER_ZZSYN
 /* standard error reporting function */
 void zzsyn(char *text, int tok, char *egroup, SetWordType *eset, int etok, int k, char *bad_text)
 {
@@ -360,7 +359,6 @@ void zzsyn(char *text, int tok, char *egroup, SetWordType *eset, int etok, int k
   if ( strlen(egroup) > 0 ) fprintf(stderr, " in %s", egroup);
   fprintf(stderr, "\n");
 }
-#endif
 
 /* is b an element of set p? */
 int zzset_el(unsigned b, SetWordType *p)
