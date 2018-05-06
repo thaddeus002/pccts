@@ -45,7 +45,7 @@ extern int define_num;
 #include "ast.h"
 #include "tokens.h"
 #include "dlgdef.h"
-#include "err.h"
+#include "error_handling.h"
 
 ANTLRChar *zztokens[118]={
     /* 00 */    "Invalid",

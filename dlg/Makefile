@@ -21,10 +21,10 @@ PREFIX=/usr/local
 #endif
 
 
-SRC = dlg_p.c dlg_a.c main.c err.c $(COMMON)/set.c support.c output.c \
+SRC = dlg_p.c dlg_a.c main.c error.c $(COMMON)/set.c support.c output.c \
         relabel.c automata.c
 
-OBJ = dlg_p.o dlg_a.o main.o err.o set.o support.o output.o \
+OBJ = dlg_p.o dlg_a.o main.o error.o set.o support.o output.o \
         relabel.o automata.o
 
 dlg : $(OBJ) $(SRC)

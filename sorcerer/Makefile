@@ -14,8 +14,8 @@ COPT=-g
 CFLAGS = $(COPT) -Ih -I$(COMMON_H) -DZZLEXBUFSIZE=32000
 AFLAGS = -gh -k 2 -gt
 DFLAGS = -C2
-SRC = sor.c scan.c err.c main.c globals.c gen.c $(COMMON)/set.c hash.c look.c cpp.c
-OBJ = sor.o scan.o err.o main.o globals.o gen.o set.o hash.o look.o cpp.o
+SRC = sor.c scan.c error.c main.c globals.c gen.c $(COMMON)/set.c hash.c look.c cpp.c
+OBJ = sor.o scan.o error.o main.o globals.o gen.o set.o hash.o look.o cpp.o
 SHELL=/bin/sh
 
 all:

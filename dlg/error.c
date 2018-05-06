@@ -15,7 +15,7 @@
 #include "antlr.h"
 #include "tokens.h"
 #include "dlgdef.h"
-#include "err.h"
+#include "error_handling.h"
 
 ANTLRChar *zztokens[46]={
   /* 00 */  "Invalid",

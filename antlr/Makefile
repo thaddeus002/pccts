@@ -45,10 +45,10 @@ PREFIX=/usr/local
 #endif
 
 
-SRC=antlr.c scan.c err.c bits.c build.c fset2.c fset.c gen.c globals.c \
+SRC=antlr.c scan.c error.c bits.c build.c fset2.c fset.c gen.c globals.c \
 	hash.c lex.c main.c misc.c $(COMMON)/set.c pred.c egman.c mrhoist.c fcache.c logger.c utils.c
 
-OBJ=antlr.o scan.o err.o bits.o build.o fset2.o fset.o gen.o \
+OBJ=antlr.o scan.o error.o bits.o build.o fset2.o fset.o gen.o \
         globals.o hash.o lex.o main.o misc.o set.o pred.o egman.o mrhoist.o fcache.o logger.o utils.o
 
 antlr : $(OBJ) $(SRC)

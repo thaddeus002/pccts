@@ -19,7 +19,7 @@
  * this system and expect to make other tools available as they are
  * completed.
  *
- * Has grown to hold all kinds of stuff (err.h is increasingly misnamed)
+ * Has grown to hold all kinds of stuff (error_handling.h is increasingly misnamed)
  *
  * ANTLR 1.33
  * Terence Parr
@@ -29,7 +29,7 @@
  */
 
 /**
- * \file err.h
+ * \file error_handling.h
  *
  * Standard error handling mechanism
  */

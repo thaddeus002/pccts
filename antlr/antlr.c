@@ -32,7 +32,7 @@
 #include "misc.h"
 #include "mrhoist.h"
 #include "fset2.h"
-#include "err.h"
+#include "error_handling.h"
 
 #define MaxClassDeclStuff   256
 
@@ -3405,7 +3405,8 @@ char *inline_set(char *s)
 
 /**
  * ANTLR/DLG-specific syntax error message generator
- * (define USER_ZZSYN when compiling so don't get 2 definitions : also define in err.h)
+ * (define USER_ZZSYN when compiling so don't get 2 definitions :
+ * also define in error_handling.h)
  */
 void zzsyn(char *text, int tok, char *egroup, SetWordType *eset, int etok,
 int k, char *bad_text)
