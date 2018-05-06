@@ -61,6 +61,10 @@ static int isDLGmaxToken(char *Token);
 
 static int class_nest_level = 0;
 
+static void zzsyn(char *text, int tok, char *egroup, SetWordType *eset, int etok,
+int k, char *bad_text);
+
+
 /* MR20 G. Hobbelt extern definitions moved to antlr.h */
 
 
@@ -3406,10 +3410,8 @@ char *inline_set(char *s)
 
 /**
  * ANTLR/DLG-specific syntax error message generator
- * (define USER_ZZSYN when compiling so don't get 2 definitions :
- * also define in error_handling.h)
  */
-void zzsyn(char *text, int tok, char *egroup, SetWordType *eset, int etok,
+static void zzsyn(char *text, int tok, char *egroup, SetWordType *eset, int etok,
 int k, char *bad_text)
 {
     hdrLog(FileStr[CurFile]!=NULL?FileStr[CurFile]:"stdin", zzline);

@@ -287,17 +287,6 @@ extern void _inf_zzgettok();
 #endif  /* ZZINF_LOOK */
 
 
-#define ANTLR_INFO  \
-  Attrib zzempty_attr(void) {static Attrib a; return a;} \
-  Attrib zzconstr_attr(int _tok, char *_text) \
-    {Attrib a; zzcr_attr((&a),_tok,_text); return a;} \
-  int zzasp=ZZA_STACKSIZE; \
-  char zzStackOvfMsg[]="fatal: attrib/AST stack overflow %s(%d)!\n"; \
-  Attrib zzaStack[ZZA_STACKSIZE]; DemandLookData \
-  InfLookData \
-    zzGuessData
-
-
 #ifdef ZZINF_LOOK
 
 #ifdef LL_K
@@ -633,16 +622,8 @@ extern int _zzsetmatch_wdfltsig(SetWordType *tokensWanted,
 #endif
 
 
-/* MR26 */
-
-extern void zzFAIL(int k, ...);
-
         /* E x t e r n  D e f s */
 
-extern Attrib zzempty_attr(void);
-extern Attrib zzconstr_attr(int, char *);
-extern void zzsyn(char *, int, char *, SetWordType *, int, int, char *);
-extern int zzset_el(unsigned, SetWordType *);
 extern int zzset_deg(SetWordType *);
 extern void zzedecode(SetWordType *);
 extern void zzresynch(SetWordType *, SetWordType);

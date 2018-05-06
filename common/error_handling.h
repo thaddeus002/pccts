@@ -88,6 +88,12 @@ void zzresynch(SetWordType *wd,SetWordType mask)
   consumed=1;
 }
 
+/* is b an element of set p? */
+int zzset_el(unsigned b, SetWordType *p)
+{
+  return( p[BSETDIVWORD(b)] & bitmask[BSETMODWORD(b)] );
+}
+
 /*                                                                          */
 /*  7-Apr-97 133MR1 for C++ and MR7 for C                                   */
 /*         Change suggested by Eli Sternheim (eli@interhdl.com)           */
@@ -340,32 +346,6 @@ void zzedecode(SetWordType *a)
     } while (++b < &(bitmask[sizeof(SetWordType)*8]));
   } while (++p < endp);
   if ( zzset_deg(a)>1 ) fprintf(stderr, " }");
-}
-
-#ifndef USER_ZZSYN
-/* standard error reporting function */
-void zzsyn(char *text, int tok, char *egroup, SetWordType *eset, int etok, int k, char *bad_text)
-{
-  zzSyntaxErrCount++;
-  fprintf(stderr, "line %d: syntax error at \"%s\"", zzline, (tok==zzEOF_TOKEN)?"EOF":bad_text);
-  if ( !etok && !eset ) {fprintf(stderr, "\n"); return;}
-  if ( k==1 ) fprintf(stderr, " missing");
-  else
-  {
-    fprintf(stderr, "; \"%s\" not", bad_text);
-    if ( zzset_deg(eset)>1 ) fprintf(stderr, " in");
-  }
-  if ( zzset_deg(eset)>0 ) zzedecode(eset);
-  else fprintf(stderr, " %s", zztokens[etok]);
-  if ( strlen(egroup) > 0 ) fprintf(stderr, " in %s", egroup);
-  fprintf(stderr, "\n");
-}
-#endif
-
-/* is b an element of set p? */
-int zzset_el(unsigned b, SetWordType *p)
-{
-  return( p[BSETDIVWORD(b)] & bitmask[BSETMODWORD(b)] );
 }
 
 int zzset_deg(SetWordType *a)
