@@ -42,8 +42,6 @@
 #include "generic.h"
 #include "proto.h"
 #include "constants.h"
-#define zzcr_attr(attr,tok,t)
-#define zzSET_SIZE 20
 #include "antlr.h" // for ANTLR()
 #include "dlgdef.h"
 #include "logger.h"

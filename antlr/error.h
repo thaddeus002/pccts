@@ -1,0 +1,86 @@
+/*
+ * Thaddeus002's pccts
+ *
+ * Public Domain
+ */
+
+#include "antlr.h"
+
+extern ANTLRChar *zztokens[];
+
+extern SetWordType zzerr1[];
+extern SetWordType zzerr2[];
+extern SetWordType zzerr3[];
+extern SetWordType zzerr4[];
+extern SetWordType setwd1[];
+extern SetWordType zzerr5[];
+extern SetWordType zzerr6[];
+extern SetWordType zzerr7[];
+extern SetWordType zzerr8[];
+extern SetWordType zzerr9[];
+extern SetWordType setwd2[];
+extern SetWordType zzerr10[];
+extern SetWordType zzerr11[];
+extern SetWordType zzerr12[];
+extern SetWordType zzerr13[];
+extern SetWordType setwd3[];
+extern SetWordType zzerr14[];
+extern SetWordType zzerr15[];
+extern SetWordType zzerr16[];
+extern SetWordType zzerr17[];
+extern SetWordType zzerr18[];
+extern SetWordType zzerr19[];
+extern SetWordType zzerr20[];
+extern SetWordType zzerr21[];
+extern SetWordType setwd4[];
+extern SetWordType zzerr22[];
+extern SetWordType zzerr23[];
+extern SetWordType zzerr24[];
+extern SetWordType zzerr25[];
+extern SetWordType zzerr26[];
+extern SetWordType setwd5[];
+extern SetWordType zzerr27[];
+extern SetWordType zzerr28[];
+extern SetWordType zzerr29[];
+extern SetWordType zzerr30[];
+extern SetWordType zzerr31[];
+extern SetWordType zzerr32[];
+extern SetWordType zzerr33[];
+extern SetWordType setwd6[];
+extern SetWordType zzerr34[];
+extern SetWordType zzerr35[];
+extern SetWordType zzerr36[];
+extern SetWordType zzerr37[];
+extern SetWordType zzerr38[];
+extern SetWordType zzerr39[];
+extern SetWordType zzerr40[];
+extern SetWordType zzerr41[];
+extern SetWordType zzerr42[];
+extern SetWordType setwd7[];
+extern SetWordType zzerr43[];
+extern SetWordType zzerr44[];
+extern SetWordType zzerr45[];
+extern SetWordType zzerr46[];
+extern SetWordType zzerr47[];
+extern SetWordType zzerr48[];
+extern SetWordType zzerr49[];
+extern SetWordType zzerr50[];
+extern SetWordType zzerr51[];
+extern SetWordType zzerr52[];
+extern SetWordType zzerr53[];
+extern SetWordType setwd8[];
+extern SetWordType zzerr54[];
+extern SetWordType zzerr55[];
+extern SetWordType zzerr56[];
+extern SetWordType zzerr57[];
+extern SetWordType setwd9[];
+extern SetWordType zzerr58[];
+extern SetWordType zzerr59[];
+extern SetWordType zzerr60[];
+extern SetWordType zzerr61[];
+extern SetWordType zzerr62[];
+extern SetWordType zzerr63[];
+extern SetWordType zzerr64[];
+extern SetWordType zzerr65[];
+extern SetWordType setwd10[];
+extern SetWordType setwd11[];

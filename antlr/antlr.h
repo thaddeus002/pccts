@@ -40,6 +40,9 @@
 #define ANTLR_H
 
 #include <string.h>
+#include "generic.h" // for Attrib
+
+#define zzcr_attr(attr,tok,t)
 
 
 typedef int ANTLRTokenType;
@@ -663,7 +666,6 @@ extern void zzdflthandlers(int, int *);
 /* Define a parser; user should do a "#parser myname" in their grammar file */
 /*extern struct pccts_parser zzparser;*/
 
-extern char *zztokens[];
 #ifdef LL_K
 extern int zztokenLA[];
 extern zzchar_t zztextLA[][ZZLEXBUFSIZE];

@@ -16,7 +16,6 @@
 #include "generic.h"
 #include "proto.h"
 #include "constants.h"
-#define zzcr_attr(attr,tok,t)
 #include "antlr.h"
 #include "tokens.h"
 #include "dlgdef.h"

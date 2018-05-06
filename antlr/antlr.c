@@ -17,8 +17,6 @@
 #include "hash.h"
 #include "generic.h"
 #include "proto.h"
-#define zzcr_attr(attr,tok,t)
-#define zzSET_SIZE 20
 #include "antlr.h"
 #include "tokens.h"
 #include "dlgdef.h"
@@ -32,7 +30,10 @@
 #include "misc.h"
 #include "mrhoist.h"
 #include "fset2.h"
+#define zzSET_SIZE 20 /* error_handling.h needs this */
+#include "error.h" /* ... and this */
 #include "error_handling.h"
+
 
 #define MaxClassDeclStuff   256
 
