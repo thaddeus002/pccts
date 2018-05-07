@@ -37,6 +37,7 @@
 #include <ctype.h>
 #include <assert.h>
 #include <string.h>
+#include <stdbool.h>
 #include "constants.h"
 #include "hash.h"
 #include "generic.h"
@@ -201,10 +202,10 @@ static set Efirst( char *rule, ECnode *eclass )
     return empty;
   }
   r = RulePtr[q->rulenum];
-  r->end->halt = TRUE;    /* don't let reach fall off end of rule here */
+  r->end->halt = true;    /* don't let reach fall off end of rule here */
   rk = empty;
   REACH(r, 1, &rk, a);
-  r->end->halt = FALSE;
+  r->end->halt = false;
   return a;
 }
 

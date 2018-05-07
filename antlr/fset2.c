@@ -35,6 +35,7 @@
 #include <string.h>
 #include <stdarg.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 #include "constants.h"
 #include "hash.h"
@@ -48,6 +49,11 @@
 #include "fset2.h"
 
 /* ick! globals.  Used by permute() to track which elements of a set have been used */
+
+#define TreeBlockAllocSize    500
+
+
+
 
 static int *findex;
 set *fset;              /* MR11 make global */
@@ -412,20 +418,20 @@ Tree *tJunc(Junction *p, int k, set *rk)
     if ( p->jtype!=aSubBlk && p->jtype!=aOptBlk ) {
       require(p->lock!=NULL, "rJunc: lock array is NULL");
       if ( p->lock[k] ) return NULL;
-      p->lock[k] = TRUE;
+      p->lock[k] = true;
     }
 
-/* MR10 */    if (MR_MaintainBackTrace) {
-/* MR10 */      if (p->jtype != Generic) MR_pointerStackPush(&MR_BackTraceStack,p);
-/* MR10 */    };
+    if (MR_MaintainBackTrace) {
+      if (p->jtype != Generic) MR_pointerStackPush(&MR_BackTraceStack,p);
+    };
 
     TRAV(p->p1, k, rk, tail);
 
-/* MR10 */    if (MR_MaintainBackTrace) {
-/* MR10 */      if (p->jtype != Generic) MR_pointerStackPop(&MR_BackTraceStack);
-/* MR10 */    };
+    if (MR_MaintainBackTrace) {
+      if (p->jtype != Generic) MR_pointerStackPop(&MR_BackTraceStack);
+    };
 
-    if ( p->jtype==RuleBlk ) {p->lock[k] = FALSE; return tail;}
+    if ( p->jtype==RuleBlk ) {p->lock[k] = false; return tail;}
     r = tmake(tnode(ALT), tail, NULL);
     for (alt=(Junction *)p->p2; alt!=NULL; alt = (Junction *)alt->p2)
     {
@@ -435,19 +441,19 @@ Tree *tJunc(Junction *p, int k, set *rk)
       if ( tail==NULL ) {TRAV(alt->p1, k, rk, tail); r->down = tail;}
       else
       {
-/* MR10 */    if (MR_MaintainBackTrace) {
-/* MR10 */      if (p->jtype != Generic) MR_pointerStackPush(&MR_BackTraceStack,p);
-/* MR10 */    };
+        if (MR_MaintainBackTrace) {
+          if (p->jtype != Generic) MR_pointerStackPush(&MR_BackTraceStack,p);
+        };
 
         TRAV(alt->p1, k, rk, tail->right);
 
-/* MR10 */    if (MR_MaintainBackTrace) {
-/* MR10 */      if (p->jtype != Generic) MR_pointerStackPop(&MR_BackTraceStack);
-/* MR10 */    };
+        if (MR_MaintainBackTrace) {
+          if (p->jtype != Generic) MR_pointerStackPop(&MR_BackTraceStack);
+        };
         if ( tail->right != NULL ) tail = tail->right;
       }
     }
-    if ( p->jtype!=aSubBlk && p->jtype!=aOptBlk ) p->lock[k] = FALSE;
+    if ( p->jtype!=aSubBlk && p->jtype!=aOptBlk ) p->lock[k] = true;
 #ifdef DBG_TREES
     fprintf(stderr, "blk(%s) returns:",((Junction *)p)->rname); preorder(r); fprintf(stderr, "\n");
 #endif
@@ -469,7 +475,7 @@ Tree *tJunc(Junction *p, int k, set *rk)
     if ( p->lock[k] ) return NULL;
     /* if no FOLLOW assume k EOF's */
     if ( p->p1 == NULL ) return eofnode(k);
-    p->lock[k] = TRUE;
+    p->lock[k] = true;
   }
 
 /* MR14 */  if (p->p1 != NULL && p->guess &&  p->guess_analysis_point == NULL) {
@@ -498,7 +504,7 @@ Tree *tJunc(Junction *p, int k, set *rk)
 /* MR10 */      if (p->jtype != Generic) MR_pointerStackPop(&MR_BackTraceStack);
 /* MR10 */    };
 
-    if ( p->jtype==EndRule ) p->lock[k]=FALSE;
+    if ( p->jtype==EndRule ) p->lock[k]=false;
     return t;
   }
 
@@ -518,7 +524,7 @@ Tree *tJunc(Junction *p, int k, set *rk)
 
   if ( p->jtype!=RuleBlk && /* MR14 */ !p->guess) TRAV(p->p2, k, rk, u);
 
-  if ( p->jtype==EndRule ) p->lock[k] = FALSE;/* unlock node */
+  if ( p->jtype==EndRule ) p->lock[k] = false;/* unlock node */
 
   if ( t==NULL ) return tmake(tnode(ALT), u, NULL);
   return tmake(tnode(ALT), t, u, NULL);
@@ -546,7 +552,7 @@ Tree *tRuleRef(RuleRefNode *p, int k, set *rk_out)
   r = RulePtr[q->rulenum];
   if ( r->lock[k] ) return NULL;
   save_halt = r->end->halt;
-  r->end->halt = TRUE;    /* don't let reach fall off end of rule here */
+  r->end->halt = true;    /* don't let reach fall off end of rule here */
 
 /* MR10 */    if (MR_MaintainBackTrace) {
 /* MR10 */      MR_pointerStackPush(&MR_BackTraceStack,p);

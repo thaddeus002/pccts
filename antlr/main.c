@@ -38,6 +38,7 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
+#include <stdbool.h>
 #include "hash.h"
 #include "generic.h"
 #include "proto.h"
@@ -225,19 +226,19 @@ static void pInfo(char *s, char *t)                         /* MR10 */
   };
 }
 
-static void pCGen(void) { CodeGen = FALSE; LexGen = FALSE; }
-static void pLGen(void) { LexGen = FALSE; }
-static void pXTGen(void){ MR_Inhibit_Tokens_h_Gen = TRUE; }
-static void pTGen(void) { TraceGen = TRUE; }
-static void pSGen(void) { GenExprSetsOpt = FALSE; }
-static void pPrt(void)  { PrintOut = TRUE; pCGen(); pLGen(); }
-static void pPrtA(void) { PrintOut = TRUE; PrintAnnotate = TRUE; pCGen(); pLGen(); }
-static void pAst(void)  { GenAST = TRUE; }
-static void pANSI(void) { GenANSI = TRUE; }
-static void pCr(void) { GenCR = TRUE; }
-static void pNOPURIFY(void) { PURIFY = FALSE; }
-static void pLI(void) { GenLineInfo = TRUE; GenLineInfoMS = FALSE; } /* MR14 */
-static void pLIms(void) { GenLineInfo = TRUE; GenLineInfoMS = TRUE; }  /* MR14 */
+static void pCGen(void) { CodeGen = false; LexGen = false; }
+static void pLGen(void) { LexGen = false; }
+static void pXTGen(void){ MR_Inhibit_Tokens_h_Gen = true; }
+static void pTGen(void) { TraceGen = true; }
+static void pSGen(void) { GenExprSetsOpt = false; }
+static void pPrt(void)  { PrintOut = true; pCGen(); pLGen(); }
+static void pPrtA(void) { PrintOut = true; PrintAnnotate = true; pCGen(); pLGen(); }
+static void pAst(void)  { GenAST = true; }
+static void pANSI(void) { GenANSI = true; }
+static void pCr(void) { GenCR = true; }
+static void pNOPURIFY(void) { PURIFY = false; }
+static void pLI(void) { GenLineInfo = true; GenLineInfoMS = false; } /* MR14 */
+static void pLIms(void) { GenLineInfo = true; GenLineInfoMS = true; }  /* MR14 */
 static void pFr(char *s, char *t) {RemapFileName = t;}
 static void pFe(char *s, char *t) {ErrFileName = t;}
 static void pFl(char *s, char *t) {DlgFileName = t;}
@@ -268,7 +269,7 @@ static void pAlpha(void) { AlphaBetaTrace = 1; }                    /* MR14 */
 static void pMR_BlkErr(void) { MR_BlkErr = 1; }                     /* MR21 */
 static void pStdout(void) {UseStdout = 1; }                       /* MR6 */
 static void pW2(void) { WarningLevel = 2; }
-static void pCC(void) { GenCC = TRUE; }
+static void pCC(void) { GenCC = true; }
 
 
 static void pPre( char *s, char *t )
@@ -332,8 +333,8 @@ static void pTRes(char *s, char *t)
 }
 
 Opt options[] = {
-    { "-CC", 0, pCC,  "Generate C++ output (default=FALSE)"},
-    { "-cr", 0, pCr,  "Generate cross reference (default=FALSE)"},
+    { "-CC", 0, pCC,  "Generate C++ output (default=false)"},
+    { "-cr", 0, pCr,  "Generate cross reference (default=false)"},
     { "-ck", 1, pCk,  "Set compressed lookahead depth; fast approximate lookahead"},
     { "-e1", 0, pE1,  "Ambiguities/errors shown in low detail (default)"},
     { "-e2", 0, pE2,  "Ambiguities/errors shown in more detail"},
@@ -345,19 +346,19 @@ Opt options[] = {
     { "-fm", 1, pFm,  "Rename mode.h"},
     { "-fr", 1, pFr,  "Rename remap.h"},
     { "-ft", 1, pFt,  "Rename tokens.h"},
-    { "-ga", 0, pANSI,  "Generate ANSI-compatible code (default=FALSE)"},
-    { "-gc", 0, pCGen,  "Do not generate output parser code (default=FALSE)"},
-    { "-gd", 0, pTGen,  "Generate code to trace rule invocation (default=FALSE)"},
-    { "-ge", 0, pEGen,  "Generate an error class for each non-terminal (default=FALSE)"},
+    { "-ga", 0, pANSI,  "Generate ANSI-compatible code (default=false)"},
+    { "-gc", 0, pCGen,  "Do not generate output parser code (default=false)"},
+    { "-gd", 0, pTGen,  "Generate code to trace rule invocation (default=false)"},
+    { "-ge", 0, pEGen,  "Generate an error class for each non-terminal (default=false)"},
     { "-gh", 0, pGHdr,  "Generate stdpccts.h for non-ANTLR-generated-files to include"},
     { "-gk", 0, pDL,  "Generate parsers that delay lookahead fetches until needed"},
     { "-gl", 0, pLI,  "Generate line info about grammar actions in C parser"},
     { "-glms", 0, pLIms,"Like -gl but replace '\\' with '/' in #line filenames for MS C/C++ systems"},
     { "-gp", 1, pPre, "Prefix all generated rule functions with a string"},
-    { "-gs", 0, pSGen,  "Do not generate sets for token expression lists (default=FALSE)"},
-    { "-gt", 0, pAst, "Generate code for Abstract-Syntax-Trees (default=FALSE)"},
-    { "-gx", 0, pLGen,  "Do not generate lexical (dlg-related) files (default=FALSE)"},
-    { "-gxt",0, pXTGen, "Do not generate tokens.h (default=FALSE)"},
+    { "-gs", 0, pSGen,  "Do not generate sets for token expression lists (default=false)"},
+    { "-gt", 0, pAst, "Generate code for Abstract-Syntax-Trees (default=false)"},
+    { "-gx", 0, pLGen,  "Do not generate lexical (dlg-related) files (default=false)"},
+    { "-gxt",0, pXTGen, "Do not generate tokens.h (default=false)"},
     { "-k",  1, pLLK, "Set full LL(k) lookahead depth (default==1)"},
     { "-o",  1, pOut, "Directory where all output files should go (default=\".\")"},
     { "-p",  0, pPrt, "Print out the grammar w/o actions (default=no)"},

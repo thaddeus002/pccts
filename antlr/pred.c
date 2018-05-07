@@ -34,6 +34,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
+#include <stdbool.h>
 #include "constants.h"
 #include "hash.h"
 #include "generic.h"
@@ -293,7 +294,7 @@ Predicate *find_predicates( Node *alt )
         {
           return NULL;
         }
-        p->pred_lock[1] = TRUE;
+        p->pred_lock[1] = true;
       }
 
       switch ( p->jtype )
@@ -309,20 +310,20 @@ Predicate *find_predicates( Node *alt )
           return a;
         case aLoopBlk :
           a = find_in_aSubBlk(p);
-          p->pred_lock[1] = FALSE;
+          p->pred_lock[1] = false;
           return a;
         case aPlusBlk :
           a = find_in_aPlusBlk(p);
-          p->pred_lock[1] = FALSE;
+          p->pred_lock[1] = false;
           return a; /* nothing is visible past this guy */
         case RuleBlk :
           a = find_predicates(p->p1);
-          p->pred_lock[1] = FALSE;
+          p->pred_lock[1] = false;
           return a;
         case Generic :
           a = find_predicates(p->p1);
           b = find_predicates(p->p2);
-          if ( p->pred_lock!=NULL ) p->pred_lock[1] = FALSE;
+          if ( p->pred_lock!=NULL ) p->pred_lock[1] = false;
           if ( a==NULL ) return b;
           if ( b==NULL ) return a;
           /* otherwise OR the two preds together */
@@ -464,31 +465,31 @@ Predicate *find_predicates( Node *alt )
             /* MR10    (at least for this particular need)              */
             /* MR10 Unset the old one and set the new one, later undo.  */
 
-            require(r->end->halt == FALSE,"should only have one halt at a time");
+            require(r->end->halt == false,"should only have one halt at a time");
 
 /* MR10 */  require(MR_RuleBlkWithHalt == NULL ||
-/* MR10 */          (MR_RuleBlkWithHalt->jtype == RuleBlk && MR_RuleBlkWithHalt->end->halt == TRUE),
+/* MR10 */          (MR_RuleBlkWithHalt->jtype == RuleBlk && MR_RuleBlkWithHalt->end->halt == true),
 /* MR10 */             "RuleBlkWithHalt->end not RuleBlk or does not have halt set");
 /* MR10 */  if (MR_RuleBlkWithHalt != NULL) {
-/* MR10 */    MR_RuleBlkWithHalt->end->halt=FALSE;
+/* MR10 */    MR_RuleBlkWithHalt->end->halt=false;
 /* MR10 */  };
 
 /***        fprintf(stderr,"\nSetting halt on junction #%d\n",r->end->seq);     ***/
 
-            require(r->end->halt == FALSE,"rule->end->halt already set");
+            require(r->end->halt == false,"rule->end->halt already set");
 
             save_MR_RuleBlkWithHalt=MR_RuleBlkWithHalt;
 
 /* MR10 */  MR_pointerStackPush(&MR_RuleBlkWithHaltStack,MR_RuleBlkWithHalt);
 /* MR10 */  MR_pointerStackPush(&MR_PredRuleRefStack,p);
 
-      r->end->halt = TRUE;
+      r->end->halt = true;
 /* MR10 */  MR_RuleBlkWithHalt=r;
 
       a = find_predicates((Node *)r);
 
-            require(r->end->halt == TRUE,"rule->end->halt not set");
-            r->end->halt = FALSE;
+            require(r->end->halt == true,"rule->end->halt not set");
+            r->end->halt = false;
 
 /* MR10 */  MR_pointerStackPop(&MR_PredRuleRefStack);
 /* MR10 */  MR_RuleBlkWithHalt=(Junction *) MR_pointerStackPop(&MR_RuleBlkWithHaltStack);
@@ -497,10 +498,10 @@ Predicate *find_predicates( Node *alt )
                     "RuleBlkWithHaltStack not consistent");
 
 /* MR10 */  require(MR_RuleBlkWithHalt == NULL ||
-/* MR10 */          (MR_RuleBlkWithHalt->jtype == RuleBlk && MR_RuleBlkWithHalt->end->halt == FALSE),
+/* MR10 */          (MR_RuleBlkWithHalt->jtype == RuleBlk && MR_RuleBlkWithHalt->end->halt == false),
 /* MR10 */             "RuleBlkWithHalt->end not RuleBlk or has no halt set");
 /* MR10 */  if (MR_RuleBlkWithHalt != NULL) {
-/* MR10 */    MR_RuleBlkWithHalt->end->halt=TRUE;
+/* MR10 */    MR_RuleBlkWithHalt->end->halt=true;
 /* MR10 */  };
 
 /***        fprintf(stderr,"\nRestoring halt on junction #%d\n",r->end->seq);   ***/

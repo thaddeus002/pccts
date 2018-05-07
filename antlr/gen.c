@@ -2404,7 +2404,7 @@ static void genLoopBlk( Junction *begin, Junction *q, Junction *start, int max_k
   require(q->jtype == aLoopBlk, "genLoopBlk: not loop block");
 
   if ( q->visited ) return;
-  q->visited = TRUE;
+  q->visited = true;
 
     /* first_item_is_guess_block doesn't care what kind of node it is */
 
@@ -2449,7 +2449,7 @@ static void genLoopBlk( Junction *begin, Junction *q, Junction *start, int max_k
     --tabs;
     gen(output, true, "}\n");
     freeBlkFsets(q);
-    q->visited = FALSE;
+    q->visited = false;
     tokensRefdInBlock = savetkref;
     return;
   }
@@ -2529,7 +2529,7 @@ static void genLoopBlk( Junction *begin, Junction *q, Junction *start, int max_k
   if ( !GenCC ) gen(output, true, "zzLOOP(zztasp%d);\n", BlkLevel-1);
   --tabs;
   gen(output, true, "}\n");
-  q->visited = FALSE;
+  q->visited = false;
   tokensRefdInBlock = savetkref;
 }
 
@@ -2647,7 +2647,7 @@ static void genPlusBlk( Junction *q )
   require(q->p2 != NULL,      "genPlusBlk: not a valid Plus block");
 
   if ( q->visited ) return;
-  q->visited = TRUE;
+  q->visited = true;
     OutLineInfo(output,q->line,FileStr[q->file]);
   BLOCK_Preamble(q);
   BlkLevel++;
@@ -2715,7 +2715,7 @@ static void genPlusBlk( Junction *q )
     if ( ParseWithPredicates && a!=NULL ) gen(output, true, "}\n");
     --BlkLevel;
     BLOCK_Tail();
-    q->visited = FALSE;
+    q->visited = false;
     freeBlkFsets(q);
     set_free(f);
     tokensRefdInBlock = savetkref;
@@ -2790,7 +2790,7 @@ static void genPlusBlk( Junction *q )
   else gen(output, true, "} while ( 1 );\n");
   --BlkLevel;
   BLOCK_Tail();
-  q->visited = FALSE;
+  q->visited = false;
   tokensRefdInBlock = savetkref;
 /* MR21 */  if (MR_BlkErr) {
 /* MR21 */    set f, fArray[2];
@@ -3053,7 +3053,7 @@ do {    /* MR10     Change recursion into iteration         */
   if ( q->ret != NULL )                                            /* MR7 */
   {                                                                /* MR7 */
     if (hasMultipleOperands(q->ret)) {                           /* MR23 */
-      if (PURIFY == TRUE) {
+      if (PURIFY == true) {
                 gen(output, true, "PCCTS_PURIFY(_retv,sizeof(struct _rv%d))\n",r->rulenum); /* MR23 */
             }
         }                                                            /* MR7 */
@@ -3067,7 +3067,7 @@ do {    /* MR10     Change recursion into iteration         */
 
       returnValueInitializer = getInitializer(q->ret);         /* MR23 */
       if (returnValueInitializer == NULL) {                    /* MR23 */
-          if (PURIFY == TRUE) {
+          if (PURIFY == true) {
               gen(output, true, "PCCTS_PURIFY(_retv,sizeof(");               /* MR23 */
             DumpType(q->ret, output);                        /* MR7 */
           gen(output, true, "))\n");                                     /* MR7 */
@@ -3102,7 +3102,7 @@ do {    /* MR10     Change recursion into iteration         */
   }
 
   BlkLevel++;
-  q->visited = TRUE;        /* mark RULE as visited for FIRST/FOLLOW */
+  q->visited = true;        /* mark RULE as visited for FIRST/FOLLOW */
     BlockPreambleOption((Junction *)q->p1, NULL);   /* MR21 */
   f = genBlk((Junction *)q->p1, RuleBlk, &max_k, &need_right_curly, &lastAltEmpty /* MR23 */);
   if ( q->p1 != NULL )
@@ -3110,7 +3110,7 @@ do {    /* MR10     Change recursion into iteration         */
       {tab(); makeErrorClause((Junction *)q->p1,f,max_k,0 /* use plus block bypass ? */);}
   { int i; for (i=1; i<=need_right_curly; i++) {tabs--; gen(output, true, "}\n");} }
   freeBlkFsets((Junction *)q->p1);
-  q->visited = FALSE;
+  q->visited = false;
   --BlkLevel;
   if ( !GenCC ) gen(output, true, "zzEXIT(zztasp%d);\n", BlkLevel);
 
@@ -3420,7 +3420,7 @@ static void genHdr( int file )
 /* MR10  Ofer Ben-Ami (gremlin@cs.huji.ac.il)           */
 /* MR10    Finally, a definition of the Purify macro    */
 
-    if (PURIFY == TRUE) {                                                   /* MR23 */
+    if (PURIFY == true) {                                                   /* MR23 */
         gen(output, false, "\n/* MR23 In order to remove calls to PURIFY use the antlr"); /* MR23 */
         gen(output, false, " -nopurify option */\n\n");                                   /* MR23 */
         gen(output, false, "#ifndef PCCTS_PURIFY\n");
@@ -3628,7 +3628,7 @@ int final_newline )
     if ( *s!='#' ) {
         indent(tabs, output);
     }
-    inDQuote = inSQuote = FALSE;
+    inDQuote = inSQuote = false;
     while ( *s != '\0' )
     {
         if ( *s == '\\' )

@@ -34,6 +34,7 @@
 
 #include <stdio.h>
 #include <limits.h> // knows LONG_MAX
+#include <stdbool.h>
 
 #include "constants.h"
 #include "hash.h"
@@ -189,7 +190,7 @@ set rJunc(Junction *p, int k, set *rk)
         }
       }
     }
-    p->lock[k] = TRUE;  /* This rule is busy */
+    p->lock[k] = true;  /* This rule is busy */
   }
 
   a = b = empty;
@@ -198,7 +199,7 @@ set rJunc(Junction *p, int k, set *rk)
   {
     if (p->halt )     /* don't want FOLLOW here? */ /* unless MR10 hoisting */
     {
-            p->lock[k] = FALSE;
+            p->lock[k] = false;
         set_orel(k, rk);            /* indicate this k value needed */
               if (MR_MaintainBackTrace) MR_pointerStackPop(&MR_BackTraceStack);
         return empty;
@@ -273,7 +274,7 @@ set rJunc(Junction *p, int k, set *rk)
 
   if ( p->jtype==aLoopBlk || p->jtype==RuleBlk ||
      p->jtype==aPlusBlk || p->jtype==EndRule )
-    p->lock[k] = FALSE;             /* unlock node */
+    p->lock[k] = false;             /* unlock node */
 
   set_orin(&a, b);
   set_free(b);
@@ -327,7 +328,7 @@ set rRuleRef( RuleRefNode *p, int k, set *rk_out )
   }
 
   save_halt = r->end->halt;
-  r->end->halt = TRUE;    /* don't let reach fall off end of rule here */
+  r->end->halt = true;    /* don't let reach fall off end of rule here */
   rk = empty;
   REACH(r, k, &rk, a);
   r->end->halt = save_halt;

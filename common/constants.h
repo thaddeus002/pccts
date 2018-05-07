@@ -35,13 +35,6 @@
 #define ErrHdr "%s, line %d:"
 
 
-#ifndef TRUE
-#define TRUE 1
-#endif
-#ifndef FALSE
-#define FALSE 0
-#endif
-
 #define zzDIE   return 1;
 #define zzDONE  return 0;
 

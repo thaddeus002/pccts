@@ -51,6 +51,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <stdbool.h>
 #include "constants.h"
 #include "hash.h"
 #include "generic.h"
@@ -315,10 +316,10 @@ static void RemapForcedTokensInSyntaxDiagram(Node *p)
     case nJunction :
       if ( j->visited ) return;
       if ( j->jtype == EndRule ) return;
-      j->visited = TRUE;
+      j->visited = true;
       RemapForcedTokensInSyntaxDiagram( j->p1 );
       RemapForcedTokensInSyntaxDiagram( j->p2 );
-      j->visited = FALSE;
+      j->visited = false;
       return;
     case nRuleRef :
       RemapForcedTokensInSyntaxDiagram( r->next );
@@ -668,7 +669,7 @@ void RegisterCycle( char *rule, int k )
       f = newCacheEntry( Fkey(RulePtr[*p]->rname,'o',k) );
       hash_add(Fcache, Fkey(RulePtr[*p]->rname,'o',k), (Entry *)f);
     }
-    f->incomplete = TRUE;
+    f->incomplete = true;
 
     set_orel(*p, &(c->cyclicDep)); /* mark rule as dependent of croot */
   }
@@ -681,7 +682,7 @@ void RegisterCycle( char *rule, int k )
  *    for each cycle do
  *      if degree of FOLLOW set for croot > old degree then
  *        update all FOLLOW sets for rules in cyclic dependency
- *        change = TRUE
+ *        change = true
  *      endif
  *    endfor
  * endwhile
@@ -731,7 +732,7 @@ void ResolveFoCycles(int k)
               hash_get(Fcache, Fkey(RulePtr[r]->rname,'o',k));
           require(g!=NULL, eMsg("FOLLOW(%s) must be in cache but isn't", RulePtr[r]->rname) );
           set_orin(&(g->fset), f->fset);
-          g->incomplete = FALSE;
+          g->incomplete = false;
         }
 /* MR10 */      free( (char *) origin);
 /* MR10 */      origin=NULL;
@@ -759,7 +760,7 @@ static void pBlk( Junction *q, int btype )
   int k,a;
   Junction *alt, *p;
 
-  q->end->pvisited = TRUE;
+  q->end->pvisited = true;
   if ( btype == aLoopBegin )
   {
     require(q->p2!=NULL, "pBlk: invalid ()* block");
@@ -836,7 +837,7 @@ static void pBlk( Junction *q, int btype )
       }
     }
   }
-  q->end->pvisited = FALSE;
+  q->end->pvisited = false;
 }
 
 /** How to print out a junction */
@@ -847,8 +848,8 @@ void pJunc( Junction *q )
   require(q!=NULL, "pJunc: NULL node");
   require(q->ntype==nJunction, "pJunc: not junction");
 
-  if ( q->pvisited == TRUE ) return;
-  q->pvisited = TRUE;
+  if ( q->pvisited == true ) return;
+  q->pvisited = true;
   switch ( q->jtype )
   {
     case aSubBlk :
@@ -950,14 +951,14 @@ void pJunc( Junction *q )
       break;
     case Generic :
       if ( q->p1 != NULL ) PRINT(q->p1);
-      q->pvisited = FALSE;
+      q->pvisited = false;
       if ( q->p2 != NULL ) PRINT(q->p2);
       break;
     case EndRule :
       printf( "\n\t;\n");
       break;
   }
-  q->pvisited = FALSE;
+  q->pvisited = false;
 }
 
 /** How to print out a rule reference node */
@@ -1041,7 +1042,7 @@ void FoLink( Node *p )
     case nJunction :
       if ( j->fvisited ) return;
       if ( j->jtype == EndRule ) return;
-      j->fvisited = TRUE;
+      j->fvisited = true;
       FoLink( j->p1 );
       FoLink( j->p2 );
 /* MR14 */
@@ -1091,7 +1092,7 @@ void FoLink( Node *p )
         if ( !r->linked )
         {
           addFoLink(  r->next, r->rname, RulePtr[q->rulenum] );
-          r->linked = TRUE;
+          r->linked = true;
         }
       }
       FoLink( r->next );

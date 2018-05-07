@@ -32,6 +32,7 @@
  */
 
 
+#include <stdbool.h>
 #include "generic.h"
 #include "proto.h"
 #include "constants.h"
@@ -212,7 +213,7 @@ int     TnodesAllocated=0;  /* MR10 */
 int     TnodesReportThreshold=0;    /* MR11 */
 int     PotentialSuppression=0; /* MR10 */
 int     PotentialDummy=0;       /* MR10 */
-int   CannotContinue=FALSE;
+int   CannotContinue=false;
 int   OutputLL_k = 1;   /* LL_k for parsing must be power of 2 */
 int   action_file;    /* used to track start of action */
 int   action_line;
@@ -264,17 +265,17 @@ Junction    *MR_RuleBlkWithHalt;    /* MR10 */
 
 int   LL_k=1;       /* how many tokens of full lookahead */
 int   CLL_k= -1;      /* how many tokens of compressed lookahead */
-int   PrintOut = FALSE; /* print out the grammar */
-int   PrintAnnotate = FALSE;/* annotate printout with FIRST sets */
-int   CodeGen=TRUE;   /* Generate output code? */
-int   LexGen=TRUE;    /* Generate lexical files? (tokens.h, parser.dlg) */
-int   GenAST=FALSE;   /* Generate AST's? */
-int   GenANSI=FALSE;    /* Generate ANSI code where necessary */
-int   GenExprSetsOpt=TRUE;/* use sets not (LA(1)==tok) expression lists */
-int   GenCR=FALSE;    /* Generate cross reference? */
-int   GenLineInfo=FALSE;  /* Generate # line "file" stuff? */
-int   GenLineInfoMS=FALSE;/* Like -gl but replace "\" with "/" for MS C/C++ systems */
-int   TraceGen=FALSE;   /* Generate code to trace rule invocation */
+int   PrintOut = false; /* print out the grammar */
+int   PrintAnnotate = false;/* annotate printout with FIRST sets */
+int   CodeGen=true;   /* Generate output code? */
+int   LexGen=true;    /* Generate lexical files? (tokens.h, parser.dlg) */
+int   GenAST=false;   /* Generate AST's? */
+int   GenANSI=false;    /* Generate ANSI code where necessary */
+int   GenExprSetsOpt=true;/* use sets not (LA(1)==tok) expression lists */
+int   GenCR=false;    /* Generate cross reference? */
+int   GenLineInfo=false;  /* Generate # line "file" stuff? */
+int   GenLineInfoMS=false;/* Like -gl but replace "\" with "/" for MS C/C++ systems */
+int   TraceGen=false;   /* Generate code to trace rule invocation */
 int   elevel=1;     /* error level for ambiguity messages */
 int   GenEClasseForRules=0;/* don't generate eclass for each rule */
 int   TreeResourceLimit= -1;/* don't limit tree resource */

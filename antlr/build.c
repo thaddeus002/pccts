@@ -35,6 +35,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
+#include <stdbool.h>
 #include "constants.h"
 #include "hash.h"
 #include "generic.h"
@@ -53,6 +54,13 @@
       ((Junction *)g.left)->pFirstSetSymbol = first_set_symbol;   \
       ((Junction *)g.left)->end = (Junction *) g.right;         \
       ((Junction *)g.right)->jtype = EndBlk;}
+
+
+#define JunctionBlockAllocSize  200
+#define ActionBlockAllocSize  50
+#define RRefBlockAllocSize    100
+#define TokenBlockAllocSize   100
+
 
 static Graph emptyAlt3(void);
 static TokNode *newTokNode(void);
@@ -166,8 +174,8 @@ Graph buildToken( char *text )
   j2 = newJunction();
   t = newTokNode();
   t->altstart = CurAltStart;
-  if ( *text == '"' ) {t->label=FALSE; t->token = addTexpr( text );}
-  else {t->label=TRUE; t->token = addTname( text );}
+  if ( *text == '"' ) {t->label=false; t->token = addTexpr( text );}
+  else {t->label=true; t->token = addTname( text );}
   j1->p1 = (Node *) t;
   t->next = (Node *) j2;
   g.left = (Node *) j1; g.right = (Node *) j2;

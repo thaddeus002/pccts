@@ -30,6 +30,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <stdbool.h>
 
 #include "constants.h"
 #include "hash.h"
@@ -734,13 +735,13 @@ static void MR_complete_set(int predDepth,set *tokensUsed,set *incomplete)
                 "RuleRefStack and RuleBlkWithHaltStack not same size");
 
     require(MR_RuleBlkWithHalt == NULL ||
-         (MR_RuleBlkWithHalt->jtype == RuleBlk && MR_RuleBlkWithHalt->end->halt == TRUE),
+         (MR_RuleBlkWithHalt->jtype == RuleBlk && MR_RuleBlkWithHalt->end->halt == true),
                      "RuleBlkWithHalt has no halt set");
 
     save_MR_RuleBlkWithHalt=MR_RuleBlkWithHalt;
 
     if (MR_RuleBlkWithHalt != NULL) {
-      MR_RuleBlkWithHalt->end->halt=FALSE;
+      MR_RuleBlkWithHalt->end->halt=false;
     };
 
     for (i=MR_PredRuleRefStack.count-1; i >= 0 ; i--) {
@@ -748,7 +749,7 @@ static void MR_complete_set(int predDepth,set *tokensUsed,set *incomplete)
       if (ruleRef == NULL) continue;
 
       MR_RuleBlkWithHalt=(Junction *)MR_RuleBlkWithHaltStack.data[i];
-      if (MR_RuleBlkWithHalt != NULL) MR_RuleBlkWithHalt->end->halt=TRUE;
+      if (MR_RuleBlkWithHalt != NULL) MR_RuleBlkWithHalt->end->halt=true;
 
       rk2=empty;
       b=empty;
@@ -762,7 +763,7 @@ static void MR_complete_set(int predDepth,set *tokensUsed,set *incomplete)
     set_free(b);
       };
 
-      if (MR_RuleBlkWithHalt != NULL) MR_RuleBlkWithHalt->end->halt=FALSE;
+      if (MR_RuleBlkWithHalt != NULL) MR_RuleBlkWithHalt->end->halt=false;
 
     set_orin(incomplete,rk2);                       /* remember what we couldn't do */
       set_free(rk2);
@@ -771,7 +772,7 @@ static void MR_complete_set(int predDepth,set *tokensUsed,set *incomplete)
 
     MR_RuleBlkWithHalt=save_MR_RuleBlkWithHalt;
     if (MR_RuleBlkWithHalt != NULL) {
-      MR_RuleBlkWithHalt->end->halt=TRUE;
+      MR_RuleBlkWithHalt->end->halt=true;
     };
 }
 
@@ -793,7 +794,7 @@ static void MR_complete_tree(int predDepth,Tree **t,set *incomplete)
                 "RuleRefStack and RuleBlkWithHaltStack not same size");
 
     require(MR_RuleBlkWithHalt == NULL ||
-         (MR_RuleBlkWithHalt->jtype == RuleBlk && MR_RuleBlkWithHalt->end->halt == TRUE),
+         (MR_RuleBlkWithHalt->jtype == RuleBlk && MR_RuleBlkWithHalt->end->halt == true),
                      "RuleBlkWithHalt has no halt set");
 
     save_MR_RuleBlkWithHalt=MR_RuleBlkWithHalt;
@@ -801,7 +802,7 @@ static void MR_complete_tree(int predDepth,Tree **t,set *incomplete)
     ConstrainSearch=0;
 
     if (MR_RuleBlkWithHalt != NULL) {
-      MR_RuleBlkWithHalt->end->halt=FALSE;
+      MR_RuleBlkWithHalt->end->halt=false;
     };
 
     for (i=MR_PredRuleRefStack.count-1; i >= 0 ; i--) {
@@ -810,7 +811,7 @@ static void MR_complete_tree(int predDepth,Tree **t,set *incomplete)
 
       MR_RuleBlkWithHalt=(Junction *)MR_RuleBlkWithHaltStack.data[i];
 
-      if (MR_RuleBlkWithHalt != NULL) MR_RuleBlkWithHalt->end->halt=TRUE;
+      if (MR_RuleBlkWithHalt != NULL) MR_RuleBlkWithHalt->end->halt=true;
 
       rk2=empty;
 
@@ -831,7 +832,7 @@ static void MR_complete_tree(int predDepth,Tree **t,set *incomplete)
       set_orin(incomplete,rk2);         /* remember what we couldn't do */
       set_free(rk2);
 
-      if (MR_RuleBlkWithHalt != NULL) MR_RuleBlkWithHalt->end->halt=FALSE;
+      if (MR_RuleBlkWithHalt != NULL) MR_RuleBlkWithHalt->end->halt=false;
 
       if (set_int(*incomplete) > (unsigned) predDepth) break;    /* <=== another exit from loop */
     };
@@ -839,7 +840,7 @@ static void MR_complete_tree(int predDepth,Tree **t,set *incomplete)
     MR_RuleBlkWithHalt=save_MR_RuleBlkWithHalt;
 
     if (MR_RuleBlkWithHalt != NULL) {
-      MR_RuleBlkWithHalt->end->halt=TRUE;
+      MR_RuleBlkWithHalt->end->halt=true;
     };
     ConstrainSearch=saveConstrainSearch;
 }

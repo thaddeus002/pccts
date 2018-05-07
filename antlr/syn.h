@@ -58,12 +58,6 @@
 
 typedef int NodeType;
 
-#define TreeBlockAllocSize    500
-#define JunctionBlockAllocSize  200
-#define ActionBlockAllocSize  50
-#define RRefBlockAllocSize    100
-#define TokenBlockAllocSize   100
-
 
 /* note that 'right' is used by the tree node allocator as a ptr for linked list */
 typedef struct _tree {

@@ -14,6 +14,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
+#include <stdbool.h>
 #include "hash.h"
 #include "generic.h"
 #include "proto.h"
@@ -435,7 +436,7 @@ void grammar()
   return;
 fail:
   zzEXIT(zztasp1);
-  CannotContinue=TRUE;
+  CannotContinue=true;
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
   zzresynch(setwd1, 0x10);
   }
@@ -521,7 +522,7 @@ static void class_def()
   return;
 fail:
   zzEXIT(zztasp1);
-  CannotContinue=TRUE;
+  CannotContinue=true;
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
   zzresynch(setwd1, 0x40);
   }
@@ -548,7 +549,7 @@ static void rule()
     q=NULL;
     if ( hash_get(Rname, LATEXT(1))!=NULL ) {
       err(eMsg("duplicate rule definition: '%s'",LATEXT(1)));
-      CannotContinue=TRUE;
+      CannotContinue=true;
     }
     else
     {
@@ -567,7 +568,7 @@ static void rule()
       {
         if ( (LA(1)==103) ) {
           zzmatch(103);
-          if ( q!=NULL ) q->noAST = TRUE;
+          if ( q!=NULL ) q->noAST = true;
           zzCONSUME;
         }
         else {
@@ -758,7 +759,7 @@ static void rule()
   return;
 fail:
   zzEXIT(zztasp1);
-  CannotContinue=TRUE;
+  CannotContinue=true;
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
   zzresynch(setwd2, 0x10);
   }
@@ -784,7 +785,7 @@ static void laction()
   return;
 fail:
   zzEXIT(zztasp1);
-  CannotContinue=TRUE;
+  CannotContinue=true;
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
   zzresynch(setwd2, 0x20);
   }
@@ -815,7 +816,7 @@ static void lmember()
   return;
 fail:
   zzEXIT(zztasp1);
-  CannotContinue=TRUE;
+  CannotContinue=true;
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
   zzresynch(setwd2, 0x40);
   }
@@ -846,7 +847,7 @@ static void lprefix()
   return;
 fail:
   zzEXIT(zztasp1);
-  CannotContinue=TRUE;
+  CannotContinue=true;
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
   zzresynch(setwd2, 0x80);
   }
@@ -1172,7 +1173,7 @@ static void aLexclass()
   return;
 fail:
   zzEXIT(zztasp1);
-  CannotContinue=TRUE;
+  CannotContinue=true;
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
   zzresynch(setwd4, 0x1);
   }
@@ -1304,7 +1305,7 @@ static void error()
   return;
 fail:
   zzEXIT(zztasp1);
-  CannotContinue=TRUE;
+  CannotContinue=true;
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
   zzresynch(setwd4, 0x4);
   }
@@ -1466,7 +1467,7 @@ static void tclass()
   return;
 fail:
   zzEXIT(zztasp1);
-  CannotContinue=TRUE;
+  CannotContinue=true;
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
   zzresynch(setwd4, 0x20);
   }
@@ -1615,7 +1616,7 @@ static void token()
   return;
 fail:
   zzEXIT(zztasp1);
-  CannotContinue=TRUE;
+  CannotContinue=true;
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
   zzresynch(setwd5, 0x10);
   }
@@ -1650,7 +1651,7 @@ static void block(set *toksrefd, set *rulesrefd)
     ( ( (Junction *)g.left) ->p1);
     if (!actionNode->is_predicate )
     {
-      actionNode->init_action = TRUE;
+      actionNode->init_action = true;
         if (actionNode->noHoist) {
           errorFL("<<nohoist>> appears as init-action - use <<>> <<nohoist>>",
                     FileStr[actionNode->file],actionNode->line);
@@ -1722,7 +1723,7 @@ static void block(set *toksrefd, set *rulesrefd)
   return;
 fail:
   zzEXIT(zztasp1);
-  CannotContinue=TRUE;
+  CannotContinue=true;
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
   zzresynch(setwd5, 0x20);
   }
@@ -1841,7 +1842,7 @@ inAlt = 0;
   return;
 fail:
   zzEXIT(zztasp1);
-  CannotContinue=TRUE;
+  CannotContinue=true;
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
   zzresynch(setwd6, 0x2);
   }
@@ -2689,21 +2690,21 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
         else {
           if ( (LA(1)==129) ) {
             zzmatch(129);
-            warn("don't you want a ')' with that '*'?"); CannotContinue=TRUE;
+            warn("don't you want a ')' with that '*'?"); CannotContinue=true;
  zzCONSUME;
 
           }
           else {
             if ( (LA(1)==130) ) {
               zzmatch(130);
-              warn("don't you want a ')' with that '+'?"); CannotContinue=TRUE;
+              warn("don't you want a ')' with that '+'?"); CannotContinue=true;
  zzCONSUME;
 
             }
             else {
               if ( (LA(1)==105) ) {
                 zzmatch(105);
-                warn("'>' can only appear after a nonterminal"); CannotContinue=TRUE;
+                warn("'>' can only appear after a nonterminal"); CannotContinue=true;
  zzCONSUME;
 
               }
@@ -2711,7 +2712,7 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
                 if ( (LA(1)==PassAction) ) {
                   zzmatch(PassAction);
                   warn("[...] out of context 'rule > [...]'");
-                  CannotContinue=TRUE;
+                  CannotContinue=true;
  zzCONSUME;
 
                 }
@@ -2727,7 +2728,7 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
   return _retv;
 fail:
   zzEXIT(zztasp1);
-  CannotContinue=TRUE;
+  CannotContinue=true;
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
   zzresynch(setwd9, 0x1);
   return _retv;
@@ -2888,7 +2889,7 @@ static ExceptionGroup *exception_group()
   return _retv;
 fail:
   zzEXIT(zztasp1);
-  CannotContinue=TRUE;
+  CannotContinue=true;
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
   zzresynch(setwd9, 0x10);
   return _retv;
@@ -2965,7 +2966,7 @@ static ExceptionHandler *exception_handler()
   return _retv;
 fail:
   zzEXIT(zztasp1);
-  CannotContinue=TRUE;
+  CannotContinue=true;
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
   zzresynch(setwd9, 0x40);
   return _retv;
