@@ -16,6 +16,8 @@
 #ifndef __MISC_H__
 #define __MISC_H__
 
+#include <stdio.h>
+
 
 /**
  * switch to lexical class/mode m.  This amounts to creating a new

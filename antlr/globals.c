@@ -32,9 +32,6 @@
  */
 
 
-#include <stdio.h>
-
-#include "hash.h"
 #include "generic.h"
 #include "proto.h"
 #include "constants.h"
