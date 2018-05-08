@@ -72,10 +72,13 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include "constants.h"
 #include "automata.h"
 #include "output.h"
 
+#define ATOKENBUFFER_H    "ATokenBuffer.h"
+#define DLEXER_H      "DLexer.h"
 
 #define MAX_MODES 50  /* number of %%names allowed */
 #define MAX_ON_LINE 10
@@ -410,7 +413,7 @@ static void p_accept_table()
 {
   register int  i = 1;
   register int  items_on_line = 0;
-  int   true_interactive = TRUE;
+  int   true_interactive = true;
 
   /* make sure element for one past (zzerraction) -WEC 12/16/92 */
   fprintf(output_stream,"\n%sDfaState %saccepts[%d] = {\n  ",
@@ -459,7 +462,7 @@ static void p_accept_table()
     }
 
     if ((DFA(i)->alternatives) && (accept != 0)){
-      true_interactive = FALSE;
+      true_interactive = false;
     }
     fprintf(output_stream, "%d, ", accept);
 

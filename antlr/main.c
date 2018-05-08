@@ -425,7 +425,7 @@ int main( int argc, char *argv[] )
 #endif
 
     fprintf(stderr, "Antlr parser generator   Version %s   1989-2001\n", Version);
-    if ( argc == 1 ) { help(); zzDIE; }
+    if ( argc == 1 ) { help(); return EXIT_FAILURE; }
     ProcessArgs(argc-1, &(argv[1]), options);
 
     if (MR_AmbAidRule && AlphaBetaTrace) {
@@ -491,7 +491,7 @@ int main( int argc, char *argv[] )
     readDescr();
     LastTokenCounted = TokenNum;
     RemapForcedTokens();
-    if ( CannotContinue ) {cleanUp(); zzDIE;}
+    if ( CannotContinue ) {cleanUp(); return EXIT_FAILURE;}
     if ( GenCC && no_classes_found ) fatal("required grammar class not found (exiting...)");
     if ( WarningLevel>1 && HdrAction == NULL )
         warningNoFL("no #header action was found");
@@ -556,7 +556,7 @@ int main( int argc, char *argv[] )
         if ( SynDiag == NULL ) {
             warningNoFL("no grammar description recognized");
             cleanUp();
-            zzDIE;
+            return EXIT_FAILURE;
         } else if ( !GenCC ) {
             ErrFile = fopen(OutMetaName(ErrFileName), "w");
             require(ErrFile != NULL, "main: can't open err file");

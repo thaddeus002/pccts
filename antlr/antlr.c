@@ -16,6 +16,7 @@
 #include <ctype.h>
 #include <stdbool.h>
 #include "hash.h"
+#include "syn.h"
 #include "generic.h"
 #include "proto.h"
 #include "antlr.h"

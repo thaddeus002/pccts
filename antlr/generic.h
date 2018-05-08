@@ -36,6 +36,7 @@
 
 
 #include "syn.h"
+#include "set.h"
 // for Entry
 #include "hash.h"
 

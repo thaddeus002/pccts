@@ -231,7 +231,7 @@ int main(int argc, char *argv[])
     "Sorcerer -  A simple tree-parser generator  Version %s  1992-2001\n",
     VersionText);
 
-  if ( argc == 1 ) { help(); zzDONE; }
+  if ( argc == 1 ) { help(); return EXIT_SUCCESS; }
   ProcessArgs(argc-1, &(argv[1]), options);
 
   symbols = newHashTable();
@@ -248,7 +248,7 @@ int main(int argc, char *argv[])
   if ( found_error )
   {
     fprintf(stderr, "no parser generated due to parsing errors; exiting...\n");
-    zzDIE;
+    return EXIT_FAILURE;
   }
 
   if ( GenCPP ) {
@@ -277,8 +277,8 @@ int main(int argc, char *argv[])
       fclose(ProtoFILE);
     }
   }
-  if ( found_error ) {zzDIE;}
-  else zzDONE;
+  if ( found_error ) {return EXIT_FAILURE;}
+  else return EXIT_SUCCESS;
 }
 
 void

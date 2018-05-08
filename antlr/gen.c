@@ -40,6 +40,7 @@
 #include "constants.h"
 #include "hash.h"
 #include "generic.h"
+#include "syn.h"
 #include "proto.h"
 #include "dlgdef.h"
 #include "logger.h"
@@ -51,6 +52,9 @@
 #include "fset.h"
 #include "fset2.h"
 #include "gen.h"
+
+#define ATOKPTR_H     "ATokPtr.h"
+#define ATOKENBUFFER_H    "ATokenBuffer.h"
 
 /* User may redefine how line information looks */
 #ifndef LineInfoFormatStr

@@ -113,15 +113,15 @@ char *decodeJType[] = {
 
               /* H a s h  T a b l e s */
 
-Entry **Tname,      /* Table of all token names (maps name to tok num)*/
-    **Texpr,      /* Table of all token expressions
+Entry **Tname; /* Table of all token names (maps name to tok num)*/
+Entry **Texpr; /* Table of all token expressions
                  (maps expr to tok num) */
-    **Rname,      /* Table of all Rules (has ptr to start of rule) */
-    **Fcache,     /* Cache of First/Follow Computations */
-    **Tcache;     /* Tree cache; First/Follow for permute trees */
-Entry **Elabel;     /* Table of all element label names */
-Entry **Sname;      /* Signal names */
-Entry   **Pname;            /* symbolic predicate names MR11 */
+Entry **Rname; /* Table of all Rules (has ptr to start of rule) */
+Entry **Fcache; /* Cache of First/Follow Computations */
+Entry **Tcache; /* Tree cache; First/Follow for permute trees */
+Entry **Elabel; /* Table of all element label names */
+Entry **Sname; /* Signal names */
+Entry **Pname; /* symbolic predicate names MR11 */
 
 
               /* V a r i a b l e s */
