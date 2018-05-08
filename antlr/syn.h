@@ -35,6 +35,7 @@
 #define __SYN_H__
 
 #include "set.h"
+#include "antlr_log.h"
 
 #define NumNodeTypes  4
 #define NumJuncTypes  9

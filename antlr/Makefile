@@ -46,10 +46,12 @@ PREFIX=/usr/local
 
 
 SRC=antlr.c scan.c error.c bits.c build.c fset2.c fset.c gen.c globals.c \
-	hash.c lex.c main.c misc.c $(COMMON)/set.c pred.c egman.c mrhoist.c fcache.c logger.c utils.c
+	hash.c lex.c main.c misc.c $(COMMON)/set.c pred.c egman.c mrhoist.c \
+	fcache.c logger.c utils.c antlr_log.c
 
 OBJ=antlr.o scan.o error.o bits.o build.o fset2.o fset.o gen.o \
-        globals.o hash.o lex.o main.o misc.o set.o pred.o egman.o mrhoist.o fcache.o logger.o utils.o
+        globals.o hash.o lex.o main.o misc.o set.o pred.o egman.o mrhoist.o \
+        fcache.o logger.o utils.o antlr_log.o
 
 antlr : $(OBJ) $(SRC)
 	$(CC) $(CFLAGS) $(CPPFLAGS) $(COTHER) -o antlr $(OBJ)

@@ -59,6 +59,7 @@
 #include "dlgdef.h"
 #include <ctype.h>
 #include "logger.h"
+#include "antlr_log.h"
 #include "gen.h"
 #include "syn.h"
 #include "fset.h"

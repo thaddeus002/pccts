@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "logger.h"
+#include "antlr_log.h"
 #include "utils.h"
 
 

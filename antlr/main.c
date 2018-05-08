@@ -46,6 +46,7 @@
 #include "antlr.h" // for ANTLR()
 #include "dlgdef.h"
 #include "logger.h"
+#include "antlr_log.h"
 #include "gen.h"
 #include "fcache.h"
 #include "bits.h"

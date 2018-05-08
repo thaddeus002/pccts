@@ -25,6 +25,7 @@
 #include "mode.h"
 #include "constants.h"
 #include "logger.h"
+#include "antlr_log.h"
 #include "build.h"
 #include "egman.h"
 #include "pred.h"
