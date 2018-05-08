@@ -32,6 +32,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 #include "relabel.h"
 #include "automata.h"
@@ -204,8 +205,8 @@ void make_dfa_model_node(int width)
        + sizeof(int)*width);
   dfa_model_node->node_no = -1; /* impossible value for real dfa node */
   dfa_model_node->dfa_set = 0;
-  dfa_model_node->alternatives = FALSE;
-  dfa_model_node->done = FALSE;
+  dfa_model_node->alternatives = false;
+  dfa_model_node->done = false;
   dfa_model_node->nfa_states = empty;
   for(i = 0; i<width; i++){
     dfa_model_node->trans[i] = NIL_INDEX;
@@ -241,7 +242,7 @@ dfa_node **nfa_to_dfa(nfa_node *start)
 
   do {
     /* Mark dfa state x as "done" */
-    d_state->done = TRUE;
+    d_state->done = true;
     nfa_list = set_pdq(d_state->nfa_states);
     for (a = 0; a<class_no; ++a) {
       /* Add NFA states reached by a from d_state */
@@ -256,7 +257,7 @@ dfa_node **nfa_to_dfa(nfa_node *start)
         trans_d_state = dfastate(t);
         /* And make transition x->t, labeled with a */
         d_state->trans[a] = DFA_NO(trans_d_state);
-        d_state->alternatives = TRUE;
+        d_state->alternatives = true;
       }
     }
     free(nfa_list);

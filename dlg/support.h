@@ -56,13 +56,7 @@ FILE *read_stream(char *name);
  */
 FILE *write_stream(char *outputDirectory, char *name);
 
-/**
- * Print message and quit.
- */
-void fatal(char *message,int line_no);
 
 void error(char *message,int line_no);
-
-void warning(char *message,int line_no);
 
 #endif

@@ -30,19 +30,12 @@
 #include <stdlib.h>
 #include "dlg_p.h"
 #include "constants.h"
+#include "logger.h"
 #include "support.h"
 
 // TODO remove this var
 int err_found = 0;      /* indicates whether problem found */
 
-/**
- * Quit program if an error occured.
- */
-static void internal_error(char *s, char *file,int line)    /* MR9 23-Sep-97 */
-{
-  fprintf(stderr,s,file,line);
-  exit(EXIT_FAILURE);
-}
 
 /**
  * Allocate 'bytes' bytes, or quit if fail.
@@ -56,8 +49,7 @@ char *dlg_malloc(int bytes,char *file,int line)
 
   t = (char *) malloc(bytes);
   if (!t){
-    internal_error("%s(%d): unable to allocate memory\n",
-      file,line);
+    internal_error_FL("unable to allocate memory", file, line);
   }
   return t;
 }
@@ -75,8 +67,7 @@ char *dlg_calloc(int n,int bytes,char *file,int line)
 
   t = (char *) calloc(n,bytes);
   if (!t){
-    internal_error("%s(%d): unable to allocate memory\n",
-      file,line);
+    internal_error_FL("unable to allocate memory", file, line);
   }
   return t;
 }
@@ -93,15 +84,13 @@ FILE *read_stream(char *name)
 
   if (name){
     if (name[0] == '-') {
-      fprintf(stderr, "dlg: invalid option: '%s'\n", name);
+      warningNoFL("dlg: invalid option: '%s'", name);
       f = NULL;
     }else{
       f = fopen(name, "r");
       if (f == NULL){
         /* couldn't open file */
-        fprintf(stderr,
-          "dlg: Warning: Can't read file %s.\n",
-          name);
+        warningNoFL("dlg: Can't read file %s", name);
       }
     }
   }else{
@@ -160,21 +149,16 @@ FILE *write_stream(char *outputDirectory, char *name)
 
   if (name){
     if (name[0] == '-') {
-      fprintf(stderr, "dlg: invalid option: '%s'\n", name);
+      warningNoFL("dlg: invalid option: '%s'", name);
       f = NULL;
     }else{
       f = fopen(OutMetaName(outputDirectory, name), "w");
       if (f == NULL){
         /* couldn't open file */
-        fprintf(stderr,
-          "dlg: Warning: Can't write to file %s.\n",
-          name);
+        warningNoFL("dlg: Can't write to file %s.", name);
       }
-      else
 #ifdef SPECIAL_FOPEN
-                special_fopen_actions(OutMetaName(name)); /* MR1 */
-#else
-    ;           /* MR1 */
+      else special_fopen_actions(OutMetaName(name));
 #endif
     }
   }else{
@@ -185,25 +169,8 @@ FILE *write_stream(char *outputDirectory, char *name)
 }
 
 
-void fatal(char *message,int line_no)
-{
-  fprintf(stderr,ErrHdr,
-    (file_str[0] ? file_str[0] : "stdin"), line_no);
-  fprintf(stderr, " Fatal: %s\n", message);
-  exit(EXIT_FAILURE);
-}
-
 void error(char *message,int line_no)
 {
-  fprintf(stderr,ErrHdr,
-    (file_str[0] ? file_str[0] : "stdin"), line_no);
-  fprintf(stderr, " Error: %s\n", message);
+  errorFL(message, file_str[0] ? file_str[0] : "stdin", line_no);
   err_found = 1;
-}
-
-void warning(char *message,int line_no)
-{
-  fprintf(stderr,ErrHdr,
-    (file_str[0] ? file_str[0] : "stdin"), line_no);
-  fprintf(stderr, " Warning: %s\n", message);
 }

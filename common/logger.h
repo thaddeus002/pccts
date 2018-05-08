@@ -19,6 +19,15 @@
  */
 void hdrLog(char *f,int l);
 
+/**
+ * Log an info message.
+ */
+void logNoFL(char *err, ...);
+
+/**
+ * Log an info message with filename and line number.
+ */
+void logFL(char *err, char *file, int line, ...);
 
 /**
  * Log an error message.

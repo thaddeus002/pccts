@@ -91,6 +91,28 @@ void warningNoFL(char *err, ...) {
 }
 
 /**
+ * Log an info message.
+ */
+void logNoFL(char *err, ...) {
+    va_list ap;
+    va_start(ap, err);
+    log_message_va(NONE, err, NULL, 0, ap);
+    va_end(ap);
+}
+
+/**
+ * Log an info message with filename and line number.
+ */
+void logFL(char *err, char *file, int line, ...) {
+    va_list ap;
+    va_start(ap, line);
+    log_message_va(NONE, err, file, line, ap);
+    va_end(ap);
+}
+
+
+
+/**
  * Log a warning message.
  */
 void warning(char *err, char *file, int line, ...) {

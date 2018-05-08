@@ -42,6 +42,7 @@
 #include "constants.h"
 #include "support.h"
 #include "automata.h"
+#include "logger.h"
 
 #define ANTLR_VERSION 13333
 
@@ -84,7 +85,7 @@ void p_cl_name(char *s, char *t)
       class_name = t;
     }
     else {
-      warning("-cl only valid in C++ mode; -cl ignored...",0);
+      warningNoFL("-cl only valid in C++ mode; -cl ignored...");
     }
   }
 void p_outdir(char *s,char *t) {OutputDirectory=t;}
@@ -183,7 +184,7 @@ static void usage(char *program)
 int main(int argc, char *argv[])
 {
   init();
-  fprintf(stderr, "%s  Version %s   1989-2001\n", basename(argv[0]), VERSION);
+  fprintf(stdout, "%s  Version %s   1989-2001\n", basename(argv[0]), VERSION);
   if ( argc == 1 )
   {
     usage(argv[0]);
@@ -191,7 +192,7 @@ int main(int argc, char *argv[])
 
   ProcessArgs(argc-1, &(argv[1]), options);
   if (interactive && gen_cpp) {
-    fprintf(stderr,"\n");
+    fprintf(stdout,"\n");
   }
   input_stream = read_stream(file_str[0]);
   if (input_stream) {
@@ -199,7 +200,7 @@ int main(int argc, char *argv[])
     if ( gen_cpp ) {
       output_stream = write_stream(OutputDirectory, ClassName(CPP_FILE_SUFFIX));
       if ( file_str[1]!=NULL ) {
-        warning("output file implicit in C++ mode; ignored...",0);
+        warningNoFL("output file implicit in C++ mode; ignored...");
       }
       class_stream = write_stream(OutputDirectory, ClassName(".h"));
       mode_stream = class_stream;

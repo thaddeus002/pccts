@@ -22,10 +22,10 @@ PREFIX=/usr/local
 
 
 SRC = dlg_p.c dlg_a.c main.c error.c $(COMMON)/set.c support.c output.c \
-        relabel.c automata.c
+        relabel.c automata.c $(COMMON)/logger.c
 
 OBJ = dlg_p.o dlg_a.o main.o error.o set.o support.o output.o \
-        relabel.o automata.o
+        relabel.o automata.o logger.o
 
 dlg : $(OBJ) $(SRC)
 		$(CC) $(CFLAGS) $(CPPFLAGS) -o dlg $(OBJ)
@@ -42,6 +42,9 @@ main.o : main.c dlg_p.h
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c main.c
 
 set.o : $(COMMON)/set.c
+	$(CC) -c $(CFLAGS) $(CPPFLAGS) $<
+
+logger.o: $(COMMON)/logger.c
 	$(CC) -c $(CFLAGS) $(CPPFLAGS) $<
 
 #clean up all the intermediate files

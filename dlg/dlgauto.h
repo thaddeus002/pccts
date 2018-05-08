@@ -30,6 +30,7 @@
 #ifndef ZZDEFAUTO_H
 #define ZZDEFAUTO_H
 
+#include "logger.h"
 
 zzchar_t  *zzlextext; /* text of most recently matched token */
 zzchar_t  *zzbegexpr; /* beginning of last reg expr recogn. */
@@ -397,16 +398,14 @@ void zzadvance()
 
 void zzerrstd(const char *s)
 {
-  zzLexErrCount++;                /* MR11 */
-  fprintf(stderr,
-      "%s near line %d (text was '%s')\n",
-      ((s == NULL) ? "Lexical error" : s),
-      zzline,zzlextext);
+  zzLexErrCount++;
+  logNoFL("%s near line %d (text was '%s')", ((s == NULL) ? "Lexical error" : s),
+      zzline, zzlextext);
 }
 
 int zzerr_in()
 {
-  fprintf(stderr,"No input stream, function, or string\n");
+  logNoFL("No input stream, function, or string");
   /* return eof to get out gracefully */
   return EOF;
 }

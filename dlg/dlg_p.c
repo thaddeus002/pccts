@@ -26,6 +26,7 @@
 #include "automata.h"
 #include "constants.h"
 #include "output.h"
+#include "logger.h"
 
 
 /* MR23 In order to remove calls to PURIFY use the antlr -nopurify option */
@@ -248,7 +249,8 @@ void rule_list()
   else {
     if ( (setwd1[LA(1)]&0x40) ) {
       zzaRet.l = new_nfa_node(); zzaRet.r = NULL;
-      warning("no regular expressions", zzline);
+      warning("no regular expressions", file_str[0] ? file_str[0] : "stdin", zzline);
+
     }
     else {zzFAIL(1,zzerr3,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
   }
@@ -850,8 +852,10 @@ int dump_nfas(int first_node, int last_node)
  */
 void zzsyn(char *text, int tok, char *egroup, SetWordType *eset, int etok, int k, char *bad_text)
 {
-    fprintf(stderr, ErrHdr, file_str[0]!=NULL?file_str[0]:"stdin", zzline);
+    hdrLog(file_str[0]!=NULL?file_str[0]:"stdin" , zzline);
+
     fprintf(stderr, " syntax error at \"%s\"", (tok==zzEOF_TOKEN)?"EOF":text);
+
     if ( !etok && !eset ) {fprintf(stderr, "\n"); return;}
     if ( k==1 ) fprintf(stderr, " missing");
     else
