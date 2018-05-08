@@ -31,6 +31,7 @@
 #include "stdpccts.h"
 #include "sym.h"
 #include "proto.h"
+#include "logger.h"
 
 static GLA *end_node;
 
@@ -87,7 +88,7 @@ Lookahead( GLA *p )
                 require(p->p1->p1!=NULL, "Lookahead: invalid GLA");
                 require(p->p1->p1->p1!=NULL, "Lookahead: invalid GLA");
                 if ( p->p1->p1->p1->visited ) {
-                    errNoFL(eMsg2("infinite recursion from rule %s to rule %s",
+                    errNoFL(eMsg("infinite recursion from rule %s to rule %s",
                                   p->in_rule,p->p1->in_rule));
                     rv = set_of(wild_card);
                     trouble = 1;
@@ -328,7 +329,7 @@ build_GLA_for_element( AST *elem, GLA **elem_tail )
              */
             p = (SymEntry *) hash_get(symbols, elem->text);
             if ( p==NULL || !p->defined ) {
-                errNoFL(eMsg1("rule not defined: '%s'", elem->text));
+                errNoFL(eMsg("rule not defined: '%s'", elem->text));
                 start = newGLANode();
                 start->p1 = newGLANode();
                 start->label1 = wild_card;
@@ -579,7 +580,7 @@ test_block_consistency( AST *blk, int block_type )
             in_common = set_and(alt1->lookahead, alt2->lookahead);
             if ( !set_nil(in_common) )
             {
-                fprintf(stderr, ErrHdr, FileStr[t->file], t->line);
+                hdrLog(FileStr[t->file], t->line);
                 fprintf(stderr, " warning: alts %d and %d of (...) nondeterministic upon ",
                         i1, i2);
                 set_fprint(stderr, in_common);
@@ -598,7 +599,7 @@ test_block_consistency( AST *blk, int block_type )
             in_common = set_and(alt1->lookahead, blk->start_state->lookahead);
             if ( !set_nil(in_common) )
             {
-                fprintf(stderr, ErrHdr, FileStr[t->file], t->line);
+                hdrLog(FileStr[t->file], t->line);
                 fprintf(stderr, " warning: alt %d and optional branch of %s nondeterministic upon ",
                         i1, block_type==OPT?"{...}":"(...)*");
                 set_fprint(stderr, in_common);

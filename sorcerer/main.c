@@ -70,10 +70,10 @@ pOut( char *s, char *t )
 static void
 pFile( char *s )
 {
-  if ( *s=='-' ) { warnNoFL( eMsg1("invalid option: '%s'",s) ); return; }
+  if ( *s=='-' ) { warningNoFL("invalid option: '%s'",s); return; }
   if ( DontAcceptFiles )
   {
-    warnNoFL(eMsg1("file '%s' ignored as '-' (stdin option) was specified first",s));
+    warningNoFL("file '%s' ignored as '-' (stdin option) was specified first",s);
     return;
   }
 
@@ -87,7 +87,7 @@ pDToks( char *s, char *t )
 {
   if ( !GenCPP )
   {
-    warnNoFL("-def-tokens valid with C++ interface only; ignored");
+    warningNoFL("-def-tokens valid with C++ interface only; ignored");
     return;
   }
   else {
@@ -100,18 +100,18 @@ pDToksFile( char *s, char *t )
 {
   if ( GenCPP )
   {
-    warnNoFL("-def-tokens-file not valid with C++ interface; ignored");
+    warningNoFL("-def-tokens-file not valid with C++ interface; ignored");
     return;
   }
   if ( Inline )
   {
-    warnNoFL("-def-tokens-file conflicts with -inline; ignored");
+    warningNoFL("-def-tokens-file conflicts with -inline; ignored");
   }
   else {
     def_token_file = t;
     if ( def_token_file == NULL )
     {
-      warnNoFL("don't you want filename with that -def-tokens-file?; ignored");
+      warningNoFL("don't you want filename with that -def-tokens-file?; ignored");
     }
   }
 }
@@ -121,14 +121,14 @@ pPrefix( char *s, char *t )
 {
   Prefix = t;
   if ( GenCPP ) {
-    warnNoFL("-prefix conflicts with C++ interface; ignored");
+    warningNoFL("-prefix conflicts with C++ interface; ignored");
     Prefix = "";
     return;
   }
 
   if ( Prefix == NULL )
   {
-    warnNoFL("don't you want string with that -prefix?; ignored");
+    warningNoFL("don't you want string with that -prefix?; ignored");
     Prefix = "";
   }
 }
@@ -137,9 +137,9 @@ static void
 pProtoFile( char *s, char *t )
 {
   if ( GenCPP )
-    {warnNoFL("-proto-file not valid with C++ interface; ignored");}
+    {warningNoFL("-proto-file not valid with C++ interface; ignored");}
   if ( t==NULL )
-    {warnNoFL("don't you want filename with that -proto-file?; ignored");}
+    {warningNoFL("don't you want filename with that -proto-file?; ignored");}
   else {
     GenProtoFile = t;
   }
@@ -150,11 +150,11 @@ pstdin()
 {
   if ( DontAcceptStdin )
   {
-    warnNoFL("'-' (stdin) ignored as files were specified first");
+    warningNoFL("'-' (stdin) ignored as files were specified first");
     return;
   }
   if ( GenCPP )
-    {warnNoFL("'-' (stdin) cannot be used with C++ interface; ignored");}
+    {warningNoFL("'-' (stdin) cannot be used with C++ interface; ignored");}
 
   require(NumFiles<MaxNumFiles,"exceeded max # of input files");
   FileStr[NumFiles++] = "stdin";
@@ -178,11 +178,11 @@ pInline()
 {
   if ( def_token_file!=NULL )
   {
-    warnNoFL("-inline conflicts with -def-tokens; ignored");
+    warningNoFL("-inline conflicts with -def-tokens; ignored");
   }
   else if ( GenCPP )
   {
-    warnNoFL("-inline conflicts with C++ interface; ignored");
+    warningNoFL("-inline conflicts with C++ interface; ignored");
   }
   else Inline = 1;
 }
@@ -200,7 +200,7 @@ pNoCtor()
 {
   NoCtor = 1;
   if ( ! GenCPP )
-    {warnNoFL("-noctor needs -CPP option; ignored");}
+    {warningNoFL("-noctor needs -CPP option; ignored");}
 }
 
 Opt options[] = {
@@ -258,14 +258,14 @@ int main(int argc, char *argv[])
 
   if ( !UserDefdTokens ) gen_tokens_file();
   else if ( def_token_file!=NULL ) {
-    warnNoFL("tokens file not generated; it conflicts with use of #tokdefs");
+    warningNoFL("tokens file not generated; it conflicts with use of #tokdefs");
   }
 
   if ( GenProtoFile!=NULL )
   {
     FILE *ProtoFILE;
     ProtoFILE = fopen(OutMetaName(GenProtoFile), "w");
-    if ( ProtoFILE==NULL ) {warnNoFL(eMsg1("Can't open prototype file '%s'; ignored",GenProtoFile));}
+    if ( ProtoFILE==NULL ) {warningNoFL("Can't open prototype file '%s'; ignored",GenProtoFile);}
     else {
 #ifdef SPECIAL_FOPEN
                         special_fopen_actions(OutMetaName(GenProtoFile));
@@ -311,7 +311,7 @@ NextFile( void )
     f = fopen(FileStr[CurFile], "r");
     if ( f == NULL )
     {
-      warnNoFL( eMsg1("file %s doesn't exist; ignored", FileStr[CurFile]) );
+      warningNoFL("file %s doesn't exist; ignored", FileStr[CurFile]);
     }
     else
     {
@@ -357,32 +357,6 @@ int topint(void)
     return istack[isp];
 }
 
-/** sprintf up to 3 strings */
-char *
-eMsg3( char *s, char *a1, char *a2, char *a3 )
-{
-    static char buf[250];           /* DANGEROUS as hell !!!!!! */
-
-    sprintf(buf, s, a1, a2, a3);
-    return( buf );
-}
-
-char *
-eMsgd( char *s, int d )
-{
-    static char buf[250];           /* DANGEROUS as hell !!!!!! */
-
-    sprintf(buf, s, d);
-    return( buf );
-}
-
-void
-fatalFL( char *err_, char *f, int l )
-{
-    fprintf(stderr, ErrHdr, f, l);
-    fprintf(stderr, " %s\n", err_);
-    exit(1);
-}
 
 /**
  * add an element to a list.
@@ -529,7 +503,7 @@ ensure_no_C_file_collisions(char *class_c_file)
   {
     if ( strcmp(outname(FileStr[i]), class_c_file)==0 )
     {
-      fatal(eMsg1("class def output file conflicts with parser output file: %s",
+      fatal(eMsg("class def output file conflicts with parser output file: %s",
             outname(FileStr[i])));
     }
   }
@@ -666,7 +640,7 @@ DumpType( char *s, FILE *f, char *file, int line )
   while ( isalnum(*p) || *p=='_' ) --p;
   if ( p<=s )
   {
-    warnFL(eMsg1("invalid parameter/return value: '%s'",s), file, line);
+    warning("invalid parameter/return value: '%s'", file, line, s);
     return;
   }
   end = p;          /* here is where we stop printing alnum */
@@ -702,7 +676,7 @@ newRefVarRec(char *t,char *lab, char *init)
     q->token = REFVAR;
     q->defined = 1;
   }
-  else err(eMsg2("Reference variable clashes with %s: '%s'", zztokens[q->token], lab));
+  else err(eMsg("Reference variable clashes with %s: '%s'", zztokens[q->token], lab));
 
   p = (RefVarRec *) calloc(1, sizeof(RefVarRec));
   require(p!=NULL, "newRefVarRec: no memory");
@@ -850,7 +824,7 @@ cvt_token_str(char *prefix, char *s)
     q = (SymEntry *) hash_get(symbols, tname);
     if ( q==NULL )
     {
-      warnNoFL(eMsg1("call to ast_scan() has reference to unknown token: '%s'",tname));
+      warningNoFL("call to ast_scan() has reference to unknown token: '%s'",tname);
     }
     else
     {

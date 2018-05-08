@@ -22,6 +22,7 @@
 #include "charbuf.h"
 #include "hash.h"
 #include "set.h"
+#include "logger.h"
 #include "sor.h"
 #define AST_FIELDS  \
 int token; char text[MaxAtom+1], label[MaxRuleName+1]; \
@@ -173,9 +174,9 @@ sordesc(AST**_root)
         }
     }
 
-    if ( he==0 && !Inline && !GenCPP ) warnNoFL("missing #header statement");
-    if ( he>1 ) warnNoFL("extra #header statement");
-    if ( to>1 ) warnNoFL("extra #tokdef statement");
+    if ( he==0 && !Inline && !GenCPP ) warningNoFL("missing #header statement");
+    if ( he>1 ) warningNoFL("extra #header statement");
+    if ( to>1 ) warningNoFL("extra #tokdef statement");
     {
         zzBLOCK(zztasp2);
         zzMake0;
@@ -340,7 +341,7 @@ tokdef(AST**_root)
         zzsave_dlg_state(&dst);
         define_num=0;
         f = fopen(tokdefs_file, "r");
-        if ( f==NULL ) {found_error=1; err(eMsg1("cannot open token defs file '%s'", tokdefs_file));}
+        if ( f==NULL ) {found_error=1; err(eMsg("cannot open token defs file '%s'", tokdefs_file));}
         else {ANTLRm(enum_file(&dumb), f, PARSE_ENUM_FILE);}
         zzrestore_antlr_state(&st);
         zzrestore_dlg_state(&dst);
@@ -420,13 +421,13 @@ rule(AST**_root)
         p->definition = (*_root);
     }
     else if ( p->token != NonTerm ) {
-        err(eMsg2("rule definition clashes with %s definition: '%s'", zztokens[p->token], p->str));
+        err(eMsg("rule definition clashes with %s definition: '%s'", zztokens[p->token], p->str));
         trouble = 1;
     }
     else {
         if ( p->defined ) {
             trouble = 1;
-            err(eMsg1("rule multiply defined: '%s'", zzaArg(zztasp1,1 ).text));
+            err(eMsg("rule multiply defined: '%s'", zzaArg(zztasp1,1 ).text));
         }
         else {
             p->defined = 1;
@@ -883,7 +884,7 @@ labeled_element(AST**_root,int no_copy)
         s->token = LABEL;
     }
     else if ( s->token!=LABEL ) {
-        err(eMsg2("label definition clashes with %s definition: '%s'", zztokens[s->token], label.text));
+        err(eMsg("label definition clashes with %s definition: '%s'", zztokens[s->token], label.text));
     }
     zzmatch(LABEL);  zzCONSUME;
     {
@@ -1293,7 +1294,7 @@ tree(AST**_root,int no_copy)
                         s->token = LABEL;
                     }
                     else if ( s->token!=LABEL ) {
-                        err(eMsg2("label definition clashes with %s definition: '%s'", zztokens[s->token], label.text));
+                        err(eMsg("label definition clashes with %s definition: '%s'", zztokens[s->token], label.text));
                     }
                     zzmatch(LABEL);  zzCONSUME;
                     {
@@ -1539,7 +1540,7 @@ defines(AST**_root)
             }
             else
             {
-                err(eMsg1("redefinition of token %s; ignored",zzaArg(zztasp2,2 ).text));
+                err(eMsg("redefinition of token %s; ignored",zzaArg(zztasp2,2 ).text));
                 ignore = 1;
             }
  zzCONSUME;
@@ -1608,7 +1609,7 @@ enum_def(AST**_root)
     }
     else
     {
-        err(eMsg1("redefinition of token %s; ignored",zzaArg(zztasp1,4 ).text));
+        err(eMsg("redefinition of token %s; ignored",zzaArg(zztasp1,4 ).text));
         ignore = 1;
     }
  zzCONSUME;
@@ -1707,7 +1708,7 @@ enum_def(AST**_root)
                             }
                             else
                             {
-                                err(eMsg1("redefinition of token %s; ignored",zzaArg(zztasp3,1 ).text));
+                                err(eMsg("redefinition of token %s; ignored",zzaArg(zztasp3,1 ).text));
                                 ignore = 1;
                             }
  zzCONSUME;
@@ -1777,7 +1778,7 @@ fail:
 void
 zzsyn(char *text, int tok, char *egroup, SetWordType *eset, int etok, int k, char *bad_text)
 {
-fprintf(stderr, ErrHdr, FileStr[CurFile]!=NULL?FileStr[CurFile]:"stdin", zzline);
+hdrLog(FileStr[CurFile]!=NULL?FileStr[CurFile]:"stdin", zzline);
 fprintf(stderr, " syntax error at \"%s\"", (tok==zzEOF_TOKEN)?"EOF":text);
 if ( !etok && !eset ) {fprintf(stderr, "\n"); return;}
 if ( k==1 ) fprintf(stderr, " missing");
@@ -1800,7 +1801,7 @@ SymEntry *p;
   p = (SymEntry *) hash_get(symbols, text);
 if ( p==NULL ) {
 if ( UserDefdTokens ) {
-err(eMsg1("implicit token definition of '%s' not allowed with #tokdefs",text));
+err(eMsg("implicit token definition of '%s' not allowed with #tokdefs",text));
 }
 p = (SymEntry *) hash_add(symbols, text, (Entry *) newSymEntry(text));
 p->token = Token;
@@ -1811,7 +1812,7 @@ set_orel(p->token_type, &referenced_tokens);
 }
 else {
 if ( p->token!=Token )
-err(eMsg2("token definition clashes with %s definition: '%s'", zztokens[p->token], text));
+err(eMsg("token definition clashes with %s definition: '%s'", zztokens[p->token], text));
 }
 return p;
 }

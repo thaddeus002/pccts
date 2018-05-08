@@ -392,7 +392,7 @@ static void gen_block( AST *q, int block_type )
   g = first_guess_block(q->down);
   if ( num_alts==1 && g!=NULL )
   {
-    warnFL("(...)? predicate in block with one alternative; will generate bad code",
+    warning("(...)? predicate in block with one alternative; will generate bad code",
          FileStr[g->file], g->line);
   }
 
@@ -694,12 +694,12 @@ static void gen_element( AST *t )
         if ( t->down->token == BLOCK ) gen_block(t->down, PRED_OP);
       }
       else {
-        warnFL("predicate not at beginning of alternative; ignored",
+        warning("predicate not at beginning of alternative; ignored",
              FileStr[t->file], t->line);
       }
       break;
     default :
-      fatal(eMsgd("invalid elemental node type: %d", t->token));
+      fatal(eMsg("invalid elemental node type: %d", t->token));
   }
 }
 
@@ -800,12 +800,8 @@ dumpAction( char *s, FILE *output, int tabs, int file, int line, int final_newli
 {
     int inDQuote, inSQuote;
     require(s!=NULL, "dumpAction: NULL action");
-    require(output!=NULL, eMsg1("dumpAction: output FILE is NULL for %s",s));
+    require(output!=NULL, eMsg("dumpAction: output FILE is NULL for %s",s));
 
-/*  if ( GenLineInfo && file != -1 )
-  {
-    fprintf(output, LineInfoFormatStr, line, FileStr[file]);
-  }*/
     PastWhiteSpace( s );
     /* don't print a tab if first non-white char is a # (preprocessor command) */
     if ( *s!='#' ) {
@@ -1052,7 +1048,7 @@ void gen_tokens_file(void)
   f = fopen(def_token_file, "w");
   if ( f==NULL )
   {
-    errNoFL(eMsg1("cannot write token definition file %s", def_token_file));
+    errNoFL(eMsg("cannot write token definition file %s", def_token_file));
     return;
   }
 #ifdef SPECIAL_FOPEN

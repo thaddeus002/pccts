@@ -1,6 +1,4 @@
 /*
- * hash.h -- define hash table entries, sizes, hash function...
- *
  * SOFTWARE RIGHTS
  *
  * We reserve no LEGAL rights to SORCERER -- SORCERER is in the public
@@ -25,6 +23,14 @@
  * Terence Parr
  * AHPCRC, University of Minnesota
  * 1992-2001
+ */
+
+/**
+ * \file hash.h
+ * \brief define hash table entries, sizes, hash function...
+ *
+ * Manage hash tables.
+ * A HashTable is a collection of Entry classed by hash of str.
  */
 
         /* H a s h  T a b l e  S t u f f */

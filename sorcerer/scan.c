@@ -306,9 +306,9 @@ static void act31()
 
 static void act32()
 {
-        NLA = 92;
-        warn(eMsg1("unknown meta-op: %s",LATEXT(1))); zzskip();
-    }
+    NLA = 92;
+    warn(eMsg("unknown meta-op: %s",LATEXT(1))); zzskip();
+}
 
 static unsigned char shift0[257] = {
   0, 37, 37, 37, 37, 37, 37, 37, 37, 37,
@@ -829,7 +829,7 @@ static void act67()
         zzbegexpr[1] = ' ';
         if ( zzbufovf ) {
             found_error = 1;
-            err( eMsgd("action buffer overflow; size %d",ZZLEXBUFSIZE));
+            err(eMsg("action buffer overflow; size %d",ZZLEXBUFSIZE));
         }
     }
 
@@ -846,7 +846,7 @@ static void act68()
                 zzbegexpr[0] = ' ';
                 if ( zzbufovf ) {
                     found_error = 1;
-                    err( eMsgd("parameter buffer overflow; size %d",ZZLEXBUFSIZE));
+                    err(eMsg("parameter buffer overflow; size %d",ZZLEXBUFSIZE));
                 }
             }
             else {
