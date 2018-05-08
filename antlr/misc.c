@@ -549,9 +549,9 @@ char *Fkey( char *rule, int computation, int k )
   int i;
 
   if ( k > 99 )                                                       /* MR10 */
-    fatal("k>99 is too big for this implementation of ANTLR!\n");   /* MR10 */
+    antlr_fatal("k>99 is too big for this implementation of ANTLR!\n");   /* MR10 */
   if ( (i=strlen(rule)) > MaxRuleName )                               /* MR10 */
-    fatal(eMsg("rule name > max of %d\n", MaxRuleName));         /* MR10 */
+    antlr_fatal(eMsg("rule name > max of %d\n", MaxRuleName));         /* MR10 */
   strcpy(key,rule);
 
 /* MR10 */     key[i]='*';
@@ -595,7 +595,7 @@ void FoPush( char *rule, int k )
     require(valid(FoStack[k]), "FoPush: invalid FoStack");
 #endif
     if ( FoTOS[k] >= &(FoStack[k][FoStackSize-1]) )
-      fatal(eMsg("exceeded max depth of FOLLOW recursion (%d)\n",
+      antlr_fatal(eMsg("exceeded max depth of FOLLOW recursion (%d)\n",
             FoStackSize));
     require(FoTOS[k]>=FoStack[k],
         eMsg("FoPush: FoStack stack-ptr is playing out of its sandbox",

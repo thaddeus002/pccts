@@ -150,19 +150,19 @@ typedef struct _ExceptionGroup {
  * the pointer to the node to operate on and a pointer to the rule
  * in which it is enclosed.
  */
-#define TRANS(p)  {if ( (p)==NULL ) fatal("TRANS: NULL object");    \
+#define TRANS(p)  {if ( (p)==NULL ) antlr_fatal("TRANS: NULL object");    \
           if ( (p)->ntype == nJunction ) (*(fpJTrans[((Junction *)(p))->jtype]))( p );\
           else (*(fpTrans[(p)->ntype]))( p );}
 
-#define PRINT(p)  {if ( (p)==NULL ) fatal("PRINT: NULL object");\
+#define PRINT(p)  {if ( (p)==NULL ) antlr_fatal("PRINT: NULL object");\
           (*(fpPrint[(p)->ntype]))( p );}
 
-#define REACH(p,k,rk,a) {if ( (p)==NULL ) fatal("REACH: NULL object");\
+#define REACH(p,k,rk,a) {if ( (p)==NULL ) antlr_fatal("REACH: NULL object");\
           (a) = (*(fpReach[(p)->ntype]))( p, k, rk );}
 
 #define TRAV(p,k,rk,a) {if ( (p)==NULL ) {\
             if ( ContextGuardTRAV ) (a)=NULL; \
-            else fatal("TRAV: NULL object");\
+            else antlr_fatal("TRAV: NULL object");\
             } \
           else (a) = (*(fpTraverse[(p)->ntype]))( p, k, rk );}
 

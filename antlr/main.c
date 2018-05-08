@@ -430,7 +430,7 @@ int main( int argc, char *argv[] )
     ProcessArgs(argc-1, &(argv[1]), options);
 
     if (MR_AmbAidRule && AlphaBetaTrace) {
-        fatal("Can't specify both -aa (ambiguity aid) and -alpha (\"(alpha)? beta\" aid)");
+        antlr_fatal("Can't specify both -aa (ambiguity aid) and -alpha (\"(alpha)? beta\" aid)");
     }
 
     if (MRhoistingk) {
@@ -493,7 +493,7 @@ int main( int argc, char *argv[] )
     LastTokenCounted = TokenNum;
     RemapForcedTokens();
     if ( CannotContinue ) {cleanUp(); return EXIT_FAILURE;}
-    if ( GenCC && no_classes_found ) fatal("required grammar class not found (exiting...)");
+    if ( GenCC && no_classes_found ) antlr_fatal("required grammar class not found (exiting...)");
     if ( WarningLevel>1 && HdrAction == NULL )
         warningNoFL("no #header action was found");
     if ( FoundAtOperator && ! FoundExceptionGroup) {
@@ -771,7 +771,7 @@ static void readDescr()
 {
     zzerr = dlgerror;
     input = NextFile();
-    if ( input==NULL ) fatal("No grammar description found (exiting...)");
+    if ( input==NULL ) antlr_fatal("No grammar description found (exiting...)");
     ANTLR(grammar(), input);
     tnodes_used_in_guard_predicates_etc=TnodesInUse;
 }
@@ -937,7 +937,7 @@ static void CompleteTokenSetRefs()
       set_free(a);
       q->tset=b;
     }
-    else fatal("invalid meta token");
+    else antlr_fatal("invalid meta token");
   }
 }
 
@@ -1002,7 +1002,7 @@ static void ensure_no_C_file_collisions(char *class_c_file)
   {
     if ( strcmp(outname(FileStr[i]), class_c_file)==0 )
     {
-      fatal(eMsg("class def output file conflicts with parser output file: %s",
+      antlr_fatal(eMsg("class def output file conflicts with parser output file: %s",
             outname(FileStr[i])));
     }
   }

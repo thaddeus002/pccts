@@ -8,7 +8,7 @@
 
           /* E r r o r  M a c r o s */
 
-#define fatal(err)  fatalFL(err, __FILE__, __LINE__)
+#define antlr_fatal(err)  fatalFL(err, __FILE__, __LINE__)
 #define fatal_internal(err) fatal_intern(err, __FILE__, __LINE__)
 
         /* S a n i t y  C h e c k i n g */

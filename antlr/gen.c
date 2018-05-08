@@ -525,7 +525,7 @@ static void genCombinedPredTreeContextOrig( Predicate *p )
         return;
      };
 
-  fatal("pred tree is really wacked");
+  antlr_fatal("pred tree is really wacked");
 }
 
 

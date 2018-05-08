@@ -548,7 +548,7 @@ Tree *tRuleRef(RuleRefNode *p, int k, set *rk_out)
     return t;
   }
   rk = rk2 = empty;
-    if (RulePtr == NULL) fatal("RulePtr==NULL");
+    if (RulePtr == NULL) antlr_fatal("RulePtr==NULL");
   r = RulePtr[q->rulenum];
   if ( r->lock[k] ) return NULL;
   save_halt = r->end->halt;

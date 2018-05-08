@@ -1297,7 +1297,7 @@ static void act113()
       static char buf[100];
       numericActionLabel=1;       /* MR10 */
       if ( strlen(zzbegexpr)>(size_t)85 )
-      fatal("$i attrib ref too big");
+      antlr_fatal("$i attrib ref too big");
       set_orel(atoi(zzbegexpr+1), &attribsRefdFromAction);
       if ( !GenCC ) sprintf(buf,"zzaArg(zztasp%d,%s)",
       BlkLevel-1,zzbegexpr+1);
@@ -1319,7 +1319,7 @@ static void act114()
       static char buf[100];
       numericActionLabel=1;       /* MR10 */
       if ( strlen(zzbegexpr)>(size_t)85 )
-      fatal("$i.field attrib ref too big");
+      antlr_fatal("$i.field attrib ref too big");
       zzbegexpr[strlen(zzbegexpr)-1] = ' ';
       set_orel(atoi(zzbegexpr+1), &attribsRefdFromAction);
       if ( !GenCC ) sprintf(buf,"zzaArg(zztasp%d,%s).",
@@ -1343,7 +1343,7 @@ static void act115()
       static char i[20], j[20];
       char *p,*q;
       numericActionLabel=1;       /* MR10 */
-      if (strlen(zzbegexpr)>(size_t)85) fatal("$i.j attrib ref too big");
+      if (strlen(zzbegexpr)>(size_t)85) antlr_fatal("$i.j attrib ref too big");
       for (p=zzbegexpr+1,q= &i[0]; *p!='.'; p++) {
         if ( q == &i[20] )
         fatalFL("i of $i.j attrib ref too big",
@@ -1452,7 +1452,7 @@ static void act120()
     {
       static char buf[100];
       if ( strlen(zzbegexpr)>(size_t)85 )
-      fatal("#i AST ref too big");
+      antlr_fatal("#i AST ref too big");
       if ( GenCC ) sprintf(buf,"_ast%d%s",BlkLevel-1,zzbegexpr+1);
       else sprintf(buf,"zzastArg(%s)",zzbegexpr+1);
       zzreplstr(buf);

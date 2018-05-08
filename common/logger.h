@@ -11,7 +11,7 @@
           /* E r r o r  M a c r o s */
 
 #define internal_error(err) internal_error_FL(err, __FILE__, __LINE__)
-
+#define fatal(err)    internal_error_FL(err, __FILE__, __LINE__)
 
 
 /**

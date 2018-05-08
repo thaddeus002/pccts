@@ -677,7 +677,7 @@ static void rule()
     }
   }
   BlkLevel++;
-  if (BlkLevel >= MAX_BLK_LEVEL) fatal("Blocks nested too deeply");
+  if (BlkLevel >= MAX_BLK_LEVEL) antlr_fatal("Blocks nested too deeply");
   /* MR23 */    CurBlockID_array[BlkLevel] = CurBlockID;
   /* MR23 */    CurAltNum_array[BlkLevel] = CurAltNum;
   zzmatch(106);
@@ -2393,7 +2393,7 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
         if ( (setwd8[LA(1)]&0x2) ) {
           if (  old_not ) warn("~ BLOCK is an undefined operation");
           BlkLevel++;
-          if (BlkLevel >= MAX_BLK_LEVEL) fatal("Blocks nested too deeply");
+          if (BlkLevel >= MAX_BLK_LEVEL) antlr_fatal("Blocks nested too deeply");
           /* MR23 */    CurBlockID_array[BlkLevel] = CurBlockID;
           /* MR23 */    CurAltNum_array[BlkLevel] = CurAltNum;
           {
