@@ -31,8 +31,6 @@
 /* largest file name size */
 #define MaxFileName   300
 
-#define ErrHdr "%s, line %d:"
-
 #define TopDirectory  "."
 #define DirectorySymbol "/"
 #define CPP_FILE_SUFFIX   ".cpp"

@@ -4,8 +4,7 @@
 
 #include "logger.h"
 
-// define ErrHdr "%s, line %d:"
-#include "constants.h"
+#define ErrHdr "%s, line %d:"
 
 
 /*void require(int expr, char *err) {
