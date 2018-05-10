@@ -46,7 +46,6 @@
 
 #define ANTLR_VERSION 13333
 
-#define zzSET_SIZE 8
 #include "antlr.h"
 #include "dlgdef.h"
 

@@ -10,12 +10,8 @@
  * ANTLR Version 1.33MR33
  */
 
-#include "dlg_p.h"
-#define zzSET_SIZE 8
 #include "antlr.h"
-#include "tokens.h"
-#include "dlgdef.h"
-#include "error_handling.h"
+#include "error.h"
 
 ANTLRChar *zztokens[46]={
   /* 00 */  "Invalid",

@@ -27,6 +27,8 @@
 #include "constants.h"
 #include "output.h"
 #include "logger.h"
+#include "error.h" // needed by error_handling.h
+#include "error_handling.h"
 
 
 /* MR23 In order to remove calls to PURIFY use the antlr -nopurify option */

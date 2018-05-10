@@ -40,7 +40,7 @@
 #define ANTLR_H
 
 #include <string.h>
-
+#include "dlg_p.h" // for Attrib
 
 typedef int ANTLRTokenType;
 typedef unsigned char SetWordType;
@@ -630,10 +630,6 @@ extern int _zzsetmatch_wdfltsig(SetWordType *tokensWanted,
 #endif
 
 
-/* MR26 */
-
-extern void zzFAIL(int k, ...);
-
         /* E x t e r n  D e f s */
 
 extern Attrib zzempty_attr(void);
@@ -663,7 +659,6 @@ extern void zzdflthandlers(int, int *);
 /* Define a parser; user should do a "#parser myname" in their grammar file */
 /*extern struct pccts_parser zzparser;*/
 
-extern char *zztokens[];
 #ifdef LL_K
 extern int zztokenLA[];
 extern zzchar_t zztextLA[][ZZLEXBUFSIZE];
