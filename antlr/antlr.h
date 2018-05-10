@@ -66,10 +66,12 @@ typedef struct _zzjmp_buf {
 
 
 /* can make this a power of 2 for more efficient lookup */
-
+/* Allow user to override default ZZLEXBUFSIZE  */
 #ifndef ZZLEXBUFSIZE
-#define ZZLEXBUFSIZE  8000 /* MR22 raise from 2k to 8k */
+#define ZZLEXBUFSIZE 32000
 #endif
+
+
 
 #define zzOvfChk                            \
     if ( zzasp <= 0 )                                           \

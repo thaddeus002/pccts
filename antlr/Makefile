@@ -38,7 +38,7 @@ COMMON=../common
 COMMON_H=../common
 
 CC ?= gcc
-CPPFLAGS += -I$(COMMON_H) -DZZLEXBUFSIZE=32000
+CPPFLAGS += -I$(COMMON_H)
 
 #ifndef PREFIX
 PREFIX=/usr/local

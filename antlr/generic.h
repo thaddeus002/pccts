@@ -44,13 +44,6 @@
 
 #define DefaultParserName "zzparser"
 
-/* MR9  JVincent@novell.com     Allow user to override default ZZLEXBUFSIZE  */
-/* MR11 thm                     Raise antlr's own default ZZLEXBUFSIZE to 8k */
-/* MR22 thm                     Raise antlr's own default ZZLEXBUFSIZE to 32k */
-
-#ifndef ZZLEXBUFSIZE
-#define ZZLEXBUFSIZE 32000
-#endif
 
 /* Tree/FIRST/FOLLOW defines -- valid only after all grammar has been read */
 #define ALT     TokenNum+1
