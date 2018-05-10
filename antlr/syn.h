@@ -66,8 +66,8 @@ typedef struct _tree {
     int token;
     union {
         int rk; /* if token==EpToken, => how many more tokens req'd */
-        struct _tree *tref; /* if token==TREE_REF */
-        set sref;     /* if token==SET */
+        struct _tree *tref; /* if token==TREE_REF (==TokenNum+3) */
+        set sref;     /* if token==SET (==TokenNum+2) */
     } v;
 } Tree;
 

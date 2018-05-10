@@ -40,15 +40,12 @@
 // for Entry
 #include "hash.h"
 
-#define StrSame     0
 
 #define DefaultParserName "zzparser"
 
 
 /* Tree/FIRST/FOLLOW defines -- valid only after all grammar has been read */
 #define ALT     TokenNum+1
-#define SET     TokenNum+2
-#define TREE_REF  TokenNum+3
 
 
           /* L i s t  N o d e s */
@@ -195,8 +192,6 @@ typedef struct _exprOrder {
     int lclass;
 } Expr;
 
-
-typedef Graph Attrib;
 
         /* M a x i m u m s */
 

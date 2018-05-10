@@ -30,9 +30,6 @@
  * \file antlr.h
  *
  * Define all of the stack setup and manipulation of $i, #i variables.
- *
- *  Notes:
- *    The type 'Attrib' must be defined before entry into this .h file.
  */
 
 
@@ -40,7 +37,7 @@
 #define ANTLR_H
 
 #include <string.h>
-#include "generic.h" // for Attrib
+#include "syn.h" // for Graph
 
 #define zzcr_attr(attr,tok,t)
 
@@ -49,6 +46,8 @@ typedef int ANTLRTokenType;
 typedef unsigned char SetWordType;
 
 typedef char ANTLRChar;
+
+typedef Graph Attrib;
 
             /* G u e s s  S t u f f */
 
