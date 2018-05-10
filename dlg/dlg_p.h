@@ -89,7 +89,7 @@ extern char *file_str[];  /* file names being used */ //main.c
 
 /******************** Functions ******************************/
 void make_nfa_model_node();
-
+void grammar(char *version, char *mode_file);
 
 
 #endif

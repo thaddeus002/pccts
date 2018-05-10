@@ -13,7 +13,6 @@
 #ifndef tokens_h
 #define tokens_h
 
-#define zzEOF_TOKEN 1
 #define L_EOF 4
 #define PER_PER 5
 #define NAME_PER_PER 6
@@ -45,19 +44,6 @@
 #define LIT 32
 #define REGCHAR 33
 
-void grammar(char *version, char *mode_file); //dlg_p.c
-void start_states();
-void do_conversion();
-void rule_list();
-void rule();
-void reg_expr();
-void and_expr();
-void repeat_expr();
-void expr();
-void atom_list();
-void near_atom();
-void atom();
-void anychar();
 
 #endif
 

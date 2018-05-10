@@ -28,8 +28,8 @@
 #include "output.h"
 #include "logger.h"
 #include "error.h" // needed by error_handling.h
+#define zzEOF_TOKEN 1  /* needed by error_handling.h */
 #include "error_handling.h"
-
 
 /* MR23 In order to remove calls to PURIFY use the antlr -nopurify option */
 
@@ -40,7 +40,6 @@
 #endif
 
 ANTLR_INFO
-
 
 extern int case_insensitive;/* ignore case of input spec. */
 extern int  dfa_basep[];  /* start of each group of dfa */ // output.c
@@ -69,6 +68,8 @@ void new_automaton_mode()
   set_free(used_chars);
   clear_hash();
 }
+
+static void start_states();
 
 void grammar(char *version, char *mode_file)
 {
@@ -147,7 +148,9 @@ fail:
   }
 }
 
-void start_states()
+static void do_conversion();
+
+static void start_states()
 {
   zzRULE;
   zzBLOCK(zztasp1);
@@ -193,7 +196,10 @@ fail:
   }
 }
 
-void do_conversion()
+static void rule();
+static void rule_list();
+
+static void do_conversion()
 {
   zzRULE;
   zzBLOCK(zztasp1);
@@ -220,7 +226,7 @@ fail:
   }
 }
 
-void rule_list()
+static void rule_list()
 {
   zzRULE;
   zzBLOCK(zztasp1);
@@ -265,7 +271,12 @@ fail:
   }
 }
 
-void rule()
+static void reg_expr();
+static void and_expr();
+static void repeat_expr();
+static void expr();
+
+static void rule()
 {
   zzRULE;
   zzBLOCK(zztasp1);
@@ -299,7 +310,7 @@ fail:
   }
 }
 
-void reg_expr()
+static void reg_expr()
 {
   zzRULE;
   zzBLOCK(zztasp1);
@@ -338,7 +349,7 @@ fail:
   }
 }
 
-void and_expr()
+static void and_expr()
 {
   zzRULE;
   zzBLOCK(zztasp1);
@@ -371,7 +382,7 @@ fail:
   }
 }
 
-void repeat_expr()
+static void repeat_expr()
 {
   zzRULE;
   zzBLOCK(zztasp1);
@@ -440,7 +451,10 @@ fail:
   }
 }
 
-void expr()
+static void atom_list();
+static void atom();
+
+static void expr()
 {
   zzRULE;
   zzBLOCK(zztasp1);
@@ -531,7 +545,9 @@ fail:
   }
 }
 
-void atom_list()
+static void near_atom();
+
+static void atom_list()
 {
   zzRULE;
   zzBLOCK(zztasp1);
@@ -559,7 +575,9 @@ fail:
   }
 }
 
-void near_atom()
+static void anychar();
+
+static void near_atom()
 {
   zzRULE;
   zzBLOCK(zztasp1);
@@ -628,7 +646,7 @@ fail:
   }
 }
 
-void atom()
+static void atom()
 {
   zzRULE;
   zzBLOCK(zztasp1);
@@ -653,7 +671,7 @@ fail:
   }
 }
 
-void anychar()
+static void anychar()
 {
   zzRULE;
   zzBLOCK(zztasp1);
