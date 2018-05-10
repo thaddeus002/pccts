@@ -42,6 +42,7 @@
 #include "proto.h"
 #include "dlgdef.h"
 #include "logger.h"
+#include "antlr_log.h"
 #include "gen.h"
 #include "pred.h"
 #include "misc.h"

@@ -44,6 +44,7 @@
 #include "logger.h"
 #include "utils.h"
 #include "misc.h"
+#include "antlr_log.h"
 #include "build.h"
 
 #define WildCardString "WildCard"

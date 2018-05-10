@@ -38,6 +38,7 @@
 #include "generic.h"
 #include "proto.h"
 #include "logger.h"
+#include "antlr_log.h"
 #include "gen.h"
 #include "bits.h"
 #include "utils.h"

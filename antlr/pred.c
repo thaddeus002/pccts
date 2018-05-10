@@ -41,6 +41,7 @@
 #include "proto.h"
 #include "dlgdef.h"
 #include "logger.h"
+#include "antlr_log.h"
 #include "gen.h"
 #include "mrhoist.h"
 #include "fset2.h"

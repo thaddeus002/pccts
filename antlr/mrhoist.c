@@ -38,6 +38,7 @@
 #include "proto.h"
 #include "dlgdef.h"
 #include "logger.h"
+#include "antlr_log.h"
 #include "pred.h"
 #include "misc.h"
 #include "fset.h"

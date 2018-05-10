@@ -42,6 +42,7 @@
 #include "generic.h"
 #include "proto.h"
 #include "logger.h"
+#include "antlr_log.h"
 #include "pred.h"
 #include "misc.h"
 #include "mrhoist.h"

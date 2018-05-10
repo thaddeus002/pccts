@@ -44,6 +44,7 @@
 #include "proto.h"
 #include "dlgdef.h"
 #include "logger.h"
+#include "antlr_log.h"
 #include "bits.h"
 #include "pred.h"
 #include "lex.h"

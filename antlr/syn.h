@@ -35,7 +35,6 @@
 #define __SYN_H__
 
 #include "set.h"
-#include "antlr_log.h"
 
 #define NumNodeTypes  4
 #define NumJuncTypes  9
@@ -141,30 +140,6 @@ typedef struct _ExceptionGroup {
 
 #define TokenString(_i)     ((TokenInd!=NULL)?TokenStr[TokenInd[_i]]:TokenStr[_i])
 #define ExprString(_i)      ((TokenInd!=NULL)?ExprStr[TokenInd[_i]]:ExprStr[_i])
-
-
-        /* M e s s a g e  P a s s i n g  T o  N o d e s */
-
-/*
- * assumes a 'Junction *r' exists.  This macro calls a function with
- * the pointer to the node to operate on and a pointer to the rule
- * in which it is enclosed.
- */
-#define TRANS(p)  {if ( (p)==NULL ) antlr_fatal("TRANS: NULL object");    \
-          if ( (p)->ntype == nJunction ) (*(fpJTrans[((Junction *)(p))->jtype]))( p );\
-          else (*(fpTrans[(p)->ntype]))( p );}
-
-#define PRINT(p)  {if ( (p)==NULL ) antlr_fatal("PRINT: NULL object");\
-          (*(fpPrint[(p)->ntype]))( p );}
-
-#define REACH(p,k,rk,a) {if ( (p)==NULL ) antlr_fatal("REACH: NULL object");\
-          (a) = (*(fpReach[(p)->ntype]))( p, k, rk );}
-
-#define TRAV(p,k,rk,a) {if ( (p)==NULL ) {\
-            if ( ContextGuardTRAV ) (a)=NULL; \
-            else antlr_fatal("TRAV: NULL object");\
-            } \
-          else (a) = (*(fpTraverse[(p)->ntype]))( p, k, rk );}
 
 
 /**
