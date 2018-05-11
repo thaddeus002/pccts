@@ -74,30 +74,15 @@ extern int  zzline;   /* line current token is on */
 extern int  zzreal_line;    /* line of 1st portion of token that is not skipped */
 extern int  zzchar;   /* character to determine next state */
 extern int  zzbufovf; /* indicates that buffer too small for text */
-extern void (*zzerr)(const char *);/* pointer to error reporting function */
 
 #ifdef USER_ZZMODE_STACK
 extern int     zzauto;
 #endif
 
-extern void zzadvance();
-extern void zzskip(); /* erase zzlextext, look for antoher token */
-extern void zzmore(); /* keep zzlextext, look for another token */
 extern void zzmode(int k);  /* switch to automaton 'k' */
 extern void zzrdstream(FILE *);/* what stream to read from */
-extern void zzclose_stream();/* close the current input stream */
 extern void zzrdfunc(int (*)(void));/* what function to get char from */
 extern void zzrdstr( zzchar_t * );
 extern void zzgettok(); /* get next token */
-extern void zzreplchar(zzchar_t c);/* replace last recognized reg. expr. with
-          a character */
-extern void zzreplstr(zzchar_t *s);/* replace last recognized reg. expr. with
-          a string */
-extern void zzsave_dlg_state(struct zzdlg_state *);
-extern void zzrestore_dlg_state(struct zzdlg_state *);
-extern int zzerr_in();
-extern void zzerrstd(const char *);
-extern void zzerraction();
-
 
 #endif

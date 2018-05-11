@@ -22,7 +22,11 @@
 
 LOOKAHEAD
 
-void zzerraction()
+static void (*zzerr)(const char *);/* pointer to error reporting function */
+static void zzskip();
+static void zzadvance();
+
+static void zzerraction()
 {
   (*zzerr)("invalid token");
   zzadvance();
@@ -59,7 +63,7 @@ char  *pClassName=theClassName;
 int firstLexMember=1;
 
 
-void  xxputc(int c) {
+static void xxputc(int c) {
     if (parserClass) {
       *pClassName++=c;
       *pClassName=0;
@@ -68,9 +72,9 @@ void  xxputc(int c) {
     } else {
       fputc(c,output_stream);
     };
-  }
+}
 
-void xxprintf(char *format,char *string) {
+static void xxprintf(char *format, char *string) {
     if (lexMember || lexPrefix || parserClass) {
         if (class_stream != NULL)
             fprintf(class_stream,format,string);
@@ -503,8 +507,8 @@ static void act47()
 static void act48()
 {
     NLA = 44;
-    zzmode(ACT); zzline++;      /* MR1 */
-    xxprintf("%s", &(zzlextext[0])); zzskip();  /* MR1 */
+    zzmode(ACT); zzline++;
+    xxprintf("%s", &(zzlextext[0])); zzskip();
 }
 
 
@@ -1397,4 +1401,269 @@ static unsigned char *b_class_no[] = {
 
 #define ZZSHIFT(c) (b_class_no[zzauto][1+c])
 #define MAX_MODE 4
-#include "dlgauto.h"
+
+#include "logger.h"
+
+zzchar_t  *zzlextext; /* text of most recently matched token */
+zzchar_t  *zzbegexpr; /* beginning of last reg expr recogn. */
+zzchar_t  *zzendexpr; /* beginning of last reg expr recogn. */
+int zzbufsize = 0;  /* number of characters in zzlextext */
+int zzbegcol = 0; /* column that first character of token is in*/
+int zzendcol = 0; /* column that last character of token is in */
+int zzline = 1; /* line current token is on */
+int zzreal_line=1;  /* line of 1st portion of token that is not skipped */
+int zzchar;   /* character to determine next state */
+int zzbufovf; /* indicates that buffer too small for text */
+int zzcharfull = 0;
+static zzchar_t *zznextpos;/* points to next available position in zzlextext*/
+static int  zzclass;
+
+static void zzerrstd(const char *);
+static void (*zzerr)(const char *)=zzerrstd;/* pointer to error reporting function */
+static int zzerr_in(void);
+static int (*zzfunc_in)(void) = zzerr_in;  /* MR20 */
+
+static FILE *zzstream_in=0;
+static zzchar_t *zzstr_in=0;
+
+#ifdef USER_ZZMODE_STACK
+int             zzauto = 0;
+#else
+static int     zzauto = 0;
+#endif
+static int  zzadd_erase;
+static char   zzebuf[70];
+
+#ifdef ZZCOL
+#define ZZINC (++zzendcol)
+#else
+#define ZZINC
+#endif
+
+
+#define ZZGETC_STREAM {zzchar = getc(zzstream_in); zzclass = ZZSHIFT(zzchar);}
+#define ZZGETC_FUNC {zzchar = (*zzfunc_in)(); zzclass = ZZSHIFT(zzchar);}
+#define ZZGETC_STR {      \
+  if (*zzstr_in){       \
+    zzchar = *zzstr_in;   \
+    ++zzstr_in;       \
+  }else{            \
+    zzchar = EOF;     \
+  }             \
+  zzclass = ZZSHIFT(zzchar);  \
+}
+
+#define ZZNEWSTATE  (newstate = dfa[state][zzclass])
+
+#ifndef ZZCOPY
+#define ZZCOPY  \
+  /* Truncate matching buffer to size (not an error) */ \
+  if (zznextpos < lastpos){       \
+    *(zznextpos++) = zzchar;      \
+  }else{              \
+    zzbufovf = 1;         \
+  }
+#endif
+
+void zzrdstream( FILE *f )
+{
+  /* make sure that it is really set to something, otherwise just
+     leave it be.
+  */
+  if (f){
+    zzline = 1;
+    zzstream_in = f;
+    zzfunc_in = NULL;
+    zzstr_in = 0;
+    zzcharfull = 0;
+  }
+}
+
+void zzrdfunc( int (*f)(void) )
+{
+  /* make sure that it is really set to something, otherwise just
+     leave it be.
+  */
+  if (f){
+    zzline = 1;
+    zzstream_in = NULL;
+    zzfunc_in = f;
+    zzstr_in = 0;
+    zzcharfull = 0;
+  }
+}
+
+
+void zzrdstr(zzchar_t *s)
+{
+  /* make sure that it is really set to something, otherwise just
+     leave it be.
+  */
+  if (s){
+    zzline = 1;
+    zzstream_in = NULL;
+    zzfunc_in = 0;
+    zzstr_in = s;
+    zzcharfull = 0;
+  }
+}
+
+
+void zzmode( int m )
+{
+  /* points to base of dfa table */
+  if (m<MAX_MODE){
+    zzauto = m;
+    /* have to redo class since using different compression */
+    zzclass = ZZSHIFT(zzchar);
+  }else{
+    sprintf(zzebuf,"Invalid automaton mode = %d ",m);
+    zzerr(zzebuf);
+  }
+}
+
+/** erase what is currently in the buffer, and get a new reg. expr */
+static void zzskip()
+{
+  zzadd_erase = 1;
+}
+
+
+void zzgettok()
+{
+  register int state, newstate;
+  /* last space reserved for the null char */
+  zzchar_t *lastpos;  /* MR27 Remove register since address operator used. */
+
+skip:
+  zzreal_line = zzline;
+  zzbufovf = 0;
+  lastpos = &zzlextext[zzbufsize-1];
+  zznextpos = zzlextext;
+  zzbegcol = zzendcol+1;
+more:
+  zzbegexpr = zznextpos;
+#ifdef ZZINTERACTIVE
+  /* interactive version of automaton */
+  /* if there is something in zzchar, process it */
+  state = newstate = dfa_base[zzauto];
+  if (zzcharfull){
+    ZZINC;
+    ZZCOPY;
+    ZZNEWSTATE;
+  }
+  if (zzstr_in)
+    while (zzalternatives[newstate]){
+      state = newstate;
+      ZZGETC_STR;
+      ZZINC;
+      ZZCOPY;
+      ZZNEWSTATE;
+    }
+  else if (zzstream_in)
+    while (zzalternatives[newstate]){
+      state = newstate;
+      ZZGETC_STREAM;
+      ZZINC;
+      ZZCOPY;
+      ZZNEWSTATE;
+    }
+  else if (zzfunc_in)
+    while (zzalternatives[newstate]){
+      state = newstate;
+      ZZGETC_FUNC;
+      ZZINC;
+      ZZCOPY;
+      ZZNEWSTATE;
+    }
+  /* figure out if last character really part of token */
+  if ((state != dfa_base[zzauto]) && (newstate == DfaStates)){
+    zzcharfull = 1;
+    --zznextpos;
+  }else{
+    zzcharfull = 0;
+    state = newstate;
+  }
+  *(zznextpos) = '\0';
+  /* Able to transition out of start state to some non err state?*/
+  if ( state == dfa_base[zzauto] ){
+    /* make sure doesn't get stuck */
+    zzadvance();
+  }
+#else
+  /* non-interactive version of automaton */
+  if (!zzcharfull)
+    zzadvance();
+  else
+    ZZINC;
+  state = dfa_base[zzauto];
+  if (zzstr_in)
+    while (ZZNEWSTATE != DfaStates){
+      state = newstate;
+      ZZCOPY;
+      ZZGETC_STR;
+      ZZINC;
+    }
+  else if (zzstream_in)
+    while (ZZNEWSTATE != DfaStates){
+      state = newstate;
+      ZZCOPY;
+      ZZGETC_STREAM;
+      ZZINC;
+    }
+  else if (zzfunc_in)
+    while (ZZNEWSTATE != DfaStates){
+      state = newstate;
+      ZZCOPY;
+      ZZGETC_FUNC;
+      ZZINC;
+    }
+  zzcharfull = 1;
+  if ( state == dfa_base[zzauto] ){
+    if (zznextpos < lastpos){
+      *(zznextpos++) = zzchar;
+    }else{
+      zzbufovf = 1;
+    }
+    *zznextpos = '\0';
+    /* make sure doesn't get stuck */
+    zzadvance();
+  }else{
+    *zznextpos = '\0';
+  }
+#endif
+#ifdef ZZCOL
+  zzendcol -= zzcharfull;
+#endif
+  zzendexpr = zznextpos -1;
+  zzadd_erase = 0;
+  (*actions[accepts[state]])();
+  switch (zzadd_erase) {
+    case 1: goto skip;
+    case 2: goto more;
+  }
+}
+
+static void zzadvance()
+{
+  if (zzstream_in) { ZZGETC_STREAM; zzcharfull = 1; ZZINC;}
+  if (zzfunc_in) { ZZGETC_FUNC; zzcharfull = 1; ZZINC;}
+  if (zzstr_in) { ZZGETC_STR; zzcharfull = 1; ZZINC;}
+  if (!(zzstream_in || zzfunc_in || zzstr_in)){
+    zzerr_in();
+  }
+}
+
+static void zzerrstd(const char *s)
+{
+  zzLexErrCount++;
+  logNoFL("%s near line %d (text was '%s')", ((s == NULL) ? "Lexical error" : s),
+      zzline, zzlextext);
+}
+
+static int zzerr_in()
+{
+  logNoFL("No input stream, function, or string");
+  /* return eof to get out gracefully */
+  return EOF;
+}
