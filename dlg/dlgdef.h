@@ -47,37 +47,8 @@
 #endif
 #endif
 
-struct zzdlg_state {
-  FILE *stream;
-  int (*func_ptr)();
-  zzchar_t *str;
-  int auto_num;
-  int add_erase;
-  int lookc;
-  int char_full;
-  int begcol, endcol;
-  int line;
-  zzchar_t *lextext, *begexpr, *endexpr;
-  int bufsize;
-  int bufovf;
-  zzchar_t *nextpos;
-  int class_num;
-};
 
-extern zzchar_t *zzlextext;   /* text of most recently matched token */
-extern zzchar_t *zzbegexpr; /* beginning of last reg expr recogn. */
-extern zzchar_t *zzendexpr; /* beginning of last reg expr recogn. */
-extern int  zzbufsize;  /* how long zzlextext is */
-extern int  zzbegcol; /* column that first character of token is in*/
-extern int  zzendcol; /* column that last character of token is in */
 extern int  zzline;   /* line current token is on */
-extern int  zzreal_line;    /* line of 1st portion of token that is not skipped */
-extern int  zzchar;   /* character to determine next state */
-extern int  zzbufovf; /* indicates that buffer too small for text */
-
-#ifdef USER_ZZMODE_STACK
-extern int     zzauto;
-#endif
 
 extern void zzmode(int k);  /* switch to automaton 'k' */
 extern void zzrdstream(FILE *);/* what stream to read from */

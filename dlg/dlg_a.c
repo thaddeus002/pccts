@@ -1398,6 +1398,7 @@ static unsigned char *b_class_no[] = {
 };
 
 
+static int zzauto = 0;
 
 #define ZZSHIFT(c) (b_class_no[zzauto][1+c])
 #define MAX_MODE 4
@@ -1426,11 +1427,6 @@ static int (*zzfunc_in)(void) = zzerr_in;  /* MR20 */
 static FILE *zzstream_in=0;
 static zzchar_t *zzstr_in=0;
 
-#ifdef USER_ZZMODE_STACK
-int             zzauto = 0;
-#else
-static int     zzauto = 0;
-#endif
 static int  zzadd_erase;
 static char   zzebuf[70];
 
