@@ -20,7 +20,6 @@
 #define zzSET_SIZE 8
 #include "antlr.h"
 #include "tokens.h"
-#include "mode.h"
 #include "support.h"
 #include "relabel.h"
 #include "automata.h"

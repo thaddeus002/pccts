@@ -21,6 +21,7 @@
 #include "dlg_a.h"
 
 
+
 static void (*zzerr)(const char *);/* pointer to error reporting function */
 static void zzskip();
 static void zzadvance();
@@ -42,9 +43,10 @@ static void zzerraction()
  * DLG Version 1.33MR33
  */
 
-#include "mode.h"
-
-
+#define START 0
+#define ACT 1
+#define ACTION_COMMENTS 2
+#define ACTION_CPP_COMMENTS 3
 
 
 int func_action;    /* should actions be turned into functions?*/
