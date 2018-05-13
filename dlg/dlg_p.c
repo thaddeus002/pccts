@@ -16,10 +16,10 @@
 
 #include <ctype.h>
 #include "dlg_p.h"
+#include "dlg_a.h" // for zzline
 #define zzSET_SIZE 8
 #include "antlr.h"
 #include "tokens.h"
-#include "dlgdef.h"
 #include "mode.h"
 #include "support.h"
 #include "relabel.h"

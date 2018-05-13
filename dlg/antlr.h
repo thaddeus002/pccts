@@ -41,6 +41,7 @@
 
 #include <string.h>
 #include "dlg_p.h" // for Attrib
+#include "dlg_a.h"
 
 typedef int ANTLRTokenType;
 typedef unsigned char SetWordType;
@@ -106,18 +107,6 @@ typedef struct _zzjmp_buf {
 #define zzfailed_pred_action(_p,_hasuseraction,_useraction) \
     if (_hasuseraction) { _useraction } \
     else { fprintf(stderr, "semantic error; failed predicate: '%s'\n",_p); }
-#endif
-
-/* MR19 zzchar_t additions */
-
-#ifdef LL_K
-#define LOOKAHEAD \
-  int zztokenLA[LL_K]; \
-  zzchar_t zztextLA[LL_K][ZZLEXBUFSIZE]; \
-  int zzlap = 0, zzlabase=0; /* labase only used for DEMAND_LOOK */
-#else
-#define LOOKAHEAD                       \
-  int zztoken;
 #endif
 
 #ifndef zzcr_ast
@@ -660,12 +649,11 @@ extern void zzdflthandlers(int, int *);
 /*extern struct pccts_parser zzparser;*/
 
 #ifdef LL_K
-extern int zztokenLA[];
-extern zzchar_t zztextLA[][ZZLEXBUFSIZE];
-extern int zzlap;
-extern int zzlabase;
+int zztokenLA[LL_K];
+zzchar_t zztextLA[LL_K][ZZLEXBUFSIZE];
+int zzlap = 0, zzlabase=0; // labase only used for DEMAND_LOOK
 #else
-extern int zztoken;
+int zztoken;
 #endif
 
 extern char zzStackOvfMsg[];
@@ -686,12 +674,5 @@ extern int zzdirty;
 extern int zzguessing;
 extern zzjmp_buf zzguess_start;
 #endif
-
-/* Define global veriables that refer to values exported by the scanner.
- * These declarations duplicate those in dlgdef.h, but are needed
- * if ANTLR is not to generate a .dlg file (-gx); PS, this is a hack.
- */
-extern zzchar_t *zzlextext;     /* text of most recently matched token */
-extern int      zzbufsize;      /* how long zzlextext is */
 
 #endif

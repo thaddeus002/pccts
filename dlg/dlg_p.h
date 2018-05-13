@@ -80,8 +80,6 @@ extern set  used_classes; /* classes or chars used to label trans. arcs */
 extern set  normal_chars; /* mask off unused portion of set */
 extern int  mode_counter; /* keeps track of the number of %%name */
 extern int  gen_cpp;
-extern int  func_action;  /* should actions be turned into functions?*/ //dlg_a.c
-extern int  firstLexMember; /* defined in dlg_a.c */
 extern int  comp_level; /* what compression level to use */ // main.c
 extern char *file_str[];  /* file names being used */ //main.c
 

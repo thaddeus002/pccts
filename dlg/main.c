@@ -37,6 +37,7 @@
 #include <string.h>
 #include <stdbool.h>
 #include "dlg_p.h"
+#include "dlg_a.h"
 #include "output.h"
 #include "tokens.h"
 #include "constants.h"
@@ -47,7 +48,6 @@
 #define ANTLR_VERSION 13333
 
 #include "antlr.h"
-#include "dlgdef.h"
 
 /* tells what version this is */
 #define VERSION "1.33MR33"

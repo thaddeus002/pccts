@@ -17,10 +17,9 @@
 #include "output.h"
 #include "antlr.h"
 #include "tokens.h"
-#include "dlgdef.h"
 #include "support.h"
+#include "dlg_a.h"
 
-LOOKAHEAD
 
 static void (*zzerr)(const char *);/* pointer to error reporting function */
 static void zzskip();
@@ -54,12 +53,12 @@ int lex_mode_counter = 0; /* keeps track of the number of %%names */
 /* MR1  11-Apr-97 Provide mechanism for inserting code into DLG class */
 /* MR1        via <<%%lexmember...>>          */
 /* MR1                      */
-int lexMember = 0;    /* <<%%lexmemeber ...>>       MR1 */
-int lexAction = 0;    /* <<%%lexaction ...>>      MR1 */
-int parserClass = 0;  /* <<%%parserclass ...>>        MR1 */
-int lexPrefix = 0;    /* <<%%lexprefix ...>>      MR1 */
-char  theClassName[100];
-char  *pClassName=theClassName;
+static int lexMember = 0;    /* <<%%lexmemeber ...>>       MR1 */
+static int lexAction = 0;    /* <<%%lexaction ...>>      MR1 */
+static int parserClass = 0;  /* <<%%parserclass ...>>        MR1 */
+static int lexPrefix = 0;    /* <<%%lexprefix ...>>      MR1 */
+static char theClassName[100];
+static char *pClassName=theClassName;
 int firstLexMember=1;
 
 
@@ -1219,7 +1218,7 @@ static DfaState st93[4] = {
 };
 
 
-DfaState *dfa[94] = {
+static DfaState *dfa[94] = {
   st0,
   st1,
   st2,
@@ -1317,7 +1316,7 @@ DfaState *dfa[94] = {
 };
 
 
-DfaState accepts[95] = {
+static DfaState accepts[95] = {
   0, 1, 2, 3, 4, 33, 33, 33, 33, 13,
   14, 15, 16, 17, 18, 19, 20, 21, 22, 23,
   0, 2, 5, 11, 12, 32, 31, 30, 29, 27,
@@ -1330,7 +1329,7 @@ DfaState accepts[95] = {
   0, 47, 48, 49, 0
 };
 
-void (*actions[50])() = {
+static void (*actions[50])() = {
   zzerraction,
   act1,
   act2,
@@ -1405,17 +1404,17 @@ static int zzauto = 0;
 
 #include "logger.h"
 
-zzchar_t  *zzlextext; /* text of most recently matched token */
-zzchar_t  *zzbegexpr; /* beginning of last reg expr recogn. */
-zzchar_t  *zzendexpr; /* beginning of last reg expr recogn. */
+zzchar_t *zzlextext; /* text of most recently matched token */
+static zzchar_t *zzbegexpr; /* beginning of last reg expr recogn. */
+static zzchar_t *zzendexpr; /* beginning of last reg expr recogn. */
 int zzbufsize = 0;  /* number of characters in zzlextext */
-int zzbegcol = 0; /* column that first character of token is in*/
-int zzendcol = 0; /* column that last character of token is in */
+static int zzbegcol = 0; /* column that first character of token is in*/
+static int zzendcol = 0; /* column that last character of token is in */
 int zzline = 1; /* line current token is on */
-int zzreal_line=1;  /* line of 1st portion of token that is not skipped */
-int zzchar;   /* character to determine next state */
-int zzbufovf; /* indicates that buffer too small for text */
-int zzcharfull = 0;
+static int zzreal_line=1;  /* line of 1st portion of token that is not skipped */
+static int zzchar;   /* character to determine next state */
+static int zzbufovf; /* indicates that buffer too small for text */
+static int zzcharfull = 0;
 static zzchar_t *zznextpos;/* points to next available position in zzlextext*/
 static int  zzclass;
 
