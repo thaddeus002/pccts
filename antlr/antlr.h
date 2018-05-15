@@ -112,18 +112,6 @@ typedef struct _zzjmp_buf {
     else { fprintf(stderr, "semantic error; failed predicate: '%s'\n",_p); }
 #endif
 
-/* MR19 zzchar_t additions */
-
-#ifdef LL_K
-#define LOOKAHEAD \
-  int zztokenLA[LL_K]; \
-  zzchar_t zztextLA[LL_K][ZZLEXBUFSIZE]; \
-  int zzlap = 0, zzlabase=0; /* labase only used for DEMAND_LOOK */
-#else
-#define LOOKAHEAD                       \
-  int zztoken;
-#endif
-
 #ifndef zzcr_ast
 #define zzcr_ast(ast,attr,tok,text)
 #endif

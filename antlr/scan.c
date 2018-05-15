@@ -25,7 +25,7 @@
 #include "utils.h"
 #include "misc.h"
 
-ListNode *CurActionLabels=NULL;     /* MR10 Element Labels appearing in last action */
+static ListNode *CurActionLabels=NULL;     /* MR10 Element Labels appearing in last action */
 
 
 #define MAX_INT_STACK 50
@@ -71,15 +71,20 @@ static int topint()
 }
 
 
-
-LOOKAHEAD
+#ifdef LL_K
+  int zztokenLA[LL_K];
+  zzchar_t zztextLA[LL_K][ZZLEXBUFSIZE];
+  int zzlap = 0, zzlabase=0; /* labase only used for DEMAND_LOOK */
+#else
+  int zztoken;
+#endif
 
 static void zzadvance();
 static void zzreplstr(zzchar_t *s);
 static void zzmore();
 static void zzskip();
 
-void zzerraction()
+static void zzerraction()
 {
   (*zzerr)("invalid token");
   zzadvance();
@@ -102,7 +107,7 @@ int inAlt = 0;
 set attribsRefdFromAction = set_init;
 int UsedOldStyleAttrib = 0;
 int UsedNewStyleLabel = 0;
-char *inline_set(char *);
+extern char *inline_set(char *s); // antlr.c
 int tokenActionActive=0;
 
 
@@ -169,7 +174,7 @@ static char *getFileNameFromTheLineInfo(char *toStr, char *fromStr)
 
 
 
-void mark_label_used_in_sem_pred(LabelEntry *le)              /* MR10 */
+void mark_label_used_in_sem_pred(LabelEntry *le)
 {
   TokNode   *tn;
   require (le->elem->ntype == nToken,"mark_label_used... ntype != nToken");
@@ -222,8 +227,8 @@ static void act5()
     NLA = 79;
     action_file=CurFile; action_line=zzline;
     zzmode(ACTIONS); zzmore();
-    list_free(&CurActionLabels,0);       /* MR10 */
-    numericActionLabel=0;                /* MR10 */
+    list_free(&CurActionLabels,0);
+    numericActionLabel=0;
     istackreset();
     pushint('>');
 }
@@ -290,7 +295,7 @@ static void act13()
 static void act14()
 {
     NLA = 88;
-    FoundException = 1;   /* MR6 */
+    FoundException = 1;
     FoundAtOperator = 1;
 }
 

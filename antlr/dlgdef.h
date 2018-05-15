@@ -82,7 +82,6 @@ extern void zzrdstr( zzchar_t * );
 extern void zzgettok(); /* get next token */
 extern void zzsave_dlg_state(struct zzdlg_state *);
 extern void zzrestore_dlg_state(struct zzdlg_state *);
-extern void zzerraction();
 
 
 #endif
