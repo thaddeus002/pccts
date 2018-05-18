@@ -45,6 +45,7 @@
 #include "utils.h"
 #include "misc.h"
 #include "antlr_log.h"
+#include "scan.h" // for zzline
 #include "build.h"
 
 #define WildCardString "WildCard"

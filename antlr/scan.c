@@ -24,6 +24,7 @@
 #include "antlr_log.h"
 #include "utils.h"
 #include "misc.h"
+#include "scan.h"
 
 static ListNode *CurActionLabels=NULL;     /* MR10 Element Labels appearing in last action */
 
@@ -31,6 +32,22 @@ static ListNode *CurActionLabels=NULL;     /* MR10 Element Labels appearing in l
 #define MAX_INT_STACK 50
 static int istack[MAX_INT_STACK];   /* Int stack */
 static int isp = MAX_INT_STACK;
+
+
+zzchar_t  *zzlextext; /* text of most recently matched token */
+static zzchar_t *zzbegexpr; /* beginning of last reg expr recogn. */
+static zzchar_t  *zzendexpr; /* beginning of last reg expr recogn. */
+
+int zzbufsize = 0;  /* number of characters in zzlextext */
+int zzbegcol = 0; /* column that first character of token is in*/
+int zzendcol = 0; /* column that last character of token is in */
+int zzline = 1; /* line current token is on */
+int zzreal_line=1;  /* line of 1st portion of token that is not skipped */
+int zzchar;   /* character to determine next state */
+int zzbufovf; /* indicates that buffer too small for text */
+int zzcharfull = 0;
+static zzchar_t *zznextpos;/* points to next available position in zzlextext*/
+static int  zzclass;
 
 
 static void chkGTFlag()
@@ -1424,14 +1441,14 @@ else
 warn(eMsg("$%s not parameter, return value, (defined) element label",&zzbegexpr[1]));
 }
 zzmore();
-  }
+}
 
 
 static void act117()
 {
     NLA = 49;
     zzreplstr("(*_root)"); zzmore(); chkGTFlag();
-  }
+}
 
 
 static void act118()
@@ -1442,14 +1459,14 @@ static void act118()
       else zzreplstr("(new AST)");}
     else {zzreplstr("zzastnew()");} zzmore();
     chkGTFlag();
-  }
+}
 
 
 static void act119()
 {
     NLA = 51;
     zzreplstr("NULL"); zzmore(); chkGTFlag();
-  }
+}
 
 
 static void act120()
@@ -1466,7 +1483,7 @@ static void act120()
       set_orel(atoi(zzbegexpr+1), &AST_nodes_refd_in_actions);
       chkGTFlag();
     }
-  }
+}
 
 
 static void act121()
@@ -1475,7 +1492,7 @@ static void act121()
 
     zzline = atoi(zzbegexpr+5) - 1; zzline++; zzmore();
     getFileNameFromTheLineInfo(FileStr[CurFile], zzbegexpr);
-  }
+}
 
 
 static void act122()
@@ -1483,7 +1500,7 @@ static void act122()
     NLA = 54;
 
     zzline++; zzmore();
-  }
+}
 
 
 static void act123()
@@ -1583,7 +1600,7 @@ static void act128()
 
     pushint('|'); /* look for '|' to terminate simple [...] */
     zzmore();
-  }
+}
 
 
 static void act129()
@@ -1592,29 +1609,29 @@ static void act129()
 
     pushint(')');
     zzmore();
-  }
+}
 
 
 static void act130()
 {
     NLA = 62;
     zzreplstr("]");  zzmore();
-  }
+}
 
 
 static void act131()
 {
     NLA = 63;
     zzreplstr(")");  zzmore();
-  }
+}
 
 
 static void act132()
 {
     NLA = 64;
-    if (! tokenActionActive) zzreplstr(">");   /* MR1 */
-    zzmore();                /* MR1 */
-  }
+    if (! tokenActionActive) zzreplstr(">");
+    zzmore();
+}
 
 
 static void act133()
@@ -1642,56 +1659,56 @@ static void act136()
 {
     NLA = 68;
     zzreplstr("#");  zzmore();
-  }
+}
 
 
 static void act137()
 {
     NLA = 69;
     zzline++; zzmore();
-  }
+}
 
 
 static void act138()
 {
     NLA = 70;
     zzmore();
-  }
+}
 
 
 static void act139()
 {
     NLA = 71;
     zzmore();
-  }
+}
 
 
 static void act140()
 {
     NLA = 72;
     zzmode(ACTION_COMMENTS); zzmore();
-  }
+}
 
 
 static void act141()
 {
     NLA = 73;
     warn("Missing /*; found dangling */ in action"); zzmore();
-  }
+}
 
 
 static void act142()
 {
     NLA = 74;
     zzmode(ACTION_CPP_COMMENTS); zzmore();
-  }
+}
 
 
 static void act143()
 {
     NLA = 75;
     zzmore();
-  }
+}
 
 static unsigned char shift10[257] = {
   0, 33, 33, 33, 33, 33, 33, 33, 33, 33,
@@ -1727,126 +1744,125 @@ static void act144()
 {
     NLA = Eof;
     ;
-  }
+}
 
 
 static void act145()
 {
     NLA = 137;
     zzskip();
-  }
+}
 
 
 static void act146()
 {
     NLA = 138;
     zzline++; zzskip();
-  }
+}
 
 
 static void act147()
 {
     NLA = 139;
     zzmode(TOK_DEF_CPP_COMMENTS); zzmore();
-  }
+}
 
 
 static void act148()
 {
     NLA = 140;
     zzmode(TOK_DEF_COMMENTS); zzskip();
-  }
+}
 
 
 static void act149()
 {
     NLA = 141;
     zzmode(TOK_DEF_CPP_COMMENTS); zzskip();
-  }
+}
 
 
 static void act150()
 {
     NLA = 142;
     zzmode(TOK_DEF_CPP_COMMENTS); zzskip();
-  }
+}
 
 
 static void act151()
 {
     NLA = 143;
-    ;
-  }
+}
 
 
 static void act152()
 {
     NLA = 144;
     zzmode(TOK_DEF_CPP_COMMENTS); zzskip();
-  }
+}
 
 
 static void act153()
 {
     NLA = 145;
     zzmode(TOK_DEF_CPP_COMMENTS); zzskip();
-  }
+}
 
 
 static void act154()
 {
     NLA = 146;
     zzmode(TOK_DEF_CPP_COMMENTS); zzskip();
-  }
+}
 
 
 static void act155()
 {
     NLA = 147;
     zzmode(TOK_DEF_CPP_COMMENTS); zzskip();
-  }
+}
 
 
 static void act156()
 {
     NLA = 149;
-  }
+}
 
 
 static void act157()
 {
     NLA = 151;
-  }
+}
 
 
 static void act158()
 {
     NLA = 152;
-  }
+}
 
 
 static void act159()
 {
     NLA = 153;
-  }
+}
 
 
 static void act160()
 {
     NLA = 154;
-  }
+}
 
 
 static void act161()
 {
     NLA = 155;
-  }
+}
 
 
 static void act162()
 {
     NLA = 156;
-  }
+}
 
 
 static void act163()
@@ -5756,20 +5772,6 @@ static unsigned char *b_class_no[] = {
 #define ZZSHIFT(c) (b_class_no[zzauto][1+c])
 #define MAX_MODE 12
 
-
-zzchar_t  *zzlextext; /* text of most recently matched token */
-zzchar_t  *zzbegexpr; /* beginning of last reg expr recogn. */
-zzchar_t  *zzendexpr; /* beginning of last reg expr recogn. */
-int zzbufsize = 0;  /* number of characters in zzlextext */
-int zzbegcol = 0; /* column that first character of token is in*/
-int zzendcol = 0; /* column that last character of token is in */
-int zzline = 1; /* line current token is on */
-int zzreal_line=1;  /* line of 1st portion of token that is not skipped */
-int zzchar;   /* character to determine next state */
-int zzbufovf; /* indicates that buffer too small for text */
-int zzcharfull = 0;
-static zzchar_t *zznextpos;/* points to next available position in zzlextext*/
-static int  zzclass;
 
 static void zzerrstd(const char *);
 void  (*zzerr)(const char *)=zzerrstd;/* pointer to error reporting function */

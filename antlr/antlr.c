@@ -35,6 +35,7 @@
 #include "fset2.h"
 #define zzSET_SIZE 20 /* error_handling.h needs this */
 #include "error.h" /* ... and this */
+#include "scan.h" /* ... and this for zzline */
 #include "error_handling.h"
 
 

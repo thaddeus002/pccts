@@ -7,6 +7,7 @@
 #include "generic.h"
 // for zzline
 #include "dlgdef.h"
+#include "scan.h"
 #include "logger.h"
 #include "antlr_log.h"
 

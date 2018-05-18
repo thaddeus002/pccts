@@ -56,6 +56,7 @@
 #include "mrhoist.h"
 #include "fset2.h"
 #include "tokens.h"
+#include "scan.h" // for zzerr
 
 char  Parser_h_Name[MaxFileName+1] = "";
 char  Parser_c_Name[MaxFileName+1] = "";

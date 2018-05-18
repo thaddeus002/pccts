@@ -63,18 +63,6 @@ struct zzdlg_state {
   int class_num;
 };
 
-extern zzchar_t *zzlextext;   /* text of most recently matched token */
-extern zzchar_t *zzbegexpr; /* beginning of last reg expr recogn. */
-extern zzchar_t *zzendexpr; /* beginning of last reg expr recogn. */
-extern int  zzbufsize;  /* how long zzlextext is */
-extern int  zzbegcol; /* column that first character of token is in*/
-extern int  zzendcol; /* column that last character of token is in */
-extern int  zzline;   /* line current token is on */
-extern int  zzreal_line;    /* line of 1st portion of token that is not skipped */
-extern int  zzchar;   /* character to determine next state */
-extern int  zzbufovf; /* indicates that buffer too small for text */
-extern void (*zzerr)(const char *);/* pointer to error reporting function */
-
 extern void zzmode(int k);  /* switch to automaton 'k' */
 extern void zzrdstream(FILE *);/* what stream to read from */
 extern void zzrdfunc(int (*)(void));/* what function to get char from */

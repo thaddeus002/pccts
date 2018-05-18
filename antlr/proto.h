@@ -199,7 +199,6 @@ extern ListNode *MetaTokenNodes;
 extern char *OutputDirectory;
 extern int DontCopyTokens;
 extern int LTinTokenAction;
-extern set AST_nodes_refd_in_actions;
 extern int CurBlockID;
 extern int CurAltNum;
 extern Junction *CurAltStart;
@@ -211,18 +210,9 @@ extern PointerStack MR_BackTraceStack;
 extern PointerStack MR_PredRuleRefStack;
 extern PointerStack MR_RuleBlkWithHaltStack;
 
-extern int tokenActionActive;
-
 extern FILE * NextFile( void );
 extern char * outname( char * );
 extern char *OutMetaName(char *);
-
-/* MR20 G. Hobbelt  Create proper externs for dlg variables */
-
-extern set attribsRefdFromAction;
-extern int inAlt;
-extern int UsedOldStyleAttrib;
-extern int UsedNewStyleLabel;
 
 #define MAX_BLK_LEVEL 100
 extern int     CurBlockID_array[MAX_BLK_LEVEL];
