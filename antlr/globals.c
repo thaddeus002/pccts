@@ -215,7 +215,6 @@ int     AlphaBetaTrace=0;           /* MR14 */
 int   MR_BlkErr=0;        /* MR21 */
 int     MR_AlphaBetaMessageCount=0; /* MR14 */
 int     MR_AlphaBetaWarning=0;      /* MR14 */
-int     MR_ErrorSetComputationActive=0;     /* MR14 */
 int     MR_MaintainBackTrace=0;             /* MR14 */
 set     MR_CompromisedRules;        /* MR14 */
 
@@ -225,9 +224,7 @@ Junction    *MR_RuleBlkWithHalt;    /* MR10 */
 
 int   LL_k=1;       /* how many tokens of full lookahead */
 int   CLL_k= -1;      /* how many tokens of compressed lookahead */
-int   PrintOut = false; /* print out the grammar */
 int   PrintAnnotate = false;/* annotate printout with FIRST sets */
-int   CodeGen=true;   /* Generate output code? */
 int   LexGen=true;    /* Generate lexical files? (tokens.h, parser.dlg) */
 int   GenAST=false;   /* Generate AST's? */
 int   GenExprSetsOpt=true;/* use sets not (LA(1)==tok) expression lists */

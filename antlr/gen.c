@@ -3144,9 +3144,7 @@ do {    /* MR10     Change recursion into iteration         */
 /* MR14 */      follow=empty;
               } else {
                 MR_pointerStackReset(&MR_BackTraceStack);   /* MR14 */
-                MR_ErrorSetComputationActive=1;
                 REACH(q->end, 1, &rk, follow);
-                MR_ErrorSetComputationActive=0;
                 require (MR_BackTraceStack.count == 0,"K: MR_BackTraceStack.count != 0");
               }
 

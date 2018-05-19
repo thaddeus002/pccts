@@ -66,6 +66,8 @@ extern int UseStdout; // gen.c
 extern int LTinTokenAction; // gen.c
 extern int PURIFY; // gen.c
 int GenCR=false;    /* Generate cross reference? */
+int CodeGen=true;   /* Generate output code? */
+int PrintOut = false; /* print out the grammar */
 
            /* S t a n d a r d  S i g n a l s */
 
