@@ -44,7 +44,6 @@
 #include "proto.h"
 #include "constants.h"
 #include "antlr.h" // for ANTLR()
-#include "dlgdef.h"
 #include "logger.h"
 #include "antlr_log.h"
 #include "gen.h"

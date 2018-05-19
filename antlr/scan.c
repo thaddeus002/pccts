@@ -18,7 +18,6 @@
 #include "constants.h"
 #include "antlr.h"
 #include "tokens.h"
-#include "dlgdef.h"
 #include "mode.h"
 #include "logger.h"
 #include "antlr_log.h"

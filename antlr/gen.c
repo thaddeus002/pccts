@@ -42,7 +42,6 @@
 #include "generic.h"
 #include "syn.h"
 #include "proto.h"
-#include "dlgdef.h"
 #include "logger.h"
 #include "antlr_log.h"
 #include "bits.h"
