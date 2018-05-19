@@ -57,6 +57,10 @@ int zzasp=ZZA_STACKSIZE;
 char zzStackOvfMsg[]="fatal: attrib/AST stack overflow %s(%d)!\n";
 Attrib zzaStack[ZZA_STACKSIZE];
 
+#define MAX_BLK_LEVEL 100
+int CurBlockID_array[MAX_BLK_LEVEL];
+int CurAltNum_array[MAX_BLK_LEVEL];
+
 
 static void chkToken(char *, char *, char *, int);
 

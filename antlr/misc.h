@@ -17,7 +17,7 @@
 #define __MISC_H__
 
 #include <stdio.h>
-
+#include "generic.h"
 
 /**
  * switch to lexical class/mode m.  This amounts to creating a new

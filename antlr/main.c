@@ -60,6 +60,12 @@
 char  Parser_h_Name[MaxFileName+1] = "";
 char  Parser_c_Name[MaxFileName+1] = "";
 
+int   GenStdPccts = 0;  /* don't gen stdpccts.h? */
+
+extern int UseStdout; // gen.c
+extern int LTinTokenAction; // gen.c
+extern int PURIFY; // gen.c
+int GenCR=false;    /* Generate cross reference? */
 
            /* S t a n d a r d  S i g n a l s */
 
@@ -235,7 +241,6 @@ static void pSGen(void) { GenExprSetsOpt = false; }
 static void pPrt(void)  { PrintOut = true; pCGen(); pLGen(); }
 static void pPrtA(void) { PrintOut = true; PrintAnnotate = true; pCGen(); pLGen(); }
 static void pAst(void)  { GenAST = true; }
-static void pANSI(void) { GenANSI = true; }
 static void pCr(void) { GenCR = true; }
 static void pNOPURIFY(void) { PURIFY = false; }
 static void pLI(void) { GenLineInfo = true; GenLineInfoMS = false; } /* MR14 */
@@ -347,7 +352,6 @@ Opt options[] = {
     { "-fm", 1, pFm,  "Rename mode.h"},
     { "-fr", 1, pFr,  "Rename remap.h"},
     { "-ft", 1, pFt,  "Rename tokens.h"},
-    { "-ga", 0, pANSI,  "Generate ANSI-compatible code (default=false)"},
     { "-gc", 0, pCGen,  "Do not generate output parser code (default=false)"},
     { "-gd", 0, pTGen,  "Generate code to trace rule invocation (default=false)"},
     { "-ge", 0, pEGen,  "Generate an error class for each non-terminal (default=false)"},

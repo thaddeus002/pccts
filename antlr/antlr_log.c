@@ -5,6 +5,9 @@
 #include <stdio.h>
 // MaxNumFiles
 #include "generic.h"
+#include "misc.h"
+#include "fset.h"
+#include "fset2.h"
 // for zzline
 #include "scan.h"
 #include "logger.h"
@@ -71,3 +74,42 @@ void cleanUp(void) {
     if ( DefFile != NULL) fclose( DefFile );
 }
 
+
+            /* M e t h o d  T a b l e s */
+/*
+ * The following tables are used to fill syntax diagram nodes with the correct
+ * function pointers for computing FIRST sets and printing themselves.
+ */
+
+/* fpTraverse[node type] == pointer to function that calculates trees
+ * representing the FIRST sets for that node (maintains spatial info).
+ * We use 'struct _tree' not 'tree' due to a g++ 2.4.3 bug.
+ */
+Tree *(*fpTraverse[NumNodeTypes+1])() = {
+  NULL,
+  tJunc,
+  tRuleRef,
+  tToken,
+  tAction
+};
+
+/* fpPrint[node type] == pointer to function that knows how to print that node. */
+void (*fpPrint[NumNodeTypes+1])() = {
+  NULL,
+  pJunc,
+  pRuleRef,
+  pToken,
+  pAction
+};
+
+/* fpReach[node type] == pointer to function that calculates FIRST set for
+ * that node. (r stands for reach).  We use 'struct _set' not 'set'
+ * due to a g++ 2.4.3 bug.
+ */
+set (*fpReach[NumNodeTypes+1])() = {
+  NULL,
+  rJunc,
+  rRuleRef,
+  rToken,
+  rAction
+};

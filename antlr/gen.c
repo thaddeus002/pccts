@@ -61,6 +61,20 @@
 #define LineInfoFormatStr "#line %d \"%s\"\n"
 #endif
 
+/* DontCopyTokens and Pragma_DupLabeledTokens were a bad idea.  I've just
+   turned them off rather than backpatching the code.  Who knows?  We
+   may need them in the future.
+ */
+int   DontCopyTokens = 1; /* in C++, don't copy ANTLRToken passed to ANTLR */
+
+/* Remember if LT(i), LA(i), or LATEXT(i) used in an action which is not
+   a predicate.  If so, give a warning for novice users.
+*/
+int LTinTokenAction = 0;
+int PURIFY = 1;
+
+int UseStdout = 0;
+
 #define NumPredefinedSignals 3
 int NumSignals = NumPredefinedSignals;
 

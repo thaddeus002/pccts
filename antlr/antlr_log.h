@@ -7,7 +7,6 @@
 
 #include "syn.h"
 
-
           /* E r r o r  M a c r o s */
 
 #define antlr_fatal(err)  fatalFL(err, __FILE__, __LINE__)
@@ -39,6 +38,12 @@ void cleanUp(void);
 
 
         /* M e s s a g e  P a s s i n g  T o  N o d e s */
+
+/* fpPrint[node type] == pointer to function that knows how to print that node. */
+extern void (*fpPrint[NumNodeTypes+1])();
+extern struct _set (*fpReach[])();
+extern struct _tree *(*fpTraverse[])();
+
 
 /*
  * assumes a 'Junction *r' exists.  This macro calls a function with

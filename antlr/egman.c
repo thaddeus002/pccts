@@ -45,6 +45,8 @@ static int              highWater=0;
 static ExceptionGroup *lastEG=NULL;     /* used in altFixup()         */
 static int             lastBlkLevel=0;  /* used in altFixup()         */
 
+extern int CurAltNum_array[]; // antlr.c
+
 static void arrayCheck();
 
 /**

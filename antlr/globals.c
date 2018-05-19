@@ -57,46 +57,6 @@ int CurAmbigAlt1, CurAmbigAlt2, CurAmbigline, CurAmbigfile;
 char *CurAmbigbtype;
 
 
-            /* M e t h o d  T a b l e s */
-/*
- * The following tables are used to fill syntax diagram nodes with the correct
- * function pointers for computing FIRST sets and printing themselves.
- */
-
-/* fpTraverse[node type] == pointer to function that calculates trees
- * representing the FIRST sets for that node (maintains spatial info).
- * We use 'struct _tree' not 'tree' due to a g++ 2.4.3 bug.
- */
-Tree *(*fpTraverse[NumNodeTypes+1])() = {
-  NULL,
-  tJunc,
-  tRuleRef,
-  tToken,
-  tAction
-};
-
-
-/* fpReach[node type] == pointer to function that calculates FIRST set for
- * that node. (r stands for reach).  We use 'struct _set' not 'set'
- * due to a g++ 2.4.3 bug.
- */
-set (*fpReach[NumNodeTypes+1])() = {
-  NULL,
-  rJunc,
-  rRuleRef,
-  rToken,
-  rAction
-};
-
-/* fpPrint[node type] == pointer to function that knows how to print that node. */
-void (*fpPrint[NumNodeTypes+1])() = {
-  NULL,
-  pJunc,
-  pRuleRef,
-  pToken,
-  pAction
-};
-
 char *decodeJType[] = {
   "invalid",
   "aSubBlk",
@@ -270,9 +230,7 @@ int   PrintAnnotate = false;/* annotate printout with FIRST sets */
 int   CodeGen=true;   /* Generate output code? */
 int   LexGen=true;    /* Generate lexical files? (tokens.h, parser.dlg) */
 int   GenAST=false;   /* Generate AST's? */
-int   GenANSI=false;    /* Generate ANSI code where necessary */
 int   GenExprSetsOpt=true;/* use sets not (LA(1)==tok) expression lists */
-int   GenCR=false;    /* Generate cross reference? */
 int   GenLineInfo=false;  /* Generate # line "file" stuff? */
 int   GenLineInfoMS=false;/* Like -gl but replace "\" with "/" for MS C/C++ systems */
 int   TraceGen=false;   /* Generate code to trace rule invocation */
@@ -282,34 +240,15 @@ int   TreeResourceLimit= -1;/* don't limit tree resource */
 int   DemandLookahead = 0;/* demand/delayed lookahead or not */
 char  *RulePrefix = ""; /* prefix each generated rule with this */
 char  *stdpccts = "stdpccts.h";/* where to generate std pccts include file */
-int   GenStdPccts = 0;  /* don't gen stdpccts.h? */
 int   ParseWithPredicates = 1;
 int   WarningLevel = 1;
-int   UseStdout = 0;          /* MR6 */
 int   TabWidth = 4;
 int   HoistPredicateContext = 0;
 int     MRhoisting = 0;                 /* MR9 */
 int     MRhoistingk = 0;                /* MR13 */
-int     MR_debugGenRule=0;              /* MR11 */
 
 int   GenCC = 0;      /* Generate C++ output */
 
 PointerStack MR_BackTraceStack={0,0,NULL};            /* MR10 */
 PointerStack MR_PredRuleRefStack={0,0,NULL};          /* MR10 */
 PointerStack MR_RuleBlkWithHaltStack={0,0,NULL};      /* MR10 */
-
-/* DontCopyTokens and Pragma_DupLabeledTokens were a bad idea.  I've just
-   turned them off rather than backpatching the code.  Who knows?  We
-   may need them in the future.
- */
-int   DontCopyTokens = 1; /* in C++, don't copy ANTLRToken passed to ANTLR */
-
-/* Remember if LT(i), LA(i), or LATEXT(i) used in an action which is not
-   a predicate.  If so, give a warning for novice users.
-*/
-
-int     LTinTokenAction = 0; /* MR23 */
-int     PURIFY = 1;          /* MR23 */
-
-int     CurBlockID_array[MAX_BLK_LEVEL]; /* MR23 */
-int     CurAltNum_array[MAX_BLK_LEVEL]; /* MR23 */
