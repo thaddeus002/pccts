@@ -14,6 +14,9 @@
 #include <stdio.h>
 #include "antlr.h" // for zzchar_t
 
+// TODO mask this mode in scan.c
+#define PARSE_ENUM_FILE 11
+
 struct zzdlg_state {
   FILE *stream;
   int (*func_ptr)();

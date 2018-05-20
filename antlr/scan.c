@@ -18,12 +18,24 @@
 #include "constants.h"
 #include "antlr.h"
 #include "tokens.h"
-#include "mode.h"
 #include "logger.h"
 #include "antlr_log.h"
 #include "utils.h"
 #include "misc.h"
 #include "scan.h"
+
+// modes
+#define START 0
+#define STRINGS 1
+#define ACTION_STRINGS 2
+#define ACTION_CHARS 3
+#define ACTION_COMMENTS 4
+#define TOK_DEF_COMMENTS 5
+#define TOK_DEF_CPP_COMMENTS 6
+#define ACTION_CPP_COMMENTS 7
+#define CPP_COMMENTS 8
+#define COMMENTS 9
+#define ACTIONS 10
 
 static ListNode *CurActionLabels=NULL;     /* MR10 Element Labels appearing in last action */
 

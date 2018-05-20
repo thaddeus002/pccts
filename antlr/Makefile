@@ -58,9 +58,9 @@ antlr : $(OBJ) $(SRC)
 
 
 
-antlr.o : antlr.c mode.h tokens.h
+antlr.o : antlr.c tokens.h
 
-scan.o : scan.c mode.h tokens.h
+scan.o : scan.c tokens.h
 
 
 set.o : $(COMMON)/set.c

@@ -21,7 +21,6 @@
 #include "proto.h"
 #include "antlr.h"
 #include "tokens.h"
-#include "mode.h"
 #include "constants.h"
 #include "logger.h"
 #include "antlr_log.h"
