@@ -68,6 +68,9 @@ extern int PURIFY; // gen.c
 int GenCR=false;    /* Generate cross reference? */
 int CodeGen=true;   /* Generate output code? */
 int PrintOut = false; /* print out the grammar */
+char *OutputDirectory=TopDirectory;
+Entry **Sname; /* Signal names */
+Entry **Tcache; /* Tree cache; First/Follow for permute trees */
 
            /* S t a n d a r d  S i g n a l s */
 

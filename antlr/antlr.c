@@ -43,8 +43,11 @@
 ListNode *CurExGroups=NULL; /* Current list of exception groups for rule/alts */
 ListNode *CurElementLabels=NULL;
 Junction *CurRuleBlk=NULL;  /* Pointer to current block node for enclosing block */
-char    *CurPredName=NULL;
-
+char *CurPredName=NULL;
+Junction *CurAltStart = NULL; /* Junction node that starts the alt */
+static int CurAltNum=0;
+static int CurBlockID=0;   /* Unique int for each block */
+RuleEntry *CurRuleNode=NULL;/* Pointer to current rule node in syntax tree */
 
 /* MR23 In order to remove calls to PURIFY use the antlr -nopurify option */
 

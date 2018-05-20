@@ -33,12 +33,8 @@
 
 
 #include <stdbool.h>
+#include <stdio.h>
 #include "generic.h"
-#include "proto.h"
-#include "constants.h"
-#include "misc.h"
-#include "fset.h"
-#include "fset2.h"
 
 char Version[] = "1.33MR33" ; /* PCCTS version number */
 char VersionDef[] = "13333";    /* same (except int equiv for preproc symbol) */
@@ -78,9 +74,7 @@ Entry **Texpr; /* Table of all token expressions
                  (maps expr to tok num) */
 Entry **Rname; /* Table of all Rules (has ptr to start of rule) */
 Entry **Fcache; /* Cache of First/Follow Computations */
-Entry **Tcache; /* Tree cache; First/Follow for permute trees */
 Entry **Elabel; /* Table of all element label names */
-Entry **Sname; /* Signal names */
 Entry **Pname; /* symbolic predicate names MR11 */
 
 
@@ -92,7 +86,6 @@ int   EpToken=0;      /* Imaginary Epsilon token number */
 int   WildCardToken=0;
 int   CurFile= -1;    /* Index into FileStr table */
 char  *CurRule=NULL;    /* Pointer to current rule name */
-RuleEntry *CurRuleNode=NULL;/* Pointer to current rule node in syntax tree */
 char  *CurRetDef=NULL;  /* Pointer to current return type definition */
 char  *CurParmDef=NULL; /* Pointer to current parameter definition */
 ListNode *CurAstLabelsInActions=NULL; /* MR27 */
@@ -105,10 +98,6 @@ ListNode *NumericPredLabels=NULL;   /* MR10 << ... $1 ... >>?  ONLY             
 ListNode *ContextGuardPredicateList=NULL;  /* MR13 for re-evaluating predicates
                                                    after meta tokens are defined    */
 
-int   CurBlockID=0;   /* Unique int for each block */
-int   CurAltNum=0;
-Junction *CurAltStart = NULL; /* Junction node that starts the alt */
-Junction *OuterAltStart = NULL; /* For chaining exception groups        MR7 */
 int   NumRules=0;     /* Rules are from 1 to n */
 FILE  *output=NULL;   /* current parser output file */
 FILE  *input=NULL;    /* current grammar input file */
@@ -159,9 +148,6 @@ char  *HdrAction=NULL;  /* action defined with #header */
 char  *FirstAction=NULL;  /* action defined with #first MR11 */
 FILE  *ErrFile;     /* sets and error recovery stuff */
 FILE  *DefFile=NULL;    /* list of tokens, return value structs, setwd defs */
-FILE    *MRinfoFile=NULL;   /* MR10 information file */
-int     MRinfo=0;           /* MR10 */
-int     MRinfoSeq=0;        /* MR10 */
 int     InfoP=0;            /* MR10 predicates        */
 int     InfoT=0;            /* MR10 tnodes            */
 int     InfoF=0;            /* MR10 first/follow sets */
@@ -171,8 +157,6 @@ int     TnodesInUse=0;      /* MR10 */
 int     TnodesPeak=0;       /* MR10 */
 int     TnodesAllocated=0;  /* MR10 */
 int     TnodesReportThreshold=0;    /* MR11 */
-int     PotentialSuppression=0; /* MR10 */
-int     PotentialDummy=0;       /* MR10 */
 int   CannotContinue=false;
 int   OutputLL_k = 1;   /* LL_k for parsing must be power of 2 */
 int   action_file;    /* used to track start of action */
@@ -183,8 +167,6 @@ int   FoundException=0; /* there is an exception somewhere in grammar */
 /* MR6    by keeping separate flags for @ operator and real exceptions      */
 int   FoundAtOperator=0;                               /* MR6 */
 int   FoundExceptionGroup=0;                                   /* MR6 */
-int   pLevel=0;     /* print Level */
-int   pAlt1,pAlt2;    /* print "==>" in front of these alts */
 
 /* C++ output stuff */
 char    *ClassDeclStuff=NULL;                               /* MR10 */
@@ -197,7 +179,6 @@ char  CurrentClassName[MaxRuleName]="";
 int   no_classes_found=1;
 char  *UserTokenDefsFile;
 int   UserDefdTokens=0; /* found #tokdefs? */
-char  *OutputDirectory=TopDirectory;
 ExceptionGroup *DefaultExGroup = NULL;
 int   ContextGuardTRAV=0;
 
@@ -214,7 +195,6 @@ int   tmakeInParser=0;            /* MR23 */
 int     AlphaBetaTrace=0;           /* MR14 */
 int   MR_BlkErr=0;        /* MR21 */
 int     MR_AlphaBetaMessageCount=0; /* MR14 */
-int     MR_AlphaBetaWarning=0;      /* MR14 */
 int     MR_MaintainBackTrace=0;             /* MR14 */
 set     MR_CompromisedRules;        /* MR14 */
 

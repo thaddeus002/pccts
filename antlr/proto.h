@@ -50,7 +50,6 @@ extern void (**fpJTrans)();
 extern int BlkLevel;
 extern int CurFile;
 extern char *CurRule;
-extern RuleEntry *CurRuleNode;
 extern ListNode *CurAstLabelsInActions;
 extern ListNode *ContextGuardPredicateList;
 extern int numericActionLabel;
@@ -63,9 +62,7 @@ extern Entry  **Tname,
         **Texpr,
         **Rname,
         **Fcache,
-        **Tcache,
         **Elabel,
-        **Sname,
         **Pname;
 extern ListNode *ExprOrder;
 extern ListNode **Cycles;
@@ -137,7 +134,6 @@ extern int NewAST;
 extern int tmakeInParser;
 extern int AlphaBetaTrace;
 extern int MR_BlkErr;
-extern int MR_AlphaBetaWarning;
 extern int MR_AlphaBetaMessageCount;
 extern int MR_MaintainBackTrace;
 extern int MR_BadExprSets;
@@ -147,9 +143,6 @@ extern int FoundAtOperator;
 extern int FoundExceptionGroup;
 extern int WarningLevel;
 extern int TabWidth;
-extern int pLevel;
-extern int pAlt1;
-extern int pAlt2;
 extern int AImode;
 extern int HoistPredicateContext;
 extern int MRhoisting;
@@ -164,16 +157,11 @@ extern ListNode *ForcedTokens;
 extern int *TokenInd;
 extern char CurrentClassName[];
 extern int no_classes_found;
-extern FILE *MRinfoFile;
-extern int MRinfo;
-extern int MRinfoSeq;
 extern int InfoP;
 extern int InfoT;
 extern int InfoF;
 extern int InfoM;
 extern int InfoO;
-extern int PotentialSuppression;
-extern int PotentialDummy;
 extern int TnodesInUse;
 extern int TnodesPeak;
 extern int TnodesReportThreshold;
@@ -184,11 +172,6 @@ extern ListNode *class_before_actions, *class_after_actions;
 extern char *UserTokenDefsFile;
 extern int UserDefdTokens;
 extern ListNode *MetaTokenNodes;
-extern char *OutputDirectory;
-extern int CurBlockID;
-extern int CurAltNum;
-extern Junction *CurAltStart;
-extern Junction *OuterAltStart;
 extern ExceptionGroup *DefaultExGroup;
 extern int ContextGuardTRAV;
 extern Junction *MR_RuleBlkWithHalt;

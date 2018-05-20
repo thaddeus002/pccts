@@ -755,6 +755,9 @@ void ResolveFoCycles(int k)
 
       /* P r i n t i n g  S y n t a x  D i a g r a m s */
 
+int pLevel=0;     /* print Level */
+int pAlt1,pAlt2;    /* print "==>" in front of these alts */
+
 static void pBlk( Junction *q, int btype )
 {
   int k,a;

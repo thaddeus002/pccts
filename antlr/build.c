@@ -153,9 +153,11 @@ Graph buildAction( char *action, int file, int line, int is_predicate )
   g.left = (Node *) j1; g.right = (Node *) j2;
   a->file = file;
   a->line = line;
-  a->rname = CurRule;     /* MR10 */
+  a->rname = CurRule;
   return g;
 }
+
+extern Junction *CurAltStart; // antlr.c
 
 /**
  * Build a token node for the syntax diagram
