@@ -32,10 +32,10 @@ dlg : $(OBJ) $(SRC)
 
 
 
-dlg_p.o : dlg_p.c dlg_p.h tokens.h mode.h
+dlg_p.o : dlg_p.c dlg_p.h tokens.h
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c dlg_p.c
 
-dlg_a.o : dlg_a.c dlg_p.h tokens.h mode.h
+dlg_a.o : dlg_a.c dlg_p.h tokens.h
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c dlg_a.c
 
 main.o : main.c dlg_p.h

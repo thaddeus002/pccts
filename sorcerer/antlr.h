@@ -124,12 +124,6 @@ typedef struct _zzjmp_buf {
 #define zzcr_ast(ast,attr,tok,text)
 #endif
 
-#ifdef DEMAND_LOOK
-#define DemandLookData  int zzdirty=1;
-#else
-#define DemandLookData
-#endif
-
 #ifndef zzUSER_GUESS_HOOK
 #define zzUSER_GUESS_HOOK(seqFrozen,zzrv)
 #endif
@@ -193,9 +187,6 @@ typedef struct _zzantlr_state {
       char **inf_text;                                       /* MR6 */
       char *inf_text_buffer;                                 /* MR6 */
       int *inf_line;                                         /* MR6 */
-#endif
-#ifdef DEMAND_LOOK
-      int dirty;
 #endif
 
 #ifdef LL_K
@@ -278,7 +269,7 @@ extern void _inf_zzgettok();
     {Attrib a; zzcr_attr((&a),_tok,_text); return a;} \
   int zzasp=ZZA_STACKSIZE; \
   char zzStackOvfMsg[]="fatal: attrib/AST stack overflow %s(%d)!\n"; \
-  Attrib zzaStack[ZZA_STACKSIZE]; DemandLookData \
+  Attrib zzaStack[ZZA_STACKSIZE]; \
   InfLookData \
     zzGuessData
 
@@ -286,41 +277,25 @@ extern void _inf_zzgettok();
 #ifdef ZZINF_LOOK
 
 #ifdef LL_K
-#ifdef DEMAND_LOOK
-#define zzPrimeLookAhead  {zzdirty=LL_K; zzlap = zzlabase = 0;}
-#else
 #define zzPrimeLookAhead  {zzlap = zzlabase = 0; zzfill_inf_look();\
               {int _i;  for(_i=1;_i<=LL_K; _i++)    \
                     {zzCONSUME;} zzlap = zzlabase = 0;}}
-#endif
 
 #else /* LL_K */
 
-#ifdef DEMAND_LOOK
-#define zzPrimeLookAhead  zzfill_inf_look(); zzdirty=1
-#else
 #define zzPrimeLookAhead  zzfill_inf_look(); inf_zzgettok
 
-#endif
 #endif  /* LL_K */
 
 #else /* ZZINF_LOOK */
 
 #ifdef LL_K
-#ifdef DEMAND_LOOK
-#define zzPrimeLookAhead  {zzdirty=LL_K; zzlap = zzlabase = 0;}
-#else
 #define zzPrimeLookAhead  {int _i; zzlap = 0; for(_i=1;_i<=LL_K; _i++)    \
                     {zzCONSUME;} zzlap = 0;}
-#endif
 
 #else
 
-#ifdef DEMAND_LOOK
-#define zzPrimeLookAhead  zzdirty=1
-#else
 #define zzPrimeLookAhead  zzgettok()
-#endif
 #endif  /* LL_K */
 
 #endif  /* ZZINF_LOOK */
@@ -516,13 +491,6 @@ extern int _zzsetmatch_wdfltsig(SetWordType *tokensWanted,
 
 #ifdef LL_K
 
-#ifdef DEMAND_LOOK
-#define LOOK(_k)  {int i,stop=_k-(LL_K-zzdirty); for (i=1; i<=stop; i++)  \
-          zzCONSUME;}
-#define zzCONSUME {zzgettok(); zzdirty--;             \
-          zzlap = (zzlap+1)&(LL_K-1);           \
-          zzlextext = &(zztextLA[zzlap][0]);}
-#else
 #ifdef ZZINF_LOOK
 #define zzCONSUME {inf_zzgettok;                  \
           zzlap = (zzlap+1)&(LL_K-1);           \
@@ -533,19 +501,8 @@ extern int _zzsetmatch_wdfltsig(SetWordType *tokensWanted,
           zzlap = (zzlap+1)&(LL_K-1);           \
           zzlextext = &(zztextLA[zzlap][0]);}
 #endif /* ZZINF_LOOK */
-#endif /* DEMAND_LOOK */
 
 #else /* LL_K */
-
-#ifdef DEMAND_LOOK
-#define LOOK(_k)  if ( zzdirty) zzCONSUME;
-#ifdef ZZINF_LOOK
-#define zzCONSUME inf_zzgettok; zzdirty=0;
-#else
-#define zzCONSUME zzgettok(); zzdirty=0;
-#endif /* ZZINF_LOOK */
-
-#else  /* DEMAND_LOOK */
 
 #ifdef ZZINF_LOOK
 #define zzCONSUME inf_zzgettok
@@ -553,20 +510,13 @@ extern int _zzsetmatch_wdfltsig(SetWordType *tokensWanted,
 #define zzCONSUME zzgettok();
 #endif
 
-#endif /* DEMAND_LOOK */
-
 #endif /* LL_K */
 
 #ifdef LL_K
 #define NLA     zztokenLA[zzlap&(LL_K-1)] /* --> next LA */
 #define NLATEXT   zztextLA[zzlap&(LL_K-1)]  /* --> next text of LA */
-#ifdef DEMAND_LOOK
-#define LA(i)       zztokenLA[(zzlabase+(i)-1)&(LL_K-1)]
-#define LATEXT(i)   (&(zztextLA[(zzlabase+(i)-1)&(LL_K-1)][0]))
-#else
 #define LA(i)       zztokenLA[(zzlap+(i)-1)&(LL_K-1)]
 #define LATEXT(i)   (&(zztextLA[(zzlap+(i)-1)&(LL_K-1)][0]))
-#endif
 #else
 #define NLA     zztoken
 #define NLATEXT   zztext
@@ -671,9 +621,6 @@ extern char *zzinf_text_buffer;
 extern int *zzinf_line;
 extern int zzinf_labase;
 extern int zzinf_last;
-#endif
-#ifdef DEMAND_LOOK
-extern int zzdirty;
 #endif
 #ifdef ZZCAN_GUESS
 extern int zzguessing;

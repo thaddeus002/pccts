@@ -240,9 +240,6 @@ void zzsave_antlr_state(zzantlr_state *buf)
   buf->inf_line = zzinf_line;                                  /* MR6 */
 
 #endif
-#ifdef DEMAND_LOOK
-  buf->dirty = zzdirty;
-#endif
 #ifdef LL_K
   for (i=0; i<LL_K; i++) buf->tokenLA[i] = zztokenLA[i];
   for (i=0; i<LL_K; i++) strcpy(buf->textLA[i], zztextLA[i]);
@@ -293,9 +290,6 @@ void zzrestore_antlr_state(zzantlr_state *buf)
   zzinf_text = buf->inf_text;                                      /* MR6 */
   zzinf_text_buffer = buf->inf_text_buffer;                        /* MR6 */
   zzinf_line = buf->inf_line;                                  /* MR6 */
-#endif
-#ifdef DEMAND_LOOK
-  zzdirty = buf->dirty;
 #endif
 #ifdef LL_K
   for (i=0; i<LL_K; i++) zztokenLA[i] = buf->tokenLA[i];
@@ -372,74 +366,6 @@ int zzset_deg(SetWordType *a)
   return(degree);
 }
 
-#ifdef DEMAND_LOOK
-
-#ifdef LL_K
-int _zzmatch(int _t, char **zzBadText, char **zzMissText,
-    int *zzMissTok, int *zzBadTok,
-    SetWordType **zzMissSet)
-{
-  if ( zzdirty==LL_K ) {
-    zzCONSUME;
-  }
-  if ( LA(1)!=_t ) {
-    *zzBadText = *zzMissText=LATEXT(1);
-    *zzMissTok= _t; *zzBadTok=LA(1);
-    *zzMissSet=NULL;
-    return 0;
-  }
-  zzMakeAttr
-  zzdirty++;
-  zzlabase++;
-  return 1;
-}
-
-int _zzmatch_wsig(int _t)
-{
-  if ( zzdirty==LL_K ) {
-    zzCONSUME;
-  }
-  if ( LA(1)!=_t ) {
-    return 0;
-  }
-  zzMakeAttr
-  zzdirty++;
-  zzlabase++;
-  return 1;
-}
-
-#else
-
-int _zzmatch(int _t, char **zzBadText, char **zzMissText,
-     int *zzMissTok, int *zzBadTok, SetWordType **zzMissSet)
-{
-  if ( zzdirty ) {zzCONSUME;}
-  if ( LA(1)!=_t ) {
-    *zzBadText = *zzMissText=LATEXT(1);
-    *zzMissTok= _t; *zzBadTok=LA(1);
-    *zzMissSet=NULL;
-    return 0;
-  }
-  zzdirty = 1;
-  zzMakeAttr
-  return 1;
-}
-
-int _zzmatch_wsig(int _t)
-{
-  if ( zzdirty ) {zzCONSUME;}
-  if ( LA(1)!=_t ) {
-    return 0;
-  }
-  zzdirty = 1;
-  zzMakeAttr
-  return 1;
-}
-
-#endif /*LL_K*/
-
-#else
-
 int _zzmatch(int _t, char **zzBadText, char **zzMissText,
     int *zzMissTok, int *zzBadTok,
     SetWordType **zzMissSet)
@@ -460,8 +386,6 @@ int _zzmatch_wsig(int _t)
   zzMakeAttr
   return 1;
 }
-
-#endif /*DEMAND_LOOK*/
 
 #ifdef ZZINF_LOOK
 void _inf_zzgettok()
@@ -586,13 +510,6 @@ int _zzsetmatch(SetWordType *e, char **zzBadText, char **zzMissText,
       SetWordType **zzMissSet,
       SetWordType *zzTokclassErrset /* MR23 */)
 {
-#ifdef DEMAND_LOOK
-#ifdef LL_K
-  if ( zzdirty==LL_K ) {zzCONSUME;}
-#else
-  if ( zzdirty ) {zzCONSUME;}
-#endif
-#endif
   if ( !zzset_el((unsigned)LA(1), e) ) {
     *zzBadText = LATEXT(1); *zzMissText=NULL;
     *zzMissTok= 0; *zzBadTok=LA(1);
@@ -600,32 +517,14 @@ int _zzsetmatch(SetWordType *e, char **zzBadText, char **zzMissText,
     return 0;
   }
   zzMakeAttr           /* MR14 Ger Hobbelt (hobbelt@axa.nl) */
-#ifdef DEMAND_LOOK
-#ifdef LL_K
-  zzdirty++;
-    zzlabase++;          /* MR14 Ger Hobbelt (hobbelt@axa.nl) */
-#else
-  zzdirty = 1;
-#endif
-#endif
   return 1;
 }
 
 int _zzmatch_wdfltsig(int tokenWanted, SetWordType *whatFollows)
 {
-#ifdef DEMAND_LOOK
-#ifdef LL_K
-  if ( zzdirty==LL_K ) {
-      zzCONSUME;
-  }
-#else
-  if ( zzdirty ) {zzCONSUME;}
-#endif
-#endif
-
   if ( LA(1)!=tokenWanted )
   {
-        zzSyntaxErrCount++;     /* MR11 */
+        zzSyntaxErrCount++;
     fprintf(stderr,
         "line %d: syntax error at \"%s\" missing %s\n",
         zzline,
@@ -636,16 +535,6 @@ int _zzmatch_wdfltsig(int tokenWanted, SetWordType *whatFollows)
   }
   else {
     zzMakeAttr
-#ifdef DEMAND_LOOK
-#ifdef LL_K
-    zzdirty++;
-    zzlabase++;
-#else
-    zzdirty = 1;
-#endif
-#else
-/*    zzCONSUME;     consume if not demand lookahead */
-#endif
     return 1;
   }
 }
@@ -654,13 +543,6 @@ int _zzsetmatch_wdfltsig(SetWordType *tokensWanted,
            int tokenTypeOfSet,
            SetWordType *whatFollows)
 {
-#ifdef DEMAND_LOOK
-#ifdef LL_K
-  if ( zzdirty==LL_K ) {zzCONSUME;}
-#else
-  if ( zzdirty ) {zzCONSUME;}
-#endif
-#endif
   if ( !zzset_el((unsigned)LA(1), tokensWanted) )
   {
         zzSyntaxErrCount++;     /* MR11 */
@@ -674,39 +556,14 @@ int _zzsetmatch_wdfltsig(SetWordType *tokensWanted,
   }
   else {
     zzMakeAttr
-#ifdef DEMAND_LOOK
-#ifdef LL_K
-    zzdirty++;
-    zzlabase++;
-#else
-    zzdirty = 1;
-#endif
-#else
-/*    zzCONSUME;    consume if not demand lookahead */
-#endif
     return 1;
   }
 }
 
 int _zzsetmatch_wsig(SetWordType *e)
 {
-#ifdef DEMAND_LOOK
-#ifdef LL_K
-  if ( zzdirty==LL_K ) {zzCONSUME;}
-#else
-  if ( zzdirty ) {zzCONSUME;}
-#endif
-#endif
   if ( !zzset_el((unsigned)LA(1), e) ) return 0;
   zzMakeAttr           /* MR14 Ger Hobbelt (hobbelt@axa.nl) */
-#ifdef DEMAND_LOOK
-#ifdef LL_K
-  zzdirty++;
-    zzlabase++;          /* MR14 Ger Hobbelt (hobbelt@axa.nl) */
-#else
-  zzdirty = 1;
-#endif
-#endif
   return 1;
 }
 

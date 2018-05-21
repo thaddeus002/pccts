@@ -55,11 +55,7 @@ void zzsubchild(AST **_root, AST **_sibling, AST **_tail)
   AST *n;
   zzNON_GUESS_MODE {
   n = zzastnew();
-#ifdef DEMAND_LOOK
-  zzcr_ast(n, &(zzaCur), LA(0), LATEXT(0));
-#else
   zzcr_ast(n, &(zzaCur), LA(1), LATEXT(1));
-#endif
   zzastPush( n );
   if ( *_tail != NULL ) (*_tail)->right = n;
   else {
@@ -81,11 +77,7 @@ void zzsubroot(AST **_root, AST **_sibling, AST **_tail)
   AST *n;
   zzNON_GUESS_MODE {
   n = zzastnew();
-#ifdef DEMAND_LOOK
-  zzcr_ast(n, &(zzaCur), LA(0), LATEXT(0));
-#else
   zzcr_ast(n, &(zzaCur), LA(1), LATEXT(1));
-#endif
   zzastPush( n );
   if ( *_root != NULL )
     if ( (*_root)->down == *_sibling ) *_sibling = *_tail = *_root;
