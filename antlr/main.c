@@ -43,7 +43,7 @@
 #include "generic.h"
 #include "proto.h"
 #include "constants.h"
-#include "antlr.h" // for ANTLR()
+#include "antlr.h" // for ANTLR() and grammar()
 #include "logger.h"
 #include "antlr_log.h"
 #include "gen.h"

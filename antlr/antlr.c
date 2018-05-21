@@ -74,8 +74,17 @@ static void zzsyn(char *text, int tok, char *egroup, SetWordType *eset, int etok
 int k, char *bad_text);
 
 
-/* MR20 G. Hobbelt extern definitions moved to antlr.h */
-
+#define ANTLRm(st, f, _m) zzbufsize = ZZLEXBUFSIZE; \
+            zzmode(_m);       \
+            zzenterANTLR(f);      \
+            {                                            \
+              zzBLOCK(zztasp1);                          \
+              st; /* ++zzasp; Removed MR20 G. Hobbelt */     \
+                  /* ZZAST_ADJUST Removed MR20 G. Hobbelt */ \
+              /* MR20 G. Hobbelt. Kill the top' attribute (+AST stack corr.) */  \
+              zzEXIT_ANTLR(zztasp1 + 1);                 \
+            }                                            \
+            zzleaveANTLR(f);
 
 
 static UserAction *newUserAction(char *s)

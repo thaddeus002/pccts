@@ -25,7 +25,4 @@
 #define ID 148
 #define INT 150
 
-
-void grammar();
-
 #endif

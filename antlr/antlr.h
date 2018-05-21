@@ -49,6 +49,8 @@ typedef char ANTLRChar;
 
 typedef Graph Attrib;
 
+void grammar();
+
             /* G u e s s  S t u f f */
 
 #ifdef ZZCAN_GUESS
@@ -200,10 +202,10 @@ typedef struct _zzantlr_state {
       char text[ZZLEXBUFSIZE];
 #endif
 #ifdef zzTRACE_RULES
-      int     traceOptionValue;       /* MR10 */
-      int     traceGuessOptionValue;  /* MR10 */
-      char    *traceCurrentRuleName;  /* MR10 */
-      int     traceDepth;             /* MR10 */
+      int     traceOptionValue;
+      int     traceGuessOptionValue;
+      char    *traceCurrentRuleName;
+      int     traceDepth;
 #endif
 
 } zzantlr_state;
@@ -216,24 +218,12 @@ extern char *zzTraceCurrentRuleName;
 extern int  zzTraceDepth;
 #endif
 
-extern int zzGuessSeq;                      /* MR10 */
-extern int zzSyntaxErrCount;                /* MR11 */
-extern int zzLexErrCount;                   /* MR11 */
+extern int zzGuessSeq;
+extern int zzSyntaxErrCount;
+extern int zzLexErrCount;
 
                  /* I n f i n i t e  L o o k a h e a d */
 
-
-#ifdef ZZINF_LOOK
-#define InfLookData \
-  int *zzinf_tokens;  \
-  char **zzinf_text;  \
-  char *zzinf_text_buffer;  \
-  int *zzinf_line;        \
-  int zzinf_labase; \
-  int zzinf_last;
-#else
-#define InfLookData
-#endif
 
 #ifdef ZZINF_LOOK
 
@@ -255,19 +245,6 @@ extern int zzLexErrCount;                   /* MR11 */
 
 #if ZZLEXBUFSIZE > ZZINF_BUFFER_TEXT_CHUNK_SIZE
 #define ZZINF_BUFFER_TEXT_CHUNK_SIZE  ZZLEXBUFSIZE+5
-#endif
-
-/* make inf_look user-access macros */
-#ifdef LL_K
-#define ZZINF_LA_VALID(i) (((zzinf_labase+i-1)-LL_K+1) <= zzinf_last)
-#define ZZINF_LA(i)     zzinf_tokens[(zzinf_labase+i-1)-LL_K+1]
-#define ZZINF_LATEXT(i)   zzinf_text[(zzinf_labase+i-1)-LL_K+1]
-/* MR6  In 1.33 vanilla the #define ZZINF_LINE(i) is was commented out  */
-#define ZZINF_LINE(i)       zzinf_line[(zzinf_labase+i-1)-LL_K+1]
-#else
-#define ZZINF_LA_VALID(i) (((zzinf_labase+i-1)) <= zzinf_last)
-#define ZZINF_LA(i)     zzinf_tokens[(zzinf_labase+i-1)]
-#define ZZINF_LATEXT(i)   zzinf_text[(zzinf_labase+i-1)]
 #endif
 
 #define inf_zzgettok _inf_zzgettok()
@@ -320,44 +297,21 @@ extern void _inf_zzgettok();
 
 
 #ifdef LL_K
-#define zzenterANTLRs(s)                            \
-        zzlextext = &(zztextLA[0][0]); zzrdstr( s ); zzPrimeLookAhead;
-#define zzenterANTLRf(f)              \
-    zzlextext = &(zztextLA[0][0]); zzrdfunc( f ); zzPrimeLookAhead;
 #define zzenterANTLR(f)             \
     zzlextext = &(zztextLA[0][0]); zzrdstream( f ); zzPrimeLookAhead;
-#ifdef ZZINF_LOOK
-#define zzleaveANTLR(f)     free(zzinf_text_buffer); free(zzinf_text); free(zzinf_tokens); free(zzinf_line);
-#define zzleaveANTLRf(f)      free(zzinf_text_buffer); free(zzinf_text); free(zzinf_tokens); free(zzinf_line);
-#define zzleaveANTLRs(f)    free(zzinf_text_buffer); free(zzinf_text); free(zzinf_tokens); free(zzinf_line);
 #else
-#define zzleaveANTLR(f)
-#define zzleaveANTLRf(f)
-#define zzleaveANTLRs(f)
-#endif
-
-#else
-
-#define zzenterANTLRs(s)                            \
-        {static char zztoktext[ZZLEXBUFSIZE];   \
-        zzlextext = zztoktext; zzrdstr( s ); zzPrimeLookAhead;}
-#define zzenterANTLRf(f)              \
-    {static char zztoktext[ZZLEXBUFSIZE]; \
-    zzlextext = zztoktext; zzrdfunc( f ); zzPrimeLookAhead;}
 #define zzenterANTLR(f)             \
     {static char zztoktext[ZZLEXBUFSIZE]; \
     zzlextext = zztoktext; zzrdstream( f ); zzPrimeLookAhead;}
-#ifdef ZZINF_LOOK
-#define zzleaveANTLR(f)     free(zzinf_text_buffer); free(zzinf_text); free(zzinf_tokens); free(zzinf_line);
-#define zzleaveANTLRf(f)      free(zzinf_text_buffer); free(zzinf_text); free(zzinf_tokens); free(zzinf_line);
-#define zzleaveANTLRs(f)    free(zzinf_text_buffer); free(zzinf_text); free(zzinf_tokens); free(zzinf_line);
-#else
-#define zzleaveANTLR(f)
-#define zzleaveANTLRf(f)
-#define zzleaveANTLRs(f)
 #endif
 
+#ifdef ZZINF_LOOK
+#define zzleaveANTLR(f)     free(zzinf_text_buffer); free(zzinf_text); free(zzinf_tokens); free(zzinf_line);
+#else
+#define zzleaveANTLR(f)
 #endif
+
+
 
 /* MR19 Paul D. Smith (psmith@baynetworks.com)
    Need to adjust AST stack pointer at exit.
@@ -374,46 +328,11 @@ extern void _inf_zzgettok();
             zzenterANTLR(f);      \
             {                                            \
               zzBLOCK(zztasp1);                          \
-              st; /* ++zzasp; Removed MR20 G. Hobbelt */     \
-                  /* ZZAST_ADJUST Removed MR20 G. Hobbelt */ \
-              /* MR20 G. Hobbelt. Kill the top' attribute (+AST stack corr.) */  \
+              st;                                        \
               zzEXIT_ANTLR(zztasp1 + 1);                 \
             }                                            \
             zzleaveANTLR(f);
 
-#define ANTLRm(st, f, _m) zzbufsize = ZZLEXBUFSIZE; \
-            zzmode(_m);       \
-            zzenterANTLR(f);      \
-            {                                            \
-              zzBLOCK(zztasp1);                          \
-              st; /* ++zzasp; Removed MR20 G. Hobbelt */     \
-                  /* ZZAST_ADJUST Removed MR20 G. Hobbelt */ \
-              /* MR20 G. Hobbelt. Kill the top' attribute (+AST stack corr.) */  \
-              zzEXIT_ANTLR(zztasp1 + 1);                 \
-            }                                            \
-            zzleaveANTLR(f);
-
-#define ANTLRf(st, f) zzbufsize = ZZLEXBUFSIZE; \
-            zzenterANTLRf(f);     \
-            {                                            \
-              zzBLOCK(zztasp1);                          \
-              st; /* ++zzasp; Removed MR20 G. Hobbelt */     \
-                  /* ZZAST_ADJUST Removed MR20 G. Hobbelt */ \
-              /* MR20 G. Hobbelt. Kill the top' attribute (+AST stack corr.) */  \
-              zzEXIT_ANTLR(zztasp1 + 1);                 \
-            }                                            \
-            zzleaveANTLRf(f);
-
-#define ANTLRs(st, s)   zzbufsize = ZZLEXBUFSIZE; \
-                        zzenterANTLRs(s);           \
-            {                                            \
-              zzBLOCK(zztasp1);                          \
-              st; /* ++zzasp; Removed MR20 G. Hobbelt */     \
-                  /* ZZAST_ADJUST Removed MR20 G. Hobbelt */ \
-              /* MR20 G. Hobbelt. Kill the top' attribute (+AST stack corr.) */  \
-              zzEXIT_ANTLR(zztasp1 + 1);                 \
-            }                                            \
-                        zzleaveANTLRs(s);
 
 #ifdef LL_K
 #define zztext    (&(zztextLA[zzlap][0]))
@@ -443,7 +362,7 @@ extern void _inf_zzgettok();
 
 
 #define zzsetmatch(_es,_tokclassErrset)           \
-  if ( !_zzsetmatch(_es, &zzBadText, &zzMissText, &zzMissTok, &zzBadTok, &zzMissSet, _tokclassErrset) ) goto fail; /* MR23 */
+  if ( !_zzsetmatch(_es, &zzBadText, &zzMissText, &zzMissTok, &zzBadTok, &zzMissSet, _tokclassErrset) ) goto fail;
 
 #ifdef ZZCAN_GUESS
 #define zzsetmatch_wsig(_es, handler)   \
@@ -663,12 +582,5 @@ extern int zzdirty;
 extern int zzguessing;
 extern zzjmp_buf zzguess_start;
 #endif
-
-/* Define global veriables that refer to values exported by the scanner.
- * These declarations duplicate those in dlgdef.h, but are needed
- * if ANTLR is not to generate a .dlg file (-gx); PS, this is a hack.
- */
-extern zzchar_t *zzlextext;     /* text of most recently matched token */
-extern int      zzbufsize;      /* how long zzlextext is */
 
 #endif

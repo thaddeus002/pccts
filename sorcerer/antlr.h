@@ -265,18 +265,6 @@ extern int zzLexErrCount;                   /* MR11 */
 #define ZZINF_BUFFER_TEXT_CHUNK_SIZE  ZZLEXBUFSIZE+5
 #endif
 
-/* make inf_look user-access macros */
-#ifdef LL_K
-#define ZZINF_LA_VALID(i) (((zzinf_labase+i-1)-LL_K+1) <= zzinf_last)
-#define ZZINF_LA(i)     zzinf_tokens[(zzinf_labase+i-1)-LL_K+1]
-#define ZZINF_LATEXT(i)   zzinf_text[(zzinf_labase+i-1)-LL_K+1]
-/* MR6  In 1.33 vanilla the #define ZZINF_LINE(i) is was commented out  */
-#define ZZINF_LINE(i)       zzinf_line[(zzinf_labase+i-1)-LL_K+1]
-#else
-#define ZZINF_LA_VALID(i) (((zzinf_labase+i-1)) <= zzinf_last)
-#define ZZINF_LA(i)     zzinf_tokens[(zzinf_labase+i-1)]
-#define ZZINF_LATEXT(i)   zzinf_text[(zzinf_labase+i-1)]
-#endif
 
 #define inf_zzgettok _inf_zzgettok()
 extern void _inf_zzgettok();
