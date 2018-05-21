@@ -76,7 +76,12 @@ testcpp:
 	$(MAKE) -C testcpp
 	$(MAKE) -C testcpp scrub
 
-tests: testcpp
+bin: antlr dlg
+	mkdir -p bin
+	cp antlr/antlr bin/
+	cp dlg/dlg bin/
+
+tests: bin testcpp
 
 clean:
 	$(MAKE) -C antlr clean
@@ -92,6 +97,6 @@ manpages: pre
 install: manpages
 	$(MAKE) -C antlr PREFIX=$(PREFIX) install
 	$(MAKE) -C dlg PREFIX=$(PREFIX) install
-	[ ! -d $(INCDIR) ] && install -d $(INCDIR)
+	install -d $(INCDIR)
 	install -m 644 h/* $(INCDIR)
 	install -m 644 hpp/* $(INCDIR)
