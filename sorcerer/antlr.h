@@ -49,18 +49,6 @@ typedef char ANTLRChar;
 
             /* G u e s s  S t u f f */
 
-#ifdef ZZCAN_GUESS
-#ifndef ZZINF_LOOK
-#define ZZINF_LOOK
-#endif
-#endif
-
-#ifdef ZZCAN_GUESS
-typedef struct _zzjmp_buf {
-    jmp_buf state;
-} zzjmp_buf;
-#endif
-
 
 /* can make this a power of 2 for more efficient lookup */
 
@@ -83,17 +71,8 @@ typedef struct _zzjmp_buf {
 #endif
 
 #ifndef zzfailed_pred
-#ifdef ZZCAN_GUESS
-#define zzfailed_pred(_p,_hasuseraction,_useraction) \
-  if (zzguessing) { \
-    zzGUESS_FAIL; \
-  } else { \
-    zzfailed_pred_action(_p,_hasuseraction,_useraction); \
-  }
-#else
 #define zzfailed_pred(_p,_hasuseraction,_useraction) \
     zzfailed_pred_action(_p,_hasuseraction,_useraction);
-#endif
 #endif
 
 /*  MR23            Provide more control over failed predicate action
@@ -134,44 +113,14 @@ typedef struct _zzjmp_buf {
 
             /* S t a t e  S t u f f */
 
-#ifdef ZZCAN_GUESS
-#define zzGUESS_BLOCK   zzantlr_state zzst; int zzrv; int zzGuessSeqFrozen;
-
-/* MR10 change zzGUESS: do zzGUESS_DONE when zzrv==1 after longjmp as in C++ mode */
-
-#define zzGUESS       zzsave_antlr_state(&zzst); \
-              zzguessing = 1; \
-                            zzGuessSeqFrozen=++zzGuessSeq; \
-              zzrv = setjmp(zzguess_start.state); \
-                            zzUSER_GUESS_HOOK(zzGuessSeqFrozen,zzrv) \
-                            if (zzrv) zzGUESS_DONE;
-#ifdef zzTRACE_RULES
-#define zzGUESS_FAIL    { zzTraceGuessFail(); longjmp(zzguess_start.state, 1); }
-#else
-#define zzGUESS_FAIL    longjmp(zzguess_start.state, 1)
-#endif
-
-/* MR10 change zzGUESS_DONE: zzrv=1 to simulate longjmp() return value as in C++ mode */
-
-#define zzGUESS_DONE    { zzrestore_antlr_state(&zzst); zzrv=1; zzUSER_GUESS_DONE_HOOK(zzGuessSeqFrozen) }
-#define zzNON_GUESS_MODE  if ( !zzguessing )
-#define zzGuessData                                     \
-            zzjmp_buf zzguess_start;                    \
-            int zzguessing;
-#else
 #define zzGUESS_BLOCK
 #define zzGUESS
 #define zzGUESS_FAIL
 #define zzGUESS_DONE
 #define zzNON_GUESS_MODE
 #define zzGuessData
-#endif
 
 typedef struct _zzantlr_state {
-#ifdef ZZCAN_GUESS
-      zzjmp_buf guess_start;
-      int guessing;
-#endif
       int asp;
       int ast_sp;
 #ifdef ZZINF_LOOK
@@ -425,15 +374,10 @@ extern void _inf_zzgettok();
 
 
 #define zzsetmatch(_es,_tokclassErrset)           \
-  if ( !_zzsetmatch(_es, &zzBadText, &zzMissText, &zzMissTok, &zzBadTok, &zzMissSet, _tokclassErrset) ) goto fail; /* MR23 */
+  if ( !_zzsetmatch(_es, &zzBadText, &zzMissText, &zzMissTok, &zzBadTok, &zzMissSet, _tokclassErrset) ) goto fail;
 
-#ifdef ZZCAN_GUESS
-#define zzsetmatch_wsig(_es, handler)   \
-  if ( !_zzsetmatch_wsig(_es) ) if (zzguessing) { zzGUESS_FAIL; } else {_signal=MismatchedToken; goto handler;}
-#else
 #define zzsetmatch_wsig(_es, handler)   \
   if ( !_zzsetmatch_wsig(_es) ) {_signal=MismatchedToken; goto handler;}
-#endif
 
 extern int _zzsetmatch(SetWordType *, char **, char **, int *, int *, SetWordType **, SetWordType *);
 extern int _zzsetmatch_wsig(SetWordType *);
@@ -441,13 +385,8 @@ extern int _zzsetmatch_wsig(SetWordType *);
 #define zzmatch(_t)             \
   if ( !_zzmatch(_t, &zzBadText, &zzMissText, &zzMissTok, &zzBadTok, &zzMissSet) ) goto fail;
 
-#ifdef ZZCAN_GUESS
-#define zzmatch_wsig(_t,handler)      \
-  if ( !_zzmatch_wsig(_t) ) if (zzguessing) { zzGUESS_FAIL; } else {_signal=MismatchedToken; goto handler;}
-#else
 #define zzmatch_wsig(_t,handler)      \
   if ( !_zzmatch_wsig(_t) ) {_signal=MismatchedToken; goto handler;}
-#endif
 
 extern int _zzmatch(int, char **, char **, int *, int *, SetWordType **);
 extern int _zzmatch_wsig(int);
@@ -621,10 +560,6 @@ extern char *zzinf_text_buffer;
 extern int *zzinf_line;
 extern int zzinf_labase;
 extern int zzinf_last;
-#endif
-#ifdef ZZCAN_GUESS
-extern int zzguessing;
-extern zzjmp_buf zzguess_start;
 #endif
 
 /* Define global veriables that refer to values exported by the scanner.

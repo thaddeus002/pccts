@@ -123,10 +123,16 @@ void zzconsumeUntilToken(int t)
  * where the zzMiss stuff is set here to the token that did not match
  * (and which set wasn't it a member of).
  */
+
 void zzFAIL(int k, ...)
 {
+#ifdef LL_K
+  static char text[LL_K*ZZLEXBUFSIZE+1];
+  SetWordType *f[LL_K];
+#else
   static char text[ZZLEXBUFSIZE+1];
   SetWordType *f[1];
+#endif
   SetWordType **miss_set;
   char **miss_text;
   int *bad_tok;
@@ -180,13 +186,27 @@ void zzTraceGuessDone(zzantlr_state *state)
 
 void zzsave_antlr_state(zzantlr_state *buf)
 {
+#ifdef LL_K
+  int     i;
+#endif
+
   buf->asp = zzasp;
 #ifdef GENAST
   buf->ast_sp = zzast_sp;
 #endif
+#ifdef LL_K
+  for (i=0; i<LL_K; i++) buf->tokenLA[i] = zztokenLA[i];
+  for (i=0; i<LL_K; i++) strcpy(buf->textLA[i], zztextLA[i]);
+  buf->lap = zzlap;
+  buf->labase = zzlabase;
+#else
   buf->token = zztoken;
   strcpy(buf->text, zzlextext);
+#endif
 #ifdef zzTRACE_RULES
+
+    /* MR10 */
+
     buf->traceOptionValue=zzTraceOptionValue;
     buf->traceGuessOptionValue=zzTraceGuessOptionValue;
     buf->traceCurrentRuleName=zzTraceCurrentRuleName;
@@ -201,12 +221,23 @@ void zzrestore_antlr_state(zzantlr_state *buf)
     int     prevTraceOptionValue;
 #endif
 
+#ifdef LL_K
+  int     i;
+#endif
+
   zzasp = buf->asp;
 #ifdef GENAST
   zzast_sp = buf->ast_sp;
 #endif
+#ifdef LL_K
+  for (i=0; i<LL_K; i++) zztokenLA[i] = buf->tokenLA[i];
+  for (i=0; i<LL_K; i++) strcpy(zztextLA[i], buf->textLA[i]);
+  zzlap = buf->lap;
+  zzlabase = buf->labase;
+#else
   zztoken = buf->token;
   strcpy(zzlextext, buf->text);
+#endif
 #ifdef zzTRACE_RULES
 
     prevTraceOptionValue=zzTraceOptionValue;

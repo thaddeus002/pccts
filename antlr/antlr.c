@@ -36,8 +36,8 @@
 #include "scan.h" /* ... and this for zzline */
 #include "error_handling.h"
 
-
 #define MaxClassDeclStuff   256
+#define ZZA_STACKSIZE 400
 
 ListNode *CurExGroups=NULL; /* Current list of exception groups for rule/alts */
 ListNode *CurElementLabels=NULL;
@@ -83,8 +83,7 @@ int k, char *bad_text);
                   /* ZZAST_ADJUST Removed MR20 G. Hobbelt */ \
               /* MR20 G. Hobbelt. Kill the top' attribute (+AST stack corr.) */  \
               zzEXIT_ANTLR(zztasp1 + 1);                 \
-            }                                            \
-            zzleaveANTLR(f);
+            }
 
 
 static UserAction *newUserAction(char *s)

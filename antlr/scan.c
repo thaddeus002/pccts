@@ -98,15 +98,7 @@ static int topint()
   return istack[isp];
 }
 
-
-#ifdef LL_K
-  int zztokenLA[LL_K];
-  zzchar_t zztextLA[LL_K][ZZLEXBUFSIZE];
-  int zzlap = 0, zzlabase=0; /* labase only used for DEMAND_LOOK */
-#else
-  int zztoken;
-#endif
-
+int zztoken;
 static void zzadvance();
 static void zzreplstr(zzchar_t *s);
 static void zzmore();

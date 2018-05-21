@@ -50,18 +50,6 @@ typedef char ANTLRChar;
 
             /* G u e s s  S t u f f */
 
-#ifdef ZZCAN_GUESS
-#ifndef ZZINF_LOOK
-#define ZZINF_LOOK
-#endif
-#endif
-
-#ifdef ZZCAN_GUESS
-typedef struct _zzjmp_buf {
-    jmp_buf state;
-} zzjmp_buf;
-#endif
-
 
 /* can make this a power of 2 for more efficient lookup */
 
@@ -79,22 +67,10 @@ typedef struct _zzjmp_buf {
 #ifndef ZZA_STACKSIZE
 #define ZZA_STACKSIZE 400
 #endif
-#ifndef ZZAST_STACKSIZE
-#define ZZAST_STACKSIZE 400
-#endif
 
 #ifndef zzfailed_pred
-#ifdef ZZCAN_GUESS
-#define zzfailed_pred(_p,_hasuseraction,_useraction) \
-  if (zzguessing) { \
-    zzGUESS_FAIL; \
-  } else { \
-    zzfailed_pred_action(_p,_hasuseraction,_useraction); \
-  }
-#else
 #define zzfailed_pred(_p,_hasuseraction,_useraction) \
     zzfailed_pred_action(_p,_hasuseraction,_useraction);
-#endif
 #endif
 
 /*  MR23            Provide more control over failed predicate action
@@ -109,84 +85,21 @@ typedef struct _zzjmp_buf {
     else { fprintf(stderr, "semantic error; failed predicate: '%s'\n",_p); }
 #endif
 
-#ifndef zzcr_ast
-#define zzcr_ast(ast,attr,tok,text)
-#endif
-
-#ifndef zzUSER_GUESS_HOOK
-#define zzUSER_GUESS_HOOK(seqFrozen,zzrv)
-#endif
-
-#ifndef zzUSER_GUESS_DONE_HOOK
-#define zzUSER_GUESS_DONE_HOOK(seqFrozen)
-#endif
 
             /* S t a t e  S t u f f */
 
-#ifdef ZZCAN_GUESS
-#define zzGUESS_BLOCK   zzantlr_state zzst; int zzrv; int zzGuessSeqFrozen;
-
-/* MR10 change zzGUESS: do zzGUESS_DONE when zzrv==1 after longjmp as in C++ mode */
-
-#define zzGUESS       zzsave_antlr_state(&zzst); \
-              zzguessing = 1; \
-                            zzGuessSeqFrozen=++zzGuessSeq; \
-              zzrv = setjmp(zzguess_start.state); \
-                            zzUSER_GUESS_HOOK(zzGuessSeqFrozen,zzrv) \
-                            if (zzrv) zzGUESS_DONE;
-#ifdef zzTRACE_RULES
-#define zzGUESS_FAIL    { zzTraceGuessFail(); longjmp(zzguess_start.state, 1); }
-#else
-#define zzGUESS_FAIL    longjmp(zzguess_start.state, 1)
-#endif
-
-/* MR10 change zzGUESS_DONE: zzrv=1 to simulate longjmp() return value as in C++ mode */
-
-#define zzGUESS_DONE    { zzrestore_antlr_state(&zzst); zzrv=1; zzUSER_GUESS_DONE_HOOK(zzGuessSeqFrozen) }
-#define zzNON_GUESS_MODE  if ( !zzguessing )
-#define zzGuessData                                     \
-            zzjmp_buf zzguess_start;                    \
-            int zzguessing;
-#else
 #define zzGUESS_BLOCK
 #define zzGUESS
 #define zzGUESS_FAIL
 #define zzGUESS_DONE
 #define zzNON_GUESS_MODE
 #define zzGuessData
-#endif
 
 typedef struct _zzantlr_state {
-#ifdef ZZCAN_GUESS
-      zzjmp_buf guess_start;
-      int guessing;
-#endif
       int asp;
       int ast_sp;
-#ifdef ZZINF_LOOK
-      int inf_lap;  /* not sure we need to save this one */
-      int inf_labase;
-      int inf_last;
-
-/* MR6  Gunnar Rxnning (gunnar@candleweb.no)                                */
-/* MR6    Additional state needs to be saved/restored                       */
-/* MR6    Matching changes in err.h                                         */
-
-      int *inf_tokens;                                       /* MR6 */
-      char **inf_text;                                       /* MR6 */
-      char *inf_text_buffer;                                 /* MR6 */
-      int *inf_line;                                         /* MR6 */
-#endif
-
-#ifdef LL_K
-      int tokenLA[LL_K];
-      char textLA[LL_K][ZZLEXBUFSIZE];
-      int lap;
-      int labase;
-#else
       int token;
       char text[ZZLEXBUFSIZE];
-#endif
 #ifdef zzTRACE_RULES
       int     traceOptionValue;       /* MR10 */
       int     traceGuessOptionValue;  /* MR10 */
@@ -211,47 +124,6 @@ extern int zzLexErrCount;                   /* MR11 */
                  /* I n f i n i t e  L o o k a h e a d */
 
 
-#ifdef ZZINF_LOOK
-#define InfLookData \
-  int *zzinf_tokens;  \
-  char **zzinf_text;  \
-  char *zzinf_text_buffer;  \
-  int *zzinf_line;        \
-  int zzinf_labase; \
-  int zzinf_last;
-#else
-#define InfLookData
-#endif
-
-#ifdef ZZINF_LOOK
-
-#ifndef ZZINF_DEF_TEXT_BUFFER_SIZE
-#define ZZINF_DEF_TEXT_BUFFER_SIZE      20000
-#endif
-#ifndef ZZINF_DEF_TOKEN_BUFFER_SIZE
-#define ZZINF_DEF_TOKEN_BUFFER_SIZE     2000
-#endif
-/* WARNING!!!!!!
- * ZZINF_BUFFER_TEXT_CHUNK_SIZE must be > sizeof(text) largest possible token.
- */
-#ifndef ZZINF_BUFFER_TEXT_CHUNK_SIZE
-#define ZZINF_BUFFER_TEXT_CHUNK_SIZE  5000
-#endif
-#ifndef ZZINF_BUFFER_TOKEN_CHUNK_SIZE
-#define ZZINF_BUFFER_TOKEN_CHUNK_SIZE 1000
-#endif
-
-#if ZZLEXBUFSIZE > ZZINF_BUFFER_TEXT_CHUNK_SIZE
-#define ZZINF_BUFFER_TEXT_CHUNK_SIZE  ZZLEXBUFSIZE+5
-#endif
-
-
-#define inf_zzgettok _inf_zzgettok()
-extern void _inf_zzgettok();
-
-#endif  /* ZZINF_LOOK */
-
-
 #define ANTLR_INFO  \
   Attrib zzempty_attr(void) {static Attrib a; return a;} \
   Attrib zzconstr_attr(int _tok, char *_text) \
@@ -259,53 +131,10 @@ extern void _inf_zzgettok();
   int zzasp=ZZA_STACKSIZE; \
   char zzStackOvfMsg[]="fatal: attrib/AST stack overflow %s(%d)!\n"; \
   Attrib zzaStack[ZZA_STACKSIZE]; \
-  InfLookData \
     zzGuessData
 
 
-#ifdef ZZINF_LOOK
-
-#ifdef LL_K
-#define zzPrimeLookAhead  {zzlap = zzlabase = 0; zzfill_inf_look();\
-              {int _i;  for(_i=1;_i<=LL_K; _i++)    \
-                    {zzCONSUME;} zzlap = zzlabase = 0;}}
-
-#else /* LL_K */
-
-#define zzPrimeLookAhead  zzfill_inf_look(); inf_zzgettok
-
-#endif  /* LL_K */
-
-#else /* ZZINF_LOOK */
-
-#ifdef LL_K
-#define zzPrimeLookAhead  {int _i; zzlap = 0; for(_i=1;_i<=LL_K; _i++)    \
-                    {zzCONSUME;} zzlap = 0;}
-#else
 #define zzPrimeLookAhead  zzgettok()
-#endif  /* LL_K */
-
-#endif  /* ZZINF_LOOK */
-
-
-#ifdef LL_K
-#define zzenterANTLRs(s)                            \
-        zzlextext = &(zztextLA[0][0]); zzrdstr( s ); zzPrimeLookAhead;
-#define zzenterANTLRf(f)              \
-    zzlextext = &(zztextLA[0][0]); zzrdfunc( f ); zzPrimeLookAhead;
-#define zzenterANTLR(f)             \
-    zzlextext = &(zztextLA[0][0]); zzrdstream( f ); zzPrimeLookAhead;
-#ifdef ZZINF_LOOK
-#define zzleaveANTLR(f)     free(zzinf_text_buffer); free(zzinf_text); free(zzinf_tokens); free(zzinf_line);
-#define zzleaveANTLRf(f)      free(zzinf_text_buffer); free(zzinf_text); free(zzinf_tokens); free(zzinf_line);
-#define zzleaveANTLRs(f)    free(zzinf_text_buffer); free(zzinf_text); free(zzinf_tokens); free(zzinf_line);
-#else
-#define zzleaveANTLR(f)
-#define zzleaveANTLRf(f)
-#define zzleaveANTLRs(f)
-#endif
-
-#else
 
 #define zzenterANTLRs(s)                            \
         {static char zztoktext[ZZLEXBUFSIZE];   \
@@ -316,17 +145,10 @@ extern void _inf_zzgettok();
 #define zzenterANTLR(f)             \
     {static char zztoktext[ZZLEXBUFSIZE]; \
     zzlextext = zztoktext; zzrdstream( f ); zzPrimeLookAhead;}
-#ifdef ZZINF_LOOK
-#define zzleaveANTLR(f)     free(zzinf_text_buffer); free(zzinf_text); free(zzinf_tokens); free(zzinf_line);
-#define zzleaveANTLRf(f)      free(zzinf_text_buffer); free(zzinf_text); free(zzinf_tokens); free(zzinf_line);
-#define zzleaveANTLRs(f)    free(zzinf_text_buffer); free(zzinf_text); free(zzinf_tokens); free(zzinf_line);
-#else
 #define zzleaveANTLR(f)
 #define zzleaveANTLRf(f)
 #define zzleaveANTLRs(f)
-#endif
 
-#endif
 
 /* MR19 Paul D. Smith (psmith@baynetworks.com)
    Need to adjust AST stack pointer at exit.
@@ -384,11 +206,7 @@ extern void _inf_zzgettok();
             }                                            \
                         zzleaveANTLRs(s);
 
-#ifdef LL_K
-#define zztext    (&(zztextLA[zzlap][0]))
-#else
 #define zztext    zzlextext
-#endif
 
 
           /* A r g u m e n t  A c c e s s */
@@ -412,15 +230,10 @@ extern void _inf_zzgettok();
 
 
 #define zzsetmatch(_es,_tokclassErrset)           \
-  if ( !_zzsetmatch(_es, &zzBadText, &zzMissText, &zzMissTok, &zzBadTok, &zzMissSet, _tokclassErrset) ) goto fail; /* MR23 */
+  if ( !_zzsetmatch(_es, &zzBadText, &zzMissText, &zzMissTok, &zzBadTok, &zzMissSet, _tokclassErrset) ) goto fail;
 
-#ifdef ZZCAN_GUESS
-#define zzsetmatch_wsig(_es, handler)   \
-  if ( !_zzsetmatch_wsig(_es) ) if (zzguessing) { zzGUESS_FAIL; } else {_signal=MismatchedToken; goto handler;}
-#else
 #define zzsetmatch_wsig(_es, handler)   \
   if ( !_zzsetmatch_wsig(_es) ) {_signal=MismatchedToken; goto handler;}
-#endif
 
 extern int _zzsetmatch(SetWordType *, char **, char **, int *, int *, SetWordType **, SetWordType *);
 extern int _zzsetmatch_wsig(SetWordType *);
@@ -428,13 +241,8 @@ extern int _zzsetmatch_wsig(SetWordType *);
 #define zzmatch(_t)             \
   if ( !_zzmatch(_t, &zzBadText, &zzMissText, &zzMissTok, &zzBadTok, &zzMissSet) ) goto fail;
 
-#ifdef ZZCAN_GUESS
-#define zzmatch_wsig(_t,handler)      \
-  if ( !_zzmatch_wsig(_t) ) if (zzguessing) { zzGUESS_FAIL; } else {_signal=MismatchedToken; goto handler;}
-#else
 #define zzmatch_wsig(_t,handler)      \
   if ( !_zzmatch_wsig(_t) ) {_signal=MismatchedToken; goto handler;}
-#endif
 
 extern int _zzmatch(int, char **, char **, int *, int *, SetWordType **);
 extern int _zzmatch_wsig(int);
@@ -476,41 +284,12 @@ extern int _zzsetmatch_wdfltsig(SetWordType *tokensWanted,
 #define zzLOOP(i) zzREL(i)
 #endif
 
-#ifdef LL_K
-
-#ifdef ZZINF_LOOK
-#define zzCONSUME {inf_zzgettok;                  \
-          zzlap = (zzlap+1)&(LL_K-1);           \
-          zzlextext = &(zztextLA[zzlap][0]);        \
-          }
-#else
-#define zzCONSUME {zzgettok();                  \
-          zzlap = (zzlap+1)&(LL_K-1);           \
-          zzlextext = &(zztextLA[zzlap][0]);}
-#endif /* ZZINF_LOOK */
-
-#else /* LL_K */
-
-#ifdef ZZINF_LOOK
-#define zzCONSUME inf_zzgettok
-#else
 #define zzCONSUME zzgettok();
-#endif
 
-#endif /* LL_K */
-
-#ifdef LL_K
-#define NLA     zztokenLA[zzlap&(LL_K-1)] /* --> next LA */
-#define NLATEXT   zztextLA[zzlap&(LL_K-1)]  /* --> next text of LA */
-#define LA(i)       zztokenLA[(zzlap+(i)-1)&(LL_K-1)]
-#define LATEXT(i)   (&(zztextLA[(zzlap+(i)-1)&(LL_K-1)][0]))
-#else
 #define NLA     zztoken
 #define NLATEXT   zztext
 #define LA(i)       zztoken
 #define LATEXT(i)   zztext
-#endif
-
 
            /* S t a n d a r d  S i g n a l s */
 
@@ -584,28 +363,9 @@ extern void zzdflthandlers(int, int *);
 /* Define a parser; user should do a "#parser myname" in their grammar file */
 /*extern struct pccts_parser zzparser;*/
 
-#ifdef LL_K
-int zztokenLA[LL_K];
-zzchar_t zztextLA[LL_K][ZZLEXBUFSIZE];
-int zzlap = 0, zzlabase=0; // labase only used for DEMAND_LOOK
-#else
 int zztoken;
-#endif
-
 extern char zzStackOvfMsg[];
 extern int zzasp;
 extern Attrib zzaStack[];
-#ifdef ZZINF_LOOK
-extern int *zzinf_tokens;
-extern char **zzinf_text;
-extern char *zzinf_text_buffer;
-extern int *zzinf_line;
-extern int zzinf_labase;
-extern int zzinf_last;
-#endif
-#ifdef ZZCAN_GUESS
-extern int zzguessing;
-extern zzjmp_buf zzguess_start;
-#endif
 
 #endif
