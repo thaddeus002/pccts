@@ -100,22 +100,7 @@ typedef struct _zzantlr_state {
       int ast_sp;
       int token;
       char text[ZZLEXBUFSIZE];
-#ifdef zzTRACE_RULES
-      int     traceOptionValue;       /* MR10 */
-      int     traceGuessOptionValue;  /* MR10 */
-      char    *traceCurrentRuleName;  /* MR10 */
-      int     traceDepth;             /* MR10 */
-#endif
-
 } zzantlr_state;
-
-#ifdef zzTRACE_RULES
-extern int  zzTraceOptionValueDefault;
-extern int  zzTraceOptionValue;
-extern int  zzTraceGuessOptionValue;
-extern char *zzTraceCurrentRuleName;
-extern int  zzTraceDepth;
-#endif
 
 extern int zzGuessSeq;                      /* MR10 */
 extern int zzSyntaxErrCount;                /* MR11 */
@@ -134,17 +119,15 @@ extern int zzLexErrCount;                   /* MR11 */
     zzGuessData
 
 
-#define zzPrimeLookAhead  zzgettok()
-
 #define zzenterANTLRs(s)                            \
         {static char zztoktext[ZZLEXBUFSIZE];   \
-        zzlextext = zztoktext; zzrdstr( s ); zzPrimeLookAhead;}
+        zzlextext = zztoktext; zzrdstr( s ); zzgettok();}
 #define zzenterANTLRf(f)              \
     {static char zztoktext[ZZLEXBUFSIZE]; \
-    zzlextext = zztoktext; zzrdfunc( f ); zzPrimeLookAhead;}
+    zzlextext = zztoktext; zzrdfunc( f ); zzgettok();}
 #define zzenterANTLR(f)             \
     {static char zztoktext[ZZLEXBUFSIZE]; \
-    zzlextext = zztoktext; zzrdstream( f ); zzPrimeLookAhead;}
+    zzlextext = zztoktext; zzrdstream( f ); zzgettok();}
 #define zzleaveANTLR(f)
 #define zzleaveANTLRf(f)
 #define zzleaveANTLRs(f)
@@ -155,18 +138,12 @@ extern int zzLexErrCount;                   /* MR11 */
    Referenced in ANTLRx macros.
 */
 
-#ifdef GENAST
-#define ZZAST_ADJUST ++zzast_sp;
-#else
-#define ZZAST_ADJUST
-#endif
 
 #define ANTLR(st, f)  zzbufsize = ZZLEXBUFSIZE; \
             zzenterANTLR(f);      \
             {                                            \
               zzBLOCK(zztasp1);                          \
               st; /* ++zzasp; Removed MR20 G. Hobbelt */     \
-                  /* ZZAST_ADJUST Removed MR20 G. Hobbelt */ \
               /* MR20 G. Hobbelt. Kill the top' attribute (+AST stack corr.) */  \
               zzEXIT_ANTLR(zztasp1 + 1);                 \
             }                                            \
@@ -178,7 +155,6 @@ extern int zzLexErrCount;                   /* MR11 */
             {                                            \
               zzBLOCK(zztasp1);                          \
               st; /* ++zzasp; Removed MR20 G. Hobbelt */     \
-                  /* ZZAST_ADJUST Removed MR20 G. Hobbelt */ \
               /* MR20 G. Hobbelt. Kill the top' attribute (+AST stack corr.) */  \
               zzEXIT_ANTLR(zztasp1 + 1);                 \
             }                                            \
@@ -189,7 +165,6 @@ extern int zzLexErrCount;                   /* MR11 */
             {                                            \
               zzBLOCK(zztasp1);                          \
               st; /* ++zzasp; Removed MR20 G. Hobbelt */     \
-                  /* ZZAST_ADJUST Removed MR20 G. Hobbelt */ \
               /* MR20 G. Hobbelt. Kill the top' attribute (+AST stack corr.) */  \
               zzEXIT_ANTLR(zztasp1 + 1);                 \
             }                                            \
@@ -200,7 +175,6 @@ extern int zzLexErrCount;                   /* MR11 */
             {                                            \
               zzBLOCK(zztasp1);                          \
               st; /* ++zzasp; Removed MR20 G. Hobbelt */     \
-                  /* ZZAST_ADJUST Removed MR20 G. Hobbelt */ \
               /* MR20 G. Hobbelt. Kill the top' attribute (+AST stack corr.) */  \
               zzEXIT_ANTLR(zztasp1 + 1);                 \
             }                                            \
@@ -215,18 +189,9 @@ extern int zzLexErrCount;                   /* MR11 */
 #define zzaRet      (*zzaRetPtr)
 #define zzaArg(v,n)   zzaStack[v-n]
 #define zzMakeAttr    { zzNON_GUESS_MODE {zzOvfChk; --zzasp; zzcr_attr(&(zzaStack[zzasp]),LA(1),LATEXT(1));}}
-#ifdef zzdef0
-#define zzMake0     { zzOvfChk; --zzasp; zzdef0(&(zzaStack[zzasp]));}
-#else
 #define zzMake0     { zzOvfChk; --zzasp;}
-#endif
 #define zzaPush(_v)   { zzOvfChk; zzaStack[--zzasp] = _v;}
-#ifndef zzd_attr
 #define zzREL(t)    zzasp=(t);    /* Restore state of stack */
-#else
-#define zzREL(t)    for (; zzasp<(t); zzasp++)        \
-            { zzd_attr(&(zzaStack[zzasp])); }
-#endif
 
 
 #define zzsetmatch(_es,_tokclassErrset)           \
@@ -257,32 +222,16 @@ extern int _zzsetmatch_wdfltsig(SetWordType *tokensWanted,
                 int tokenTypeOfSet,
                 SetWordType *whatFollows);
 
-#ifdef GENAST
-#define zzRULE    Attrib *zzaRetPtr = &(zzaStack[zzasp-1]); \
-          SetWordType *zzMissSet=NULL; int zzMissTok=0;   \
-          int zzBadTok=0; char *zzBadText="";   \
-          int zzErrk=1,zzpf=0;          \
-                    zzTRACEdata \
-          char *zzMissText=""; zzASTVars
-#else
 #define zzRULE    Attrib *zzaRetPtr = &(zzaStack[zzasp-1]); \
           int zzBadTok=0; char *zzBadText="";   \
           int zzErrk=1,zzpf=0;                \
                     zzTRACEdata \
           SetWordType *zzMissSet=NULL; int zzMissTok=0; char *zzMissText=""
-#endif
 
-#ifdef GENAST
-#define zzBLOCK(i)  int i = zzasp - 1; int zztsp = zzast_sp
-#define zzEXIT(i) zzREL(i); zzastREL; zzNON_GUESS_MODE { zzastPush(*_root); }
-#define zzEXIT_ANTLR(i) zzREL(i); zzastREL /* [i_a] added as we want this for the ANTLRx() macros */
-#define zzLOOP(i) zzREL(i); zzastREL
-#else
 #define zzBLOCK(i)  int i = zzasp - 1
 #define zzEXIT(i) zzREL(i)
 #define zzEXIT_ANTLR(i) zzREL(i)           /* [i_a] added as we want this for the ANTLRx() macros */
 #define zzLOOP(i) zzREL(i)
-#endif
 
 #define zzCONSUME zzgettok();
 
@@ -308,29 +257,14 @@ extern int _zzsetmatch_wdfltsig(SetWordType *tokensWanted,
 
            /* F u n c t i o n  T r a c i n g */
 
-#ifndef zzTRACE_RULES
 #define zzTRACEdata
-#else
-#ifndef zzTRACEdata
-#define zzTRACEdata     ANTLRChar *zzTracePrevRuleName = NULL;
-#endif
-#endif
-
-#ifndef zzTRACEIN
 #define zzTRACEIN(r)  zzTracePrevRuleName=zzTraceCurrentRuleName;zzTraceIn(r);
-#endif
-#ifndef zzTRACEOUT
 #define zzTRACEOUT(r) zzTraceOut(r);zzTraceCurrentRuleName=zzTracePrevRuleName;
-#endif
 
 /* MR19 zzchar_t additions */
 
 #ifndef zzchar_t
-#ifdef ZZWCHAR_T
-#define zzchar_t wchar_t
-#else
 #define zzchar_t char
-#endif
 #endif
 
 
@@ -354,9 +288,6 @@ extern int  zzTraceOption(int delta);                                /* MR10 */
 extern int  zzTraceGuessOption(int delta);                           /* MR10 */
 extern void zzTraceReset(void);                                      /* MR10 */
 extern void zzTraceGuessFail(void);                                  /* MR10 */
-#ifdef EXCEPTION_HANDLING
-extern void zzdflthandlers(int, int *);
-#endif
 
         /* G l o b a l  V a r i a b l e s */
 

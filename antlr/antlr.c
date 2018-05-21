@@ -80,7 +80,6 @@ int k, char *bad_text);
             {                                            \
               zzBLOCK(zztasp1);                          \
               st; /* ++zzasp; Removed MR20 G. Hobbelt */     \
-                  /* ZZAST_ADJUST Removed MR20 G. Hobbelt */ \
               /* MR20 G. Hobbelt. Kill the top' attribute (+AST stack corr.) */  \
               zzEXIT_ANTLR(zztasp1 + 1);                 \
             }

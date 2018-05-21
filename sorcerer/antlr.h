@@ -359,11 +359,7 @@ extern void _inf_zzgettok();
 #define zzaRet      (*zzaRetPtr)
 #define zzaArg(v,n)   zzaStack[v-n]
 #define zzMakeAttr    { zzNON_GUESS_MODE {zzOvfChk; --zzasp; zzcr_attr(&(zzaStack[zzasp]),LA(1),LATEXT(1));}}
-#ifdef zzdef0
-#define zzMake0     { zzOvfChk; --zzasp; zzdef0(&(zzaStack[zzasp]));}
-#else
 #define zzMake0     { zzOvfChk; --zzasp;}
-#endif
 #define zzaPush(_v)   { zzOvfChk; zzaStack[--zzasp] = _v;}
 #ifndef zzd_attr
 #define zzREL(t)    zzasp=(t);    /* Restore state of stack */
@@ -499,11 +495,7 @@ extern int _zzsetmatch_wdfltsig(SetWordType *tokensWanted,
 /* MR19 zzchar_t additions */
 
 #ifndef zzchar_t
-#ifdef ZZWCHAR_T
-#define zzchar_t wchar_t
-#else
 #define zzchar_t char
-#endif
 #endif
 
 
@@ -531,9 +523,6 @@ extern int  zzTraceOption(int delta);                                /* MR10 */
 extern int  zzTraceGuessOption(int delta);                           /* MR10 */
 extern void zzTraceReset(void);                                      /* MR10 */
 extern void zzTraceGuessFail(void);                                  /* MR10 */
-#ifdef EXCEPTION_HANDLING
-extern void zzdflthandlers(int, int *);
-#endif
 
         /* G l o b a l  V a r i a b l e s */
 

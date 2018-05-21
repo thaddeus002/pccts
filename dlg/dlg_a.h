@@ -15,11 +15,7 @@
 
 
 #ifndef zzchar_t
-#ifdef ZZWCHAR_T
-#define zzchar_t wchar_t
-#else
 #define zzchar_t char
-#endif
 #endif
 
 

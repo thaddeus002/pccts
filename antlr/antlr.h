@@ -96,22 +96,8 @@ typedef struct _zzantlr_state {
       int ast_sp;
       int token;
       char text[ZZLEXBUFSIZE];
-#ifdef zzTRACE_RULES
-      int     traceOptionValue;
-      int     traceGuessOptionValue;
-      char    *traceCurrentRuleName;
-      int     traceDepth;
-#endif
-
 } zzantlr_state;
 
-#ifdef zzTRACE_RULES
-extern int  zzTraceOptionValueDefault;
-extern int  zzTraceOptionValue;
-extern int  zzTraceGuessOptionValue;
-extern char *zzTraceCurrentRuleName;
-extern int  zzTraceDepth;
-#endif
 
 extern int zzGuessSeq;
 extern int zzSyntaxErrCount;
@@ -120,26 +106,10 @@ extern int zzLexErrCount;
                  /* I n f i n i t e  L o o k a h e a d */
 
 
-#define zzPrimeLookAhead  zzgettok()
-
 #define zzenterANTLR(f)             \
     {static char zztoktext[ZZLEXBUFSIZE]; \
-    zzlextext = zztoktext; zzrdstream( f ); zzPrimeLookAhead;}
+    zzlextext = zztoktext; zzrdstream( f ); zzgettok();}
 
-#define zzleaveANTLR(f)
-
-
-
-/* MR19 Paul D. Smith (psmith@baynetworks.com)
-   Need to adjust AST stack pointer at exit.
-   Referenced in ANTLRx macros.
-*/
-
-#ifdef GENAST
-#define ZZAST_ADJUST ++zzast_sp;
-#else
-#define ZZAST_ADJUST
-#endif
 
 #define ANTLR(st, f)  zzbufsize = ZZLEXBUFSIZE; \
             zzenterANTLR(f);      \
@@ -158,18 +128,9 @@ extern int zzLexErrCount;
 #define zzaRet      (*zzaRetPtr)
 #define zzaArg(v,n)   zzaStack[v-n]
 #define zzMakeAttr    { zzNON_GUESS_MODE {zzOvfChk; --zzasp;}}
-#ifdef zzdef0
-#define zzMake0     { zzOvfChk; --zzasp; zzdef0(&(zzaStack[zzasp]));}
-#else
 #define zzMake0     { zzOvfChk; --zzasp;}
-#endif
 #define zzaPush(_v)   { zzOvfChk; zzaStack[--zzasp] = _v;}
-#ifndef zzd_attr
 #define zzREL(t)    zzasp=(t);    /* Restore state of stack */
-#else
-#define zzREL(t)    for (; zzasp<(t); zzasp++)        \
-            { zzd_attr(&(zzaStack[zzasp])); }
-#endif
 
 
 #define zzsetmatch(_es,_tokclassErrset)           \
@@ -200,32 +161,15 @@ extern int _zzsetmatch_wdfltsig(SetWordType *tokensWanted,
                 int tokenTypeOfSet,
                 SetWordType *whatFollows);
 
-#ifdef GENAST
-#define zzRULE    Attrib *zzaRetPtr = &(zzaStack[zzasp-1]); \
-          SetWordType *zzMissSet=NULL; int zzMissTok=0;   \
-          int zzBadTok=0; char *zzBadText="";   \
-          int zzErrk=1,zzpf=0;          \
-                    zzTRACEdata \
-          char *zzMissText=""; zzASTVars
-#else
 #define zzRULE    Attrib *zzaRetPtr = &(zzaStack[zzasp-1]); \
           int zzBadTok=0; char *zzBadText="";   \
           int zzErrk=1,zzpf=0;                \
-                    zzTRACEdata \
           SetWordType *zzMissSet=NULL; int zzMissTok=0; char *zzMissText=""
-#endif
 
-#ifdef GENAST
-#define zzBLOCK(i)  int i = zzasp - 1; int zztsp = zzast_sp
-#define zzEXIT(i) zzREL(i); zzastREL; zzNON_GUESS_MODE { zzastPush(*_root); }
-#define zzEXIT_ANTLR(i) zzREL(i); zzastREL /* [i_a] added as we want this for the ANTLRx() macros */
-#define zzLOOP(i) zzREL(i); zzastREL
-#else
 #define zzBLOCK(i)  int i = zzasp - 1
 #define zzEXIT(i) zzREL(i)
 #define zzEXIT_ANTLR(i) zzREL(i)           /* [i_a] added as we want this for the ANTLRx() macros */
 #define zzLOOP(i) zzREL(i)
-#endif
 
 #define zzCONSUME zzgettok();
 #define NLA     zztoken
@@ -251,30 +195,11 @@ extern int _zzsetmatch_wdfltsig(SetWordType *tokensWanted,
 
            /* F u n c t i o n  T r a c i n g */
 
-#ifndef zzTRACE_RULES
-#define zzTRACEdata
-#else
-#ifndef zzTRACEdata
-#define zzTRACEdata     ANTLRChar *zzTracePrevRuleName = NULL;
-#endif
-#endif
-
-#ifndef zzTRACEIN
 #define zzTRACEIN(r)  zzTracePrevRuleName=zzTraceCurrentRuleName;zzTraceIn(r);
-#endif
-#ifndef zzTRACEOUT
 #define zzTRACEOUT(r) zzTraceOut(r);zzTraceCurrentRuleName=zzTracePrevRuleName;
-#endif
 
 /* MR19 zzchar_t additions */
-
-#ifndef zzchar_t
-#ifdef ZZWCHAR_T
-#define zzchar_t wchar_t
-#else
 #define zzchar_t char
-#endif
-#endif
 
 
         /* E x t e r n  D e f s */
@@ -285,17 +210,14 @@ extern void zzresynch(SetWordType *, SetWordType);
 extern void zzsave_antlr_state(zzantlr_state *);
 extern void zzrestore_antlr_state(zzantlr_state *);
 extern void zzfill_inf_look(void);
-extern void zzconsumeUntil(SetWordType *st);                         /* MR7 */
-extern void zzconsumeUntilToken(int t);                              /* MR7 */
-extern void zzTraceIn(char * ruleName);                              /* MR10 */
-extern void zzTraceOut(char * ruleName);                             /* MR10 */
-extern int  zzTraceOption(int delta);                                /* MR10 */
-extern int  zzTraceGuessOption(int delta);                           /* MR10 */
-extern void zzTraceReset(void);                                      /* MR10 */
-extern void zzTraceGuessFail(void);                                  /* MR10 */
-#ifdef EXCEPTION_HANDLING
-extern void zzdflthandlers(int, int *);
-#endif
+extern void zzconsumeUntil(SetWordType *st);
+extern void zzconsumeUntilToken(int t);
+extern void zzTraceIn(char * ruleName);
+extern void zzTraceOut(char * ruleName);
+extern int  zzTraceOption(int delta);
+extern int  zzTraceGuessOption(int delta);
+extern void zzTraceReset(void);
+extern void zzTraceGuessFail(void);
 
         /* G l o b a l  V a r i a b l e s */
 

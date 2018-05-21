@@ -59,14 +59,6 @@ static SetWordType bitmask[] = {
   0x00000010, 0x00000020, 0x00000040, 0x00000080
 };
 
-#ifdef zzTRACE_RULES
-int  zzTraceOptionValueDefault=1;
-int  zzTraceOptionValue=1;
-int  zzTraceGuessOptionValue=1;
-char *zzTraceCurrentRuleName=NULL;
-int  zzTraceDepth=0;
-#endif
-
 int  zzGuessSeq=0;          /* MR10 */
 int  zzSyntaxErrCount=0;    /* MR11 */
 int  zzLexErrCount=0;       /* MR11 */
@@ -181,54 +173,15 @@ void zzTraceGuessDone(zzantlr_state *state)
 void zzsave_antlr_state(zzantlr_state *buf)
 {
   buf->asp = zzasp;
-#ifdef GENAST
-  buf->ast_sp = zzast_sp;
-#endif
   buf->token = zztoken;
   strcpy(buf->text, zzlextext);
-#ifdef zzTRACE_RULES
-    buf->traceOptionValue=zzTraceOptionValue;
-    buf->traceGuessOptionValue=zzTraceGuessOptionValue;
-    buf->traceCurrentRuleName=zzTraceCurrentRuleName;
-    buf->traceDepth=zzTraceDepth;
-#endif
 }
 
 void zzrestore_antlr_state(zzantlr_state *buf)
 {
-
-#ifdef zzTRACE_RULES
-    int     prevTraceOptionValue;
-#endif
-
   zzasp = buf->asp;
-#ifdef GENAST
-  zzast_sp = buf->ast_sp;
-#endif
   zztoken = buf->token;
   strcpy(zzlextext, buf->text);
-#ifdef zzTRACE_RULES
-
-    prevTraceOptionValue=zzTraceOptionValue;
-    zzTraceOptionValue=buf->traceOptionValue;
-    if ( (prevTraceOptionValue > 0) !=
-             (zzTraceOptionValue > 0)) {
-      if (zzTraceOptionValue > 0) {
-        fprintf(stderr,"trace enable restored in rule %s depth %d\n",
-                        zzTraceCurrentRuleName,zzTraceDepth);
-      };
-      if (zzTraceOptionValue <= 0) {
-        fprintf(stderr,"trace disable restored in rule %s depth %d\n",
-                        zzTraceCurrentRuleName,zzTraceDepth);
-      };
-    };
-
-    zzTraceOptionValue=buf->traceOptionValue;            /* MR10 */
-    zzTraceGuessOptionValue=buf->traceGuessOptionValue;  /* MR10 */
-    zzTraceCurrentRuleName=buf->traceCurrentRuleName;    /* MR10 */
-    zzTraceDepth=buf->traceDepth;                        /* MR10 */
-    zzTraceGuessDone(buf);                               /* MR10 */
-#endif
 }
 
 void zzedecode(SetWordType *a)
@@ -360,12 +313,6 @@ int _zzsetmatch_wsig(SetWordType *e)
 
 void zzTraceReset()
 {
-#ifdef zzTRACE_RULES
-  zzTraceOptionValue=zzTraceOptionValueDefault;
-  zzTraceGuessOptionValue=1;
-  zzTraceCurrentRuleName=NULL;
-  zzTraceDepth=0;
-#endif
 }
 
 void zzTraceGuessFail()
@@ -378,74 +325,16 @@ void zzTraceGuessFail()
 
 void zzTraceIn(char * rule)
 {
-#ifdef zzTRACE_RULES
-
-  int           doIt=0;
-
-  zzTraceDepth++;
-  zzTraceCurrentRuleName=rule;
-
-  if (zzTraceOptionValue <= 0) {
-    doIt=0;
-  } else {
-    doIt=1;
-  };
-
-  if (doIt) {
-    fprintf(stderr,"enter rule %s {\"%s\"} depth %d",
-            rule,
-            LA(1)==1 ? "@" : (char *) LATEXT(1),    /* MR19 */
-            zzTraceDepth);
-    fprintf(stderr,"\n");
-  };
-#endif
   return;
 }
 
 void zzTraceOut(char * rule)
 {
-#ifdef zzTRACE_RULES
-  int       doIt=0;
-
-  zzTraceDepth--;
-
-  if (zzTraceOptionValue <= 0) {
-    doIt=0;
-  } else {
-    doIt=1;
-  };
-
-  if (doIt) {
-    fprintf(stderr,"exit rule %s {\"%s\"} depth %d",
-            rule,
-            LA(1)==1 ? "@" : (char *) LATEXT(1), /* MR19 */
-            zzTraceDepth+1);
-    fprintf(stderr,"\n");
-  };
-#endif
 }
 
 int zzTraceOption(int delta)
 {
-#ifdef zzTRACE_RULES
-    int     prevValue=zzTraceOptionValue;
-
-    zzTraceOptionValue=zzTraceOptionValue+delta;
-
-    if (zzTraceCurrentRuleName != NULL) {
-      if (prevValue <= 0 && zzTraceOptionValue > 0) {
-        fprintf(stderr,"trace enabled in rule %s depth %d\n",
-                                            zzTraceCurrentRuleName,zzTraceDepth);
-      };
-      if (prevValue > 0 && zzTraceOptionValue <= 0) {
-        fprintf(stderr,"trace disabled in rule %s depth %d\n",
-                                            zzTraceCurrentRuleName,zzTraceDepth);
-      };
-    };
-    return  prevValue;
-#else
     return 0;
-#endif
 }
 
 int zzTraceGuessOption(int delta)
