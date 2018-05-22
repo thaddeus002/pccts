@@ -26,22 +26,6 @@
 #include <stdio.h>
 
 /**
- * Allocate 'bytes' bytes, or quit if fail.
- * \param bytes the number of bytes to allocate
- * \param file name of source file
- * \param line line number in which the function is called
- */
-char *dlg_malloc(int bytes,char *file,int line);
-
-/**
- * Allocate 'n' times 'bytes' bytes, or quit if fail.
- * \param bytes the number of bytes to allocate
- * \param file name of source file
- * \param line line number in which the function is called
- */
-char *dlg_calloc(int n,int bytes,char *file,int line);
-
-/**
  * Open an input stream.
  * \param name file to read
  * \return the new filestream (must be closed), or NULL if fail, or stdin if 'name' is NULL.

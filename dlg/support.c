@@ -27,50 +27,10 @@
 
 #include <stdio.h>
 #include <string.h>
-#include <stdlib.h>
 #include "dlg_p.h"
 #include "constants.h"
 #include "logger.h"
 #include "support.h"
-
-// TODO remove this var
-int err_found = 0;      /* indicates whether problem found */
-
-
-/**
- * Allocate 'bytes' bytes, or quit if fail.
- * \param bytes the number of bytes to allocate
- * \param file name of source file
- * \param line line number in which the function is called
- */
-char *dlg_malloc(int bytes,char *file,int line)
-{
-  char *t;
-
-  t = (char *) malloc(bytes);
-  if (!t){
-    internal_error_FL("unable to allocate memory", file, line);
-  }
-  return t;
-}
-
-
-/**
- * Allocate 'n' times 'bytes' bytes, or quit if fail.
- * \param bytes the number of bytes to allocate
- * \param file name of source file
- * \param line line number in which the function is called
- */
-char *dlg_calloc(int n,int bytes,char *file,int line)
-{
-  char *t;
-
-  t = (char *) calloc(n,bytes);
-  if (!t){
-    internal_error_FL("unable to allocate memory", file, line);
-  }
-  return t;
-}
 
 
 /**
@@ -157,12 +117,9 @@ FILE *write_stream(char *outputDirectory, char *name)
         /* couldn't open file */
         warningNoFL("dlg: Can't write to file %s.", name);
       }
-#ifdef SPECIAL_FOPEN
-      else special_fopen_actions(OutMetaName(name));
-#endif
     }
   }else{
-    /* open stdout if nothing there */
+    /* use stdout if nothing there */
     f = stdout;
   }
   return f;
@@ -172,5 +129,4 @@ FILE *write_stream(char *outputDirectory, char *name)
 void error(char *message,int line_no)
 {
   errorFL(message, file_str[0] ? file_str[0] : "stdin", line_no);
-  err_found = 1;
 }

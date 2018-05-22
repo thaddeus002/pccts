@@ -341,7 +341,8 @@ static unsigned char shift0[257] = {
 static void act34()
 {
     NLA = 1;
-    error("unterminated action", zzline); zzmode(START);
+    error("unterminated action", zzline);
+    zzmode(START);
 }
 
 
