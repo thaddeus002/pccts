@@ -544,9 +544,6 @@ int main( int argc, char *argv[] )
         if ( f==NULL ) {
             warningNoFL("can't create %s",OutMetaName(stdpccts));
         } else {
-#ifdef SPECIAL_FOPEN
-            special_fopen_actions(OutMetaName(stdpccts));
-#endif
             if (strcmp(stdpccts,"stdpccts.h") == 0) {
                 genStdPCCTSIncludeFile(f,NULL);
             } else {
@@ -570,9 +567,6 @@ int main( int argc, char *argv[] )
         } else if ( !GenCC ) {
             ErrFile = fopen(OutMetaName(ErrFileName), "w");
             require(ErrFile != NULL, "main: can't open err file");
-#ifdef SPECIAL_FOPEN
-            special_fopen_actions(OutMetaName(ErrFileName));
-#endif
             NewSetWd();
             GenErrHdr();
             TRANS(SynDiag);     /* Translate to the target language */
@@ -587,14 +581,9 @@ int main( int argc, char *argv[] )
             ensure_no_C_file_collisions(Parser_c_Name);
             Parser_h = fopen(OutMetaName(Parser_h_Name), "w");
             require(Parser_h != NULL, "main: can't open class Parserx.h file");
-#ifdef SPECIAL_FOPEN
-            special_fopen_actions(OutMetaName(Parser_h_Name));
-#endif
             Parser_c = fopen(OutMetaName(Parser_c_Name), "w");
             require(Parser_c != NULL, "main: can't open class Parserx.c file");
-#ifdef SPECIAL_FOPEN
-            special_fopen_actions(OutMetaName(Parser_c_Name));
-#endif
+
             GenParser_h_Hdr();
             if ( class_before_actions != NULL ) {
                 ListNode *p;

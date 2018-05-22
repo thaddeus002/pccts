@@ -2971,9 +2971,6 @@ do {    /* MR10     Change recursion into iteration         */
 /* MR6 */ };
     require(output != NULL, "genRule: can't open output file");
 
-#ifdef SPECIAL_FOPEN
-       special_fopen_actions(OutMetaName(outname(FileStr[q->file]))); /* MR1 */
-#endif
     if ( file == -1 ) genHdr1(q->file);
     else genHdr(q->file);
     file = q->file;

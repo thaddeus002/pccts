@@ -182,9 +182,6 @@ void genLexDescr()
   ListNode *p;
   FILE *dlgFile = fopen(OutMetaName(DlgFileName), "w");
   require(dlgFile!=NULL, eMsg("genLexFile: cannot open %s", OutMetaName(DlgFileName)) );
-#ifdef SPECIAL_FOPEN
-  special_fopen_actions(OutMetaName(DlgFileName));               /* MR1 */
-#endif
   fprintf(dlgFile, "<<\n");
   fprintf(dlgFile, "/* %s -- DLG Description of scanner\n", DlgFileName);
   fprintf(dlgFile, " *\n");
@@ -390,9 +387,6 @@ void genDefFile(void)
 
   DefFile = fopen(OutMetaName(DefFileName), "w");
   require(DefFile!=NULL, eMsg("genDefFile: cannot open %s", OutMetaName(DefFileName)) );
-#ifdef SPECIAL_FOPEN
-  special_fopen_actions(OutMetaName(DefFileName));               /* MR1 */
-#endif
   fprintf(DefFile, "#ifndef %s\n", StripPath(gate_symbol(DefFileName)));
   fprintf(DefFile, "#define %s\n", StripPath(gate_symbol(DefFileName)));
 
@@ -491,9 +485,6 @@ void GenRemapFile(void)
 
     f = fopen(OutMetaName(RemapFileName), "w");
     require(f!=NULL, eMsg("GenRemapFile: cannot open %s", OutMetaName(RemapFileName)) );
-#ifdef SPECIAL_FOPEN
-    special_fopen_actions(OutMetaName(RemapFileName));           /* MR1 */
-#endif
     fprintf(f, "/* %s -- List of symbols to remap\n", RemapFileName);
     fprintf(f, " *\n");
     fprintf(f, " * Generated from:");

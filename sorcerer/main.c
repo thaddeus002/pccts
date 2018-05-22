@@ -267,9 +267,6 @@ int main(int argc, char *argv[])
     ProtoFILE = fopen(OutMetaName(GenProtoFile), "w");
     if ( ProtoFILE==NULL ) {warningNoFL("Can't open prototype file '%s'; ignored",GenProtoFile);}
     else {
-#ifdef SPECIAL_FOPEN
-                        special_fopen_actions(OutMetaName(GenProtoFile));
-#endif
       gen_info_hdr( ProtoFILE );
       if ( header_action!=NULL )
         dumpAction(header_action, ProtoFILE, 0, -1, 0, 1);

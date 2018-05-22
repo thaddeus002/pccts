@@ -40,9 +40,6 @@ void GenCPPClassHeader()
   strcat(CPPParser_h_Name, ".h");
   Parser_h = fopen(OutMetaName(CPPParser_h_Name), "w");
   require(Parser_h != NULL, "can't open parser.h file");
-#ifdef SPECIAL_FOPEN
-       special_fopen_actions(OutMetaName(CPPParser_h_Name));
-#endif
 
   /* Put a gate on the header file */
   fprintf(Parser_h, "#ifndef %s_h\n", CurClassName);
@@ -120,9 +117,6 @@ void GenCPPClassCode()
   ensure_no_C_file_collisions(CPPParser_C_Name);
   Parser_c = fopen(OutMetaName(CPPParser_C_Name), "w");
   require(Parser_c != NULL, "can't open class Parserx.c file");
-#ifdef SPECIAL_FOPEN
-       special_fopen_actions(OutMetaName(CPPParser_C_Name));
-#endif
 
   gen_info_hdr(Parser_c);
   fprintf(Parser_c, "#include \"%s.h\"\n\n", CurClassName);

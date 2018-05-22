@@ -265,9 +265,6 @@ static void gen_rule( AST *t )
       if ( output != NULL ) fclose( output );
       output = fopen(OutMetaName(outname(FileStr[t->file])), "w");
       require(output != NULL, "gen_rule: can't open output file");
-#ifdef SPECIAL_FOPEN
-      special_fopen_actions(OutMetaName(outname(FileStr[t->file])));
-#endif
     }
     if ( outfile == -1 ) gen_hdr1();
     else gen_hdr();
@@ -1051,9 +1048,6 @@ void gen_tokens_file(void)
     errNoFL(eMsg("cannot write token definition file %s", def_token_file));
     return;
   }
-#ifdef SPECIAL_FOPEN
-       special_fopen_actions(def_token_file);
-#endif
 
   gen_info_hdr(f);
   fprintf(f, "\n");
