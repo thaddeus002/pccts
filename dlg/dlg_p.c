@@ -34,11 +34,15 @@
 
 #define NFA_MIN   64  /* minimum nfa_array size */
 
-#ifndef PCCTS_PURIFY
-#define PCCTS_PURIFY(r,s) memset((char *) &(r),'\0',(s));
-#endif
 
-ANTLR_INFO
+int zzasp=ZZA_STACKSIZE;
+char zzStackOvfMsg[]="fatal: attrib/AST stack overflow %s(%d)!\n";
+Attrib zzaStack[ZZA_STACKSIZE];
+
+
+static void zzsyn(char *text, int tok, char *egroup, SetWordType *eset, int etok, int k, char *bad_text);
+extern void zzedecode(SetWordType *);
+extern void zzresynch(SetWordType *, SetWordType);
 
 extern int case_insensitive;/* ignore case of input spec. */
 extern int  dfa_basep[];  /* start of each group of dfa */ // output.c
@@ -869,7 +873,7 @@ int dump_nfas(int first_node, int last_node)
 /*
  * DLG-specific syntax error message generator
  */
-void zzsyn(char *text, int tok, char *egroup, SetWordType *eset, int etok, int k, char *bad_text)
+static void zzsyn(char *text, int tok, char *egroup, SetWordType *eset, int etok, int k, char *bad_text)
 {
     hdrLog(file_str[0]!=NULL?file_str[0]:"stdin" , zzline);
 
