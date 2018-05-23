@@ -59,8 +59,6 @@ static SetWordType bitmask[] = {
   0x00000010, 0x00000020, 0x00000040, 0x00000080
 };
 
-int  zzGuessSeq=0;          /* MR10 */
-int  zzSyntaxErrCount=0;    /* MR11 */
 int  zzLexErrCount=0;       /* MR11 */
 
 void zzresynch(SetWordType *wd,SetWordType mask)
@@ -80,35 +78,12 @@ void zzresynch(SetWordType *wd,SetWordType mask)
   consumed=1;
 }
 
-/* is b an element of set p? */
-int zzset_el(unsigned b, SetWordType *p)
+/** is b an element of set p? */
+static int zzset_el(unsigned b, SetWordType *p)
 {
   return( p[BSETDIVWORD(b)] & bitmask[BSETMODWORD(b)] );
 }
 
-/*                                                                          */
-/*  7-Apr-97 133MR1 for C++ and MR7 for C                                   */
-/*         Change suggested by Eli Sternheim (eli@interhdl.com)           */
-/*                                                                          */
-
-void zzconsumeUntil(SetWordType *st)
-{
-    int     tmp;                                                     /* MR7 */
-    while ( !zzset_el( (tmp=LA(1)), st) && tmp!=1 /* Eof */) {       /* MR7 */
-        zzCONSUME;
-    }   /* MR7 */
-}
-
-/*                                                                          */
-/*  7-Apr-97 133MR1 for C++ and MR7 for C                                   */
-/*         Change suggested by Eli Sternheim (eli@interhdl.com)           */
-/*                                                                          */
-
-void zzconsumeUntilToken(int t)
-{
-    int     tmp;
-    while ( (tmp=zztoken) !=t && tmp!=1 /* Eof */) { zzgettok(); }
-}
 
 /* input looks like:
  *    zzFAIL(k, e1, e2, ...,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText)
@@ -166,9 +141,6 @@ void zzFAIL(int k, ...)
   else *err_k = k;
 }
 
-void zzTraceGuessDone(zzantlr_state *state)
-{
-}
 
 void zzsave_antlr_state(zzantlr_state *buf)
 {
@@ -240,13 +212,6 @@ int _zzmatch(int _t, char **zzBadText, char **zzMissText,
   return 1;
 }
 
-int _zzmatch_wsig(int _t)
-{
-  if ( LA(1)!=_t ) return 0;
-  zzMakeAttr
-  return 1;
-}
-
 
 int _zzsetmatch(SetWordType *e, char **zzBadText, char **zzMissText,
       int *zzMissTok, int *zzBadTok,
@@ -263,83 +228,5 @@ int _zzsetmatch(SetWordType *e, char **zzBadText, char **zzMissText,
   return 1;
 }
 
-int _zzmatch_wdfltsig(int tokenWanted, SetWordType *whatFollows)
-{
-  if ( LA(1)!=tokenWanted )
-  {
-        zzSyntaxErrCount++;
-    fprintf(stderr,
-        "line %d: syntax error at \"%s\" missing %s\n",
-        zzline,
-        (LA(1)==zzEOF_TOKEN)?"<eof>":(char *)zzlextext,
-        zztokens[tokenWanted]);
-    zzconsumeUntil( whatFollows );
-    return 0;
-  }
-  else {
-    zzMakeAttr
-    return 1;
-  }
-}
-
-int _zzsetmatch_wdfltsig(SetWordType *tokensWanted,
-           int tokenTypeOfSet,
-           SetWordType *whatFollows)
-{
-  if ( !zzset_el((unsigned)LA(1), tokensWanted) )
-  {
-        zzSyntaxErrCount++;
-    fprintf(stderr,
-        "line %d: syntax error at \"%s\" missing %s\n",
-        zzline,
-        (LA(1)==zzEOF_TOKEN)?"<eof>":(char *)zzlextext,
-        zztokens[tokenTypeOfSet]);
-    zzconsumeUntil( whatFollows );
-    return 0;
-  }
-  else {
-    zzMakeAttr
-    return 1;
-  }
-}
-
-int _zzsetmatch_wsig(SetWordType *e)
-{
-  if ( !zzset_el((unsigned)LA(1), e) ) return 0;
-  zzMakeAttr           /* MR14 Ger Hobbelt (hobbelt@axa.nl) */
-  return 1;
-}
-
-
-void zzTraceReset()
-{
-}
-
-void zzTraceGuessFail()
-{
-}
-
-/* zzTraceOption:
-     zero value turns off trace
-*/
-
-void zzTraceIn(char * rule)
-{
-  return;
-}
-
-void zzTraceOut(char * rule)
-{
-}
-
-int zzTraceOption(int delta)
-{
-    return 0;
-}
-
-int zzTraceGuessOption(int delta)
-{
-    return 0;
-}
 
 #endif /* ERR_H */

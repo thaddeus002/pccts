@@ -107,17 +107,6 @@ void zzconsumeUntil(SetWordType *st)
     }   /* MR7 */
 }
 
-/*                                                                          */
-/*  7-Apr-97 133MR1 for C++ and MR7 for C                                   */
-/*         Change suggested by Eli Sternheim (eli@interhdl.com)           */
-/*                                                                          */
-
-void zzconsumeUntilToken(int t)
-{
-    int     tmp;                                                     /* MR7 */
-    while ( (tmp=LA(1)) !=t && tmp!=1 /* Eof */) { zzCONSUME; }      /* MR7 */
-}
-
 /* input looks like:
  *    zzFAIL(k, e1, e2, ...,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText)
  * where the zzMiss stuff is set here to the token that did not match

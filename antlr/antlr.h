@@ -99,8 +99,6 @@ typedef struct _zzantlr_state {
 } zzantlr_state;
 
 
-extern int zzGuessSeq;
-extern int zzSyntaxErrCount;
 extern int zzLexErrCount;
 
                  /* I n f i n i t e  L o o k a h e a d */
@@ -136,30 +134,12 @@ extern int zzLexErrCount;
 #define zzsetmatch(_es,_tokclassErrset)           \
   if ( !_zzsetmatch(_es, &zzBadText, &zzMissText, &zzMissTok, &zzBadTok, &zzMissSet, _tokclassErrset) ) goto fail;
 
-#define zzsetmatch_wsig(_es, handler)   \
-  if ( !_zzsetmatch_wsig(_es) ) {_signal=MismatchedToken; goto handler;}
-
 extern int _zzsetmatch(SetWordType *, char **, char **, int *, int *, SetWordType **, SetWordType *);
-extern int _zzsetmatch_wsig(SetWordType *);
 
 #define zzmatch(_t)             \
   if ( !_zzmatch(_t, &zzBadText, &zzMissText, &zzMissTok, &zzBadTok, &zzMissSet) ) goto fail;
 
-#define zzmatch_wsig(_t,handler)      \
-  if ( !_zzmatch_wsig(_t) ) {_signal=MismatchedToken; goto handler;}
-
 extern int _zzmatch(int, char **, char **, int *, int *, SetWordType **);
-extern int _zzmatch_wsig(int);
-
-#define zzmatch_wdfltsig(_t,_f)     \
-  if ( !_zzmatch_wdfltsig(_t,_f) ) _signal=MismatchedToken;
-#define zzsetmatch_wdfltsig(tw,tt,wf)   \
-  if ( !_zzsetmatch_wdfltsig(tw,tt,wf) ) _signal=MismatchedToken;
-
-extern int _zzmatch_wdfltsig(int, SetWordType *);
-extern int _zzsetmatch_wdfltsig(SetWordType *tokensWanted,
-                int tokenTypeOfSet,
-                SetWordType *whatFollows);
 
 #define zzRULE    Attrib *zzaRetPtr = &(zzaStack[zzasp-1]); \
           int zzBadTok=0; char *zzBadText="";   \
@@ -195,8 +175,8 @@ extern int _zzsetmatch_wdfltsig(SetWordType *tokensWanted,
 
            /* F u n c t i o n  T r a c i n g */
 
-#define zzTRACEIN(r)  zzTracePrevRuleName=zzTraceCurrentRuleName;zzTraceIn(r);
-#define zzTRACEOUT(r) zzTraceOut(r);zzTraceCurrentRuleName=zzTracePrevRuleName;
+#define zzTRACEIN(r)  zzTracePrevRuleName=zzTraceCurrentRuleName;
+#define zzTRACEOUT(r) zzTraceCurrentRuleName=zzTracePrevRuleName;
 
 /* MR19 zzchar_t additions */
 #define zzchar_t char
@@ -210,14 +190,6 @@ extern void zzresynch(SetWordType *, SetWordType);
 extern void zzsave_antlr_state(zzantlr_state *);
 extern void zzrestore_antlr_state(zzantlr_state *);
 extern void zzfill_inf_look(void);
-extern void zzconsumeUntil(SetWordType *st);
-extern void zzconsumeUntilToken(int t);
-extern void zzTraceIn(char * ruleName);
-extern void zzTraceOut(char * ruleName);
-extern int  zzTraceOption(int delta);
-extern int  zzTraceGuessOption(int delta);
-extern void zzTraceReset(void);
-extern void zzTraceGuessFail(void);
 
         /* G l o b a l  V a r i a b l e s */
 

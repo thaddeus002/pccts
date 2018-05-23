@@ -516,7 +516,6 @@ extern void zzsave_antlr_state(zzantlr_state *);
 extern void zzrestore_antlr_state(zzantlr_state *);
 extern void zzfill_inf_look(void);
 extern void zzconsumeUntil(SetWordType *st);                         /* MR7 */
-extern void zzconsumeUntilToken(int t);                              /* MR7 */
 extern void zzTraceIn(char * ruleName);                              /* MR10 */
 extern void zzTraceOut(char * ruleName);                             /* MR10 */
 extern int  zzTraceOption(int delta);                                /* MR10 */
