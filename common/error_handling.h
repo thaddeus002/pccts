@@ -106,8 +106,8 @@ void zzconsumeUntil(SetWordType *st)
 
 void zzconsumeUntilToken(int t)
 {
-    int     tmp;                                                     /* MR7 */
-    while ( (tmp=LA(1)) !=t && tmp!=1 /* Eof */) { zzCONSUME; }      /* MR7 */
+    int     tmp;
+    while ( (tmp=zztoken) !=t && tmp!=1 /* Eof */) { zzgettok(); }
 }
 
 /* input looks like:
@@ -136,7 +136,7 @@ void zzFAIL(int k, ...)
   for (i=1; i<=k; i++)  /* look for offending token */
   {
     if ( i>1 ) strcat(text, " ");
-    strcat(text, LATEXT(i));
+    strcat(text, zzlextext);
     if ( !zzset_el((unsigned)LA(i), f[i-1]) ) break;
   }
   miss_set = va_arg(ap, SetWordType **);
@@ -153,7 +153,7 @@ void zzFAIL(int k, ...)
     *miss_set = NULL;
     *miss_text = zzlextext;
     *bad_tok = LA(1);
-    *bad_text = LATEXT(1);
+    *bad_text = zzlextext;
     *err_k = k;
     return;
   }
@@ -161,7 +161,7 @@ void zzFAIL(int k, ...)
   *miss_set = f[i-1];
   *miss_text = text;
   *bad_tok = LA(i);
-  *bad_text = LATEXT(i);
+  *bad_text = zzlextext;
   if ( i==1 ) *err_k = 1;
   else *err_k = k;
 }
@@ -231,7 +231,7 @@ int _zzmatch(int _t, char **zzBadText, char **zzMissText,
     SetWordType **zzMissSet)
 {
   if ( LA(1)!=_t ) {
-    *zzBadText = *zzMissText=LATEXT(1);
+    *zzBadText = *zzMissText= zzlextext;
     *zzMissTok= _t; *zzBadTok=LA(1);
     *zzMissSet=NULL;
     return 0;
@@ -254,7 +254,7 @@ int _zzsetmatch(SetWordType *e, char **zzBadText, char **zzMissText,
       SetWordType *zzTokclassErrset /* MR23 */)
 {
   if ( !zzset_el((unsigned)LA(1), e) ) {
-    *zzBadText = LATEXT(1); *zzMissText=NULL;
+    *zzBadText = zzlextext; *zzMissText=NULL;
     *zzMissTok= 0; *zzBadTok=LA(1);
     *zzMissSet=zzTokclassErrset; /* MR23 */
     return 0;
@@ -271,7 +271,7 @@ int _zzmatch_wdfltsig(int tokenWanted, SetWordType *whatFollows)
     fprintf(stderr,
         "line %d: syntax error at \"%s\" missing %s\n",
         zzline,
-        (LA(1)==zzEOF_TOKEN)?"<eof>":(char *)LATEXT(1),
+        (LA(1)==zzEOF_TOKEN)?"<eof>":(char *)zzlextext,
         zztokens[tokenWanted]);
     zzconsumeUntil( whatFollows );
     return 0;
@@ -288,11 +288,11 @@ int _zzsetmatch_wdfltsig(SetWordType *tokensWanted,
 {
   if ( !zzset_el((unsigned)LA(1), tokensWanted) )
   {
-        zzSyntaxErrCount++;     /* MR11 */
+        zzSyntaxErrCount++;
     fprintf(stderr,
         "line %d: syntax error at \"%s\" missing %s\n",
         zzline,
-        (LA(1)==zzEOF_TOKEN)?"<eof>":(char *)LATEXT(1),
+        (LA(1)==zzEOF_TOKEN)?"<eof>":(char *)zzlextext,
         zztokens[tokenTypeOfSet]);
     zzconsumeUntil( whatFollows );
     return 0;

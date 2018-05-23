@@ -86,50 +86,51 @@ static void xxprintf(char *format, char *string) {
 
 static void act1()
 {
-    NLA = 1;
+    zztoken = 1;
 }
 
 
 static void act2()
 {
-    NLA = 2;
+    zztoken = 2;
     zzskip();
 }
 
 
 static void act3()
 {
-    NLA = 3;
-    zzline++; zzskip();
+    zztoken = 3;
+    zzline++;
+    zzskip();
 }
 
 
 static void act4()
 {
-    NLA = L_EOF;
+    zztoken = L_EOF;
 }
 
 
 static void act5()
 {
-    NLA = PER_PER;
+    zztoken = PER_PER;
 }
 
 
 static void act6()
 {
-    NLA = NAME_PER_PER;
+    zztoken = NAME_PER_PER;
     p_mode_def(&zzlextext[2],lex_mode_counter++);
 }
 
 
 static void act7()
 {
-    NLA = LEXMEMBER;
+    zztoken = LEXMEMBER;
     lexMember=1;
     if (firstLexMember != 0) {
-      firstLexMember=0;
-      p_class_def1();
+        firstLexMember=0;
+        p_class_def1();
     };
     zzmode(ACT);
 }
@@ -137,14 +138,14 @@ static void act7()
 
 static void act8()
 {
-    NLA = LEXACTION;
+    zztoken = LEXACTION;
     lexAction=1;zzmode(ACT);
 }
 
 
 static void act9()
 {
-    NLA = PARSERCLASS;
+    zztoken = PARSERCLASS;
     parserClass=1;
     zzmode(ACT);
 }
@@ -152,14 +153,14 @@ static void act9()
 
 static void act10()
 {
-    NLA = LEXPREFIX;
+    zztoken = LEXPREFIX;
     lexPrefix=1;zzmode(ACT);
 }
 
 
 static void act11()
 {
-    NLA = ACTION;
+    zztoken = ACTION;
     if (func_action)
     fprintf(output_stream,"\n%s %sact%d()\n{ ",
     gen_cpp?"ANTLRTokenType":"static void",
@@ -170,142 +171,146 @@ static void act11()
 
 static void act12()
 {
-    NLA = GREAT_GREAT;
+    zztoken = GREAT_GREAT;
 }
 
 
 static void act13()
 {
-    NLA = L_BRACE;
+    zztoken = L_BRACE;
 }
 
 
 static void act14()
 {
-    NLA = R_BRACE;
+    zztoken = R_BRACE;
 }
 
 
 static void act15()
 {
-    NLA = L_PAR;
+    zztoken = L_PAR;
 }
 
 
 static void act16()
 {
-    NLA = R_PAR;
+    zztoken = R_PAR;
 }
 
 
 static void act17()
 {
-    NLA = L_BRACK;
+    zztoken = L_BRACK;
 }
 
 
 static void act18()
 {
-    NLA = R_BRACK;
+    zztoken = R_BRACK;
 }
 
 
 static void act19()
 {
-    NLA = ZERO_MORE;
+    zztoken = ZERO_MORE;
 }
 
 
 static void act20()
 {
-    NLA = ONE_MORE;
+    zztoken = ONE_MORE;
 }
 
 
 static void act21()
 {
-    NLA = OR;
+    zztoken = OR;
 }
 
 
 static void act22()
 {
-    NLA = RANGE;
+    zztoken = RANGE;
 }
 
 
 static void act23()
 {
-    NLA = NOT;
+    zztoken = NOT;
 }
 
 
 static void act24()
 {
-    NLA = OCTAL_VALUE;
-    {int t; sscanf(&zzlextext[1],"%o",&t); zzlextext[0] = t;}
+    int t;
+    zztoken = OCTAL_VALUE;
+    sscanf(&zzlextext[1],"%o",&t);
+    zzlextext[0] = t;
 }
 
 
 static void act25()
 {
-    NLA = HEX_VALUE;
-    {int t; sscanf(&zzlextext[3],"%x",&t); zzlextext[0] = t;}
+    int t;
+    zztoken = HEX_VALUE;
+    sscanf(&zzlextext[3],"%x",&t);
+    zzlextext[0] = t;
 }
 
 
 static void act26()
 {
-    NLA = DEC_VALUE;
+    zztoken = DEC_VALUE;
     {int t; sscanf(&zzlextext[1],"%d",&t); zzlextext[0] = t;}
-  }
+}
 
 
 static void act27()
 {
-    NLA = TAB;
+    zztoken = TAB;
     zzlextext[0] = '\t';
-  }
+}
 
 
 static void act28()
 {
-    NLA = NL;
+    zztoken = NL;
     zzlextext[0] = '\n';
-  }
+}
 
 
 static void act29()
 {
-    NLA = CR;
+    zztoken = CR;
     zzlextext[0] = '\r';
-  }
+}
 
 
 static void act30()
 {
-    NLA = BS;
+    zztoken = BS;
     zzlextext[0] = '\b';
-  }
+}
 
 
 static void act31()
 {
-    NLA = CONTINUATION;
+    zztoken = CONTINUATION;
     zzline++; zzskip();
-  }
+}
 
 
 static void act32()
 {
-    NLA = LIT;
+    zztoken = LIT;
     zzlextext[0] = zzlextext[1];
 }
 
 
 static void act33()
 {
-    NLA = REGCHAR;
+    zztoken = REGCHAR;
 }
 
 static unsigned char shift0[257] = {
@@ -340,7 +345,7 @@ static unsigned char shift0[257] = {
 
 static void act34()
 {
-    NLA = 1;
+    zztoken = 1;
     error("unterminated action", zzline);
     zzmode(START);
 }
@@ -348,7 +353,7 @@ static void act34()
 
 static void act35()
 {
-    NLA = ACTION;
+    zztoken = ACTION;
     if (func_action) fprintf(output_stream,"}\n\n");
     zzmode(START);
     /* MR1                      */
@@ -365,51 +370,51 @@ static void act35()
 
 static void act36()
 {
-    NLA = 34;
+    zztoken = 34;
     xxputc(zzlextext[0]); zzskip();
 }
 
 
 static void act37()
 {
-    NLA = 35;
+    zztoken = 35;
     xxputc('>'); zzskip();
 }
 
 
 static void act38()
 {
-    NLA = 36;
+    zztoken = 36;
     xxputc('\\'); zzskip();
 }
 
 
 static void act39()
 {
-    NLA = 37;
+    zztoken = 37;
     xxputc(zzlextext[0]); ++zzline; zzskip();
 }
 
 
 static void act40()
 {
-    NLA = 38;
-    zzmode(ACTION_COMMENTS);      /* MR1 */
-    xxprintf("%s", &(zzlextext[0])); zzskip();  /* MR1 */
+    zztoken = 38;
+    zzmode(ACTION_COMMENTS);
+    xxprintf("%s", &(zzlextext[0])); zzskip();
 }
 
 
 static void act41()
 {
-    NLA = 39;
-    zzmode(ACTION_CPP_COMMENTS);      /* MR1 */
-    xxprintf("%s", &(zzlextext[0])); zzskip();  /* MR1 */
+    zztoken = 39;
+    zzmode(ACTION_CPP_COMMENTS);
+    xxprintf("%s", &(zzlextext[0])); zzskip();
 }
 
 
 static void act42()
 {
-    NLA = 40;
+    zztoken = 40;
     xxputc(zzlextext[0]); zzskip();
 }
 
@@ -445,28 +450,28 @@ static unsigned char shift1[257] = {
 
 static void act43()
 {
-    NLA = 1;
+    zztoken = 1;
 }
 
 
 static void act44()
 {
-    NLA = 41;
-    zzmode(ACT);          /* MR1 */
-    xxprintf("%s", &(zzlextext[0])); zzskip();  /* MR1 */
+    zztoken = 41;
+    zzmode(ACT);
+    xxprintf("%s", &(zzlextext[0])); zzskip();
 }
 
 
 static void act45()
 {
-    NLA = 42;
+    zztoken = 42;
     zzline++; xxputc(zzlextext[0]); zzskip();
 }
 
 
 static void act46()
 {
-    NLA = 43;
+    zztoken = 43;
     xxputc(zzlextext[0]); zzskip();
 }
 
@@ -502,13 +507,13 @@ static unsigned char shift2[257] = {
 
 static void act47()
 {
-    NLA = 1;
+    zztoken = 1;
 }
 
 
 static void act48()
 {
-    NLA = 44;
+    zztoken = 44;
     zzmode(ACT); zzline++;
     xxprintf("%s", &(zzlextext[0])); zzskip();
 }
@@ -516,7 +521,7 @@ static void act48()
 
 static void act49()
 {
-    NLA = 45;
+    zztoken = 45;
     xxputc(zzlextext[0]); zzskip();
 }
 

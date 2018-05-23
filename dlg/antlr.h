@@ -118,12 +118,10 @@ extern int zzLexErrCount;
 
           /* A r g u m e n t  A c c e s s */
 
-#define zzaCur      (zzaStack[zzasp])
 #define zzaRet      (*zzaRetPtr)
 #define zzaArg(v,n)   zzaStack[v-n]
-#define zzMakeAttr    { zzNON_GUESS_MODE {zzOvfChk; --zzasp; zzcr_attr(&(zzaStack[zzasp]),LA(1),LATEXT(1));}}
+#define zzMakeAttr    { zzNON_GUESS_MODE {zzOvfChk; --zzasp; zzcr_attr(&(zzaStack[zzasp]),zztoken,zzlextext);}}
 #define zzMake0     { zzOvfChk; --zzasp;}
-#define zzaPush(_v)   { zzOvfChk; zzaStack[--zzasp] = _v;}
 #define zzREL(t)    zzasp=(t);    /* Restore state of stack */
 
 
@@ -144,27 +142,7 @@ extern int _zzmatch(int, char **, char **, int *, int *, SetWordType **);
 
 #define zzCONSUME zzgettok();
 
-#define NLA     zztoken
-#define NLATEXT   zzlextext
 #define LA(i)       zztoken
-#define LATEXT(i)   zzlextext
-
-           /* S t a n d a r d  S i g n a l s */
-
-#define NoSignal      0
-#define MismatchedToken   1
-#define NoViableAlt     2
-#define NoSemViableAlt    3
-
-/* MR7  Allow more control over signalling                                  */
-/*        by adding "Unwind" and "zzsetSignal"                              */
-
-#define Unwind              4
-#define zzsetSignal(newValue) *_retsignal=_signal=(newValue)
-#define zzsuppressSignal *_retsignal=_signal=0
-#define zzexportSignal    *_retsignal=_signal
-
-/* MR19 zzchar_t additions */
 
 #ifndef zzchar_t
 #define zzchar_t char
