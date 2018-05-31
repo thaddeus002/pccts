@@ -93,56 +93,24 @@ typedef struct _zzantlr_state {
 
 extern int zzLexErrCount;
 
-                 /* I n f i n i t e  L o o k a h e a d */
-
-
-#define zzenterANTLR(f)             \
-    {static char zztoktext[ZZLEXBUFSIZE]; \
-    zzlextext = zztoktext; zzrdstream( f ); zzgettok();}
-
-
-/* MR19 Paul D. Smith (psmith@baynetworks.com)
-   Need to adjust AST stack pointer at exit.
-   Referenced in ANTLR macro.
-*/
-
 #define ANTLR(st, f)  zzbufsize = ZZLEXBUFSIZE; \
-            zzenterANTLR(f);      \
+            {static char zztoktext[ZZLEXBUFSIZE]; \
+            zzlextext = zztoktext; zzrdstream( f ); zzgettok();}; \
             {                                            \
-              zzBLOCK(zztasp1);                          \
-              st; /* ++zzasp; Removed MR20 G. Hobbelt */     \
-              /* MR20 G. Hobbelt. Kill the top' attribute (+AST stack corr.) */  \
-              zzEXIT_ANTLR(zztasp1 + 1);                 \
+              int zztasp1 = zzasp -1; \
+              st;  \
+              zzasp=zztasp1 + 1;             \
             }
 
 
           /* A r g u m e n t  A c c e s s */
 
 #define zzaRet      (*zzaRetPtr)
-#define zzaArg(v,n)   zzaStack[v-n]
 #define zzMakeAttr    { zzNON_GUESS_MODE {zzOvfChk; --zzasp; zzcr_attr(&(zzaStack[zzasp]),zztoken,zzlextext);}}
 #define zzMake0     { zzOvfChk; --zzasp;}
 #define zzREL(t)    zzasp=(t);    /* Restore state of stack */
 
-
-#define zzmatch(_t)             \
-  if ( !_zzmatch(_t, &zzBadText, &zzMissText, &zzMissTok, &zzBadTok, &zzMissSet) ) goto fail;
-
-extern int _zzmatch(int, char **, char **, int *, int *, SetWordType **);
-
-#define zzRULE    Attrib *zzaRetPtr = &(zzaStack[zzasp-1]); \
-          int zzBadTok=0; char *zzBadText="";   \
-          int zzErrk=1,zzpf=0;                \
-          SetWordType *zzMissSet=NULL; int zzMissTok=0; char *zzMissText=""
-
-#define zzBLOCK(i)  int i = zzasp - 1
-#define zzEXIT(i) zzREL(i)
-#define zzEXIT_ANTLR(i) zzREL(i)           /* [i_a] added as we want this for the ANTLRx() macros */
-#define zzLOOP(i) zzREL(i)
-
 #define zzCONSUME zzgettok();
-
-#define LA(i)       zztoken
 
 #ifndef zzchar_t
 #define zzchar_t char

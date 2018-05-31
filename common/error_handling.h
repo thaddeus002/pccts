@@ -71,10 +71,10 @@ void zzresynch(SetWordType *wd,SetWordType mask)
   if ( !consumed ) {zzCONSUME; consumed=1; return;}   /* MR10 */
 
   /* if current token is in resynch set, we've got what we wanted */
-  if ( wd[LA(1)]&mask || LA(1) == zzEOF_TOKEN ) {consumed=0; return;}
+  if ( wd[zztoken]&mask || zztoken == zzEOF_TOKEN ) {consumed=0; return;}
 
   /* scan until we find something in the resynch set */
-  while ( !(wd[LA(1)]&mask) && LA(1) != zzEOF_TOKEN ) {zzCONSUME;}
+  while ( !(wd[zztoken]&mask) && zztoken != zzEOF_TOKEN ) {zzCONSUME;}
   consumed=1;
 }
 
@@ -112,7 +112,7 @@ void zzFAIL(int k, ...)
   {
     if ( i>1 ) strcat(text, " ");
     strcat(text, zzlextext);
-    if ( !zzset_el((unsigned)LA(i), f[i-1]) ) break;
+    if ( !zzset_el((unsigned)zztoken, f[i-1]) ) break;
   }
   miss_set = va_arg(ap, SetWordType **);
   miss_text = va_arg(ap, char **);
@@ -127,15 +127,15 @@ void zzFAIL(int k, ...)
      */
     *miss_set = NULL;
     *miss_text = zzlextext;
-    *bad_tok = LA(1);
+    *bad_tok = zztoken;
     *bad_text = zzlextext;
     *err_k = k;
     return;
   }
-/*  fprintf(stderr, "%s not in %dth set\n", zztokens[LA(i)], i);*/
+/*  fprintf(stderr, "%s not in %dth set\n", zztokens[zztoken], i);*/
   *miss_set = f[i-1];
   *miss_text = text;
-  *bad_tok = LA(i);
+  *bad_tok = zztoken;
   *bad_text = zzlextext;
   if ( i==1 ) *err_k = 1;
   else *err_k = k;
@@ -202,9 +202,9 @@ int _zzmatch(int _t, char **zzBadText, char **zzMissText,
     int *zzMissTok, int *zzBadTok,
     SetWordType **zzMissSet)
 {
-  if ( LA(1)!=_t ) {
+  if ( zztoken!=_t ) {
     *zzBadText = *zzMissText= zzlextext;
-    *zzMissTok= _t; *zzBadTok=LA(1);
+    *zzMissTok= _t; *zzBadTok=zztoken;
     *zzMissSet=NULL;
     return 0;
   }
@@ -216,15 +216,15 @@ int _zzmatch(int _t, char **zzBadText, char **zzMissText,
 int _zzsetmatch(SetWordType *e, char **zzBadText, char **zzMissText,
       int *zzMissTok, int *zzBadTok,
       SetWordType **zzMissSet,
-      SetWordType *zzTokclassErrset /* MR23 */)
+      SetWordType *zzTokclassErrset)
 {
-  if ( !zzset_el((unsigned)LA(1), e) ) {
+  if ( !zzset_el((unsigned)zztoken, e) ) {
     *zzBadText = zzlextext; *zzMissText=NULL;
-    *zzMissTok= 0; *zzBadTok=LA(1);
-    *zzMissSet=zzTokclassErrset; /* MR23 */
+    *zzMissTok= 0; *zzBadTok=zztoken;
+    *zzMissSet=zzTokclassErrset;
     return 0;
   }
-  zzMakeAttr           /* MR14 Ger Hobbelt (hobbelt@axa.nl) */
+  zzMakeAttr
   return 1;
 }
 
