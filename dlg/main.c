@@ -239,8 +239,8 @@ int main(int argc, char *argv[])
   if ( output_stream!=NULL ) fclose(output_stream);
   if ( !gen_cpp && mode_stream!=NULL ) fclose(mode_stream);
   if ( class_stream!=NULL ) fclose(class_stream);
-  exit(EXIT_SUCCESS);
-  return 0;   /* get rid of warning message MR1 */
+
+  return EXIT_SUCCESS;
 }
 
 /* initialize all the variables */
