@@ -57,7 +57,7 @@
 /**
  * \param f : input_stream
  */
-void antlr(FILE *f) {
+static void antlr(FILE *f) {
     zzbufsize = ZZLEXBUFSIZE;
     {
         static char zztoktext[ZZLEXBUFSIZE];
@@ -87,8 +87,6 @@ int gen_cpp = false;
 
 FILE *input_stream; /* where to read description from */
 FILE *mode_stream;  /* where to put the mode.h stuff */
-
-static void init();
 
 /* Option List Stuff */
 
@@ -122,6 +120,7 @@ typedef struct {
   WildFunc process;
   char *descr;
 } Opt;
+
 
 Opt options[] = {
   { "-CC", 0, (WildFunc)p_cpp, "Generate C++ output" },
@@ -187,16 +186,32 @@ static void usage(char *program)
   fprintf(stderr, "%s [options] f1 f2 ... fn\n",program);
   while ( *(p->option) != '*' )
   {
-    fprintf(stderr, "\t%s %s\t%s\n",
-            p->option,
-            (p->arg)?"___":"   ",
-            p->descr);
+    fprintf(stderr, "\t%s %s\t%s\n", p->option, (p->arg)?"___":"   ", p->descr);
     p++;
   }
 
   exit(EXIT_FAILURE);
 }
 
+
+/** initialize all the variables */
+static void init()
+{
+  used_chars = empty;
+  used_classes = empty;
+  /* make the valid character set */
+  normal_chars = empty;
+  /* NOTE: MIN_CHAR is EOF */
+  /* NOTE: EOF is not quite a valid char, it is special. Skip it*/
+  for (int i = 1; i<CHAR_RANGE; ++i){
+    set_orel(i,&normal_chars);
+  }
+  make_nfa_model_node();
+  clear_hash();
+  /* NOTE: need to set this flag before the lexer starts getting */
+  /* tokens */
+  func_action = false;
+}
 
 
 int main(int argc, char *argv[])
@@ -242,28 +257,3 @@ int main(int argc, char *argv[])
 
   return EXIT_SUCCESS;
 }
-
-/* initialize all the variables */
-static void init()
-{
-  register int i;
-
-#ifdef SPECIAL_INITS
-  special_inits();          /* MR1 */
-#endif
-  used_chars = empty;
-  used_classes = empty;
-  /* make the valid character set */
-  normal_chars = empty;
-  /* NOTE: MIN_CHAR is EOF */
-  /* NOTE: EOF is not quite a valid char, it is special. Skip it*/
-  for (i = 1; i<CHAR_RANGE; ++i){
-    set_orel(i,&normal_chars);
-  }
-  make_nfa_model_node();
-  clear_hash();
-  /* NOTE: need to set this flag before the lexer starts getting */
-  /* tokens */
-  func_action = false;
-}
-
