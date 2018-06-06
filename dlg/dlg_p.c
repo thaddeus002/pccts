@@ -33,6 +33,9 @@
 /* MR23 In order to remove calls to PURIFY use the antlr -nopurify option */
 
 #define NFA_MIN   64  /* minimum nfa_array size */
+#define zzaRet      (*zzaRetPtr)
+#define zzMake0     { zzOvfChk; --zzasp;}
+#define zzREL(t)    zzasp=(t);    /* Restore state of stack */
 
 #define zzmatch(_t)             \
   if ( !_zzmatch(_t, &zzBadText, &zzMissText, &zzMissTok, &zzBadTok, &zzMissSet) ) goto fail;
@@ -105,19 +108,19 @@ void grammar(char *version, char *mode_file)
         zzMake0;
         {
         if ( (zztoken==LEXACTION) ) {
-          zzmatch(LEXACTION); zzCONSUME;
+          zzmatch(LEXACTION); zzgettok();
         }
         else {
           if ( (zztoken==LEXMEMBER) ) {
-            zzmatch(LEXMEMBER); zzCONSUME;
+            zzmatch(LEXMEMBER); zzgettok();
           }
           else {
             if ( (zztoken==LEXPREFIX) ) {
-              zzmatch(LEXPREFIX); zzCONSUME;
+              zzmatch(LEXPREFIX); zzgettok();
             }
             else {
               if ( (zztoken==PARSERCLASS) ) {
-                zzmatch(PARSERCLASS); zzCONSUME;
+                zzmatch(PARSERCLASS); zzgettok();
               }
               else {
                 if ( (zztoken==ACTION) ) {
@@ -130,7 +133,7 @@ void grammar(char *version, char *mode_file)
         zzREL(zztasp3);
         }
       }
-      zzmatch(ACTION); zzCONSUME;
+      zzmatch(ACTION); zzgettok();
       zzREL(zztasp2);
     }
     zzREL(zztasp2);
@@ -144,7 +147,7 @@ void grammar(char *version, char *mode_file)
     zzMake0;
     {
     while ( (zztoken==ACTION) ) {
-      zzmatch(ACTION); zzCONSUME;
+      zzmatch(ACTION); zzgettok();
       zzREL(zztasp2);
     }
     zzREL(zztasp2);
@@ -152,7 +155,7 @@ void grammar(char *version, char *mode_file)
   }
   zzmatch(1);
   if (firstLexMember != 0) p_class_def1();
- zzCONSUME;
+  zzgettok();
 
   zzREL(zztasp1);
   return;
@@ -176,19 +179,19 @@ static void start_states()
     zzMake0;
     {
     if ( (zztoken==PER_PER) ) {
-      zzmatch(PER_PER); zzCONSUME;
+      zzmatch(PER_PER); zzgettok();
       do_conversion();
     }
     else {
       if ( (zztoken==NAME_PER_PER) ) {
-        zzmatch(NAME_PER_PER); zzCONSUME;
+        zzmatch(NAME_PER_PER); zzgettok();
         do_conversion();
         {
           int zztasp3 = zzasp - 1;
           zzMake0;
           {
           while ( (zztoken==NAME_PER_PER) ) {
-            zzmatch(NAME_PER_PER); zzCONSUME;
+            zzmatch(NAME_PER_PER); zzgettok();
             do_conversion();
             zzREL(zztasp3);
           }
@@ -201,7 +204,7 @@ static void start_states()
     zzREL(zztasp2);
     }
   }
-  zzmatch(PER_PER); zzCONSUME;
+  zzmatch(PER_PER); zzgettok();
   zzREL(zztasp1);
   return;
 fail:
@@ -303,7 +306,7 @@ static void rule()
     if (zzaArg(zztasp1,1 ).r != NULL) {
       zzaRet.l=zzaArg(zztasp1,1 ).l; zzaRet.r=zzaArg(zztasp1,1 ).r; (zzaArg(zztasp1,1 ).r)->accept=action_no;
     }
- zzCONSUME;
+ zzgettok();
 
   }
   else {
@@ -311,8 +314,7 @@ static void rule()
       zzmatch(ACTION);
       zzaRet.l = NULL; zzaRet.r = NULL;
       error("no expression for action  ", zzline);
- zzCONSUME;
-
+      zzgettok();
     }
     else {zzFAIL(1,zzerr4,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
   }
@@ -338,7 +340,7 @@ static void reg_expr()
     zzMake0;
     {
     while ( (zztoken==OR) ) {
-      zzmatch(OR); zzCONSUME;
+      zzmatch(OR); zzgettok();
       and_expr();
       {nfa_node *t1, *t2;
         t1 = new_nfa_node(); t2 = new_nfa_node();
@@ -420,14 +422,14 @@ static void repeat_expr()
           /* MR23 */    if (zzaRet.r != NULL) (zzaRet.r)->trans[1]=t2;
           zzaRet.l=t1;zzaRet.r=t2;
         }
- zzCONSUME;
+        zzgettok();
 
       }
       else {
         if ( (zztoken==ONE_MORE) ) {
           zzmatch(ONE_MORE);
           if (zzaRet.r != NULL) (zzaRet.r)->trans[0] = zzaRet.l;
- zzCONSUME;
+          zzgettok();
 
         }
         else {
@@ -444,14 +446,14 @@ static void repeat_expr()
     if ( (zztoken==ZERO_MORE) ) {
       zzmatch(ZERO_MORE);
       error("no expression for *", zzline);
- zzCONSUME;
+ zzgettok();
 
     }
     else {
       if ( (zztoken==ONE_MORE) ) {
         zzmatch(ONE_MORE);
         error("no expression for +", zzline);
- zzCONSUME;
+ zzgettok();
 
       }
       else {zzFAIL(1,zzerr6,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
@@ -478,7 +480,7 @@ static void expr()
   zzaRet.l = new_nfa_node();
   zzaRet.r = new_nfa_node();
   if ( (zztoken==L_BRACK) ) {
-    zzmatch(L_BRACK); zzCONSUME;
+    zzmatch(L_BRACK); zzgettok();
     atom_list();
     zzmatch(R_BRACK);
 
@@ -487,13 +489,13 @@ static void expr()
       (zzaRet.l)->label = set_dup(zzaArg(zztasp1,2 ).label);
       set_orin(&used_chars,(zzaRet.l)->label);
     }
- zzCONSUME;
+ zzgettok();
 
   }
   else {
     if ( (zztoken==NOT) ) {
-      zzmatch(NOT); zzCONSUME;
-      zzmatch(L_BRACK); zzCONSUME;
+      zzmatch(NOT); zzgettok();
+      zzmatch(L_BRACK); zzgettok();
       atom_list();
       zzmatch(R_BRACK);
 
@@ -502,12 +504,12 @@ static void expr()
         (zzaRet.l)->label = set_dif(normal_chars,zzaArg(zztasp1,3 ).label);
         set_orin(&used_chars,(zzaRet.l)->label);
       }
- zzCONSUME;
+ zzgettok();
 
     }
     else {
       if ( (zztoken==L_PAR) ) {
-        zzmatch(L_PAR); zzCONSUME;
+        zzmatch(L_PAR); zzgettok();
         reg_expr();
         zzmatch(R_PAR);
 
@@ -517,12 +519,12 @@ static void expr()
             (zzaArg(zztasp1,2 ).r)->trans[1] = zzaRet.r;    /* MR20 */
           }
         }
- zzCONSUME;
+ zzgettok();
 
       }
       else {
         if ( (zztoken==L_BRACE) ) {
-          zzmatch(L_BRACE); zzCONSUME;
+          zzmatch(L_BRACE); zzgettok();
           reg_expr();
           zzmatch(R_BRACE);
 
@@ -533,7 +535,7 @@ static void expr()
               (zzaArg(zztasp1,2 ).r)->trans[1] = zzaRet.r;    /* MR20 */
             }
           }
- zzCONSUME;
+ zzgettok();
 
         }
         else {
@@ -614,7 +616,7 @@ static void near_atom()
     zzMake0;
     {
     if ( (zztoken==RANGE) ) {
-      zzmatch(RANGE); zzCONSUME;
+      zzmatch(RANGE); zzgettok();
       anychar();
       if (case_insensitive){
         i_prime = zzaRet.letter+MIN_CHAR;
@@ -695,70 +697,70 @@ static void anychar()
   if ( (zztoken==REGCHAR) ) {
     zzmatch(REGCHAR);
     zzaRet.letter = zzaArg(zztasp1,1 ).letter - MIN_CHAR;
- zzCONSUME;
+ zzgettok();
 
   }
   else {
     if ( (zztoken==OCTAL_VALUE) ) {
       zzmatch(OCTAL_VALUE);
       zzaRet.letter = zzaArg(zztasp1,1 ).letter - MIN_CHAR;
- zzCONSUME;
+ zzgettok();
 
     }
     else {
       if ( (zztoken==HEX_VALUE) ) {
         zzmatch(HEX_VALUE);
         zzaRet.letter = zzaArg(zztasp1,1 ).letter - MIN_CHAR;
- zzCONSUME;
+ zzgettok();
 
       }
       else {
         if ( (zztoken==DEC_VALUE) ) {
           zzmatch(DEC_VALUE);
           zzaRet.letter = zzaArg(zztasp1,1 ).letter - MIN_CHAR;
- zzCONSUME;
+ zzgettok();
 
         }
         else {
           if ( (zztoken==TAB) ) {
             zzmatch(TAB);
             zzaRet.letter = zzaArg(zztasp1,1 ).letter - MIN_CHAR;
- zzCONSUME;
+ zzgettok();
 
           }
           else {
             if ( (zztoken==NL) ) {
               zzmatch(NL);
               zzaRet.letter = zzaArg(zztasp1,1 ).letter - MIN_CHAR;
- zzCONSUME;
+ zzgettok();
 
             }
             else {
               if ( (zztoken==CR) ) {
                 zzmatch(CR);
                 zzaRet.letter = zzaArg(zztasp1,1 ).letter - MIN_CHAR;
- zzCONSUME;
+ zzgettok();
 
               }
               else {
                 if ( (zztoken==BS) ) {
                   zzmatch(BS);
                   zzaRet.letter = zzaArg(zztasp1,1 ).letter - MIN_CHAR;
- zzCONSUME;
+ zzgettok();
 
                 }
                 else {
                   if ( (zztoken==LIT) ) {
                     zzmatch(LIT);
                     zzaRet.letter = zzaArg(zztasp1,1 ).letter - MIN_CHAR;
- zzCONSUME;
+ zzgettok();
 
                   }
                   else {
                     if ( (zztoken==L_EOF) ) {
                       zzmatch(L_EOF);
                       zzaRet.letter = 0;
- zzCONSUME;
+ zzgettok();
 
                     }
                     else {zzFAIL(1,zzerr9,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}

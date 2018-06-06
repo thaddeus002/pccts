@@ -59,7 +59,7 @@ static SetWordType bitmask[] = {
   0x00000010, 0x00000020, 0x00000040, 0x00000080
 };
 
-int  zzLexErrCount=0;       /* MR11 */
+int  zzLexErrCount=0;
 
 void zzresynch(SetWordType *wd,SetWordType mask)
 {
@@ -68,13 +68,13 @@ void zzresynch(SetWordType *wd,SetWordType mask)
   /* if you enter here without having consumed a token from last resynch
    * force a token consumption.
    */
-  if ( !consumed ) {zzCONSUME; consumed=1; return;}   /* MR10 */
+  if ( !consumed ) {zzgettok(); consumed=1; return;}
 
   /* if current token is in resynch set, we've got what we wanted */
   if ( wd[zztoken]&mask || zztoken == zzEOF_TOKEN ) {consumed=0; return;}
 
   /* scan until we find something in the resynch set */
-  while ( !(wd[zztoken]&mask) && zztoken != zzEOF_TOKEN ) {zzCONSUME;}
+  while ( !(wd[zztoken]&mask) && zztoken != zzEOF_TOKEN ) {zzgettok();}
   consumed=1;
 }
 

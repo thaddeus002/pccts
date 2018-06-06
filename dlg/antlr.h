@@ -82,8 +82,6 @@ typedef char ANTLRChar;
 
             /* S t a t e  S t u f f */
 
-#define zzNON_GUESS_MODE
-
 typedef struct _zzantlr_state {
       int asp;
       int ast_sp;
@@ -105,12 +103,8 @@ extern int zzLexErrCount;
 
           /* A r g u m e n t  A c c e s s */
 
-#define zzaRet      (*zzaRetPtr)
-#define zzMakeAttr    { zzNON_GUESS_MODE {zzOvfChk; --zzasp; zzcr_attr(&(zzaStack[zzasp]),zztoken,zzlextext);}}
-#define zzMake0     { zzOvfChk; --zzasp;}
-#define zzREL(t)    zzasp=(t);    /* Restore state of stack */
+#define zzMakeAttr    {zzOvfChk; --zzasp; zzcr_attr(&(zzaStack[zzasp]),zztoken,zzlextext);}
 
-#define zzCONSUME zzgettok();
 
 #ifndef zzchar_t
 #define zzchar_t char
