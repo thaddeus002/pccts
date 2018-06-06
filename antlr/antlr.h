@@ -91,13 +91,6 @@ void grammar();
 #define zzNON_GUESS_MODE
 #define zzGuessData
 
-typedef struct _zzantlr_state {
-      int asp;
-      int ast_sp;
-      int token;
-      char text[ZZLEXBUFSIZE];
-} zzantlr_state;
-
 
 extern int zzLexErrCount;
 
@@ -187,8 +180,6 @@ extern int _zzmatch(int, char **, char **, int *, int *, SetWordType **);
 extern int zzset_deg(SetWordType *);
 extern void zzedecode(SetWordType *);
 extern void zzresynch(SetWordType *, SetWordType);
-extern void zzsave_antlr_state(zzantlr_state *);
-extern void zzrestore_antlr_state(zzantlr_state *);
 extern void zzfill_inf_look(void);
 
         /* G l o b a l  V a r i a b l e s */

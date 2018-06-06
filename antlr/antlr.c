@@ -63,6 +63,27 @@ Attrib zzaStack[ZZA_STACKSIZE];
 int CurBlockID_array[MAX_BLK_LEVEL];
 int CurAltNum_array[MAX_BLK_LEVEL];
 
+typedef struct _zzantlr_state {
+      int asp;
+      int ast_sp;
+      int token;
+      char text[ZZLEXBUFSIZE];
+} zzantlr_state;
+
+
+static void zzsave_antlr_state(zzantlr_state *buf)
+{
+  buf->asp = zzasp;
+  buf->token = zztoken;
+  strcpy(buf->text, zzlextext);
+}
+
+static void zzrestore_antlr_state(zzantlr_state *buf)
+{
+  zzasp = buf->asp;
+  zztoken = buf->token;
+  strcpy(zzlextext, buf->text);
+}
 
 static void chkToken(char *, char *, char *, int);
 

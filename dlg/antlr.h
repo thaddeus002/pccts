@@ -82,12 +82,6 @@ typedef char ANTLRChar;
 
             /* S t a t e  S t u f f */
 
-typedef struct _zzantlr_state {
-      int asp;
-      int ast_sp;
-      int token;
-      char text[ZZLEXBUFSIZE];
-} zzantlr_state;
 
 extern int zzLexErrCount;
 

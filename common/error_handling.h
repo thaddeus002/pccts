@@ -141,21 +141,6 @@ void zzFAIL(int k, ...)
   else *err_k = k;
 }
 
-
-void zzsave_antlr_state(zzantlr_state *buf)
-{
-  buf->asp = zzasp;
-  buf->token = zztoken;
-  strcpy(buf->text, zzlextext);
-}
-
-void zzrestore_antlr_state(zzantlr_state *buf)
-{
-  zzasp = buf->asp;
-  zztoken = buf->token;
-  strcpy(zzlextext, buf->text);
-}
-
 void zzedecode(SetWordType *a)
 {
   register SetWordType *p = a;
