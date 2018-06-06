@@ -54,6 +54,25 @@
 /* name of file for mode output */
 #define MODE_FILE "mode.h"
 
+/**
+ * \param f : input_stream
+ */
+void antlr(FILE *f) {
+    zzbufsize = ZZLEXBUFSIZE;
+    {
+        static char zztoktext[ZZLEXBUFSIZE];
+        zzlextext = zztoktext;
+        zzrdstream( f );
+        zzgettok();
+    };
+    {
+        int zztasp1 = zzasp -1;
+        grammar(VERSION, MODE_FILE);
+        zzasp=zztasp1 + 1;
+    };
+}
+
+
 int numfiles = 0;
 char *file_str[2] = {NULL, NULL};
 char *class_name = DEFAULT_CLASSNAME;
@@ -213,9 +232,9 @@ int main(int argc, char *argv[])
      know what the file really is */
   /* make sure that reading and writing somewhere */
   if (input_stream && output_stream && mode_stream){
-    ANTLR(grammar(VERSION, MODE_FILE), input_stream);
+    antlr(input_stream);
   }
-  p_class_def2();     /* MR1 */
+  p_class_def2();
 
   if ( output_stream!=NULL ) fclose(output_stream);
   if ( !gen_cpp && mode_stream!=NULL ) fclose(mode_stream);

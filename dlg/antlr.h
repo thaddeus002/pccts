@@ -91,15 +91,6 @@ typedef struct _zzantlr_state {
 
 extern int zzLexErrCount;
 
-#define ANTLR(st, f)  zzbufsize = ZZLEXBUFSIZE; \
-            {static char zztoktext[ZZLEXBUFSIZE]; \
-            zzlextext = zztoktext; zzrdstream( f ); zzgettok();}; \
-            {                                            \
-              int zztasp1 = zzasp -1; \
-              st;  \
-              zzasp=zztasp1 + 1;             \
-            }
-
 
           /* A r g u m e n t  A c c e s s */
 
