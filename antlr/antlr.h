@@ -123,17 +123,6 @@ extern int zzLexErrCount;
 #define zzaPush(_v)   { zzOvfChk; zzaStack[--zzasp] = _v;}
 #define zzREL(t)    zzasp=(t);    /* Restore state of stack */
 
-
-#define zzsetmatch(_es,_tokclassErrset)           \
-  if ( !_zzsetmatch(_es, &zzBadText, &zzMissText, &zzMissTok, &zzBadTok, &zzMissSet, _tokclassErrset) ) goto fail;
-
-extern int _zzsetmatch(SetWordType *, char **, char **, int *, int *, SetWordType **, SetWordType *);
-
-#define zzmatch(_t)             \
-  if ( !_zzmatch(_t, &zzBadText, &zzMissText, &zzMissTok, &zzBadTok, &zzMissSet) ) goto fail;
-
-extern int _zzmatch(int, char **, char **, int *, int *, SetWordType **);
-
 #define zzRULE    Attrib *zzaRetPtr = &(zzaStack[zzasp-1]); \
           int zzBadTok=0; char *zzBadText="";   \
           int zzErrk=1,zzpf=0;                \

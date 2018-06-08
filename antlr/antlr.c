@@ -54,6 +54,42 @@ RuleEntry *CurRuleNode=NULL;/* Pointer to current rule node in syntax tree */
 #define PCCTS_PURIFY(r,s) memset((char *) &(r),'\0',(s));
 #endif
 
+#define zzsetmatch(_es,_tokclassErrset)           \
+  if ( !_zzsetmatch(_es, &zzBadText, &zzMissText, &zzMissTok, &zzBadTok, &zzMissSet, _tokclassErrset) ) goto fail;
+
+#define zzmatch(_t)             \
+  if ( !_zzmatch(_t, &zzBadText, &zzMissText, &zzMissTok, &zzBadTok, &zzMissSet) ) goto fail;
+
+int _zzmatch(int _t, char **zzBadText, char **zzMissText,
+    int *zzMissTok, int *zzBadTok,
+    SetWordType **zzMissSet)
+{
+  if ( zztoken!=_t ) {
+    *zzBadText = *zzMissText= zzlextext;
+    *zzMissTok= _t; *zzBadTok=zztoken;
+    *zzMissSet=NULL;
+    return 0;
+  }
+  zzMakeAttr
+  return 1;
+}
+
+
+int _zzsetmatch(SetWordType *e, char **zzBadText, char **zzMissText,
+      int *zzMissTok, int *zzBadTok,
+      SetWordType **zzMissSet,
+      SetWordType *zzTokclassErrset)
+{
+  if ( !zzset_el((unsigned)zztoken, e) ) {
+    *zzBadText = zzlextext; *zzMissText=NULL;
+    *zzMissTok= 0; *zzBadTok=zztoken;
+    *zzMissSet=zzTokclassErrset;
+    return 0;
+  }
+  zzMakeAttr
+  return 1;
+}
+
 
 int zzasp=ZZA_STACKSIZE;
 char zzStackOvfMsg[]="fatal: attrib/AST stack overflow %s(%d)!\n";

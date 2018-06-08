@@ -52,38 +52,11 @@ typedef char ANTLRChar;
 
 #define ZZLEXBUFSIZE  32000
 
-#define zzOvfChk                            \
-    if ( zzasp <= 0 )                                           \
-    {                                                           \
-        fprintf(stderr, zzStackOvfMsg, __FILE__, __LINE__);   \
-        exit(1);                                               \
-    }
-
-#define ZZA_STACKSIZE 400
-
-#define zzfailed_pred(_p,_hasuseraction,_useraction) \
-    zzfailed_pred_action(_p,_hasuseraction,_useraction);
-
-/*  MR23            Provide more control over failed predicate action
-                    without any need for user to worry about guessing internals.
-                    _hasuseraction == 0 => no user specified error action
-                    _hasuseraction == 1 => user specified error action
-*/
-
-#define zzfailed_pred_action(_p,_hasuseraction,_useraction) \
-    if (_hasuseraction) { _useraction } \
-    else { fprintf(stderr, "semantic error; failed predicate: '%s'\n",_p); }
-
 
             /* S t a t e  S t u f f */
 
 
 extern int zzLexErrCount;
-
-
-          /* A r g u m e n t  A c c e s s */
-
-#define zzMakeAttr    {zzOvfChk; --zzasp; zzcr_attr(&(zzaStack[zzasp]),zztoken,zzlextext);}
 
 
 #ifndef zzchar_t
@@ -101,7 +74,6 @@ extern int zzset_deg(SetWordType *);
 /*extern struct pccts_parser zzparser;*/
 
 int zztoken;
-extern char zzStackOvfMsg[];
 extern int zzasp;
 extern Attrib zzaStack[];
 

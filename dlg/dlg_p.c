@@ -34,13 +34,21 @@
 
 #define NFA_MIN   64  /* minimum nfa_array size */
 #define zzaRet      (*zzaRetPtr)
+#define zzMakeAttr    {zzOvfChk; --zzasp; zzcr_attr(&(zzaStack[zzasp]),zztoken,zzlextext);}
 #define zzMake0     { zzOvfChk; --zzasp;}
 #define zzREL(t)    zzasp=(t);    /* Restore state of stack */
+
+#define zzOvfChk                            \
+    if ( zzasp <= 0 )                                           \
+    {                                                           \
+        fprintf(stderr, zzStackOvfMsg, __FILE__, __LINE__);   \
+        exit(1);                                               \
+    }
+
 
 #define zzmatch(_t)             \
   if ( !_zzmatch(_t, &zzBadText, &zzMissText, &zzMissTok, &zzBadTok, &zzMissSet) ) goto fail;
 
-extern int _zzmatch(int, char **, char **, int *, int *, SetWordType **);
 
 #define zzRULE    Attrib *zzaRetPtr = &(zzaStack[zzasp-1]); \
           int zzBadTok=0; char *zzBadText="";   \
@@ -49,10 +57,25 @@ extern int _zzmatch(int, char **, char **, int *, int *, SetWordType **);
 
 #define zzaArg(v,n)   zzaStack[v-n]
 
+#define ZZA_STACKSIZE 400
 
 int zzasp=ZZA_STACKSIZE;
 char zzStackOvfMsg[]="fatal: attrib/AST stack overflow %s(%d)!\n";
 Attrib zzaStack[ZZA_STACKSIZE];
+
+int _zzmatch(int _t, char **zzBadText, char **zzMissText,
+    int *zzMissTok, int *zzBadTok,
+    SetWordType **zzMissSet)
+{
+  if ( zztoken!=_t ) {
+    *zzBadText = *zzMissText= zzlextext;
+    *zzMissTok= _t; *zzBadTok=zztoken;
+    *zzMissSet=NULL;
+    return 0;
+  }
+  zzMakeAttr
+  return 1;
+}
 
 
 static void zzsyn(char *text, int tok, char *egroup, SetWordType *eset, int etok, int k, char *bad_text);
