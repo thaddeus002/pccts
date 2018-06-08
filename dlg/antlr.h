@@ -50,12 +50,7 @@ typedef char ANTLRChar;
 
             /* G u e s s  S t u f f */
 
-
-/* can make this a power of 2 for more efficient lookup */
-
-#ifndef ZZLEXBUFSIZE
-#define ZZLEXBUFSIZE  8000 /* MR22 raise from 2k to 8k */
-#endif
+#define ZZLEXBUFSIZE  32000
 
 #define zzOvfChk                            \
     if ( zzasp <= 0 )                                           \
