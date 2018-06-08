@@ -54,11 +54,31 @@ RuleEntry *CurRuleNode=NULL;/* Pointer to current rule node in syntax tree */
 #define PCCTS_PURIFY(r,s) memset((char *) &(r),'\0',(s));
 #endif
 
+#define zzOvfChk                            \
+    if ( zzasp <= 0 )                                           \
+    {                                                           \
+        fprintf(stderr, zzStackOvfMsg, __FILE__, __LINE__);   \
+        exit(1);                                               \
+    }
+
+#define zzMakeAttr    { zzNON_GUESS_MODE {zzOvfChk; --zzasp;}}
+#define zzMake0     { zzOvfChk; --zzasp;}
+
+
 #define zzsetmatch(_es,_tokclassErrset)           \
   if ( !_zzsetmatch(_es, &zzBadText, &zzMissText, &zzMissTok, &zzBadTok, &zzMissSet, _tokclassErrset) ) goto fail;
 
 #define zzmatch(_t)             \
   if ( !_zzmatch(_t, &zzBadText, &zzMissText, &zzMissTok, &zzBadTok, &zzMissSet) ) goto fail;
+
+
+int zzasp=ZZA_STACKSIZE;
+char zzStackOvfMsg[]="fatal: attrib/AST stack overflow %s(%d)!\n";
+Attrib zzaStack[ZZA_STACKSIZE];
+
+#define MAX_BLK_LEVEL 100
+int CurBlockID_array[MAX_BLK_LEVEL];
+int CurAltNum_array[MAX_BLK_LEVEL];
 
 int _zzmatch(int _t, char **zzBadText, char **zzMissText,
     int *zzMissTok, int *zzBadTok,
@@ -91,13 +111,6 @@ int _zzsetmatch(SetWordType *e, char **zzBadText, char **zzMissText,
 }
 
 
-int zzasp=ZZA_STACKSIZE;
-char zzStackOvfMsg[]="fatal: attrib/AST stack overflow %s(%d)!\n";
-Attrib zzaStack[ZZA_STACKSIZE];
-
-#define MAX_BLK_LEVEL 100
-int CurBlockID_array[MAX_BLK_LEVEL];
-int CurAltNum_array[MAX_BLK_LEVEL];
 
 typedef struct _zzantlr_state {
       int asp;

@@ -57,18 +57,6 @@ void grammar();
 #endif
 
 
-#define zzOvfChk                            \
-    if ( zzasp <= 0 )                                           \
-    {                                                           \
-        fprintf(stderr, zzStackOvfMsg, __FILE__, __LINE__);   \
-        exit(1);                                               \
-    }
-
-
-#ifndef zzfailed_pred
-#define zzfailed_pred(_p,_hasuseraction,_useraction) \
-    zzfailed_pred_action(_p,_hasuseraction,_useraction);
-#endif
 
 /*  MR23            Provide more control over failed predicate action
                     without any need for user to worry about guessing internals.
@@ -76,11 +64,9 @@ void grammar();
                     _hasuseraction == 1 => user specified error action
 */
 
-#ifndef zzfailed_pred_action
-#define zzfailed_pred_action(_p,_hasuseraction,_useraction) \
+#define zzfailed_pred(_p,_hasuseraction,_useraction) \
     if (_hasuseraction) { _useraction } \
     else { fprintf(stderr, "semantic error; failed predicate: '%s'\n",_p); }
-#endif
 
             /* S t a t e  S t u f f */
 
@@ -118,9 +104,6 @@ extern int zzLexErrCount;
 #define zzaCur      (zzaStack[zzasp])
 #define zzaRet      (*zzaRetPtr)
 #define zzaArg(v,n)   zzaStack[v-n]
-#define zzMakeAttr    { zzNON_GUESS_MODE {zzOvfChk; --zzasp;}}
-#define zzMake0     { zzOvfChk; --zzasp;}
-#define zzaPush(_v)   { zzOvfChk; zzaStack[--zzasp] = _v;}
 #define zzREL(t)    zzasp=(t);    /* Restore state of stack */
 
 #define zzRULE    Attrib *zzaRetPtr = &(zzaStack[zzasp-1]); \
@@ -176,7 +159,6 @@ extern void zzfill_inf_look(void);
 /* Define a parser; user should do a "#parser myname" in their grammar file */
 
 extern int zztoken;
-extern char zzStackOvfMsg[];
 extern int zzasp;
 extern Attrib zzaStack[];
 
