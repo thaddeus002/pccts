@@ -60,7 +60,6 @@ extern int zzasp;
  * \param f : input_stream
  */
 static void antlr(FILE *f) {
-    zzbufsize = ZZLEXBUFSIZE;
     {
         static char zztoktext[ZZLEXBUFSIZE];
         zzlextext = zztoktext;

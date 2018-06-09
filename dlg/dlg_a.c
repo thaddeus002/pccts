@@ -1415,7 +1415,6 @@ static int zzauto = 0;
 zzchar_t *zzlextext; /* text of most recently matched token */
 static zzchar_t *zzbegexpr; /* beginning of last reg expr recogn. */
 static zzchar_t *zzendexpr; /* beginning of last reg expr recogn. */
-int zzbufsize = 0;  /* number of characters in zzlextext */
 static int zzbegcol = 0; /* column that first character of token is in*/
 static int zzendcol = 0; /* column that last character of token is in */
 int zzline = 1; /* line current token is on */
@@ -1541,7 +1540,7 @@ void zzgettok()
 skip:
   zzreal_line = zzline;
   zzbufovf = 0;
-  lastpos = &zzlextext[zzbufsize-1];
+  lastpos = &zzlextext[ZZLEXBUFSIZE-1];
   zznextpos = zzlextext;
   zzbegcol = zzendcol+1;
 more:
