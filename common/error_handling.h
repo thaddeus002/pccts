@@ -45,10 +45,6 @@
 
 
 #define BSETWORDSIZE 8
-#define BSETLOGWORDSIZE 3   /* SetWordType is 8bits */
-
-#define BSETMODWORD(x) ((x) & (BSETWORDSIZE-1))   /* x % BSETWORDSIZE */
-#define BSETDIVWORD(x) ((x) >> BSETLOGWORDSIZE)   /* x / BSETWORDSIZE */
 
 /* This is not put into the global pccts_parser structure because it is
  * hidden and does not need to be saved during a "save state" operation
@@ -79,7 +75,7 @@ void zzresynch(SetWordType *wd,SetWordType mask)
 /** is b an element of set p? */
 static int zzset_el(unsigned b, SetWordType *p)
 {
-  return( p[BSETDIVWORD(b)] & bitmask[BSETMODWORD(b)] );
+  return p[b/BSETWORDSIZE] & bitmask[b%BSETWORDSIZE];
 }
 
 
