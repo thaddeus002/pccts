@@ -30,51 +30,19 @@
  * \file antlr.h
  *
  * Define all of the stack setup and manipulation of $i, #i variables.
- *
- *  Notes:
- *    The type 'Attrib' must be defined before entry into this .h file.
  */
 
 
 #ifndef ANTLR_H
 #define ANTLR_H
 
-#include <string.h>
-#include "dlg_p.h" // for Attrib
-#include "dlg_a.h"
-
-typedef int ANTLRTokenType;
 typedef unsigned char SetWordType;
-
 typedef char ANTLRChar;
-
-            /* G u e s s  S t u f f */
 
 #define ZZLEXBUFSIZE  32000
 
-
-            /* S t a t e  S t u f f */
-
-
-extern int zzLexErrCount;
-
-
-#ifndef zzchar_t
-#define zzchar_t char
-#endif
-
-
-        /* E x t e r n  D e f s */
-
 extern int zzset_deg(SetWordType *);
 
-        /* G l o b a l  V a r i a b l e s */
-
-/* Define a parser; user should do a "#parser myname" in their grammar file */
-/*extern struct pccts_parser zzparser;*/
-
 int zztoken;
-extern int zzasp;
-extern Attrib zzaStack[];
 
 #endif

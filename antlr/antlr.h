@@ -78,8 +78,6 @@ void grammar();
 #define zzGuessData
 
 
-extern int zzLexErrCount;
-
                  /* I n f i n i t e  L o o k a h e a d */
 
 

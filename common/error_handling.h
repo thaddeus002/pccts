@@ -59,8 +59,6 @@ static SetWordType bitmask[] = {
   0x00000010, 0x00000020, 0x00000040, 0x00000080
 };
 
-int  zzLexErrCount=0;
-
 void zzresynch(SetWordType *wd,SetWordType mask)
 {
   static int consumed = 1;
@@ -182,36 +180,5 @@ int zzset_deg(SetWordType *a)
 
   return(degree);
 }
-
-int _zzmatch(int _t, char **zzBadText, char **zzMissText,
-    int *zzMissTok, int *zzBadTok,
-    SetWordType **zzMissSet)
-{
-  if ( zztoken!=_t ) {
-    *zzBadText = *zzMissText= zzlextext;
-    *zzMissTok= _t; *zzBadTok=zztoken;
-    *zzMissSet=NULL;
-    return 0;
-  }
-  zzMakeAttr
-  return 1;
-}
-
-
-int _zzsetmatch(SetWordType *e, char **zzBadText, char **zzMissText,
-      int *zzMissTok, int *zzBadTok,
-      SetWordType **zzMissSet,
-      SetWordType *zzTokclassErrset)
-{
-  if ( !zzset_el((unsigned)zztoken, e) ) {
-    *zzBadText = zzlextext; *zzMissText=NULL;
-    *zzMissTok= 0; *zzBadTok=zztoken;
-    *zzMissSet=zzTokclassErrset;
-    return 0;
-  }
-  zzMakeAttr
-  return 1;
-}
-
 
 #endif /* ERR_H */

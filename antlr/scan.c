@@ -6078,6 +6078,8 @@ static void zzadvance()
   }
 }
 
+int zzLexErrCount=0;
+
 static void zzerrstd(const char *s)
 {
   zzLexErrCount++;

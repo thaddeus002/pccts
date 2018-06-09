@@ -54,6 +54,8 @@
 /* name of file for mode output */
 #define MODE_FILE "mode.h"
 
+extern int zzasp;
+
 /**
  * \param f : input_stream
  */
