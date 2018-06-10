@@ -3494,6 +3494,51 @@ char *inline_set(char *s)
   return "inlineX_set";
 }
 
+
+static int zzset_deg(SetWordType *a)
+{
+  /* Fast compute degree of a set... the number
+     of elements present in the set.  Assumes
+     that all word bits are used in the set
+  */
+  register SetWordType *p = a;
+  register SetWordType *endp = &(a[zzSET_SIZE]);
+  register int degree = 0;
+
+  if ( a == NULL ) return 0;
+  while ( p < endp )
+  {
+    register SetWordType t = *p;
+    register SetWordType *b = &(bitmask[0]);
+    do {
+      if (t & *b) ++degree;
+    } while (++b < &(bitmask[sizeof(SetWordType)*8]));
+    p++;
+  }
+
+  return(degree);
+}
+
+
+static void zzedecode(SetWordType *a)
+{
+  register SetWordType *p = a;
+  register SetWordType *endp = &(p[zzSET_SIZE]);
+  register unsigned e = 0;
+
+  if ( zzset_deg(a)>1 ) fprintf(stderr, " {");
+  do {
+    register SetWordType t = *p;
+    register SetWordType *b = &(bitmask[0]);
+    do {
+      if ( t & *b ) fprintf(stderr, " %s", zztokens[e]);
+      e++;
+    } while (++b < &(bitmask[sizeof(SetWordType)*8]));
+  } while (++p < endp);
+  if ( zzset_deg(a)>1 ) fprintf(stderr, " }");
+}
+
+
 /**
  * ANTLR/DLG-specific syntax error message generator
  */

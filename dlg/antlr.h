@@ -41,8 +41,6 @@ typedef char ANTLRChar;
 
 #define ZZLEXBUFSIZE  32000
 
-extern int zzset_deg(SetWordType *);
-
 int zztoken;
 
 #endif

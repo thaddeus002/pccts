@@ -79,7 +79,6 @@ int _zzmatch(int _t, char **zzBadText, char **zzMissText,
 
 
 static void zzsyn(char *text, int tok, char *egroup, SetWordType *eset, int etok, int k, char *bad_text);
-extern void zzedecode(SetWordType *);
 extern void zzresynch(SetWordType *, SetWordType);
 
 extern int case_insensitive;/* ignore case of input spec. */
@@ -806,7 +805,7 @@ fail:
   }
 }
 
-/* adds a new nfa to the binary tree and returns a pointer to it */
+/** adds a new nfa to the binary tree and returns a pointer to it */
 static nfa_node * new_nfa_node()
 {
   register nfa_node *t;
@@ -836,7 +835,7 @@ static nfa_node * new_nfa_node()
 }
 
 
-/* initialize the model node used to fill in newly made nfa_nodes */
+/** initialize the model node used to fill in newly made nfa_nodes */
 void make_nfa_model_node()
 {
   nfa_model_node.node_no = -1; /* impossible value for real nfa node */
@@ -906,6 +905,51 @@ int dump_nfas(int first_node, int last_node)
   return 0;
 }
 #endif
+
+
+static int zzset_deg(SetWordType *a)
+{
+  /* Fast compute degree of a set... the number
+     of elements present in the set.  Assumes
+     that all word bits are used in the set
+  */
+  SetWordType *p = a;
+  SetWordType *endp = &(a[zzSET_SIZE]);
+  int degree = 0;
+
+  if ( a == NULL ) return 0;
+  while ( p < endp )
+  {
+    SetWordType t = *p;
+    SetWordType *b = &(bitmask[0]);
+    do {
+      if (t & *b) ++degree;
+    } while (++b < &(bitmask[sizeof(SetWordType)*8]));
+    p++;
+  }
+
+  return(degree);
+}
+
+
+static void zzedecode(SetWordType *a)
+{
+  register SetWordType *p = a;
+  register SetWordType *endp = &(p[zzSET_SIZE]);
+  register unsigned e = 0;
+
+  if ( zzset_deg(a)>1 ) fprintf(stderr, " {");
+  do {
+    register SetWordType t = *p;
+    register SetWordType *b = &(bitmask[0]);
+    do {
+      if ( t & *b ) fprintf(stderr, " %s", zztokens[e]);
+      e++;
+    } while (++b < &(bitmask[sizeof(SetWordType)*8]));
+  } while (++p < endp);
+  if ( zzset_deg(a)>1 ) fprintf(stderr, " }");
+}
+
 
 /*
  * DLG-specific syntax error message generator

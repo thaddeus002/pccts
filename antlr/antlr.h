@@ -147,8 +147,6 @@ void grammar();
 
         /* E x t e r n  D e f s */
 
-extern int zzset_deg(SetWordType *);
-extern void zzedecode(SetWordType *);
 extern void zzresynch(SetWordType *, SetWordType);
 extern void zzfill_inf_look(void);
 
