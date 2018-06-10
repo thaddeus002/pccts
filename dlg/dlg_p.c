@@ -368,9 +368,9 @@ static void reg_expr()
         t1 = new_nfa_node(); t2 = new_nfa_node();
         (t1)->trans[0]=zzaRet.l;
         (t1)->trans[1]=zzaArg(zztasp2,2 ).l;
-        /* MR23 */       if (zzaRet.r != NULL) (zzaRet.r)->trans[1]=t2;
+        if (zzaRet.r != NULL) (zzaRet.r)->trans[1]=t2;
         if (zzaArg(zztasp2,2 ).r) {
-          (zzaArg(zztasp2,2 ).r)->trans[1]=t2;     /* MR20 */
+          (zzaArg(zztasp2,2 ).r)->trans[1]=t2;
         }
         zzaRet.l=t1; zzaRet.r=t2;
       }
@@ -393,7 +393,6 @@ static void and_expr()
   zzRULE;
   int zztasp1 = zzasp - 1;
   zzMake0;
-  {
   repeat_expr();
 
   zzaRet.l=zzaArg(zztasp1,1 ).l; zzaRet.r=zzaArg(zztasp1,1 ).r;
@@ -414,11 +413,6 @@ static void and_expr()
   }
   zzREL(zztasp1);
   return;
-fail:
-  zzREL(zztasp1);
-  zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
-  zzresynch(setwd2, 0x10);
-  }
 }
 
 static void repeat_expr()
@@ -506,75 +500,66 @@ static void expr()
     atom_list();
     zzmatch(R_BRACK);
 
-    /* MR23 */    if (zzaRet.l != NULL) {
+    if (zzaRet.l != NULL) {
       (zzaRet.l)->trans[0] = zzaRet.r;
       (zzaRet.l)->label = set_dup(zzaArg(zztasp1,2 ).label);
       set_orin(&used_chars,(zzaRet.l)->label);
     }
- zzgettok();
+    zzgettok();
 
-  }
-  else {
-    if ( (zztoken==NOT) ) {
-      zzmatch(NOT); zzgettok();
-      zzmatch(L_BRACK); zzgettok();
-      atom_list();
-      zzmatch(R_BRACK);
+  } else if ( (zztoken==NOT) ) {
+    zzmatch(NOT); zzgettok();
+    zzmatch(L_BRACK); zzgettok();
+    atom_list();
+    zzmatch(R_BRACK);
 
-      /* MR23 */    if (zzaRet.l != NULL) {
-        (zzaRet.l)->trans[0] = zzaRet.r;
-        (zzaRet.l)->label = set_dif(normal_chars,zzaArg(zztasp1,3 ).label);
-        set_orin(&used_chars,(zzaRet.l)->label);
-      }
- zzgettok();
-
+    if (zzaRet.l != NULL) {
+      (zzaRet.l)->trans[0] = zzaRet.r;
+      (zzaRet.l)->label = set_dif(normal_chars,zzaArg(zztasp1,3 ).label);
+      set_orin(&used_chars,(zzaRet.l)->label);
     }
-    else {
-      if ( (zztoken==L_PAR) ) {
-        zzmatch(L_PAR); zzgettok();
-        reg_expr();
-        zzmatch(R_PAR);
+    zzgettok();
 
-        /* MR23 */    if (zzaRet.l != NULL) {
-          (zzaRet.l)->trans[0] = zzaArg(zztasp1,2 ).l;
-          if (zzaArg(zztasp1,2 ).r) {
-            (zzaArg(zztasp1,2 ).r)->trans[1] = zzaRet.r;    /* MR20 */
-          }
-        }
- zzgettok();
+  } else if ( (zztoken==L_PAR) ) {
+    zzmatch(L_PAR); zzgettok();
+    reg_expr();
+    zzmatch(R_PAR);
 
-      }
-      else {
-        if ( (zztoken==L_BRACE) ) {
-          zzmatch(L_BRACE); zzgettok();
-          reg_expr();
-          zzmatch(R_BRACE);
-
-          /* MR23 */    if (zzaRet.l != NULL) {
-            (zzaRet.l)->trans[0] = zzaArg(zztasp1,2 ).l;
-            (zzaRet.l)->trans[1] = zzaRet.r;
-            if (zzaArg(zztasp1,2 ).r) {
-              (zzaArg(zztasp1,2 ).r)->trans[1] = zzaRet.r;    /* MR20 */
-            }
-          }
- zzgettok();
-
-        }
-        else {
-          if ( (setwd3[zztoken]&0x1) ) {
-            atom();
-
-            /* MR23 */    if (zzaRet.l != NULL) {
-              (zzaRet.l)->trans[0] = zzaRet.r;
-              (zzaRet.l)->label = set_dup(zzaArg(zztasp1,1 ).label);
-              set_orin(&used_chars,(zzaRet.l)->label);
-            }
-          }
-          else {zzFAIL(1,zzerr7,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
-        }
+    if (zzaRet.l != NULL) {
+      (zzaRet.l)->trans[0] = zzaArg(zztasp1,2 ).l;
+      if (zzaArg(zztasp1,2 ).r) {
+        (zzaArg(zztasp1,2 ).r)->trans[1] = zzaRet.r;
       }
     }
+    zzgettok();
+
+  } else if ( (zztoken==L_BRACE) ) {
+    zzmatch(L_BRACE); zzgettok();
+    reg_expr();
+    zzmatch(R_BRACE);
+
+    if (zzaRet.l != NULL) {
+      (zzaRet.l)->trans[0] = zzaArg(zztasp1,2 ).l;
+      (zzaRet.l)->trans[1] = zzaRet.r;
+      if (zzaArg(zztasp1,2 ).r) {
+        (zzaArg(zztasp1,2 ).r)->trans[1] = zzaRet.r;
+      }
+    }
+    zzgettok();
+
+  } else if ( (setwd3[zztoken]&0x1) ) {
+    atom();
+
+    if (zzaRet.l != NULL) {
+      (zzaRet.l)->trans[0] = zzaRet.r;
+      (zzaRet.l)->label = set_dup(zzaArg(zztasp1,1 ).label);
+      set_orin(&used_chars,(zzaRet.l)->label);
+    }
+  } else {
+    zzFAIL(1,zzerr7,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk);
+    goto fail;
   }
+
   zzREL(zztasp1);
   return;
 fail:
@@ -622,8 +607,8 @@ static void near_atom()
   int zztasp1 = zzasp - 1;
   zzMake0;
   {
-  register int i;
-  register int i_prime;
+  int i;
+  int i_prime;
   anychar();
   zzaRet.letter=zzaArg(zztasp1,1 ).letter; zzaRet.label=set_of(zzaArg(zztasp1,1 ).letter);
   i_prime = zzaArg(zztasp1,1 ).letter + MIN_CHAR;
@@ -654,7 +639,7 @@ static void near_atom()
         int debugLetter2 = zzaArg(zztasp2,2 ).letter;
       }
       if (zzaRet.letter > zzaArg(zztasp2,2 ).letter
-      && zzaArg(zztasp2,2 ).letter != 0xff){       /* MR16 */
+      && zzaArg(zztasp2,2 ).letter != 0xff){
         error("invalid range  ", zzline);
       }
       for (i=zzaRet.letter; i<= (int)zzaArg(zztasp2,2 ).letter; ++i){
@@ -667,12 +652,10 @@ static void near_atom()
         set_orel(tolower(i_prime)-MIN_CHAR,
         &(zzaRet.label));
       }
+    } else if ( !(setwd3[zztoken]&0x10) ) {
+      zzFAIL(1,zzerr8,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;
     }
-    else {
-      if ( (setwd3[zztoken]&0x10) ) {
-      }
-      else {zzFAIL(1,zzerr8,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
-    }
+
     zzREL(zztasp2);
     }
   }
@@ -716,85 +699,29 @@ static void anychar()
   int zztasp1 = zzasp - 1;
   zzMake0;
   {
-  if ( (zztoken==REGCHAR) ) {
-    zzmatch(REGCHAR);
+
+  switch(zztoken) {
+  case REGCHAR:
+  case OCTAL_VALUE:
+  case HEX_VALUE:
+  case DEC_VALUE:
+  case TAB:
+  case NL:
+  case CR:
+  case BS:
+  case LIT:
+    zzmatch(zztoken);
     zzaRet.letter = zzaArg(zztasp1,1 ).letter - MIN_CHAR;
- zzgettok();
-
+    break;
+  case L_EOF:
+    zzmatch(zztoken);
+    zzaRet.letter = 0;
+    break;
+  default:
+    zzFAIL(1,zzerr9,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;
   }
-  else {
-    if ( (zztoken==OCTAL_VALUE) ) {
-      zzmatch(OCTAL_VALUE);
-      zzaRet.letter = zzaArg(zztasp1,1 ).letter - MIN_CHAR;
- zzgettok();
 
-    }
-    else {
-      if ( (zztoken==HEX_VALUE) ) {
-        zzmatch(HEX_VALUE);
-        zzaRet.letter = zzaArg(zztasp1,1 ).letter - MIN_CHAR;
- zzgettok();
-
-      }
-      else {
-        if ( (zztoken==DEC_VALUE) ) {
-          zzmatch(DEC_VALUE);
-          zzaRet.letter = zzaArg(zztasp1,1 ).letter - MIN_CHAR;
- zzgettok();
-
-        }
-        else {
-          if ( (zztoken==TAB) ) {
-            zzmatch(TAB);
-            zzaRet.letter = zzaArg(zztasp1,1 ).letter - MIN_CHAR;
- zzgettok();
-
-          }
-          else {
-            if ( (zztoken==NL) ) {
-              zzmatch(NL);
-              zzaRet.letter = zzaArg(zztasp1,1 ).letter - MIN_CHAR;
- zzgettok();
-
-            }
-            else {
-              if ( (zztoken==CR) ) {
-                zzmatch(CR);
-                zzaRet.letter = zzaArg(zztasp1,1 ).letter - MIN_CHAR;
- zzgettok();
-
-              }
-              else {
-                if ( (zztoken==BS) ) {
-                  zzmatch(BS);
-                  zzaRet.letter = zzaArg(zztasp1,1 ).letter - MIN_CHAR;
- zzgettok();
-
-                }
-                else {
-                  if ( (zztoken==LIT) ) {
-                    zzmatch(LIT);
-                    zzaRet.letter = zzaArg(zztasp1,1 ).letter - MIN_CHAR;
- zzgettok();
-
-                  }
-                  else {
-                    if ( (zztoken==L_EOF) ) {
-                      zzmatch(L_EOF);
-                      zzaRet.letter = 0;
- zzgettok();
-
-                    }
-                    else {zzFAIL(1,zzerr9,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
+  zzgettok();
   zzREL(zztasp1);
   return;
 fail:
