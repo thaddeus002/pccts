@@ -33,10 +33,6 @@
 /* MR23 In order to remove calls to PURIFY use the antlr -nopurify option */
 
 #define NFA_MIN   64  /* minimum nfa_array size */
-#define zzaRet      (*zzaRetPtr)
-#define zzMakeAttr    {zzOvfChk; --zzasp; zzcr_attr(&(zzaStack[zzasp]),zztoken,zzlextext);}
-#define zzMake0     { zzOvfChk; --zzasp;}
-#define zzREL(t)    zzasp=(t);    /* Restore state of stack */
 
 #define zzOvfChk                            \
     if ( zzasp <= 0 )                                           \
@@ -55,7 +51,6 @@
           int zzErrk=1,zzpf=0;                \
           SetWordType *zzMissSet=NULL; int zzMissTok=0; char *zzMissText=""
 
-#define zzaArg(v,n)   zzaStack[v-n]
 
 #define ZZA_STACKSIZE 400
 
@@ -73,7 +68,9 @@ int _zzmatch(int _t, char **zzBadText, char **zzMissText,
     *zzMissSet=NULL;
     return 0;
   }
-  zzMakeAttr
+  zzOvfChk;
+  --zzasp;
+  zzcr_attr(&(zzaStack[zzasp]),zztoken,zzlextext);
   return 1;
 }
 
@@ -115,19 +112,19 @@ void grammar(char *version, char *mode_file)
 {
   zzRULE;
   int zztasp1 = zzasp - 1;
-  zzMake0;
+  zzOvfChk; --zzasp;
   {
   p_head(version, mode_file);
   p_class_hdr(version);
   func_action = false;
   {
     int zztasp2 = zzasp - 1;
-    zzMake0;
+    zzOvfChk; --zzasp;
     {
     while ( (setwd1[zztoken]&0x1) ) {
       {
         int zztasp3 = zzasp - 1;
-        zzMake0;
+        zzOvfChk; --zzasp;
         {
         if ( (zztoken==LEXACTION) ) {
           zzmatch(LEXACTION); zzgettok();
@@ -152,13 +149,13 @@ void grammar(char *version, char *mode_file)
             }
           }
         }
-        zzREL(zztasp3);
+        zzasp=zztasp3;
         }
       }
       zzmatch(ACTION); zzgettok();
-      zzREL(zztasp2);
+      zzasp=zztasp2;
     }
-    zzREL(zztasp2);
+    zzasp=zztasp2;
     }
   }
   if ( gen_cpp ) p_includes();
@@ -166,23 +163,23 @@ void grammar(char *version, char *mode_file)
   func_action = false; p_tables(); p_tail();
   {
     int zztasp2 = zzasp - 1;
-    zzMake0;
+    zzOvfChk; --zzasp;
     {
     while ( (zztoken==ACTION) ) {
       zzmatch(ACTION); zzgettok();
-      zzREL(zztasp2);
+      zzasp=zztasp2;
     }
-    zzREL(zztasp2);
+    zzasp=zztasp2;
     }
   }
   zzmatch(1);
   if (firstLexMember != 0) p_class_def1();
   zzgettok();
 
-  zzREL(zztasp1);
+  zzasp=zztasp1;
   return;
 fail:
-  zzREL(zztasp1);
+  zzasp=zztasp1;
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
   zzresynch(setwd1, 0x2);
   }
@@ -194,11 +191,11 @@ static void start_states()
 {
   zzRULE;
   int zztasp1 = zzasp - 1;
-  zzMake0;
+  zzOvfChk; --zzasp;
   {
   {
     int zztasp2 = zzasp - 1;
-    zzMake0;
+    zzOvfChk; --zzasp;
     {
     if ( (zztoken==PER_PER) ) {
       zzmatch(PER_PER); zzgettok();
@@ -210,27 +207,27 @@ static void start_states()
         do_conversion();
         {
           int zztasp3 = zzasp - 1;
-          zzMake0;
+          zzOvfChk; --zzasp;
           {
           while ( (zztoken==NAME_PER_PER) ) {
             zzmatch(NAME_PER_PER); zzgettok();
             do_conversion();
-            zzREL(zztasp3);
+            zzasp=zztasp3;
           }
-          zzREL(zztasp3);
+          zzasp=zztasp3;
           }
         }
       }
       else {zzFAIL(1,zzerr2,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
     }
-    zzREL(zztasp2);
+    zzasp=zztasp2;
     }
   }
   zzmatch(PER_PER); zzgettok();
-  zzREL(zztasp1);
+  zzasp=zztasp1;
   return;
 fail:
-  zzREL(zztasp1);
+  zzasp=zztasp1;
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
   zzresynch(setwd1, 0x4);
   }
@@ -243,24 +240,24 @@ static void do_conversion()
 {
   zzRULE;
   int zztasp1 = zzasp - 1;
-  zzMake0;
+  zzOvfChk; --zzasp;
   {
   new_automaton_mode(); func_action = true;
   rule_list();
 
   dfa_class_nop[mode_counter] =
-  relabel(zzaArg(zztasp1,1 ).l,comp_level);
+  relabel(zzaStack[zztasp1-1].l,comp_level);
   if (comp_level)
   p_shift_table(mode_counter);
   dfa_basep[mode_counter] = dfa_allocated+1;
   make_dfa_model_node(dfa_class_nop[mode_counter]);
-  nfa_to_dfa(zzaArg(zztasp1,1 ).l);
+  nfa_to_dfa(zzaStack[zztasp1-1].l);
   ++mode_counter;
   func_action = false;
-  zzREL(zztasp1);
+  zzasp=zztasp1;
   return;
 fail:
-  zzREL(zztasp1);
+  zzasp=zztasp1;
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
   zzresynch(setwd1, 0x8);
   }
@@ -270,42 +267,42 @@ static void rule_list()
 {
   zzRULE;
   int zztasp1 = zzasp - 1;
-  zzMake0;
+  zzOvfChk; --zzasp;
   {
   if ( (setwd1[zztoken]&0x10) ) {
     rule();
-    zzaRet.l=zzaArg(zztasp1,1 ).l; zzaRet.r=zzaArg(zztasp1,1 ).r;
+    (*zzaRetPtr).l=zzaStack[zztasp1-1 ].l; (*zzaRetPtr).r=zzaStack[zztasp1-1 ].r;
     {
       int zztasp2 = zzasp - 1;
-      zzMake0;
+      zzOvfChk; --zzasp;
       {
       while ( (setwd1[zztoken]&0x20) ) {
         rule();
         {nfa_node *t1;
           t1 = new_nfa_node();
-          (t1)->trans[0]=zzaRet.l;
-          (t1)->trans[1]=zzaArg(zztasp2,1 ).l;
+          (t1)->trans[0]=(*zzaRetPtr).l;
+          (t1)->trans[1]=zzaStack[zztasp2-1 ].l;
           /* all accept nodes "dead ends" */
-          zzaRet.l=t1; zzaRet.r=NULL;
+          (*zzaRetPtr).l=t1; (*zzaRetPtr).r=NULL;
         }
-        zzREL(zztasp2);
+        zzasp=zztasp2;
       }
-      zzREL(zztasp2);
+      zzasp=zztasp2;
       }
     }
   }
   else {
     if ( (setwd1[zztoken]&0x40) ) {
-      zzaRet.l = new_nfa_node(); zzaRet.r = NULL;
+      (*zzaRetPtr).l = new_nfa_node(); (*zzaRetPtr).r = NULL;
       warning("no regular expressions", file_str[0] ? file_str[0] : "stdin", zzline);
 
     }
     else {zzFAIL(1,zzerr3,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
   }
-  zzREL(zztasp1);
+  zzasp=zztasp1;
   return;
 fail:
-  zzREL(zztasp1);
+  zzasp=zztasp1;
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
   zzresynch(setwd1, 0x80);
   }
@@ -320,13 +317,13 @@ static void rule()
 {
   zzRULE;
   int zztasp1 = zzasp - 1;
-  zzMake0;
+  zzOvfChk; --zzasp;
   {
   if ( (setwd2[zztoken]&0x1) ) {
     reg_expr();
     zzmatch(ACTION);
-    if (zzaArg(zztasp1,1 ).r != NULL) {
-      zzaRet.l=zzaArg(zztasp1,1 ).l; zzaRet.r=zzaArg(zztasp1,1 ).r; (zzaArg(zztasp1,1 ).r)->accept=action_no;
+    if (zzaStack[zztasp1-1 ].r != NULL) {
+      (*zzaRetPtr).l=zzaStack[zztasp1-1 ].l; (*zzaRetPtr).r=zzaStack[zztasp1-1 ].r; (zzaStack[zztasp1-1 ].r)->accept=action_no;
     }
  zzgettok();
 
@@ -334,16 +331,16 @@ static void rule()
   else {
     if ( (zztoken==ACTION) ) {
       zzmatch(ACTION);
-      zzaRet.l = NULL; zzaRet.r = NULL;
+      (*zzaRetPtr).l = NULL; (*zzaRetPtr).r = NULL;
       error("no expression for action  ", zzline);
       zzgettok();
     }
     else {zzFAIL(1,zzerr4,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
   }
-  zzREL(zztasp1);
+  zzasp=zztasp1;
   return;
 fail:
-  zzREL(zztasp1);
+  zzasp=zztasp1;
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
   zzresynch(setwd2, 0x2);
   }
@@ -353,36 +350,36 @@ static void reg_expr()
 {
   zzRULE;
   int zztasp1 = zzasp - 1;
-  zzMake0;
+  zzOvfChk; --zzasp;
   {
   and_expr();
-  zzaRet.l=zzaArg(zztasp1,1 ).l; zzaRet.r=zzaArg(zztasp1,1 ).r;
+  (*zzaRetPtr).l=zzaStack[zztasp1-1 ].l; (*zzaRetPtr).r=zzaStack[zztasp1-1 ].r;
   {
     int zztasp2 = zzasp - 1;
-    zzMake0;
+    zzOvfChk; --zzasp;
     {
     while ( (zztoken==OR) ) {
       zzmatch(OR); zzgettok();
       and_expr();
       {nfa_node *t1, *t2;
         t1 = new_nfa_node(); t2 = new_nfa_node();
-        (t1)->trans[0]=zzaRet.l;
-        (t1)->trans[1]=zzaArg(zztasp2,2 ).l;
-        if (zzaRet.r != NULL) (zzaRet.r)->trans[1]=t2;
-        if (zzaArg(zztasp2,2 ).r) {
-          (zzaArg(zztasp2,2 ).r)->trans[1]=t2;
+        (t1)->trans[0]=(*zzaRetPtr).l;
+        (t1)->trans[1]=zzaStack[zztasp2-2].l;
+        if ((*zzaRetPtr).r != NULL) ((*zzaRetPtr).r)->trans[1]=t2;
+        if (zzaStack[zztasp2-2].r) {
+          (zzaStack[zztasp2-2].r)->trans[1]=t2;
         }
-        zzaRet.l=t1; zzaRet.r=t2;
+        (*zzaRetPtr).l=t1; (*zzaRetPtr).r=t2;
       }
-      zzREL(zztasp2);
+      zzasp=zztasp2;
     }
-    zzREL(zztasp2);
+    zzasp=zztasp2;
     }
   }
-  zzREL(zztasp1);
+  zzasp=zztasp1;
   return;
 fail:
-  zzREL(zztasp1);
+  zzasp=zztasp1;
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
   zzresynch(setwd2, 0x4);
   }
@@ -392,26 +389,26 @@ static void and_expr()
 {
   zzRULE;
   int zztasp1 = zzasp - 1;
-  zzMake0;
+  zzOvfChk; --zzasp;
   repeat_expr();
 
-  zzaRet.l=zzaArg(zztasp1,1 ).l; zzaRet.r=zzaArg(zztasp1,1 ).r;
+  (*zzaRetPtr).l=zzaStack[zztasp1-1].l; (*zzaRetPtr).r=zzaStack[zztasp1-1].r;
   {
     int zztasp2 = zzasp - 1;
-    zzMake0;
+    zzOvfChk; --zzasp;
     {
     while ( (setwd2[zztoken]&0x8) ) {
       repeat_expr();
-      if (zzaRet.r != NULL) {
-        (zzaRet.r)->trans[1]=zzaArg(zztasp2,1 ).l;
-        zzaRet.r=zzaArg(zztasp2,1 ).r;
+      if ((*zzaRetPtr).r != NULL) {
+        ((*zzaRetPtr).r)->trans[1]=zzaStack[zztasp2-1].l;
+        (*zzaRetPtr).r=zzaStack[zztasp2-1].r;
       }
-      zzREL(zztasp2);
+      zzasp=zztasp2;
     }
-    zzREL(zztasp2);
+    zzasp=zztasp2;
     }
   }
-  zzREL(zztasp1);
+  zzasp=zztasp1;
   return;
 }
 
@@ -419,24 +416,24 @@ static void repeat_expr()
 {
   zzRULE;
   int zztasp1 = zzasp - 1;
-  zzMake0;
+  zzOvfChk; --zzasp;
   {
   if ( (setwd2[zztoken]&0x20) ) {
     expr();
-    zzaRet.l=zzaArg(zztasp1,1 ).l; zzaRet.r=zzaArg(zztasp1,1 ).r;
+    (*zzaRetPtr).l=zzaStack[zztasp1-1].l; (*zzaRetPtr).r=zzaStack[zztasp1-1].r;
     {
       int zztasp2 = zzasp - 1;
-      zzMake0;
+      zzOvfChk; --zzasp;
       {
       if ( (zztoken==ZERO_MORE) ) {
         zzmatch(ZERO_MORE);
         { nfa_node *t1,*t2;
-          /* MR23 */    if (zzaRet.r != NULL) (zzaRet.r)->trans[0] = zzaRet.l;
+          /* MR23 */    if ((*zzaRetPtr).r != NULL) ((*zzaRetPtr).r)->trans[0] = (*zzaRetPtr).l;
           t1 = new_nfa_node(); t2 = new_nfa_node();
-          t1->trans[0]=zzaRet.l;
+          t1->trans[0]=(*zzaRetPtr).l;
           t1->trans[1]=t2;
-          /* MR23 */    if (zzaRet.r != NULL) (zzaRet.r)->trans[1]=t2;
-          zzaRet.l=t1;zzaRet.r=t2;
+          /* MR23 */    if ((*zzaRetPtr).r != NULL) ((*zzaRetPtr).r)->trans[1]=t2;
+          (*zzaRetPtr).l=t1;(*zzaRetPtr).r=t2;
         }
         zzgettok();
 
@@ -444,7 +441,7 @@ static void repeat_expr()
       else {
         if ( (zztoken==ONE_MORE) ) {
           zzmatch(ONE_MORE);
-          if (zzaRet.r != NULL) (zzaRet.r)->trans[0] = zzaRet.l;
+          if ((*zzaRetPtr).r != NULL) ((*zzaRetPtr).r)->trans[0] = (*zzaRetPtr).l;
           zzgettok();
 
         }
@@ -454,7 +451,7 @@ static void repeat_expr()
           else {zzFAIL(1,zzerr5,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
         }
       }
-      zzREL(zztasp2);
+      zzasp=zztasp2;
       }
     }
   }
@@ -475,10 +472,10 @@ static void repeat_expr()
       else {zzFAIL(1,zzerr6,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
     }
   }
-  zzREL(zztasp1);
+  zzasp=zztasp1;
   return;
 fail:
-  zzREL(zztasp1);
+  zzasp=zztasp1;
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
   zzresynch(setwd2, 0x80);
   }
@@ -491,19 +488,19 @@ static void expr()
 {
   zzRULE;
   int zztasp1 = zzasp - 1;
-  zzMake0;
+  zzOvfChk; --zzasp;
   {
-  zzaRet.l = new_nfa_node();
-  zzaRet.r = new_nfa_node();
+  (*zzaRetPtr).l = new_nfa_node();
+  (*zzaRetPtr).r = new_nfa_node();
   if ( (zztoken==L_BRACK) ) {
     zzmatch(L_BRACK); zzgettok();
     atom_list();
     zzmatch(R_BRACK);
 
-    if (zzaRet.l != NULL) {
-      (zzaRet.l)->trans[0] = zzaRet.r;
-      (zzaRet.l)->label = set_dup(zzaArg(zztasp1,2 ).label);
-      set_orin(&used_chars,(zzaRet.l)->label);
+    if ((*zzaRetPtr).l != NULL) {
+      ((*zzaRetPtr).l)->trans[0] = (*zzaRetPtr).r;
+      ((*zzaRetPtr).l)->label = set_dup(zzaStack[zztasp1-2].label);
+      set_orin(&used_chars,((*zzaRetPtr).l)->label);
     }
     zzgettok();
 
@@ -513,10 +510,10 @@ static void expr()
     atom_list();
     zzmatch(R_BRACK);
 
-    if (zzaRet.l != NULL) {
-      (zzaRet.l)->trans[0] = zzaRet.r;
-      (zzaRet.l)->label = set_dif(normal_chars,zzaArg(zztasp1,3 ).label);
-      set_orin(&used_chars,(zzaRet.l)->label);
+    if ((*zzaRetPtr).l != NULL) {
+      ((*zzaRetPtr).l)->trans[0] = (*zzaRetPtr).r;
+      ((*zzaRetPtr).l)->label = set_dif(normal_chars,zzaStack[zztasp1-3].label);
+      set_orin(&used_chars,((*zzaRetPtr).l)->label);
     }
     zzgettok();
 
@@ -525,10 +522,10 @@ static void expr()
     reg_expr();
     zzmatch(R_PAR);
 
-    if (zzaRet.l != NULL) {
-      (zzaRet.l)->trans[0] = zzaArg(zztasp1,2 ).l;
-      if (zzaArg(zztasp1,2 ).r) {
-        (zzaArg(zztasp1,2 ).r)->trans[1] = zzaRet.r;
+    if ((*zzaRetPtr).l != NULL) {
+      ((*zzaRetPtr).l)->trans[0] = zzaStack[zztasp1-2].l;
+      if (zzaStack[zztasp1-2].r) {
+        (zzaStack[zztasp1-2].r)->trans[1] = (*zzaRetPtr).r;
       }
     }
     zzgettok();
@@ -538,11 +535,11 @@ static void expr()
     reg_expr();
     zzmatch(R_BRACE);
 
-    if (zzaRet.l != NULL) {
-      (zzaRet.l)->trans[0] = zzaArg(zztasp1,2 ).l;
-      (zzaRet.l)->trans[1] = zzaRet.r;
-      if (zzaArg(zztasp1,2 ).r) {
-        (zzaArg(zztasp1,2 ).r)->trans[1] = zzaRet.r;
+    if ((*zzaRetPtr).l != NULL) {
+      ((*zzaRetPtr).l)->trans[0] = zzaStack[zztasp1-2].l;
+      ((*zzaRetPtr).l)->trans[1] = (*zzaRetPtr).r;
+      if (zzaStack[zztasp1-2].r) {
+        (zzaStack[zztasp1-2].r)->trans[1] = (*zzaRetPtr).r;
       }
     }
     zzgettok();
@@ -550,20 +547,20 @@ static void expr()
   } else if ( (setwd3[zztoken]&0x1) ) {
     atom();
 
-    if (zzaRet.l != NULL) {
-      (zzaRet.l)->trans[0] = zzaRet.r;
-      (zzaRet.l)->label = set_dup(zzaArg(zztasp1,1 ).label);
-      set_orin(&used_chars,(zzaRet.l)->label);
+    if ((*zzaRetPtr).l != NULL) {
+      ((*zzaRetPtr).l)->trans[0] = (*zzaRetPtr).r;
+      ((*zzaRetPtr).l)->label = set_dup(zzaStack[zztasp1-1].label);
+      set_orin(&used_chars,((*zzaRetPtr).l)->label);
     }
   } else {
     zzFAIL(1,zzerr7,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk);
     goto fail;
   }
 
-  zzREL(zztasp1);
+  zzasp=zztasp1;
   return;
 fail:
-  zzREL(zztasp1);
+  zzasp=zztasp1;
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
   zzresynch(setwd3, 0x2);
   }
@@ -575,25 +572,25 @@ static void atom_list()
 {
   zzRULE;
   int zztasp1 = zzasp - 1;
-  zzMake0;
+  zzOvfChk; --zzasp;
   {
-  set_free(zzaRet.label);
+  set_free((*zzaRetPtr).label);
   {
     int zztasp2 = zzasp - 1;
-    zzMake0;
+    zzOvfChk; --zzasp;
     {
     while ( (setwd3[zztoken]&0x4) ) {
       near_atom();
-      set_orin(&(zzaRet.label),zzaArg(zztasp2,1 ).label);
-      zzREL(zztasp2);
+      set_orin(&((*zzaRetPtr).label),zzaStack[zztasp2-1].label);
+      zzasp=zztasp2;
     }
-    zzREL(zztasp2);
+    zzasp=zztasp2;
     }
   }
-  zzREL(zztasp1);
+  zzasp=zztasp1;
   return;
 fail:
-  zzREL(zztasp1);
+  zzasp=zztasp1;
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
   zzresynch(setwd3, 0x8);
   }
@@ -605,64 +602,64 @@ static void near_atom()
 {
   zzRULE;
   int zztasp1 = zzasp - 1;
-  zzMake0;
+  zzOvfChk; --zzasp;
   {
   int i;
   int i_prime;
   anychar();
-  zzaRet.letter=zzaArg(zztasp1,1 ).letter; zzaRet.label=set_of(zzaArg(zztasp1,1 ).letter);
-  i_prime = zzaArg(zztasp1,1 ).letter + MIN_CHAR;
+  (*zzaRetPtr).letter=zzaStack[zztasp1-1].letter; (*zzaRetPtr).label=set_of(zzaStack[zztasp1-1].letter);
+  i_prime = zzaStack[zztasp1-1].letter + MIN_CHAR;
   if (case_insensitive && islower(i_prime))
   set_orel(toupper(i_prime)-MIN_CHAR,
-  &(zzaRet.label));
+  &((*zzaRetPtr).label));
   if (case_insensitive && isupper(i_prime))
   set_orel(tolower(i_prime)-MIN_CHAR,
-  &(zzaRet.label));
+  &((*zzaRetPtr).label));
   {
     int zztasp2 = zzasp - 1;
-    zzMake0;
+    zzOvfChk; --zzasp;
     {
     if ( (zztoken==RANGE) ) {
       zzmatch(RANGE); zzgettok();
       anychar();
       if (case_insensitive){
-        i_prime = zzaRet.letter+MIN_CHAR;
-        zzaRet.letter = (islower(i_prime) ?
+        i_prime = (*zzaRetPtr).letter+MIN_CHAR;
+        (*zzaRetPtr).letter = (islower(i_prime) ?
         toupper(i_prime) : i_prime)-MIN_CHAR;
-        i_prime = zzaArg(zztasp2,2 ).letter+MIN_CHAR;
-        zzaArg(zztasp2,2 ).letter = (islower(i_prime) ?
+        i_prime = zzaStack[zztasp2-2].letter+MIN_CHAR;
+        zzaStack[zztasp2-2].letter = (islower(i_prime) ?
         toupper(i_prime) : i_prime)-MIN_CHAR;
       }
       /* check to see if range okay */
       {
-        int debugLetter1 = zzaRet.letter;
-        int debugLetter2 = zzaArg(zztasp2,2 ).letter;
+        int debugLetter1 = (*zzaRetPtr).letter;
+        int debugLetter2 = zzaStack[zztasp2-2].letter;
       }
-      if (zzaRet.letter > zzaArg(zztasp2,2 ).letter
-      && zzaArg(zztasp2,2 ).letter != 0xff){
+      if ((*zzaRetPtr).letter > zzaStack[zztasp2-2].letter
+      && zzaStack[zztasp2-2].letter != 0xff){
         error("invalid range  ", zzline);
       }
-      for (i=zzaRet.letter; i<= (int)zzaArg(zztasp2,2 ).letter; ++i){
-        set_orel(i,&(zzaRet.label));
+      for (i=(*zzaRetPtr).letter; i<= (int)zzaStack[zztasp2-2].letter; ++i){
+        set_orel(i,&((*zzaRetPtr).label));
         i_prime = i+MIN_CHAR;
         if (case_insensitive && islower(i_prime))
         set_orel(toupper(i_prime)-MIN_CHAR,
-        &(zzaRet.label));
+        &((*zzaRetPtr).label));
         if (case_insensitive && isupper(i_prime))
         set_orel(tolower(i_prime)-MIN_CHAR,
-        &(zzaRet.label));
+        &((*zzaRetPtr).label));
       }
     } else if ( !(setwd3[zztoken]&0x10) ) {
       zzFAIL(1,zzerr8,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;
     }
 
-    zzREL(zztasp2);
+    zzasp=zztasp2;
     }
   }
-  zzREL(zztasp1);
+  zzasp=zztasp1;
   return;
 fail:
-  zzREL(zztasp1);
+  zzasp=zztasp1;
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
   zzresynch(setwd3, 0x20);
   }
@@ -672,22 +669,22 @@ static void atom()
 {
   zzRULE;
   int zztasp1 = zzasp - 1;
-  zzMake0;
+  zzOvfChk; --zzasp;
   {
   register int i_prime;
   anychar();
-  zzaRet.label = set_of(zzaArg(zztasp1,1 ).letter);
-  i_prime = zzaArg(zztasp1,1 ).letter + MIN_CHAR;
+  (*zzaRetPtr).label = set_of(zzaStack[zztasp1-1].letter);
+  i_prime = zzaStack[zztasp1-1].letter + MIN_CHAR;
   if (case_insensitive && islower(i_prime))
   set_orel(toupper(i_prime)-MIN_CHAR,
-  &(zzaRet.label));
+  &((*zzaRetPtr).label));
   if (case_insensitive && isupper(i_prime))
   set_orel(tolower(i_prime)-MIN_CHAR,
-  &(zzaRet.label));
-  zzREL(zztasp1);
+  &((*zzaRetPtr).label));
+  zzasp=zztasp1;
   return;
 fail:
-  zzREL(zztasp1);
+  zzasp=zztasp1;
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
   zzresynch(setwd3, 0x40);
   }
@@ -697,7 +694,7 @@ static void anychar()
 {
   zzRULE;
   int zztasp1 = zzasp - 1;
-  zzMake0;
+  zzOvfChk; --zzasp;
   {
 
   switch(zztoken) {
@@ -711,21 +708,21 @@ static void anychar()
   case BS:
   case LIT:
     zzmatch(zztoken);
-    zzaRet.letter = zzaArg(zztasp1,1 ).letter - MIN_CHAR;
+    (*zzaRetPtr).letter = zzaStack[zztasp1-1].letter - MIN_CHAR;
     break;
   case L_EOF:
     zzmatch(zztoken);
-    zzaRet.letter = 0;
+    (*zzaRetPtr).letter = 0;
     break;
   default:
     zzFAIL(1,zzerr9,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;
   }
 
   zzgettok();
-  zzREL(zztasp1);
+  zzasp=zztasp1;
   return;
 fail:
-  zzREL(zztasp1);
+  zzasp=zztasp1;
   /* empty action */
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
   zzresynch(setwd3, 0x80);
