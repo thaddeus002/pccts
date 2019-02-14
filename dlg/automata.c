@@ -80,7 +80,7 @@ static dfa_node *new_dfa_node(set nfa_states)
     }
   }
   /* fill out entry in array */
-  t = (dfa_node*) malloc(sizeof(nfa_node)+sizeof(int)*class_no);
+  t = (dfa_node*) malloc(sizeof(dfa_node)+sizeof(int)*(class_no-1));
   *t = *dfa_model_node;
   for (j=0; j<class_no; ++j)
     t->trans[j] = NIL_INDEX;
