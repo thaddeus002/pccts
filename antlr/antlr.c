@@ -1587,9 +1587,9 @@ static void token()
           zzmatch(114); zzCONSUME;
           zzmatch(QuotedTerm);
           akaString=strdup(StripQuotes(LATEXT(1)));
-          /* MR11 */                   save_file=CurFile;save_line=zzline;
-          /* MR11 */
- zzCONSUME;
+          save_file=CurFile;
+          save_line=zzline;
+          zzCONSUME;
 
           zzmatch(115); zzCONSUME;
         }
