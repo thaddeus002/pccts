@@ -7,23 +7,28 @@
 
 /**
  * \file utils.h
-* \brief Utilitaries functions.
+ * \brief Utilitaries functions for strings handling.
  */
 
 #ifndef __UTILS_H__
 #define __UTILS_H__
 
 /**
- * Compare two string case insentive way.
+ * Compare two strings case insentive way.
  * \return true if the strings are equal
  */
 int ci_strequ(char *a, char *b);
 
-/** check to see if string e is a word in string s */
+/**
+ * Check if string e is a word in string s.
+ */
 int strmember(char *s, char *e);
 
-/** given "s" yield s -- DESTRUCTIVE (we modify s if starts with " else return s) */
+/**
+ * Given "s" yield s (same string without quotes).
+ * CAUTION : This function is DESTRUCTIVE (modify s if starts with " else return s)
+ * @return the modified string
+ */
 char *StripQuotes(char *s);
-
 
 #endif
