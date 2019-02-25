@@ -1398,52 +1398,46 @@ static void act115()
 static void act116()
 {
     NLA = 48;
-    { static char buf[300]; LabelEntry *el;
-      zzbegexpr[0] = ' ';
-      if ( CurRule != NULL &&
-      strcmp(CurRule, &zzbegexpr[1])==0 ) {
-        if ( !GenCC ) zzreplstr("zzaRet");
-      }
-      else if ( CurRetDef != NULL &&
-      strmember(CurRetDef, &zzbegexpr[1])) {
-        if ( hasMultipleOperands( CurRetDef ) ) {
-          require (strlen(zzbegexpr)<=(size_t)285,
-          "$retval attrib ref too big");
-          sprintf(buf,"_retv.%s",&zzbegexpr[1]);
-          zzreplstr(buf);
-        }
-        else zzreplstr("_retv");
-      }
-      else if ( CurParmDef != NULL &&
-      strmember(CurParmDef, &zzbegexpr[1])) {
-      ;
+
+    {
+        static char buf[300];
+        LabelEntry *el;
+        zzbegexpr[0] = ' ';
+        if (CurRule != NULL && strcmp(CurRule, &zzbegexpr[1])==0 ) {
+            if ( !GenCC ) zzreplstr("zzaRet");
+        } else if (CurRetDef != NULL && strmember(CurRetDef, &zzbegexpr[1])) {
+            if (hasMultipleOperands(CurRetDef)) {
+                require (strlen(zzbegexpr)<=(size_t)285,
+                        "$retval attrib ref too big");
+                sprintf(buf,"_retv.%s",&zzbegexpr[1]);
+                zzreplstr(buf);
+            } else zzreplstr("_retv");
+        } else if ( CurParmDef != NULL && strmember(CurParmDef, &zzbegexpr[1])) {
+        } else if (Elabel==NULL) {
+            err("$-variables in actions outside of rules are not allowed");
+        } else if ((el=(LabelEntry *)hash_get(Elabel, &zzbegexpr[1]))!=NULL) {
+
+            /* element labels might exist without an elem when */
+            /* it is a forward reference (to a rule)           */
+
+            if ( GenCC && (el->elem == NULL || el->elem->ntype==nRuleRef) ) {
+                err(eMsg("There are no token ptrs for rule references: '$%s'",&zzbegexpr[1]));
+            }
+
+            if ( !GenCC && (el->elem == NULL || el->elem->ntype==nRuleRef) && GenAST) {
+                err("You can no longer use attributes returned by rules when also using ASTs");
+                err("   Use upward inheritance (\"rule >[Attrib a] : ... <<$a=...>>\")");
+            }
+
+            /* keep track of <<... $label ...>> for semantic predicates in guess mode */
+            /* element labels contain pointer to the owners node                      */
+
+            if (el->elem != NULL && el->elem->ntype == nToken) {
+                list_add(&CurActionLabels,el);
+            }
+        } else warn(eMsg("$%s not parameter, return value, (defined) element label", &zzbegexpr[1]));
     }
-    else if ( Elabel==NULL ) {
-    { err("$-variables in actions outside of rules are not allowed"); }
-  } else if ( (el=(LabelEntry *)hash_get(Elabel, &zzbegexpr[1]))!=NULL ) {
-  /* MR10 */
-  /* MR10 */                      /* element labels might exist without an elem when */
-  /* MR10 */                      /*  it is a forward reference (to a rule)          */
-  /* MR10 */
-  /* MR10 */            if ( GenCC && (el->elem == NULL || el->elem->ntype==nRuleRef) )
-  /* MR10 */              { err(eMsg("There are no token ptrs for rule references: '$%s'",&zzbegexpr[1])); }
-  /* MR10 */
-  /* MR10 */            if ( !GenCC && (el->elem == NULL || el->elem->ntype==nRuleRef) && GenAST) {
-  /* MR10 */                          err("You can no longer use attributes returned by rules when also using ASTs");
-  /* MR10 */                          err("   Use upward inheritance (\"rule >[Attrib a] : ... <<$a=...>>\")");
-  /* MR10 */                      };
-  /* MR10 */
-  /* MR10 */                      /* keep track of <<... $label ...>> for semantic predicates in guess mode */
-  /* MR10 */                      /* element labels contain pointer to the owners node                      */
-  /* MR10 */
-  /* MR10 */                      if (el->elem != NULL && el->elem->ntype == nToken) {
-  /* MR10 */                        list_add(&CurActionLabels,el);
-  /* MR10 */                      };
-}
-else
-warn(eMsg("$%s not parameter, return value, (defined) element label",&zzbegexpr[1]));
-}
-zzmore();
+    zzmore();
 }
 
 
