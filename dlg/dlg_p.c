@@ -30,8 +30,6 @@
 #define zzEOF_TOKEN 1  /* needed by error_handling.h */
 #include "error_handling.h"
 
-/* MR23 In order to remove calls to PURIFY use the antlr -nopurify option */
-
 #define NFA_MIN   64  /* minimum nfa_array size */
 
 #define zzOvfChk                            \
@@ -90,8 +88,7 @@ nfa_node **nfa_array = NULL;/* root of binary tree that stores nfa array */
 nfa_node nfa_model_node;   /* model to initialize new nodes */
 set used_chars;    /* used to label trans. arcs */
 set used_classes;    /* classes or chars used to label trans. arcs */
-set normal_chars;    /* mask to get rid elements that aren't used
-in set */
+set normal_chars;    /* mask to get rid elements that aren't used in set */
 int flag_paren = false;
 int flag_brace = false;
 int mode_counter = 0;  /* keep track of number of %%names */
@@ -100,7 +97,7 @@ int mode_counter = 0;  /* keep track of number of %%names */
 static nfa_node *new_nfa_node();
 
 /** stuff that needs to be reset when a new automaton is being built */
-void new_automaton_mode()
+static void new_automaton_mode()
 {
   set_free(used_chars);
   clear_hash();
@@ -127,28 +124,19 @@ void grammar(char *version, char *mode_file)
         zzOvfChk; --zzasp;
         {
         if ( (zztoken==LEXACTION) ) {
-          zzmatch(LEXACTION); zzgettok();
+          zzmatch(zztoken); zzgettok();
+        } else if ( (zztoken==LEXMEMBER) ) {
+          zzmatch(zztoken); zzgettok();
+        } else if ( (zztoken==LEXPREFIX) ) {
+          zzmatch(zztoken); zzgettok();
+        } else if ( (zztoken==PARSERCLASS) ) {
+          zzmatch(zztoken); zzgettok();
+        } else if ( (zztoken==ACTION) ) {
+        } else {
+          zzFAIL(1,zzerr1,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk);
+          goto fail;
         }
-        else {
-          if ( (zztoken==LEXMEMBER) ) {
-            zzmatch(LEXMEMBER); zzgettok();
-          }
-          else {
-            if ( (zztoken==LEXPREFIX) ) {
-              zzmatch(LEXPREFIX); zzgettok();
-            }
-            else {
-              if ( (zztoken==PARSERCLASS) ) {
-                zzmatch(PARSERCLASS); zzgettok();
-              }
-              else {
-                if ( (zztoken==ACTION) ) {
-                }
-                else {zzFAIL(1,zzerr1,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
-              }
-            }
-          }
-        }
+
         zzasp=zztasp3;
         }
       }

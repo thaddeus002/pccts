@@ -315,9 +315,11 @@ static void dumpLexClasses(FILE *dlgFile)
       t = (TermEntry *) hash_get(Texpr, q->expr);
       require(t!=NULL, eMsg("genLexDescr: rexpr %s not in hash table",q->expr) );
       if ( t->token == EpToken ) continue;
-      fprintf(dlgFile, "%s\n\t<<\n", StripQuotes(q->expr));
-      /* replace " killed by StripQuotes() */
-      q->expr[ strlen(q->expr) ] = '"';
+      char *expression = copy_string(q->expr);
+      require(expression != NULL, "Allocation failled !");
+      fprintf(dlgFile, "%s\n\t<<\n", StripQuotes(expression));
+      free(expression);
+
       if ( !GenCC ) {
         if ( TokenString(t->token) != NULL )
           fprintf(dlgFile, "\t\tNLA = %s;\n", TokenString(t->token));
