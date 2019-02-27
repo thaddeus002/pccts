@@ -317,7 +317,7 @@ static void dumpLexClasses(FILE *dlgFile)
       if ( t->token == EpToken ) continue;
       char *expression = copy_string(q->expr);
       require(expression != NULL, "Allocation failled !");
-      fprintf(dlgFile, "%s\n\t<<\n", StripQuotes(expression));
+      fprintf(dlgFile, "%s\n\t<<\n", strip_quotes(expression));
       free(expression);
 
       if ( !GenCC ) {

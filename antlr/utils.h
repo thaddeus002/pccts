@@ -32,6 +32,12 @@ int strmember(char *s, char *e);
  */
 char *StripQuotes(char *s);
 
+/**
+ * remove the quotes from a string if there are some.
+ * @param string the string to modify
+ * @return the param "string" 
+ */
+char *strip_quotes(char *string);
 
 /**
  * Allocate memory and copy a string.
