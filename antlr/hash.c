@@ -35,10 +35,10 @@
  *
  * The following functions are visible:
  *
- *    Entry **newHashTable();   Create and return initialized hash table
- *    Entry *hash_add(Entry **, char *, Entry *);
- *    Entry *hash_get(Entry **, char *);
- *    void  killHashTable(HashTable table);
+ *    HashTable newHashTable();   Create and return initialized hash table
+ *    Entry *hash_add(HashTable, char *, Entry *);
+ *    Entry *hash_get(HashTable, char *);
+ *    void killHashTable(HashTable table);
  */
 
 
@@ -50,22 +50,19 @@
 #include "hash.h"
 
 
-/** number of entries in the table */
-static unsigned int size = HashTableSize;
-
 
 /**
- * Hash 's' using 'size'.
+ * Hash 's'.
  * \param s the string to hash
- * \param size max of return value + 1
+ * \return an integer between 0 and (HashTableSize - 1)
  */
-static unsigned int hash(const char *s, unsigned int size) {
+static unsigned int hash(const char *s) {
     unsigned int h = 0;
 
-    while ( *s != '\0' ) {
+    while (*s != '\0') {
         h = (h<<1) + *s++;
     }
-    return (h % size);
+    return (h % HashTableSize);
 }
 
 
@@ -74,15 +71,15 @@ HashTable newHashTable()
 {
     HashTable table;
 
-    table = calloc(size, sizeof(Entry *));
+    table = calloc(HashTableSize, sizeof(Entry *));
     require( table != NULL, "cannot allocate hash table");
     return table;
 }
 
 void killHashTable(HashTable table)
 {
-  /* for now, just free table, forget entries */
-  free( (char *) table );
+    /* for now, just free table, forget entries */
+    if(table != NULL) free( (char *) table );
 }
 
 /**
@@ -94,14 +91,13 @@ void killHashTable(HashTable table)
  */
 Entry *hash_add(HashTable table, char *key, Entry *rec)
 {
-  unsigned int h=0;
-  char *p=key;
-  require(table!=NULL && key!=NULL && rec!=NULL, "add: invalid addition");
+    unsigned int h=0;
+    require(table!=NULL && key!=NULL && rec!=NULL, "add: invalid addition");
 
-  h=hash(p,size);
-  rec->next = table[h];     /* Add to singly-linked list */
-  table[h] = rec;
-  return rec;
+    h=hash(key);
+    rec->next = table[h]; /* Add to singly-linked list */
+    table[h] = rec;
+    return rec;
 }
 
 /**
@@ -110,19 +106,18 @@ Entry *hash_add(HashTable table, char *key, Entry *rec)
  * \param key finding key
  * \return the last Entry stored with Entry.str == key;
  */
-Entry *hash_get(HashTable table, char *key)
+Entry *hash_get(HashTable table, const char *key)
 {
-  unsigned h=0;
-  char *p=key;
-  Entry *q;
-  require(table!=NULL && key!=NULL, "get: invalid table and/or key");
+    unsigned h=0;
+    Entry *q;
+    require(table!=NULL && key!=NULL, "get: invalid table and/or key");
 
-  h=hash(p, size);
-  for (q = table[h]; q != NULL; q = q->next)
-  {
-    if ( !strcmp(key, q->str) ) return( q );
-  }
-  return( NULL );
+    h=hash(key);
+    for (q = table[h]; q != NULL; q = q->next)
+    {
+        if ( !strcmp(key, q->str) ) return( q );
+    }
+    return( NULL );
 }
 
 
@@ -133,23 +128,21 @@ Entry *hash_get(HashTable table, char *key)
  * \param text the entry's text. must not be NULL.
  * \param sz size of the new Entry TODO what this means ?
  */
-Entry *newEntry(char *text, int sz)
+Entry *newEntry(const char *text, int sz)
 {
-  Entry *p;
-  require(text!=NULL, "new: NULL terminal");
+    Entry *p;
+    require(text!=NULL, "new: NULL terminal");
 
-  p = (Entry *) calloc(1,sz);
+    p = (Entry *) calloc(1,sz);
 
-  if ( p == NULL )
-  {
-    fatal_internal("newEntry: out of memory for terminals\n");
-    exit(EXIT_FAILURE);
-  }
+    if ( p == NULL )
+    {
+        fatal_internal("newEntry: out of memory for terminals\n");
+        exit(EXIT_FAILURE);
+    }
 
-  p->str = strdup(text);
-  // TODO log a warning if p->str==NULL
+    p->str = strdup(text);
+    // TODO log a warning if p->str==NULL
 
-  return(p);
+    return(p);
 }
-
-

@@ -35,9 +35,9 @@
  *
  * The following functions are visible:
  *
- *    Entry **newHashTable();   Create and return initialized hash table
- *    Entry *hash_add(Entry **, char *, Entry *);
- *    Entry *hash_get(Entry **, char *);
+ *    HashTable newHashTable();   Create and return initialized hash table
+ *    Entry *hash_add(HashTable, char *, Entry *);
+ *    Entry *hash_get(HashTable, char *);
  *    void  killHashTable(HashTable table);
  */
 
@@ -66,7 +66,7 @@ typedef struct _entry {
 #define newCacheEntry(s)  (CacheEntry *) newEntry(s, sizeof(CacheEntry))
 #define newLabelEntry(s)  (LabelEntry *) newEntry(s, sizeof(LabelEntry))
 #define newSignalEntry(s) (SignalEntry *) newEntry(s, sizeof(SignalEntry))
-#define newPredEntry(s)   (PredEntry *) newEntry(s,sizeof(PredEntry))
+#define newPredEntry(s)   (PredEntry *) newEntry(s, sizeof(PredEntry))
 
 
 /**
@@ -78,7 +78,7 @@ typedef Entry **HashTable;
 HashTable newHashTable();
 
 
-void  killHashTable(HashTable table);
+void killHashTable(HashTable table);
 
 /**
  * Given a table, add 'rec' with key 'key' (add to front of list).
@@ -87,7 +87,7 @@ void  killHashTable(HashTable table);
 Entry *hash_add(HashTable table, char *key, Entry *rec);
 
 /** Return ptr to 1st entry found in table under key (return NULL if none found) */
-Entry *hash_get(HashTable table, char *key);
+Entry *hash_get(HashTable table, const char *key);
 
 /**
  * Given a string, this function allocates and returns a pointer to a
@@ -96,7 +96,7 @@ Entry *hash_get(HashTable table, char *key);
  * \param text the entry's text. must not be NULL.
  * \param sz size of the new Entry TODO what this means ?
  */
-Entry *newEntry(char *text, int sz);
+Entry *newEntry(const char *text, int sz);
 
 
 #endif
