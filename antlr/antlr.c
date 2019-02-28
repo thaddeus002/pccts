@@ -251,7 +251,7 @@ void grammar()
             }
             else {
               if ( strcmp(ParserName,"zzparser")==0 ) {
-                ParserName=StripQuotes(strdup(LATEXT(1)));
+                ParserName=strip_quotes(strdup(LATEXT(1)));
                 if ( RulePrefix[0]!='\0' )
                 {
                   warn("#parser meta-op incompatible with '-gp prefix'; '-gp' ignored");
@@ -3058,7 +3058,7 @@ fail:
   }
 }
 
-static void enum_file(char * fname)
+static void enum_file(char *fname)
 {
   zzRULE;
   zzBLOCK(zztasp1);
@@ -3125,10 +3125,9 @@ static void enum_file(char * fname)
       }
     }
   }
-  else {
-    if ( (LA(1)==Eof) ) {
-    }
-    else {zzFAIL(1,zzerr61,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+  else if ( (LA(1)!=Eof) ) {
+    zzFAIL(1,zzerr61,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk);
+    goto fail; 
   }
   zzEXIT(zztasp1);
   return;
@@ -3162,7 +3161,7 @@ static void defines(char * fname)
       v = atoi(LATEXT(1));
       /*      fprintf(stderr, "#token %s=%d\n", t, v);*/
 
-  /* MR2 Andreas Magnusson (Andreas.Magnusson@mailbox.swipnet.se) */
+      /* MR2 Andreas Magnusson (Andreas.Magnusson@mailbox.swipnet.se) */
       /* MR2 Fix to bug introduced by 1.33MR1 for #tokdefs            */
       /* MR2 Don't let #tokdefs be confused by      */
       /* MR2   DLGminToken and DLGmaxToken          */
