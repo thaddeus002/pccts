@@ -53,8 +53,8 @@
 #define BitsPerWord   BitsPerByte*sizeof(SetWordType)
 
 /* C++ output stuff */
-FILE  *Parser_h;      /* where subclass of ANTLRParser goes */
-FILE  *Parser_c;      /* where code for subclass of ANTLRParser goes */
+FILE *Parser_h; /* where subclass of ANTLRParser goes */
+FILE *Parser_c; /* where code for subclass of ANTLRParser goes */
 
 
 static SetWordType *setwd = NULL;
@@ -62,14 +62,6 @@ int setnum = -1;
 int wordnum = 0;
 
 int esetnum = 0;
-
-/**
- * Define a new error set.  WARNING...set-implementation dependent.
- */
-static int DefErrSetForC1(int nilOK, set *f, int subst, char * name, const char * suffix);
-static int isTermEntryTokClass(TermEntry *te);
-static void dumpExpr(FILE *f, char *e);
-
 
 /**
  * Used to convert native wordsize, which ANTLR uses (via set.c) to manipulate sets,
@@ -209,6 +201,8 @@ static set Efirst( char *rule, ECnode *eclass )
   return a;
 }
 
+static int isTermEntryTokClass(TermEntry *te);
+
 /**
  * scan the list of tokens/eclasses/nonterminals filling the new eclass
  * with the set described by the list.  Note that an eclass can be
@@ -232,14 +226,14 @@ static void doEclass( char *eclass )
   p->eset = empty;
   for (e = (p->elist)->next; e!=NULL; e=e->next)
   {
-    q = NULL;               /* MR23 */
+    q = NULL;
 
     if ( islower( *((char *)e->elem) ) )  /* is it a rule ref? (alias FIRST request) */
     {
       a = Efirst((char *)e->elem, p);
       set_orin(&p->eset, a);
       deg += set_deg(a);
-      set_free( a );
+      set_free(a);
       continue;
     }
     else if ( *((char *)e->elem)=='"' )
@@ -297,7 +291,7 @@ void ComputeTokSets( )
 {
   ListNode *t, *e = NULL, *e1, *e2;
   int something_changed;
-    int i;
+  int i;
   TCnode *p;
   TermEntry *q, *q1, *q2;
 
@@ -332,9 +326,9 @@ void ComputeTokSets( )
                 e2=e1->next;
                 e=e2;
                 q1= (TermEntry *) hash_get(Tname, (char *)e1->elem);
-          require(q1!=NULL, "ComputeTokSets: no token def");
+                require(q1!=NULL, "ComputeTokSets: no token def");
                 q2= (TermEntry *) hash_get(Tname, (char *)e2->elem);
-          require(q2!=NULL, "ComputeTokSets: no token def");
+                require(q2!=NULL, "ComputeTokSets: no token def");
 
                 if (set_el(q1->token,imag_tokens)) {
                   errorNoFL("can't define #tokclass %s using #tokclass or #errclass %s",
@@ -450,27 +444,9 @@ static void SubstErrorClass( set *f )
   }
 }
 
-static int DefErrSetForCC1(int nilOK, set *f, int subst, char *name, const char *suffix);
-
-int DefErrSet1(int nilOK, set *f, int subst, char *name )
-{
-  if ( GenCC ) return DefErrSetForCC1(nilOK, f, subst, name, "_set");
-  else return DefErrSetForC1(nilOK, f, subst, name, "_set");
-}
-
-int DefErrSet( set *f, int subst, char *name )
-{
-    return DefErrSet1(0,f,subst,name);
-}
-
-int DefErrSetWithSuffix(int nilOK, set *f, int subst, char *name, const char* suffix)
-{
-  if ( GenCC ) return DefErrSetForCC1(nilOK, f, subst, name, suffix );
-  else return DefErrSetForC1(nilOK, f, subst, name, suffix);
-}
 
 /**
- * Define a new error set.  WARNING...set-implementation dependent.
+ * Define a new error set. WARNING... set-implementation dependent.
  */
 static int DefErrSetForC1(int nilOK, set *f, int subst, char * name, const char * suffix)
 {
@@ -515,13 +491,9 @@ static int DefErrSetForC1(int nilOK, set *f, int subst, char * name, const char 
   return esetnum;
 }
 
-static int DefErrSetForC( set *f, int subst, char *name )
-{
-  return DefErrSetForC1(0,f,subst,name, "_set");
-}
 
 /**
- * Define a new error set.  WARNING...set-implementation dependent;
+ * Define a new error set. WARNING... set-implementation dependent;
  * Only used when -CC on.
  */
 static int DefErrSetForCC1(int nilOK, set *f, int subst, char *name, const char *suffix)
@@ -571,21 +543,39 @@ static int DefErrSetForCC1(int nilOK, set *f, int subst, char *name, const char 
   return esetnum;
 }
 
-static int DefErrSetForCC( set *f, int subst, char *name )
+
+int DefErrSet1(int nilOK, set *f, int subst, char *name )
 {
-  return DefErrSetForCC1(0,f,subst,name, "_set");
+    if (GenCC) {
+        return DefErrSetForCC1(nilOK, f, subst, name, "_set");
+    }
+    return DefErrSetForC1(nilOK, f, subst, name, "_set");
 }
+
+int DefErrSet(set *f, int subst, char *name) {
+    return DefErrSet1(0,f,subst,name);
+}
+
+int DefErrSetWithSuffix(int nilOK, set *f, int subst, char *name, const char* suffix) {
+    if (GenCC) {
+        return DefErrSetForCC1(nilOK, f, subst, name, suffix);
+    }
+    return DefErrSetForC1(nilOK, f, subst, name, suffix);
+}
+
+
+static void dumpExpr(FILE *f, char *e);
 
 void GenParser_c_Hdr()
 {
   int i,j;
   TermEntry   *te;
-  char * hasAkaName = NULL;                 /* MR23 */
+  char * hasAkaName = NULL;
 
-  hasAkaName = (char *) malloc(TokenNum+1);         /* MR23 */
-  require(hasAkaName!=NULL, "Cannot alloc hasAkaName\n");   /* MR23 */
-  for (i = 0; i < TokenNum; i++) hasAkaName[i]='0';     /* MR23 */
-  hasAkaName[TokenNum] = 0;                                   /* MR23 */
+  hasAkaName = (char *) malloc(TokenNum+1);
+  require(hasAkaName!=NULL, "Cannot alloc hasAkaName\n");
+  for (i = 0; i < TokenNum; i++) hasAkaName[i]='0';
+  hasAkaName[TokenNum] = 0;
 
   fprintf(Parser_c, "/*\n");
   fprintf(Parser_c, " * %s: P a r s e r  S u p p o r t\n", CurrentClassName);
@@ -601,7 +591,7 @@ void GenParser_c_Hdr()
   fprintf(Parser_c, " * ANTLR Version %s\n", Version);
   fprintf(Parser_c, " */\n\n");
 
-  if ( FirstAction != NULL ) dumpAction(FirstAction,Parser_c, 0, -1, 0, 1);    /* MR11 MR15b */
+  if ( FirstAction != NULL ) dumpAction(FirstAction,Parser_c, 0, -1, 0, 1);
 
   fprintf(Parser_c, "#define ANTLR_VERSION  %s\n", VersionDef);
 
@@ -615,12 +605,12 @@ void GenParser_c_Hdr()
 
   fprintf(Parser_c, "#include \"%s.h\"\n\n", CurrentClassName);
 
-  fprintf(Parser_c, "const ANTLRChar *%s::tokenName(int tok) ",   /* MR1 */
-          CurrentClassName);                            /* MR1 */
-  fprintf(Parser_c, "  { return _token_tbl[tok]; }\n");         /* MR1 */ /* MR10 */
+  fprintf(Parser_c, "const ANTLRChar *%s::tokenName(int tok) ",
+          CurrentClassName);
+  fprintf(Parser_c, "  { return _token_tbl[tok]; }\n");
   /* Dump a Parser::tokens for each automaton */
   fprintf(Parser_c, "\nconst ANTLRChar *%s::_token_tbl[]={\n",
-                                                 CurrentClassName); /* MR20 */
+                                                 CurrentClassName);
   fprintf(Parser_c, "\t/* 00 */\t\"Invalid\"");
 
   for (i=1; i<TokenNum-1; i++)
@@ -633,14 +623,14 @@ void GenParser_c_Hdr()
       continue;
     }
     if ( TokenString(i) != NULL ) {
-           te=(TermEntry *) hash_get(Tname,TokenString(i));                     /* MR11 */
-            if (te == NULL || te->akaString == NULL) {                          /* MR11 */
-              fprintf(Parser_c, ",\n\t/* %02d */\t\"%s\"", i, TokenString(i));
-            } else {
-        hasAkaName[i] = '1';                          /* MR23 */
-              fprintf(Parser_c, ",\n\t/* %02d */\t\"%s\"", i, te->akaString);   /* MR11 */
-            }
+        te=(TermEntry *) hash_get(Tname,TokenString(i));
+        if (te == NULL || te->akaString == NULL) {
+            fprintf(Parser_c, ",\n\t/* %02d */\t\"%s\"", i, TokenString(i));
+        } else {
+            hasAkaName[i] = '1';
+            fprintf(Parser_c, ",\n\t/* %02d */\t\"%s\"", i, te->akaString);
         }
+    }
     else
     {
       /* look in all lexclasses for the reg expr */
@@ -678,11 +668,11 @@ void GenParser_c_Hdr()
             NumWords(TokenNum-1)*sizeof(unsigned));
   fprintf(Parser_c, "{\n");
   fprintf(Parser_c, "\ttoken_tbl = _token_tbl;\n");
-    if (TraceGen) {
-      fprintf(Parser_c, "\ttraceOptionValueDefault=1;\t\t// MR10 turn trace ON\n");
-    } else {
-      fprintf(Parser_c, "\ttraceOptionValueDefault=0;\t\t// MR10 turn trace OFF\n");
-    };
+  if (TraceGen) {
+    fprintf(Parser_c, "\ttraceOptionValueDefault=1;\t\t// MR10 turn trace ON\n");
+  } else {
+    fprintf(Parser_c, "\ttraceOptionValueDefault=0;\t\t// MR10 turn trace OFF\n");
+  };
   fprintf(Parser_c, "}\n\n");
   free ( (void *) hasAkaName);
 }
@@ -705,7 +695,7 @@ void GenParser_h_Hdr()
   fprintf(Parser_h, " * ANTLR Version %s\n", Version);
   fprintf(Parser_h, " */\n\n");
 
-  if ( FirstAction != NULL ) dumpAction( FirstAction, Parser_h, 0, -1, 0, 1);         /* MR11 MR15b */
+  if ( FirstAction != NULL ) dumpAction( FirstAction, Parser_h, 0, -1, 0, 1);
 
   fprintf(Parser_h, "#ifndef %s_h\n", CurrentClassName);
   fprintf(Parser_h, "#define %s_h\n\n", CurrentClassName);
@@ -716,25 +706,25 @@ void GenParser_h_Hdr()
 
   if ( GenAST ) fprintf(Parser_h, "class ASTBase;\n");
     if (TraceGen) {
-      fprintf(Parser_h,"#ifndef zzTRACE_RULES\n");  /* MR20 */
-      fprintf(Parser_h,"#define zzTRACE_RULES\n");  /* MR20 */
-      fprintf(Parser_h,"#endif\n");                 /* MR22 */
+      fprintf(Parser_h,"#ifndef zzTRACE_RULES\n");
+      fprintf(Parser_h,"#define zzTRACE_RULES\n");
+      fprintf(Parser_h,"#endif\n");
     };
   fprintf(Parser_h, "#include \"%s\"\n\n", APARSER_H);
 
   if ( HdrAction != NULL ) dumpAction( HdrAction, Parser_h, 0, -1, 0, 1);
 
-/* MR10 */    if (ClassDeclStuff == NULL) {
-/* MR10 */    fprintf(Parser_h, "class %s : public ANTLRParser {\n", CurrentClassName);
-/* MR10 */    } else {
-/* MR10 */      fprintf(Parser_h, "class %s %s {\n",CurrentClassName,ClassDeclStuff);
-/* MR10 */    };
+  if (ClassDeclStuff == NULL) {
+    fprintf(Parser_h, "class %s : public ANTLRParser {\n", CurrentClassName);
+  } else {
+    fprintf(Parser_h, "class %s %s {\n",CurrentClassName,ClassDeclStuff);
+  };
 
-  fprintf(Parser_h, "public:\n");                   /* MR1 */
-  fprintf(Parser_h, "\tstatic  const ANTLRChar *tokenName(int tk);\n");/* MR1 */
-  fprintf(Parser_h, "\tenum { SET_SIZE = %i };\n",TokenNum-1);         /* MR21 */
+  fprintf(Parser_h, "public:\n");
+  fprintf(Parser_h, "\tstatic  const ANTLRChar *tokenName(int tk);\n");
+  fprintf(Parser_h, "\tenum { SET_SIZE = %i };\n",TokenNum-1);
   fprintf(Parser_h, "protected:\n");
-  fprintf(Parser_h, "\tstatic const ANTLRChar *_token_tbl[];\n");     /* MR20 */
+  fprintf(Parser_h, "\tstatic const ANTLRChar *_token_tbl[];\n");
   fprintf(Parser_h, "private:\n");
 }
 
@@ -742,7 +732,7 @@ void GenParser_h_Hdr()
 void GenErrHdr( )
 {
   int i, j;
-  TermEntry   *te;
+  TermEntry *te;
 
   fprintf(ErrFile, "/*\n");
   fprintf(ErrFile, " * A n t l r  S e t s / E r r o r  F i l e  H e a d e r\n");
@@ -758,7 +748,7 @@ void GenErrHdr( )
   fprintf(ErrFile, " * ANTLR Version %s\n", Version);
   fprintf(ErrFile, " */\n\n");
 
-  if ( FirstAction != NULL ) dumpAction( FirstAction, ErrFile, 0, -1, 0, 1);         /* MR11 MR15b */
+  if ( FirstAction != NULL ) dumpAction( FirstAction, ErrFile, 0, -1, 0, 1);
 
   fprintf(ErrFile, "#define ANTLR_VERSION %s\n", VersionDef);
 
@@ -774,9 +764,9 @@ void GenErrHdr( )
     fprintf(ErrFile, "#include \"pccts_setjmp.h\"\n");
   }
   if (TraceGen) {
-    fprintf(ErrFile,"#ifndef zzTRACE_RULES\n");  /* MR20 */
-    fprintf(ErrFile,"#define zzTRACE_RULES\n");  /* MR20 */
-    fprintf(ErrFile,"#endif\n");                 /* MR22 */
+    fprintf(ErrFile,"#ifndef zzTRACE_RULES\n");
+    fprintf(ErrFile,"#define zzTRACE_RULES\n");
+    fprintf(ErrFile,"#endif\n");
   };
 
   if ( OutputLL_k > 1 ) fprintf(ErrFile, "#define LL_K %d\n", OutputLL_k);
@@ -811,13 +801,13 @@ void GenErrHdr( )
       continue;
     }
     if ( TokenString(i) != NULL ) {
-            te=(TermEntry *) hash_get(Tname,TokenString(i));                     /* MR11 */
-            if (te == NULL || te->akaString == NULL) {                          /* MR11 */
-          fprintf(ErrFile, ",\n\t/* %02d */\t\"%s\"", i, TokenString(i));
-            } else {
-          fprintf(ErrFile, ",\n\t/* %02d */\t\"%s\"", i, te->akaString);    /* MR11 */
-            }
+        te=(TermEntry *) hash_get(Tname,TokenString(i));
+        if (te == NULL || te->akaString == NULL) {
+            fprintf(ErrFile, ",\n\t/* %02d */\t\"%s\"", i, TokenString(i));
+        } else {
+            fprintf(ErrFile, ",\n\t/* %02d */\t\"%s\"", i, te->akaString);
         }
+    }
     else
     {
       /* look in all lexclasses for the reg expr */
@@ -845,35 +835,41 @@ void GenErrHdr( )
   fprintf(ErrFile, "\n};\n");
 }
 
-static void dumpExpr( FILE *f, char *e )
-{
-  while ( *e!='\0' )
-  {
-    if ( *e=='\\' && *(e+1)=='\\' )
-      {putc('\\', f); putc('\\', f); e+=2;}
-    else if ( *e=='\\' && *(e+1)=='"' )
-      {putc('\\', f); putc('"', f); e+=2;}
-    else if ( *e=='\\' ) {putc('\\', f); putc('\\', f); e++;}
-    else {putc(*e, f); e++;}
-  }
+static void dumpExpr(FILE *f, char *e) {
+    while (*e!='\0') {
+        if (*e=='\\' && *(e+1)=='\\') {
+            putc('\\', f);
+            putc('\\', f);
+            e += 2;
+        } else if (*e=='\\' && *(e+1)=='"') {
+            putc('\\', f);
+            putc('"', f);
+            e += 2;
+        } else if (*e=='\\') {
+            putc('\\', f);
+            putc('\\', f);
+            e++;
+        } else {
+            putc(*e, f);
+            e++;
+        }
+    }
 }
 
-static int isTermEntryTokClass(TermEntry *te)
-{
-  ListNode *t;
-  TCnode *p;
-  TermEntry *q;
-  char *tokstr;
+static int isTermEntryTokClass(TermEntry *te) {
+    ListNode *t;
+    TCnode *p;
+    TermEntry *q;
+    char *tokstr;
 
-  if (tclasses == NULL) return 0;
+    if (tclasses == NULL) return 0;
 
-  for (t = tclasses->next; t!=NULL; t=t->next)
-  {
-    p = (TCnode *) t->elem;
-    tokstr = TokenString(p->tok);
-    lexmode(p->lexclass); /* switch to lexclass where tokclass is defined */
-    q = (TermEntry *) hash_get(Tname, tokstr);
-    if (q == te) return 1;
-  }
-  return 0;
+    for (t = tclasses->next; t!=NULL; t=t->next) {
+        p = (TCnode *) t->elem;
+        tokstr = TokenString(p->tok);
+        lexmode(p->lexclass); /* switch to lexclass where tokclass is defined */
+        q = (TermEntry *) hash_get(Tname, tokstr);
+        if (q == te) return 1;
+    }
+    return 0;
 }

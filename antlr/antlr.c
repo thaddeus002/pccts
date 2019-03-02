@@ -1301,7 +1301,7 @@ static void error()
   if ( Tnum( (t=StripQuotes(t)) ) == 0 )
   {
     if ( hash_get(Texpr, t) != NULL )
-    warn(eMsg("errclass name conflicts with regular expression  '%s'",t));
+      warn(eMsg("errclass name conflicts with regular expression  '%s'",t));
     e->tok = addTname( t );
     set_orel(e->tok, &imag_tokens);
     require((p=(TermEntry *)hash_get(Tname, t)) != NULL,
@@ -1311,10 +1311,10 @@ static void error()
   }
   else
   {
-  warn(eMsg("redefinition of errclass or conflict w/token or tokclass '%s'; ignored",t));
-  free( (char *)e );
-  go=0;
-}
+    warn(eMsg("redefinition of errclass or conflict w/token or tokclass '%s'; ignored",t));
+    free( (char *)e );
+    go=0;
+  }
   zzmatch(102); zzCONSUME;
   {
     zzBLOCK(zztasp2);
@@ -1355,29 +1355,28 @@ static void error()
       {
         zzBLOCK(zztasp3);
         zzMake0;
-        {
+
         if ( (LA(1)==NonTerminal) ) {
           zzmatch(NonTerminal);
           if ( go ) t=strdup(zzlextext);
           zzCONSUME;
-        }
-        else {
+        } else {
           if ( (LA(1)==TokenTerm) ) {
             zzmatch(TokenTerm);
             if ( go ) t=strdup(zzlextext);
             zzCONSUME;
-          }
-          else {
+          } else {
             if ( (LA(1)==QuotedTerm) ) {
               zzmatch(QuotedTerm);
               if ( go ) t=strdup(zzlextext);
               zzCONSUME;
+            } else {
+              zzFAIL(1,zzerr16,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk);
+              goto fail;
             }
-            else {zzFAIL(1,zzerr16,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
           }
         }
         zzEXIT(zztasp3);
-        }
       }
       if ( go ) list_add(&(e->elist), t);
       zzLOOP(zztasp2);
