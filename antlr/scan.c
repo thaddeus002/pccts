@@ -205,12 +205,12 @@ void mark_label_used_in_sem_pred(LabelEntry *le)
 
 static void act1()
 {
-    NLA = Eof;
+    zztoken = Eof;
     /* L o o k  F o r  A n o t h e r  F i l e */
     {
       FILE *new_input;
       new_input = NextFile();
-      if ( new_input == NULL ) { NLA=Eof; return; }
+      if ( new_input == NULL ) { zztoken=Eof; return; }
       fclose( input );
       input = new_input;
       zzrdstream( input );
@@ -221,21 +221,21 @@ static void act1()
 
 static void act2()
 {
-    NLA = 76;
+    zztoken = 76;
     zzskip();
 }
 
 
 static void act3()
 {
-    NLA = 77;
+    zztoken = 77;
     zzline++; zzskip();
 }
 
 
 static void act4()
 {
-    NLA = 78;
+    zztoken = 78;
     zzmode(ACTIONS); zzmore();
     istackreset();
     pushint(']');
@@ -244,7 +244,7 @@ static void act4()
 
 static void act5()
 {
-    NLA = 79;
+    zztoken = 79;
     action_file=CurFile; action_line=zzline;
     zzmode(ACTIONS); zzmore();
     list_free(&CurActionLabels,0);
@@ -256,35 +256,35 @@ static void act5()
 
 static void act6()
 {
-    NLA = 80;
+    zztoken = 80;
     zzmode(STRINGS); zzmore();
 }
 
 
 static void act7()
 {
-    NLA = 81;
+    zztoken = 81;
     zzmode(COMMENTS); zzskip();
 }
 
 
 static void act8()
 {
-    NLA = 82;
+    zztoken = 82;
     warn("Missing /*; found dangling */"); zzskip();
 }
 
 
 static void act9()
 {
-    NLA = 83;
+    zztoken = 83;
     zzmode(CPP_COMMENTS); zzskip();
 }
 
 
 static void act10()
 {
-    NLA = 84;
+    zztoken = 84;
 
     zzline = atoi(zzbegexpr+5) - 1; zzline++; zzmore();
     getFileNameFromTheLineInfo(FileStr[CurFile], zzbegexpr);
@@ -293,7 +293,7 @@ static void act10()
 
 static void act11()
 {
-    NLA = 85;
+    zztoken = 85;
 
     zzline++; zzmore();
 }
@@ -301,20 +301,20 @@ static void act11()
 
 static void act12()
 {
-    NLA = 86;
+    zztoken = 86;
     warn("Missing <<; found dangling >>"); zzskip();
 }
 
 
 static void act13()
 {
-    NLA = WildCard;
+    zztoken = WildCard;
 }
 
 
 static void act14()
 {
-    NLA = 88;
+    zztoken = 88;
     FoundException = 1;
     FoundAtOperator = 1;
 }
@@ -322,281 +322,281 @@ static void act14()
 
 static void act15()
 {
-    NLA = Pragma;
+    zztoken = Pragma;
 }
 
 
 static void act16()
 {
-    NLA = FirstSetSymbol;
+    zztoken = FirstSetSymbol;
 }
 
 
 static void act17()
 {
-    NLA = 94;
+    zztoken = 94;
 }
 
 
 static void act18()
 {
-    NLA = 95;
+    zztoken = 95;
 }
 
 
 static void act19()
 {
-    NLA = 96;
+    zztoken = 96;
 }
 
 
 static void act20()
 {
-    NLA = 97;
+    zztoken = 97;
 }
 
 
 static void act21()
 {
-    NLA = 98;
+    zztoken = 98;
 }
 
 
 static void act22()
 {
-    NLA = 99;
+    zztoken = 99;
 }
 
 
 static void act23()
 {
-    NLA = 102;
+    zztoken = 102;
 }
 
 
 static void act24()
 {
-    NLA = 103;
+    zztoken = 103;
 }
 
 
 static void act25()
 {
-    NLA = 104;
+    zztoken = 104;
 }
 
 
 static void act26()
 {
-    NLA = 105;
+    zztoken = 105;
 }
 
 
 static void act27()
 {
-    NLA = 106;
+    zztoken = 106;
 }
 
 
 static void act28()
 {
-    NLA = 107;
+    zztoken = 107;
 }
 
 
 static void act29()
 {
-    NLA = 108;
+    zztoken = 108;
 }
 
 
 static void act30()
 {
-    NLA = 109;
+    zztoken = 109;
 }
 
 
 static void act31()
 {
-    NLA = 110;
+    zztoken = 110;
 }
 
 
 static void act32()
 {
-    NLA = 111;
+    zztoken = 111;
 }
 
 
 static void act33()
 {
-    NLA = 112;
+    zztoken = 112;
 }
 
 
 static void act34()
 {
-    NLA = 113;
+    zztoken = 113;
 }
 
 
 static void act35()
 {
-    NLA = 114;
+    zztoken = 114;
 }
 
 
 static void act36()
 {
-    NLA = 115;
+    zztoken = 115;
 }
 
 
 static void act37()
 {
-    NLA = 116;
+    zztoken = 116;
 }
 
 
 static void act38()
 {
-    NLA = 117;
+    zztoken = 117;
 }
 
 
 static void act39()
 {
-    NLA = 118;
+    zztoken = 118;
 }
 
 
 static void act40()
 {
-    NLA = 119;
+    zztoken = 119;
 }
 
 
 static void act41()
 {
-    NLA = 120;
+    zztoken = 120;
 }
 
 
 static void act42()
 {
-    NLA = 121;
+    zztoken = 121;
 }
 
 
 static void act43()
 {
-    NLA = 122;
+    zztoken = 122;
 }
 
 
 static void act44()
 {
-    NLA = 123;
+    zztoken = 123;
 }
 
 
 static void act45()
 {
-    NLA = 124;
+    zztoken = 124;
 }
 
 
 static void act46()
 {
-    NLA = 125;
+    zztoken = 125;
 }
 
 
 static void act47()
 {
-    NLA = 126;
+    zztoken = 126;
 }
 
 
 static void act48()
 {
-    NLA = 127;
+    zztoken = 127;
 }
 
 
 static void act49()
 {
-    NLA = 128;
+    zztoken = 128;
 }
 
 
 static void act50()
 {
-    NLA = 129;
+    zztoken = 129;
 }
 
 
 static void act51()
 {
-    NLA = 130;
+    zztoken = 130;
 }
 
 
 static void act52()
 {
-    NLA = 131;
+    zztoken = 131;
 }
 
 
 static void act53()
 {
-    NLA = 132;
+    zztoken = 132;
 }
 
 
 static void act54()
 {
-    NLA = 133;
+    zztoken = 133;
 }
 
 
 static void act55()
 {
-    NLA = 134;
+    zztoken = 134;
 }
 
 
 static void act56()
 {
-    NLA = 135;
+    zztoken = 135;
 }
 
 
 static void act57()
 {
-    NLA = NonTerminal;
+    zztoken = NonTerminal;
 
     while ( zzchar==' ' || zzchar=='\t' ) {
       zzadvance();
     }
-    if ( zzchar == ':' && inAlt ) NLA = LABEL;
+    if ( zzchar == ':' && inAlt ) zztoken = LABEL;
 }
 
 
 static void act58()
 {
-    NLA = TokenTerm;
+    zztoken = TokenTerm;
 
     while ( zzchar==' ' || zzchar=='\t' ) {
       zzadvance();
     }
-    if ( zzchar == ':' && inAlt ) NLA = LABEL;
+    if ( zzchar == ':' && inAlt ) zztoken = LABEL;
 }
 
 
 static void act59()
 {
-    NLA = 136;
+    zztoken = 136;
     warn(eMsg("unknown meta-op: %s",zzlextext)); zzskip();
 }
 
@@ -632,20 +632,20 @@ static unsigned char shift0[257] = {
 
 static void act60()
 {
-    NLA = Eof;
+    zztoken = Eof;
 }
 
 
 static void act61()
 {
-    NLA = QuotedTerm;
+    zztoken = QuotedTerm;
     zzmode(START);
 }
 
 
 static void act62()
 {
-    NLA = 3;
+    zztoken = 3;
 
     zzline++;
     warn("eoln found in string");
@@ -655,21 +655,21 @@ static void act62()
 
 static void act63()
 {
-    NLA = 4;
+    zztoken = 4;
     zzline++; zzmore();
   }
 
 
 static void act64()
 {
-    NLA = 5;
+    zztoken = 5;
     zzmore();
   }
 
 
 static void act65()
 {
-    NLA = 6;
+    zztoken = 6;
     zzmore();
   }
 
@@ -705,20 +705,20 @@ static unsigned char shift1[257] = {
 
 static void act66()
 {
-    NLA = Eof;
+    zztoken = Eof;
   }
 
 
 static void act67()
 {
-    NLA = 7;
+    zztoken = 7;
     zzmode(ACTIONS); zzmore();
   }
 
 
 static void act68()
 {
-    NLA = 8;
+    zztoken = 8;
 
     zzline++;
     warn("eoln found in string (in user action)");
@@ -728,21 +728,21 @@ static void act68()
 
 static void act69()
 {
-    NLA = 9;
+    zztoken = 9;
     zzline++; zzmore();
   }
 
 
 static void act70()
 {
-    NLA = 10;
+    zztoken = 10;
     zzmore();
   }
 
 
 static void act71()
 {
-    NLA = 11;
+    zztoken = 11;
     zzmore();
   }
 
@@ -778,20 +778,20 @@ static unsigned char shift2[257] = {
 
 static void act72()
 {
-    NLA = Eof;
+    zztoken = Eof;
   }
 
 
 static void act73()
 {
-    NLA = 12;
+    zztoken = 12;
     zzmode(ACTIONS); zzmore();
   }
 
 
 static void act74()
 {
-    NLA = 13;
+    zztoken = 13;
 
     zzline++;
     warn("eoln found in char literal (in user action)");
@@ -801,14 +801,14 @@ static void act74()
 
 static void act75()
 {
-    NLA = 14;
+    zztoken = 14;
     zzmore();
   }
 
 
 static void act76()
 {
-    NLA = 15;
+    zztoken = 15;
     zzmore();
   }
 
@@ -844,34 +844,34 @@ static unsigned char shift3[257] = {
 
 static void act77()
 {
-    NLA = Eof;
+    zztoken = Eof;
   }
 
 
 static void act78()
 {
-    NLA = 16;
+    zztoken = 16;
     zzmode(ACTIONS); zzmore();
   }
 
 
 static void act79()
 {
-    NLA = 17;
+    zztoken = 17;
     zzmore();
   }
 
 
 static void act80()
 {
-    NLA = 18;
+    zztoken = 18;
     zzline++; zzmore();
 }
 
 
 static void act81()
 {
-    NLA = 19;
+    zztoken = 19;
     zzmore();
   }
 
@@ -907,13 +907,13 @@ static unsigned char shift4[257] = {
 
 static void act82()
 {
-    NLA = Eof;
+    zztoken = Eof;
 }
 
 
 static void act83()
 {
-    NLA = 20;
+    zztoken = 20;
     zzmode(PARSE_ENUM_FILE);
     zzmore();
 }
@@ -921,21 +921,21 @@ static void act83()
 
 static void act84()
 {
-    NLA = 21;
+    zztoken = 21;
     zzmore();
 }
 
 
 static void act85()
 {
-    NLA = 22;
+    zztoken = 22;
     zzline++; zzmore();
 }
 
 
 static void act86()
 {
-    NLA = 23;
+    zztoken = 23;
     zzmore();
   }
 
@@ -971,20 +971,20 @@ static unsigned char shift5[257] = {
 
 static void act87()
 {
-    NLA = Eof;
+    zztoken = Eof;
   }
 
 
 static void act88()
 {
-    NLA = 24;
+    zztoken = 24;
     zzline++; zzmode(PARSE_ENUM_FILE); zzskip();
 }
 
 
 static void act89()
 {
-    NLA = 25;
+    zztoken = 25;
     zzskip();
 }
 
@@ -1020,20 +1020,20 @@ static unsigned char shift6[257] = {
 
 static void act90()
 {
-    NLA = Eof;
+    zztoken = Eof;
 }
 
 
 static void act91()
 {
-    NLA = 26;
+    zztoken = 26;
     zzline++; zzmode(ACTIONS); zzmore();
 }
 
 
 static void act92()
 {
-    NLA = 27;
+    zztoken = 27;
     zzmore();
 }
 
@@ -1069,20 +1069,20 @@ static unsigned char shift7[257] = {
 
 static void act93()
 {
-    NLA = Eof;
+    zztoken = Eof;
 }
 
 
 static void act94()
 {
-    NLA = 28;
+    zztoken = 28;
     zzline++; zzmode(START); zzskip();
 }
 
 
 static void act95()
 {
-    NLA = 29;
+    zztoken = 29;
     zzskip();
 }
 
@@ -1118,34 +1118,34 @@ static unsigned char shift8[257] = {
 
 static void act96()
 {
-    NLA = Eof;
+    zztoken = Eof;
 }
 
 
 static void act97()
 {
-    NLA = 30;
+    zztoken = 30;
     zzmode(START); zzskip();
   }
 
 
 static void act98()
 {
-    NLA = 31;
+    zztoken = 31;
     zzskip();
 }
 
 
 static void act99()
 {
-    NLA = 32;
+    zztoken = 32;
     zzline++; zzskip();
 }
 
 
 static void act100()
 {
-    NLA = 33;
+    zztoken = 33;
     zzskip();
 }
 
@@ -1181,13 +1181,13 @@ static unsigned char shift9[257] = {
 
 static void act101()
 {
-    NLA = Eof;
+    zztoken = Eof;
 }
 
 
 static void act102()
 {
-    NLA = Action;
+    zztoken = Action;
     /* these do not nest */
     zzmode(START);
     zzlextext[0] = ' ';
@@ -1208,7 +1208,7 @@ static void act102()
 
 static void act103()
 {
-    NLA = Pred;
+    zztoken = Pred;
     /* these do not nest */
     zzmode(START);
     zzlextext[0] = ' ';
@@ -1224,7 +1224,7 @@ static void act103()
 
 static void act104()
 {
-    NLA = PassAction;
+    zztoken = PassAction;
     if ( topint() == ']' ) {
       popint();
       if ( istackempty() )  /* terminate action */
@@ -1253,7 +1253,7 @@ static void act104()
 
 static void act105()
 {
-    NLA = 37;
+    zztoken = 37;
 
     zzmore();
     zzreplstr(inline_set(zzbegexpr+
@@ -1263,35 +1263,35 @@ static void act105()
 
 static void act106()
 {
-    NLA = 38;
+    zztoken = 38;
     zzmore();
 }
 
 
 static void act107()
 {
-    NLA = 39;
+    zztoken = 39;
     zzline++; zzmore();
 }
 
 
 static void act108()
 {
-    NLA = 40;
+    zztoken = 40;
     zzmore();
 }
 
 
 static void act109()
 {
-    NLA = 41;
+    zztoken = 41;
     zzmore();
 }
 
 
 static void act110()
 {
-    NLA = 42;
+    zztoken = 42;
     if ( !GenCC ) {zzreplstr("zzaRet"); zzmore();}
     else err("$$ use invalid in C++ mode");
 }
@@ -1299,7 +1299,7 @@ static void act110()
 
 static void act111()
 {
-    NLA = 43;
+    zztoken = 43;
     if ( !GenCC ) {zzreplstr("zzempty_attr"); zzmore();}
     else err("$[] use invalid in C++ mode");
 }
@@ -1307,7 +1307,7 @@ static void act111()
 
 static void act112()
 {
-    NLA = 44;
+    zztoken = 44;
 
     pushint(']');
     if ( !GenCC ) zzreplstr("zzconstr_attr(");
@@ -1318,7 +1318,7 @@ static void act112()
 
 static void act113()
 {
-    NLA = 45;
+    zztoken = 45;
     {
       static char buf[100];
       numericActionLabel=1;       /* MR10 */
@@ -1340,7 +1340,7 @@ static void act113()
 
 static void act114()
 {
-    NLA = 46;
+    zztoken = 46;
     {
       static char buf[100];
       numericActionLabel=1;       /* MR10 */
@@ -1363,7 +1363,7 @@ static void act114()
 
 static void act115()
 {
-    NLA = 47;
+    zztoken = 47;
     {
       static char buf[100];
       static char i[20], j[20];
@@ -1397,7 +1397,7 @@ static void act115()
 
 static void act116()
 {
-    NLA = 48;
+    zztoken = 48;
 
     {
         static char buf[300];
@@ -1443,14 +1443,14 @@ static void act116()
 
 static void act117()
 {
-    NLA = 49;
+    zztoken = 49;
     zzreplstr("(*_root)"); zzmore(); chkGTFlag();
 }
 
 
 static void act118()
 {
-    NLA = 50;
+    zztoken = 50;
     if ( GenCC ) {
       if (NewAST) zzreplstr("(newAST)");
       else zzreplstr("(new AST)");}
@@ -1461,14 +1461,14 @@ static void act118()
 
 static void act119()
 {
-    NLA = 51;
+    zztoken = 51;
     zzreplstr("NULL"); zzmore(); chkGTFlag();
 }
 
 
 static void act120()
 {
-    NLA = 52;
+    zztoken = 52;
     {
       static char buf[100];
       if ( strlen(zzbegexpr)>(size_t)85 )
@@ -1485,7 +1485,7 @@ static void act120()
 
 static void act121()
 {
-    NLA = 53;
+    zztoken = 53;
 
     zzline = atoi(zzbegexpr+5) - 1; zzline++; zzmore();
     getFileNameFromTheLineInfo(FileStr[CurFile], zzbegexpr);
@@ -1494,7 +1494,7 @@ static void act121()
 
 static void act122()
 {
-    NLA = 54;
+    zztoken = 54;
 
     zzline++; zzmore();
 }
@@ -1502,7 +1502,7 @@ static void act122()
 
 static void act123()
 {
-    NLA = 55;
+    zztoken = 55;
 
     if ( !(strcmp(zzbegexpr, "#ifdef")==0 ||
     strcmp(zzbegexpr, "#if")==0 ||
@@ -1533,7 +1533,7 @@ static void act123()
 
 static void act124()
 {
-    NLA = 56;
+    zztoken = 56;
 
     pushint(']');
     if ( GenCC ) {
@@ -1547,7 +1547,7 @@ static void act124()
 
 static void act125()
 {
-    NLA = 57;
+    zztoken = 57;
 
     pushint('}');
     if ( GenCC ) {
@@ -1568,14 +1568,14 @@ static void act125()
 
 static void act126()
 {
-    NLA = 58;
+    zztoken = 58;
     zzmore();
   }
 
 
 static void act127()
 {
-    NLA = 59;
+    zztoken = 59;
 
     if ( istackempty() )
     zzmore();
@@ -1593,7 +1593,7 @@ static void act127()
 
 static void act128()
 {
-    NLA = 60;
+    zztoken = 60;
 
     pushint('|'); /* look for '|' to terminate simple [...] */
     zzmore();
@@ -1602,7 +1602,7 @@ static void act128()
 
 static void act129()
 {
-    NLA = 61;
+    zztoken = 61;
 
     pushint(')');
     zzmore();
@@ -1611,21 +1611,21 @@ static void act129()
 
 static void act130()
 {
-    NLA = 62;
+    zztoken = 62;
     zzreplstr("]");  zzmore();
 }
 
 
 static void act131()
 {
-    NLA = 63;
+    zztoken = 63;
     zzreplstr(")");  zzmore();
 }
 
 
 static void act132()
 {
-    NLA = 64;
+    zztoken = 64;
     if (! tokenActionActive) zzreplstr(">");
     zzmore();
 }
@@ -1633,77 +1633,77 @@ static void act132()
 
 static void act133()
 {
-    NLA = 65;
+    zztoken = 65;
     zzmode(ACTION_CHARS); zzmore();
   }
 
 
 static void act134()
 {
-    NLA = 66;
+    zztoken = 66;
     zzmode(ACTION_STRINGS); zzmore();
   }
 
 
 static void act135()
 {
-    NLA = 67;
+    zztoken = 67;
     zzreplstr("$");  zzmore();
   }
 
 
 static void act136()
 {
-    NLA = 68;
+    zztoken = 68;
     zzreplstr("#");  zzmore();
 }
 
 
 static void act137()
 {
-    NLA = 69;
+    zztoken = 69;
     zzline++; zzmore();
 }
 
 
 static void act138()
 {
-    NLA = 70;
+    zztoken = 70;
     zzmore();
 }
 
 
 static void act139()
 {
-    NLA = 71;
+    zztoken = 71;
     zzmore();
 }
 
 
 static void act140()
 {
-    NLA = 72;
+    zztoken = 72;
     zzmode(ACTION_COMMENTS); zzmore();
 }
 
 
 static void act141()
 {
-    NLA = 73;
+    zztoken = 73;
     warn("Missing /*; found dangling */ in action"); zzmore();
 }
 
 
 static void act142()
 {
-    NLA = 74;
+    zztoken = 74;
     zzmode(ACTION_CPP_COMMENTS); zzmore();
 }
 
 
 static void act143()
 {
-    NLA = 75;
+    zztoken = 75;
     zzmore();
 }
 
@@ -1739,138 +1739,138 @@ static unsigned char shift10[257] = {
 
 static void act144()
 {
-    NLA = Eof;
+    zztoken = Eof;
     ;
 }
 
 
 static void act145()
 {
-    NLA = 137;
+    zztoken = 137;
     zzskip();
 }
 
 
 static void act146()
 {
-    NLA = 138;
+    zztoken = 138;
     zzline++; zzskip();
 }
 
 
 static void act147()
 {
-    NLA = 139;
+    zztoken = 139;
     zzmode(TOK_DEF_CPP_COMMENTS); zzmore();
 }
 
 
 static void act148()
 {
-    NLA = 140;
+    zztoken = 140;
     zzmode(TOK_DEF_COMMENTS); zzskip();
 }
 
 
 static void act149()
 {
-    NLA = 141;
+    zztoken = 141;
     zzmode(TOK_DEF_CPP_COMMENTS); zzskip();
 }
 
 
 static void act150()
 {
-    NLA = 142;
+    zztoken = 142;
     zzmode(TOK_DEF_CPP_COMMENTS); zzskip();
 }
 
 
 static void act151()
 {
-    NLA = 143;
+    zztoken = 143;
 }
 
 
 static void act152()
 {
-    NLA = 144;
+    zztoken = 144;
     zzmode(TOK_DEF_CPP_COMMENTS); zzskip();
 }
 
 
 static void act153()
 {
-    NLA = 145;
+    zztoken = 145;
     zzmode(TOK_DEF_CPP_COMMENTS); zzskip();
 }
 
 
 static void act154()
 {
-    NLA = 146;
+    zztoken = 146;
     zzmode(TOK_DEF_CPP_COMMENTS); zzskip();
 }
 
 
 static void act155()
 {
-    NLA = 147;
+    zztoken = 147;
     zzmode(TOK_DEF_CPP_COMMENTS); zzskip();
 }
 
 
 static void act156()
 {
-    NLA = 149;
+    zztoken = 149;
 }
 
 
 static void act157()
 {
-    NLA = 151;
+    zztoken = 151;
 }
 
 
 static void act158()
 {
-    NLA = 152;
+    zztoken = 152;
 }
 
 
 static void act159()
 {
-    NLA = 153;
+    zztoken = 153;
 }
 
 
 static void act160()
 {
-    NLA = 154;
+    zztoken = 154;
 }
 
 
 static void act161()
 {
-    NLA = 155;
+    zztoken = 155;
 }
 
 
 static void act162()
 {
-    NLA = 156;
+    zztoken = 156;
 }
 
 
 static void act163()
 {
-    NLA = INT;
+    zztoken = INT;
   }
 
 
 static void act164()
 {
-    NLA = ID;
+    zztoken = ID;
   }
 
 static unsigned char shift11[257] = {

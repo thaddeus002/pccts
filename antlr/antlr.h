@@ -114,8 +114,6 @@ void grammar();
 #define zzLOOP(i) zzREL(i)
 
 #define zzCONSUME zzgettok();
-#define NLA     zztoken
-//#define LA(i)       zztoken
 
            /* S t a n d a r d  S i g n a l s */
            /* S t a n d a r d  S i g n a l s */
