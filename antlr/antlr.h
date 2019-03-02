@@ -94,7 +94,6 @@ void grammar();
               zzEXIT_ANTLR(zztasp1 + 1);                 \
             }
 
-#define zztext    zzlextext
 
 
           /* A r g u m e n t  A c c e s s */
@@ -116,11 +115,11 @@ void grammar();
 
 #define zzCONSUME zzgettok();
 #define NLA     zztoken
-#define NLATEXT   zztext
 #define LA(i)       zztoken
-#define LATEXT(i)   zztext
+//#define LATEXT(i)   zzlextext
 
 
+           /* S t a n d a r d  S i g n a l s */
            /* S t a n d a r d  S i g n a l s */
 
 #define NoSignal      0

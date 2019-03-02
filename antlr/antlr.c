@@ -160,7 +160,7 @@ static UserAction *newUserAction(char *s)
   UserAction *ua = (UserAction *) calloc(1, sizeof(UserAction));
   require(ua!=NULL, "cannot allocate UserAction");
 
-  ua->action = (char *) calloc(strlen(LATEXT(1))+1, sizeof(char));
+  ua->action = (char *) calloc(strlen(zzlextext)+1, sizeof(char));
   strcpy(ua->action, s);
   return ua;
 }
@@ -218,9 +218,9 @@ void grammar()
         zzmatch(Action);
 
         if ( HdrAction==NULL ) {
-          HdrAction = (char *) calloc(strlen(LATEXT(1))+1, sizeof(char));
+          HdrAction = (char *) calloc(strlen(zzlextext)+1, sizeof(char));
           require(HdrAction!=NULL, "rule grammar: cannot allocate header action");
-          strcpy(HdrAction, LATEXT(1));
+          strcpy(HdrAction, zzlextext);
         }
         else warn("additional #header statement ignored");
  zzCONSUME;
@@ -232,9 +232,9 @@ void grammar()
           zzmatch(Action);
 
           if ( FirstAction==NULL ) {
-            FirstAction = (char *) calloc(strlen(LATEXT(1))+1, sizeof(char));
+            FirstAction = (char *) calloc(strlen(zzlextext)+1, sizeof(char));
             require(FirstAction!=NULL, "rule grammar: cannot allocate #first action");
-            strcpy(FirstAction, LATEXT(1));
+            strcpy(FirstAction, zzlextext);
           } else {
             warn("additional #first statement ignored");
           };
@@ -251,7 +251,7 @@ void grammar()
             }
             else {
               if ( strcmp(ParserName,"zzparser")==0 ) {
-                ParserName=strip_quotes(strdup(LATEXT(1)));
+                ParserName=strip_quotes(strdup(zzlextext));
                 if ( RulePrefix[0]!='\0' )
                 {
                   warn("#parser meta-op incompatible with '-gp prefix'; '-gp' ignored");
@@ -270,10 +270,10 @@ void grammar()
               {
                 char *fname;
                 zzantlr_state st; FILE *f; struct zzdlg_state dst;
-                UserTokenDefsFile = strdup(LATEXT(1));
+                UserTokenDefsFile = strdup(zzlextext);
                 zzsave_antlr_state(&st);
                 zzsave_dlg_state(&dst);
-                fname = strdup(LATEXT(1));
+                fname = strdup(zzlextext);
                 f = fopen(StripQuotes(fname), "r");
                 if ( f==NULL ) {warn(eMsg("cannot open token defs file '%s'", fname+1));}
                 else {
@@ -304,7 +304,7 @@ void grammar()
       if ( (LA(1)==Action) ) {
         zzmatch(Action);
         {
-          UserAction *ua = newUserAction(LATEXT(1));
+          UserAction *ua = newUserAction(zzlextext);
           ua->file = action_file; ua->line = action_line;
           if ( class_nest_level>0 ) list_add(&class_before_actions, ua);
           else list_add(&BeforeActions, ua);
@@ -456,7 +456,7 @@ void grammar()
       if ( (LA(1)==Action) ) {
         zzmatch(Action);
         {
-          UserAction *ua = newUserAction(LATEXT(1));
+          UserAction *ua = newUserAction(zzlextext);
           ua->file = action_file; ua->line = action_line;
           if ( class_nest_level>0 ) list_add(&class_after_actions, ua);
           else list_add(&AfterActions, ua);
@@ -541,14 +541,14 @@ static void class_def()
     {
     if ( (LA(1)==NonTerminal) ) {
       zzmatch(NonTerminal);
-      if(go) strncpy(name,LATEXT(1),MaxRuleName);
+      if(go) strncpy(name,zzlextext,MaxRuleName);
  zzCONSUME;
 
     }
     else {
       if ( (LA(1)==TokenTerm) ) {
         zzmatch(TokenTerm);
-        if(go) strncpy(name,LATEXT(1),MaxRuleName);
+        if(go) strncpy(name,zzlextext,MaxRuleName);
  zzCONSUME;
 
       }
@@ -575,18 +575,18 @@ static void class_def()
         /* MR10 */                   ClassDeclStuff=(char *)calloc(MaxClassDeclStuff+1,sizeof(char));
         /* MR10 */              };
       /* MR10 */              strncat(ClassDeclStuff," ",MaxClassDeclStuff);
-      /* MR10 */              strncat(ClassDeclStuff,LATEXT(1),MaxClassDeclStuff);
+      /* MR10 */              strncat(ClassDeclStuff,zzlextext,MaxClassDeclStuff);
       /* MR22 */              do {
-        /* MR22 */                if (0 == strcmp(LATEXT(1),"public")) break;
-        /* MR22 */                if (0 == strcmp(LATEXT(1),"private")) break;
-        /* MR22 */                if (0 == strcmp(LATEXT(1),"protected")) break;
-        /* MR22 */                if (0 == strcmp(LATEXT(1),"virtual")) break;
-        /* MR22 */                if (0 == strcmp(LATEXT(1),",")) break;
-        /* MR22 */                if (0 == strcmp(LATEXT(1),":")) break;
+        /* MR22 */                if (0 == strcmp(zzlextext,"public")) break;
+        /* MR22 */                if (0 == strcmp(zzlextext,"private")) break;
+        /* MR22 */                if (0 == strcmp(zzlextext,"protected")) break;
+        /* MR22 */                if (0 == strcmp(zzlextext,"virtual")) break;
+        /* MR22 */                if (0 == strcmp(zzlextext,",")) break;
+        /* MR22 */                if (0 == strcmp(zzlextext,":")) break;
         /* MR22 */                if (BaseClassName != NULL) break;
-        /* MR22 */                BaseClassName=(char *)calloc(strlen(LATEXT(1))+1,sizeof(char));
+        /* MR22 */                BaseClassName=(char *)calloc(strlen(zzlextext)+1,sizeof(char));
         /* MR22 */                require(BaseClassName!=NULL, "rule grammar: cannot allocate base class name");
-        /* MR22 */          strcpy(BaseClassName,LATEXT(1));
+        /* MR22 */          strcpy(BaseClassName,zzlextext);
         /* MR22 */              } while (0);
       /* MR10 */
  zzCONSUME;
@@ -632,15 +632,15 @@ static void rule()
     attribsRefdFromAction = empty;
     zzmatch(NonTerminal);
     q=NULL;
-    if ( hash_get(Rname, LATEXT(1))!=NULL ) {
-      err(eMsg("duplicate rule definition: '%s'",LATEXT(1)));
+    if ( hash_get(Rname, zzlextext)!=NULL ) {
+      err(eMsg("duplicate rule definition: '%s'",zzlextext));
       CannotContinue=true;
     }
     else
     {
       q = (RuleEntry *)hash_add(Rname,
-        LATEXT(1),
-        (Entry *)newRuleEntry(LATEXT(1)));
+        zzlextext,
+        (Entry *)newRuleEntry(zzlextext));
       CurRule = q->str;
     }
     CurRuleNode = q;
@@ -686,9 +686,9 @@ static void rule()
           }
         }
         zzmatch(PassAction);
-        pdecl = (char *) calloc(strlen(LATEXT(1))+1, sizeof(char));
+        pdecl = (char *) calloc(strlen(zzlextext)+1, sizeof(char));
         require(pdecl!=NULL, "rule rule: cannot allocate param decl");
-        strcpy(pdecl, LATEXT(1));
+        strcpy(pdecl, zzlextext);
         CurParmDef = pdecl;
         zzCONSUME;
       }
@@ -707,9 +707,9 @@ static void rule()
     if ( (LA(1)==105) ) {
       zzmatch(105); zzCONSUME;
       zzmatch(PassAction);
-      ret = (char *) calloc(strlen(LATEXT(1))+1, sizeof(char));
+      ret = (char *) calloc(strlen(zzlextext)+1, sizeof(char));
       require(ret!=NULL, "rule rule: cannot allocate ret type");
-      strcpy(ret, LATEXT(1));
+      strcpy(ret, zzlextext);
       CurRetDef = ret;
       zzCONSUME;
 
@@ -728,7 +728,7 @@ static void rule()
     {
     if ( (LA(1)==QuotedTerm) ) {
       zzmatch(QuotedTerm);
-      if ( q!=NULL ) q->egroup=strdup(LATEXT(1));
+      if ( q!=NULL ) q->egroup=strdup(zzlextext);
       zzCONSUME;
     }
     else {
@@ -805,9 +805,9 @@ static void rule()
     {
     if ( (LA(1)==Action) ) {
       zzmatch(Action);
-      a = (char *) calloc(strlen(LATEXT(1))+1, sizeof(char));
+      a = (char *) calloc(strlen(zzlextext)+1, sizeof(char));
       require(a!=NULL, "rule rule: cannot allocate error action");
-      strcpy(a, LATEXT(1));
+      strcpy(a, zzlextext);
       CurRuleBlk->erraction = a;
       zzCONSUME;
     }
@@ -860,9 +860,9 @@ static void laction()
   zzmatch(108); zzCONSUME;
   zzmatch(Action);
 
-  a = (char *) calloc(strlen(LATEXT(1))+1, sizeof(char));
+  a = (char *) calloc(strlen(zzlextext)+1, sizeof(char));
   require(a!=NULL, "rule laction: cannot allocate action");
-  strcpy(a, LATEXT(1));
+  strcpy(a, zzlextext);
   list_add(&LexActions, a);
  zzCONSUME;
 
@@ -889,9 +889,9 @@ static void lmember()
   if (! GenCC) {
     err("Use #lexmember only in C++ mode (to insert code in DLG class header");
   } else {
-    a = (char *) calloc(strlen(LATEXT(1))+1, sizeof(char));
+    a = (char *) calloc(strlen(zzlextext)+1, sizeof(char));
     require(a!=NULL, "rule lmember: cannot allocate action");
-    strcpy(a, LATEXT(1));
+    strcpy(a, zzlextext);
     list_add(&LexMemberActions, a);
   };
 
@@ -920,9 +920,9 @@ static void lprefix()
   if (! GenCC) {
     err("Use #lexprefix only in C++ mode (to insert code in DLG class header");
   } else {
-    a = (char *) calloc(strlen(LATEXT(1))+1, sizeof(char));
+    a = (char *) calloc(strlen(zzlextext)+1, sizeof(char));
     require(a!=NULL, "rule lprefix: cannot allocate action");
-    strcpy(a, LATEXT(1));
+    strcpy(a, zzlextext);
     list_add(&LexPrefixActions, a);
   };
 
@@ -957,7 +957,7 @@ static void aPred()
   zzCONSUME;
 
   zzmatch(TokenTerm);
-  name=strdup(LATEXT(1));
+  name=strdup(zzlextext);
   zzCONSUME;
 
 
@@ -979,7 +979,7 @@ static void aPred()
     {
     if ( (LA(1)==Pred) ) {
       zzmatch(Pred);
-      predLiteral=strdup(LATEXT(1));
+      predLiteral=strdup(zzlextext);
       save_line=action_line;
       save_file=action_file;
  zzCONSUME;
@@ -1194,7 +1194,7 @@ static Predicate *predPrimary()
   Predicate     *predExpr=NULL;
   if ( (LA(1)==TokenTerm) ) {
     zzmatch(TokenTerm);
-    name=strdup(LATEXT(1));
+    name=strdup(zzlextext);
     zzCONSUME;
     predEntry=(PredEntry *) hash_get(Pname,name);
     if (predEntry == NULL) {
@@ -1251,7 +1251,7 @@ static void aLexclass()
   {
   zzmatch(116); zzCONSUME;
   zzmatch(TokenTerm);
-  lexclass(strdup(LATEXT(1)));
+  lexclass(strdup(zzlextext));
   zzCONSUME;
 
   zzEXIT(zztasp1);
@@ -1279,14 +1279,14 @@ static void error()
     ;
     if ( (LA(1)==TokenTerm) ) {
       zzmatch(TokenTerm);
-      t=strdup(LATEXT(1));
+      t=strdup(zzlextext);
       zzCONSUME;
 
     }
     else {
       if ( (LA(1)==QuotedTerm) ) {
         zzmatch(QuotedTerm);
-        t=strdup(LATEXT(1));
+        t=strdup(zzlextext);
         zzCONSUME;
 
       }
@@ -1322,21 +1322,21 @@ static void error()
     {
     if ( (LA(1)==NonTerminal) ) {
       zzmatch(NonTerminal);
-      if ( go ) t=strdup(LATEXT(1));
+      if ( go ) t=strdup(zzlextext);
  zzCONSUME;
 
     }
     else {
       if ( (LA(1)==TokenTerm) ) {
         zzmatch(TokenTerm);
-        if ( go ) t=strdup(LATEXT(1));
+        if ( go ) t=strdup(zzlextext);
  zzCONSUME;
 
       }
       else {
         if ( (LA(1)==QuotedTerm) ) {
           zzmatch(QuotedTerm);
-          if ( go ) t=strdup(LATEXT(1));
+          if ( go ) t=strdup(zzlextext);
  zzCONSUME;
 
         }
@@ -1358,19 +1358,19 @@ static void error()
         {
         if ( (LA(1)==NonTerminal) ) {
           zzmatch(NonTerminal);
-          if ( go ) t=strdup(LATEXT(1));
+          if ( go ) t=strdup(zzlextext);
           zzCONSUME;
         }
         else {
           if ( (LA(1)==TokenTerm) ) {
             zzmatch(TokenTerm);
-            if ( go ) t=strdup(LATEXT(1));
+            if ( go ) t=strdup(zzlextext);
             zzCONSUME;
           }
           else {
             if ( (LA(1)==QuotedTerm) ) {
               zzmatch(QuotedTerm);
-              if ( go ) t=strdup(LATEXT(1));
+              if ( go ) t=strdup(zzlextext);
               zzCONSUME;
             }
             else {zzFAIL(1,zzerr16,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
@@ -1407,7 +1407,7 @@ static void tclass()
   char *totext=NULL;
   zzmatch(118); zzCONSUME;
   zzmatch(TokenTerm);
-  t=strdup(LATEXT(1));
+  t=strdup(zzlextext);
   zzCONSUME;
 
   e = newTCnode;
@@ -1437,7 +1437,7 @@ static void tclass()
     if ( (LA(1)==114) ) {
       zzmatch(114); zzCONSUME;
       zzmatch(QuotedTerm);
-      akaString=strdup(StripQuotes(LATEXT(1)));
+      akaString=strdup(StripQuotes(zzlextext));
       save_file=CurFile;save_line=zzline;
       zzCONSUME;
 
@@ -1476,12 +1476,12 @@ static void tclass()
         if ( (LA(1)==TokenTerm) ) {
           zzmatch(TokenTerm);
           if ( go ) {
-            term = (TermEntry *) hash_get(Tname, LATEXT(1));
+            term = (TermEntry *) hash_get(Tname, zzlextext);
             if ( term==NULL && UserDefdTokens ) {
               err("implicit token definition not allowed with #tokdefs");
               go = 0;
             }
-            else {t=strdup(LATEXT(1)); tok=addTname(LATEXT(1));}
+            else {t=strdup(zzlextext); tok=addTname(zzlextext);}
           }
           zzCONSUME;
 
@@ -1493,12 +1493,12 @@ static void tclass()
               zzmatch(119); zzCONSUME;
               zzmatch(TokenTerm);
               if ( go ) {
-                toterm = (TermEntry *) hash_get(Tname, LATEXT(1));
+                toterm = (TermEntry *) hash_get(Tname, zzlextext);
                 if ( toterm==NULL && UserDefdTokens ) {
                   err("implicit token definition not allowed with #tokdefs");
                   go = 0;
                 } else {
-                  totext=strdup(LATEXT(1)); totok=addTname(LATEXT(1));
+                  totext=strdup(zzlextext); totok=addTname(zzlextext);
                 }
               }
  zzCONSUME;
@@ -1517,12 +1517,12 @@ static void tclass()
           if ( (LA(1)==QuotedTerm) ) {
             zzmatch(QuotedTerm);
             if ( go ) {
-              term = (TermEntry *) hash_get(Texpr, LATEXT(1));
+              term = (TermEntry *) hash_get(Texpr, zzlextext);
               if ( term==NULL && UserDefdTokens ) {
                 err("implicit token definition not allowed with #tokdefs");
                 go = 0;
               }
-              else {t=strdup(LATEXT(1)); tok=addTexpr(LATEXT(1));}
+              else {t=strdup(zzlextext); tok=addTexpr(zzlextext);}
             }
             zzCONSUME;
 
@@ -1576,7 +1576,7 @@ static void token()
     {
     if ( (LA(1)==TokenTerm) ) {
       zzmatch(TokenTerm);
-      t=strdup(LATEXT(1));
+      t=strdup(zzlextext);
       zzCONSUME;
 
       {
@@ -1586,7 +1586,7 @@ static void token()
         if ( (LA(1)==114) ) {
           zzmatch(114); zzCONSUME;
           zzmatch(QuotedTerm);
-          akaString=strdup(StripQuotes(LATEXT(1)));
+          akaString=strdup(StripQuotes(zzlextext));
           save_file=CurFile;
           save_line=zzline;
           zzCONSUME;
@@ -1608,7 +1608,7 @@ static void token()
         if ( (LA(1)==121) ) {
           zzmatch(121); zzCONSUME;
           zzmatch(122);
-          tnum = atoi(LATEXT(1));
+          tnum = atoi(zzlextext);
  zzCONSUME;
 
         }
@@ -1635,7 +1635,7 @@ static void token()
     {
     if ( (LA(1)==QuotedTerm) ) {
       zzmatch(QuotedTerm);
-      e=strdup(LATEXT(1));
+      e=strdup(zzlextext);
       zzCONSUME;
 
     }
@@ -1654,9 +1654,9 @@ static void token()
     if ( (LA(1)==Action) ) {
       zzmatch(Action);
 
-      a = (char *) calloc(strlen(LATEXT(1))+1, sizeof(char));
+      a = (char *) calloc(strlen(zzlextext)+1, sizeof(char));
       require(a!=NULL, "rule token: cannot allocate action");
-      strcpy(a, LATEXT(1));
+      strcpy(a, zzlextext);
  zzCONSUME;
 
     }
@@ -1943,7 +1943,7 @@ static LabelEntry *element_label()
   {
   TermEntry *t=NULL; LabelEntry *l=NULL; RuleEntry *r=NULL; char *lab;
   zzmatch(LABEL);
-  lab = strdup(LATEXT(1));
+  lab = strdup(zzlextext);
   zzCONSUME;
 
 
@@ -2039,15 +2039,15 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
       if ( (LA(1)==TokenTerm) ) {
         zzmatch(TokenTerm);
 
-        term = (TermEntry *) hash_get(Tname, LATEXT(1));
+        term = (TermEntry *) hash_get(Tname, zzlextext);
         if ( term==NULL && UserDefdTokens ) {
           err("implicit token definition not allowed with #tokdefs");
           zzaRet.left = zzaRet.right = NULL;
         }
         else {
-          zzaRet = buildToken(LATEXT(1));
+          zzaRet = buildToken(zzlextext);
           p=((TokNode *)((Junction *)zzaRet.left)->p1);
-          term = (TermEntry *) hash_get(Tname, LATEXT(1));
+          term = (TermEntry *) hash_get(Tname, zzlextext);
           require( term!= NULL, "hash table mechanism is broken");
           p->tclass = term->tclass;
           p->complement =  old_not;
@@ -2070,14 +2070,14 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
               {
               if ( (LA(1)==QuotedTerm) ) {
                 zzmatch(QuotedTerm);
-                if ( p!=NULL ) setUpperRange(p, LATEXT(1));
+                if ( p!=NULL ) setUpperRange(p, zzlextext);
  zzCONSUME;
 
               }
               else {
                 if ( (LA(1)==TokenTerm) ) {
                   zzmatch(TokenTerm);
-                  if ( p!=NULL ) setUpperRange(p, LATEXT(1));
+                  if ( p!=NULL ) setUpperRange(p, zzlextext);
  zzCONSUME;
 
                 }
@@ -2157,13 +2157,13 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
         if ( (LA(1)==QuotedTerm) ) {
           zzmatch(QuotedTerm);
 
-          term = (TermEntry *) hash_get(Texpr, LATEXT(1));
+          term = (TermEntry *) hash_get(Texpr, zzlextext);
           if ( term==NULL && UserDefdTokens ) {
             err("implicit token definition not allowed with #tokdefs");
             zzaRet.left = zzaRet.right = NULL;
           }
           else {
-            zzaRet = buildToken(LATEXT(1)); p=((TokNode *)((Junction *)zzaRet.left)->p1);
+            zzaRet = buildToken(zzlextext); p=((TokNode *)((Junction *)zzaRet.left)->p1);
             p->complement =  old_not;
             if ( label!=NULL ) {
               p->el_label = label->str;
@@ -2184,14 +2184,14 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
                 {
                 if ( (LA(1)==QuotedTerm) ) {
                   zzmatch(QuotedTerm);
-                  if ( p!=NULL ) setUpperRange(p, LATEXT(1));
+                  if ( p!=NULL ) setUpperRange(p, zzlextext);
  zzCONSUME;
 
                 }
                 else {
                   if ( (LA(1)==TokenTerm) ) {
                     zzmatch(TokenTerm);
-                    if ( p!=NULL ) setUpperRange(p, LATEXT(1));
+                    if ( p!=NULL ) setUpperRange(p, zzlextext);
  zzCONSUME;
 
                   }
@@ -2271,7 +2271,7 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
           if ( (LA(1)==WildCard) ) {
             if (  old_not ) warn("~ WILDCARD is an undefined operation (implies 'nothing')");
             zzmatch(WildCard);
-            zzaRet = buildWildCard(LATEXT(1)); p=((TokNode *)((Junction *)zzaRet.left)->p1);
+            zzaRet = buildWildCard(zzlextext); p=((TokNode *)((Junction *)zzaRet.left)->p1);
  zzCONSUME;
 
             {
@@ -2318,7 +2318,7 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
             if ( (LA(1)==NonTerminal) ) {
               if (  old_not ) warn("~ NONTERMINAL is an undefined operation");
               zzmatch(NonTerminal);
-              zzaRet = buildRuleRef(LATEXT(1));
+              zzaRet = buildRuleRef(zzlextext);
  zzCONSUME;
 
               {
@@ -2361,7 +2361,7 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
                     }
                   }
                   zzmatch(PassAction);
-                  addParm(((Junction *)zzaRet.left)->p1, LATEXT(1));
+                  addParm(((Junction *)zzaRet.left)->p1, zzlextext);
  zzCONSUME;
 
                 }
@@ -2383,9 +2383,9 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
                   zzmatch(105); zzCONSUME;
                   zzmatch(PassAction);
 
-                  a = (char *) calloc(strlen(LATEXT(1))+1, sizeof(char));
+                  a = (char *) calloc(strlen(zzlextext)+1, sizeof(char));
                   require(a!=NULL, "rule element: cannot allocate assignment");
-                  strcpy(a, LATEXT(1));
+                  strcpy(a, zzlextext);
                   rr->assign = a;
  zzCONSUME;
 
@@ -2422,7 +2422,7 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
     if ( (LA(1)==Action) ) {
       if (  old_not ) warn("~ ACTION is an undefined operation");
       zzmatch(Action);
-      zzaArg(zztasp1,0) = buildAction(LATEXT(1),action_file,action_line, 0);
+      zzaArg(zztasp1,0) = buildAction(zzlextext,action_file,action_line, 0);
  zzCONSUME;
 
       if (  first_on_line ) {                                /* MR7 */
@@ -2435,7 +2435,7 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
       if ( (LA(1)==Pred) ) {
         if (  old_not ) warn("~ SEMANTIC-PREDICATE is an undefined operation");
         zzmatch(Pred);
-        zzaArg(zztasp1,0) = buildAction(LATEXT(1),action_file,action_line, 1);
+        zzaArg(zztasp1,0) = buildAction(zzlextext,action_file,action_line, 1);
  zzCONSUME;
 
         act = (ActionNode *) ((Junction *)zzaArg(zztasp1,0 ).left)->p1;
@@ -2451,9 +2451,9 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
           if ( (LA(1)==PassAction) ) {
             zzmatch(PassAction);
 
-            a = (char *) calloc(strlen(LATEXT(1))+1, sizeof(char));
+            a = (char *) calloc(strlen(zzlextext)+1, sizeof(char));
             require(a!=NULL, "rule element: cannot allocate predicate fail action");
-            strcpy(a, LATEXT(1));
+            strcpy(a, zzlextext);
             act->pred_fail = a;
  zzCONSUME;
 
@@ -2538,11 +2538,11 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
                 if ( (LA(1)==NonTerminal) ) {
                   zzmatch(NonTerminal);
 
-                  /* MR21 */                     pFirstSetSymbol = (char *) calloc(strlen(LATEXT(1))+1,
+                  /* MR21 */                     pFirstSetSymbol = (char *) calloc(strlen(zzlextext)+1,
                   /* MR21 */                                                    sizeof(char));
                   /* MR21 */                          require(pFirstSetSymbol!=NULL,
                   /* MR21 */                                  "cannot allocate first set name");
-                  /* MR21 */                          strcpy(pFirstSetSymbol, LATEXT(1));
+                  /* MR21 */                          strcpy(pFirstSetSymbol, zzlextext);
                   /* MR21 */
  zzCONSUME;
 
@@ -2551,11 +2551,11 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
                   if ( (LA(1)==TokenTerm) ) {
                     zzmatch(TokenTerm);
 
-                    /* MR21 */                      pFirstSetSymbol = (char *) calloc(strlen(LATEXT(1))+1,
+                    /* MR21 */                      pFirstSetSymbol = (char *) calloc(strlen(zzlextext)+1,
                     /* MR21 */                                                        sizeof(char));
                     /* MR21 */                      require(pFirstSetSymbol!=NULL,
                     /* MR21 */                              "cannot allocate first set name");
-                    /* MR21 */                      strcpy(pFirstSetSymbol, LATEXT(1));
+                    /* MR21 */                      strcpy(pFirstSetSymbol, zzlextext);
                     /* MR21 */
  zzCONSUME;
 
@@ -2637,7 +2637,7 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
                             }
                           }
                           zzmatch(Pred);
-                          zzaRet = buildAction(LATEXT(1),action_file,action_line,1);
+                          zzaRet = buildAction(zzlextext,action_file,action_line,1);
  zzCONSUME;
 
                           act = (ActionNode *) ((Junction *)zzaRet.left)->p1;
@@ -2654,9 +2654,9 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
                             if ( (LA(1)==PassAction) ) {
                               zzmatch(PassAction);
 
-                              a = (char *)calloc(strlen(LATEXT(1))+1, sizeof(char));
+                              a = (char *)calloc(strlen(zzlextext)+1, sizeof(char));
                               require(a!=NULL, "rule element: cannot allocate predicate fail action");
-                              strcpy(a, LATEXT(1));
+                              strcpy(a, zzlextext);
                               act->pred_fail = a;
  zzCONSUME;
 
@@ -2859,12 +2859,12 @@ static ExceptionGroup *exception_group()
     if ( (LA(1)==PassAction) ) {
       zzmatch(PassAction);
 
-      p = LATEXT(1)+1;
+      p = zzlextext+1;
       p[strlen(p)-1] = '\0';    /* kill trailing space */
-      label = (LabelEntry *) hash_get(Elabel, LATEXT(1)+1);
+      label = (LabelEntry *) hash_get(Elabel, zzlextext+1);
       if ( label==NULL )
       {
-        err(eMsg("unknown label in exception handler: '%s'", LATEXT(1)+1));
+        err(eMsg("unknown label in exception handler: '%s'", zzlextext+1));
       }
  zzCONSUME;
 
@@ -2901,10 +2901,10 @@ static ExceptionGroup *exception_group()
       {
         ExceptionHandler *eh = (ExceptionHandler *)
         calloc(1, sizeof(ExceptionHandler));
-        char *a = (char *) calloc(strlen(LATEXT(1))+1, sizeof(char));
+        char *a = (char *) calloc(strlen(zzlextext)+1, sizeof(char));
         require(eh!=NULL, "exception: cannot allocate handler");
         require(a!=NULL, "exception: cannot allocate action");
-        strcpy(a, LATEXT(1));
+        strcpy(a, zzlextext);
         eh->action = a;
         eh->signalname = (char *) calloc(strlen("default")+1, sizeof(char));
         require(eh->signalname!=NULL, "exception: cannot allocate sig name");
@@ -3003,9 +3003,9 @@ static ExceptionHandler *exception_handler()
     if ( (LA(1)==NonTerminal) ) {
       zzmatch(NonTerminal);
 
-      _retv->signalname = (char *) calloc(strlen(LATEXT(1))+1, sizeof(char));
+      _retv->signalname = (char *) calloc(strlen(zzlextext)+1, sizeof(char));
       require(_retv->signalname!=NULL, "exception: cannot allocate sig name");
-      strcpy(_retv->signalname, LATEXT(1));
+      strcpy(_retv->signalname, zzlextext);
  zzCONSUME;
 
     }
@@ -3013,9 +3013,9 @@ static ExceptionHandler *exception_handler()
       if ( (LA(1)==TokenTerm) ) {
         zzmatch(TokenTerm);
 
-        _retv->signalname = (char *) calloc(strlen(LATEXT(1))+1, sizeof(char));
+        _retv->signalname = (char *) calloc(strlen(zzlextext)+1, sizeof(char));
         require(_retv->signalname!=NULL, "exception: cannot allocate sig name");
-        strcpy(_retv->signalname, LATEXT(1));
+        strcpy(_retv->signalname, zzlextext);
  zzCONSUME;
 
       }
@@ -3033,9 +3033,9 @@ static ExceptionHandler *exception_handler()
     if ( (LA(1)==Action) ) {
       zzmatch(Action);
 
-      _retv->action = (char *) calloc(strlen(LATEXT(1))+1, sizeof(char));
+      _retv->action = (char *) calloc(strlen(zzlextext)+1, sizeof(char));
       require(_retv->action!=NULL, "exception: cannot allocate action");
-      strcpy(_retv->action, LATEXT(1));
+      strcpy(_retv->action, zzlextext);
  zzCONSUME;
 
     }
@@ -3153,12 +3153,12 @@ static void defines(char * fname)
     do {
       zzmatch(149); zzCONSUME;
       zzmatch(ID);
-      t = strdup(LATEXT(1));
+      t = strdup(zzlextext);
       zzCONSUME;
 
       zzmatch(INT);
 
-      v = atoi(LATEXT(1));
+      v = atoi(zzlextext);
       /*      fprintf(stderr, "#token %s=%d\n", t, v);*/
 
       /* MR2 Andreas Magnusson (Andreas.Magnusson@mailbox.swipnet.se) */
@@ -3203,7 +3203,7 @@ static void enum_def(char * fname)
   zzmatch(ID); zzCONSUME;
   zzmatch(152); zzCONSUME;
   zzmatch(ID);
-  t = strdup(LATEXT(1));
+  t = strdup(zzlextext);
   zzCONSUME;
 
   {
@@ -3213,7 +3213,7 @@ static void enum_def(char * fname)
     if ( (LA(1)==153) ) {
       zzmatch(153); zzCONSUME;
       zzmatch(INT);
-      v=atoi(LATEXT(1));
+      v=atoi(zzlextext);
  zzCONSUME;
 
     }
@@ -3244,8 +3244,8 @@ static void enum_def(char * fname)
         zzBLOCK(zztasp3);
         zzMake0;
         {
-        if ( (LA(1)==ID)&&(isDLGmaxToken(LATEXT(1))) ) {
-          if (!(isDLGmaxToken(LATEXT(1)))            ) {zzfailed_pred("  isDLGmaxToken(LATEXT(1))",0 /* report */, { 0; /* no user action */ } );}
+        if ( (LA(1)==ID)&&(isDLGmaxToken(zzlextext)) ) {
+          if (!(isDLGmaxToken(zzlextext))            ) {zzfailed_pred("  isDLGmaxToken(zzlextext)",0 /* report */, { 0; /* no user action */ } );}
           zzmatch(ID); zzCONSUME;
           {
             zzBLOCK(zztasp4);
@@ -3267,7 +3267,7 @@ static void enum_def(char * fname)
         else {
           if ( (LA(1)==ID) ) {
             zzmatch(ID);
-            t = strdup(LATEXT(1));
+            t = strdup(zzlextext);
             zzCONSUME;
 
             {
@@ -3277,7 +3277,7 @@ static void enum_def(char * fname)
               if ( (LA(1)==153) ) {
                 zzmatch(153); zzCONSUME;
                 zzmatch(INT);
-                v=atoi(LATEXT(1));
+                v=atoi(zzlextext);
  zzCONSUME;
 
               }

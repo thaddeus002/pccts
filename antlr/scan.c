@@ -597,7 +597,7 @@ static void act58()
 static void act59()
 {
     NLA = 136;
-    warn(eMsg("unknown meta-op: %s",LATEXT(1))); zzskip();
+    warn(eMsg("unknown meta-op: %s",zzlextext)); zzskip();
 }
 
 static unsigned char shift0[257] = {
@@ -1190,8 +1190,8 @@ static void act102()
     NLA = Action;
     /* these do not nest */
     zzmode(START);
-    NLATEXT[0] = ' ';
-    NLATEXT[1] = ' ';
+    zzlextext[0] = ' ';
+    zzlextext[1] = ' ';
     zzbegexpr[0] = ' ';
     zzbegexpr[1] = ' ';
     if ( zzbufovf ) {
@@ -1211,8 +1211,8 @@ static void act103()
     NLA = Pred;
     /* these do not nest */
     zzmode(START);
-    NLATEXT[0] = ' ';
-    NLATEXT[1] = ' ';
+    zzlextext[0] = ' ';
+    zzlextext[1] = ' ';
     zzbegexpr[0] = '\0';
     if ( zzbufovf ) {
         err(eMsg("predicate buffer overflow; size %d",ZZLEXBUFSIZE));
@@ -1230,7 +1230,7 @@ static void act104()
       if ( istackempty() )  /* terminate action */
       {
         zzmode(START);
-        NLATEXT[0] = ' ';
+        zzlextext[0] = ' ';
         zzbegexpr[0] = ' ';
         if ( zzbufovf ) {
             err(eMsg("parameter buffer overflow; size %d",ZZLEXBUFSIZE));
