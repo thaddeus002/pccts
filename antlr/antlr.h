@@ -97,10 +97,8 @@ void grammar();
 
           /* A r g u m e n t  A c c e s s */
 
-#define zzaCur      (zzaStack[zzasp])
 #define zzaRet      (*zzaRetPtr)
 #define zzaArg(v,n)   zzaStack[v-n]
-//#define zzREL(t)    zzasp=(t);    /* Restore state of stack */
 
 #define zzRULE    Attrib *zzaRetPtr = &(zzaStack[zzasp-1]); \
           int zzBadTok=0; char *zzBadText="";   \
@@ -109,25 +107,6 @@ void grammar();
 
 #define zzBLOCK(i)  int i = zzasp - 1
 
-            /* S t a n d a r d  S i g n a l s */
-
-#define NoSignal      0
-#define MismatchedToken   1
-#define NoViableAlt     2
-#define NoSemViableAlt    3
-
-/* MR7  Allow more control over signalling                                  */
-/*        by adding "Unwind" and "zzsetSignal"                              */
-
-#define Unwind              4
-#define zzsetSignal(newValue) *_retsignal=_signal=(newValue)
-#define zzsuppressSignal *_retsignal=_signal=0
-#define zzexportSignal    *_retsignal=_signal
-
-           /* F u n c t i o n  T r a c i n g */
-
-#define zzTRACEIN(r)  zzTracePrevRuleName=zzTraceCurrentRuleName;
-#define zzTRACEOUT(r) zzTraceCurrentRuleName=zzTracePrevRuleName;
 
 /* MR19 zzchar_t additions */
 #define zzchar_t char
