@@ -148,7 +148,7 @@ int k, char *bad_text);
             zzmode(_m);       \
             zzenterANTLR(f);      \
             {                                            \
-              zzBLOCK(zztasp1);                          \
+              int zztasp1 = zzasp - 1;                          \
               st; /* ++zzasp; Removed MR20 G. Hobbelt */     \
               /* MR20 G. Hobbelt. Kill the top' attribute (+AST stack corr.) */  \
               zzasp=zztasp1 + 1;                 \
@@ -203,12 +203,12 @@ static void enum_def(char *fname);
 void grammar()
 {
   zzRULE;
-  zzBLOCK(zztasp1);
+  int zztasp1 = zzasp - 1;
   zzMake0;
   {
   Graph g;
   {
-    zzBLOCK(zztasp2);
+    int zztasp2 = zzasp - 1;
     zzMake0;
     {
     for (;;) {
@@ -298,7 +298,7 @@ void grammar()
     }
   }
   {
-    zzBLOCK(zztasp2);
+    int zztasp2 = zzasp - 1;
     zzMake0;
     {
     for (;;) {
@@ -382,7 +382,7 @@ void grammar()
   rule();
   g=zzaArg(zztasp1,3); SynDiag = (Junction *) zzaArg(zztasp1,3 ).left;
   {
-    zzBLOCK(zztasp2);
+    int zztasp2 = zzasp - 1;
     zzMake0;
     {
     for (;;) {
@@ -447,7 +447,7 @@ void grammar()
     }
   }
   {
-    zzBLOCK(zztasp2);
+    int zztasp2 = zzasp - 1;
     zzMake0;
     {
     for (;;) {
@@ -529,14 +529,14 @@ fail:
 static void class_def()
 {
   zzRULE;
-  zzBLOCK(zztasp1);
+  int zztasp1 = zzasp - 1;
   zzMake0;
   {
   int go=1; char name[MaxRuleName+1];
   zzmatch(99);
   zzgettok();
   {
-    zzBLOCK(zztasp2);
+    int zztasp2 = zzasp - 1;
     zzMake0;
     {
     if ( (zztoken==NonTerminal) ) {
@@ -564,7 +564,7 @@ static void class_def()
   else strcpy(CurrentClassName, name);
   if ( !GenCC ) { err("class meta-op used without C++ option"); }
   {
-    zzBLOCK(zztasp2);
+    int zztasp2 = zzasp - 1;
     zzMake0;
     {
     while ( (setwd1[zztoken]&0x20) ) {
@@ -614,7 +614,7 @@ fail:
 static void rule()
 {
   zzRULE;
-  zzBLOCK(zztasp1);
+  int zztasp1 = zzasp - 1;
   zzMake0;
   {
     ExceptionGroup *eg;
@@ -646,7 +646,7 @@ static void rule()
     NumRules++;
     zzgettok();
     {
-      zzBLOCK(zztasp2);
+      int zztasp2 = zzasp - 1;
       zzMake0;
       {
         if ( (zztoken==103) ) {
@@ -663,12 +663,12 @@ static void rule()
       }
     }
     {
-      zzBLOCK(zztasp2);
+      int zztasp2 = zzasp - 1;
       zzMake0;
       {
         if ( (setwd2[zztoken]&0x1) ) {
         {
-          zzBLOCK(zztasp3);
+          int zztasp3 = zzasp - 1;
           zzMake0;
           {
             if ( (zztoken==104) ) {
@@ -698,7 +698,7 @@ static void rule()
     }
   }
   {
-    zzBLOCK(zztasp2);
+    int zztasp2 = zzasp - 1;
     zzMake0;
     {
     if ( (zztoken==105) ) {
@@ -720,7 +720,7 @@ static void rule()
     }
   }
   {
-    zzBLOCK(zztasp2);
+    int zztasp2 = zzasp - 1;
     zzMake0;
     {
     if ( (zztoken==QuotedTerm) ) {
@@ -797,7 +797,7 @@ static void rule()
   zzgettok();
 
   {
-    zzBLOCK(zztasp2);
+    int zztasp2 = zzasp - 1;
     zzMake0;
     {
     if ( (zztoken==Action) ) {
@@ -817,7 +817,7 @@ static void rule()
     }
   }
   {
-    zzBLOCK(zztasp2);
+    int zztasp2 = zzasp - 1;
     zzMake0;
     {
     while (zztoken==133) {
@@ -850,7 +850,7 @@ fail:
 static void laction()
 {
   zzRULE;
-  zzBLOCK(zztasp1);
+  int zztasp1 = zzasp - 1;
   zzMake0;
   {
   char *a;
@@ -877,7 +877,7 @@ fail:
 static void lmember()
 {
   zzRULE;
-  zzBLOCK(zztasp1);
+  int zztasp1 = zzasp - 1;
   zzMake0;
   {
   char *a;
@@ -909,7 +909,7 @@ fail:
 static void lprefix()
 {
   zzRULE;
-  zzBLOCK(zztasp1);
+  int zztasp1 = zzasp - 1;
   zzMake0;
   {
   char *a;
@@ -941,7 +941,7 @@ fail:
 static void aPred()
 {
   zzRULE;
-  zzBLOCK(zztasp1);
+  int zztasp1 = zzasp - 1;
   zzMake0;
   {
   PredEntry     *predEntry=NULL;
@@ -973,7 +973,7 @@ static void aPred()
     name=NULL;
   }
   {
-    zzBLOCK(zztasp2);
+    int zztasp2 = zzasp - 1;
     zzMake0;
     {
     if ( (zztoken==Pred) ) {
@@ -984,7 +984,7 @@ static void aPred()
       zzgettok();
 
       {
-        zzBLOCK(zztasp3);
+        int zztasp3 = zzasp - 1;
         zzMake0;
         {
         if ( (setwd3[zztoken]&0x1) ) {
@@ -1050,7 +1050,7 @@ static void aPred()
     }
   }
   {
-    zzBLOCK(zztasp2);
+    int zztasp2 = zzasp - 1;
     zzMake0;
     {
     if (zztoken==107) {
@@ -1079,7 +1079,7 @@ static Predicate *predOrExpr()
 {
   Predicate *   _retv;
   zzRULE;
-  zzBLOCK(zztasp1);
+  int zztasp1 = zzasp - 1;
   PCCTS_PURIFY(_retv,sizeof(Predicate *  ))
   zzMake0;
   {
@@ -1096,7 +1096,7 @@ static Predicate *predOrExpr()
     tail=&predExpr->right;
   }
   {
-    zzBLOCK(zztasp2);
+    int zztasp2 = zzasp - 1;
     zzMake0;
     {
     while ( (zztoken==112) ) {
@@ -1132,7 +1132,7 @@ static Predicate *predAndExpr()
 {
   Predicate *   _retv;
   zzRULE;
-  zzBLOCK(zztasp1);
+  int zztasp1 = zzasp - 1;
   PCCTS_PURIFY(_retv,sizeof(Predicate *  ))
   zzMake0;
   {
@@ -1149,7 +1149,7 @@ static Predicate *predAndExpr()
     tail=&predExpr->right;
   }
   {
-    zzBLOCK(zztasp2);
+    int zztasp2 = zzasp - 1;
     zzMake0;
     {
     while (zztoken==113) {
@@ -1184,7 +1184,7 @@ static Predicate *predPrimary()
 {
   Predicate *   _retv;
   zzRULE;
-  zzBLOCK(zztasp1);
+  int zztasp1 = zzasp - 1;
   PCCTS_PURIFY(_retv,sizeof(Predicate *  ))
   zzMake0;
   {
@@ -1245,7 +1245,7 @@ fail:
 static void aLexclass()
 {
   zzRULE;
-  zzBLOCK(zztasp1);
+  int zztasp1 = zzasp - 1;
   zzMake0;
   {
   zzmatch(116);
@@ -1267,14 +1267,14 @@ fail:
 static void error()
 {
   zzRULE;
-  zzBLOCK(zztasp1);
+  int zztasp1 = zzasp - 1;
   zzMake0;
   {
   char *t=NULL; ECnode *e; int go=1; TermEntry *p;
   zzmatch(117);
   zzgettok();
   {
-    zzBLOCK(zztasp2);
+    int zztasp2 = zzasp - 1;
     zzMake0;
     {
     if (zztoken==TokenTerm) {
@@ -1317,7 +1317,7 @@ static void error()
   zzmatch(102);
   zzgettok();
   {
-    zzBLOCK(zztasp2);
+    int zztasp2 = zzasp - 1;
     zzMake0;
     {
     if ( (zztoken==NonTerminal) ) {
@@ -1345,12 +1345,12 @@ static void error()
   }
   if ( go ) list_add(&(e->elist), t);
   {
-    zzBLOCK(zztasp2);
+    int zztasp2 = zzasp - 1;
     zzMake0;
     {
     while ( (setwd4[zztoken]&0x2) ) {
       {
-        zzBLOCK(zztasp3);
+        int zztasp3 = zzasp - 1;
         zzMake0;
 
         if ( (zztoken==NonTerminal) ) {
@@ -1396,7 +1396,7 @@ fail:
 static void tclass()
 {
   zzRULE;
-  zzBLOCK(zztasp1);
+  int zztasp1 = zzasp - 1;
   zzMake0;
   {
   char *t=NULL; TCnode *e; int go=1,tok,totok; TermEntry *p, *term, *toterm;
@@ -1429,7 +1429,7 @@ static void tclass()
     go=0;
   }
   {
-    zzBLOCK(zztasp2);
+    int zztasp2 = zzasp - 1;
     zzMake0;
     {
     if ( (zztoken==114) ) {
@@ -1462,13 +1462,13 @@ static void tclass()
   /* MR23 */
   zzmatch(102); zzgettok();
   {
-    zzBLOCK(zztasp2);
+    int zztasp2 = zzasp - 1;
     int zzcnt=1;
     zzMake0;
     {
      do {
       {
-        zzBLOCK(zztasp3);
+        int zztasp3 = zzasp - 1;
         zzMake0;
         {
         if ( (zztoken==TokenTerm) ) {
@@ -1484,7 +1484,7 @@ static void tclass()
           zzgettok();
 
           {
-            zzBLOCK(zztasp4);
+            int zztasp4 = zzasp - 1;
             zzMake0;
             {
             if (zztoken==119) {
@@ -1560,7 +1560,7 @@ fail:
 static void token()
 {
   zzRULE;
-  zzBLOCK(zztasp1);
+  int zztasp1 = zzasp - 1;
   zzMake0;
   {
   char *t=NULL, *e=NULL, *a=NULL; int tnum=0;
@@ -1570,7 +1570,7 @@ static void token()
   zzgettok();
 
   {
-    zzBLOCK(zztasp2);
+    int zztasp2 = zzasp - 1;
     zzMake0;
     {
     if ( (zztoken==TokenTerm) ) {
@@ -1579,7 +1579,7 @@ static void token()
       zzgettok();
 
       {
-        zzBLOCK(zztasp3);
+        int zztasp3 = zzasp - 1;
         zzMake0;
 
         if (zztoken==114) {
@@ -1601,7 +1601,7 @@ static void token()
         zzasp=zztasp3;
       }
       {
-        zzBLOCK(zztasp3);
+        int zztasp3 = zzasp - 1;
         zzMake0;
 
         if (zztoken==121) {
@@ -1626,7 +1626,7 @@ static void token()
     }
   }
   {
-    zzBLOCK(zztasp2);
+    int zztasp2 = zzasp - 1;
     zzMake0;
 
     if ( (zztoken==QuotedTerm) ) {
@@ -1641,7 +1641,7 @@ static void token()
     zzasp=zztasp2;
   }
   {
-    zzBLOCK(zztasp2);
+    int zztasp2 = zzasp - 1;
     zzMake0;
 
     if ( (zztoken==Action) ) {
@@ -1659,7 +1659,7 @@ static void token()
     zzasp=zztasp2;
   }
   {
-    zzBLOCK(zztasp2);
+    int zztasp2 = zzasp - 1;
     zzMake0;
 
     if (zztoken==107) {
@@ -1698,7 +1698,7 @@ fail:
 static void block(set *toksrefd, set *rulesrefd)
 {
   zzRULE;
-  zzBLOCK(zztasp1);
+  int zztasp1 = zzasp - 1;
   zzMake0;
   {
 
@@ -1733,7 +1733,7 @@ static void block(set *toksrefd, set *rulesrefd)
   }
   ((Junction *)g.left)->blockid = CurBlockID;
   {
-    zzBLOCK(zztasp2);
+    int zztasp2 = zzasp - 1;
     zzMake0;
     {
     while ( (zztoken==133) ) {
@@ -1753,7 +1753,7 @@ static void block(set *toksrefd, set *rulesrefd)
   CurAltNum++;
   CurAltNum_array[BlkLevel] = CurAltNum;
   {
-    zzBLOCK(zztasp2);
+    int zztasp2 = zzasp - 1;
     zzMake0;
     {
     while (zztoken==123) {
@@ -1766,7 +1766,7 @@ static void block(set *toksrefd, set *rulesrefd)
 
       ((Junction *)g.left)->blockid = CurBlockID;
       {
-        zzBLOCK(zztasp3);
+        int zztasp3 = zzasp - 1;
         zzMake0;
         {
         while (zztoken==133) {
@@ -1805,7 +1805,7 @@ fail:
 static void alt(set * toksrefd,set * rulesrefd)
 {
   zzRULE;
-  zzBLOCK(zztasp1);
+  int zztasp1 = zzasp - 1;
   zzMake0;
   {
   int n=0; Graph g; int e_num=0, old_not=0; Node *node; set elems, dif;
@@ -1816,7 +1816,7 @@ static void alt(set * toksrefd,set * rulesrefd)
   elems = empty;
   inAlt = 1;
   {
-    zzBLOCK(zztasp2);
+    int zztasp2 = zzasp - 1;
     zzMake0;
     {
     if ( (zztoken==88) ) {
@@ -1833,12 +1833,12 @@ static void alt(set * toksrefd,set * rulesrefd)
     }
   }
   {
-    zzBLOCK(zztasp2);
+    int zztasp2 = zzasp - 1;
     zzMake0;
     {
     while ( (setwd5[zztoken]&0x80) ) {
       {
-        zzBLOCK(zztasp3);
+        int zztasp3 = zzasp - 1;
         zzMake0;
         {
         old_not=0;
@@ -1922,7 +1922,7 @@ static LabelEntry *element_label()
 {
   LabelEntry *   _retv;
   zzRULE;
-  zzBLOCK(zztasp1);
+  int zztasp1 = zzasp - 1;
   PCCTS_PURIFY(_retv,sizeof(LabelEntry *  ))
   zzMake0;
   {
@@ -1978,7 +1978,7 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
 {
   Node *   _retv;
   zzRULE;
-  zzBLOCK(zztasp1);
+  int zztasp1 = zzasp - 1;
   PCCTS_PURIFY(_retv,sizeof(Node *  ))
   zzMake0;
   {
@@ -2003,7 +2003,7 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
   _retv = NULL;
   if ( (setwd6[zztoken]&0x8) ) {
     {
-      zzBLOCK(zztasp2);
+      int zztasp2 = zzasp - 1;
       zzMake0;
       {
       if ( (zztoken==LABEL) ) {
@@ -2019,7 +2019,7 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
       }
     }
     {
-      zzBLOCK(zztasp2);
+      int zztasp2 = zzasp - 1;
       zzMake0;
       {
       if ( (zztoken==TokenTerm) ) {
@@ -2045,14 +2045,14 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
         zzgettok();
 
         {
-          zzBLOCK(zztasp3);
+          int zztasp3 = zzasp - 1;
           zzMake0;
           {
           if (zztoken==119) {
             zzmatch(119);
 	    zzgettok();
             {
-              zzBLOCK(zztasp4);
+              int zztasp4 = zzasp - 1;
               zzMake0;
               {
               if ( (zztoken==QuotedTerm) ) {
@@ -2084,7 +2084,7 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
         if ( p!=NULL && (p->upper_range!=0 || p->tclass ||  old_not) )
         list_add(&MetaTokenNodes, (void *)p);
         {
-          zzBLOCK(zztasp3);
+          int zztasp3 = zzasp - 1;
           zzMake0;
           {
           if (zztoken==125) {
@@ -2109,7 +2109,7 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
           }
         }
         {
-          zzBLOCK(zztasp3);
+          int zztasp3 = zzasp - 1;
           zzMake0;
           {
           if (zztoken==88) {
@@ -2154,14 +2154,14 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
           }
           zzgettok();
           {
-            zzBLOCK(zztasp3);
+            int zztasp3 = zzasp - 1;
             zzMake0;
             {
             if (zztoken==119) {
               zzmatch(119);
 	      zzgettok();
               {
-                zzBLOCK(zztasp4);
+                int zztasp4 = zzasp - 1;
                 zzMake0;
                 {
                 if (zztoken==QuotedTerm) {
@@ -2190,7 +2190,7 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
             }
           }
           {
-            zzBLOCK(zztasp3);
+            int zztasp3 = zzasp - 1;
             zzMake0;
             {
             if (zztoken==125) {
@@ -2216,7 +2216,7 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
             }
           }
           {
-            zzBLOCK(zztasp3);
+            int zztasp3 = zzasp - 1;
             zzMake0;
             {
             if (zztoken==88) {
@@ -2253,7 +2253,7 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
             zzgettok();
 
             {
-              zzBLOCK(zztasp3);
+              int zztasp3 = zzasp - 1;
               zzMake0;
               {
               if (zztoken==125) {
@@ -2298,7 +2298,7 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
               zzgettok();
 
               {
-                zzBLOCK(zztasp3);
+                int zztasp3 = zzasp - 1;
                 zzMake0;
                 {
                 if (zztoken==103) {
@@ -2317,12 +2317,12 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
                 }
               }
               {
-                zzBLOCK(zztasp3);
+                int zztasp3 = zzasp - 1;
                 zzMake0;
                 {
                 if (setwd7[zztoken]&0x20) {
                   {
-                    zzBLOCK(zztasp4);
+                    int zztasp4 = zzasp - 1;
                     zzMake0;
                     {
                     if (zztoken==104) {
@@ -2351,7 +2351,7 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
               }
               rr=(RuleRefNode *) ((Junction *)zzaRet.left)->p1;
               {
-                zzBLOCK(zztasp3);
+                int zztasp3 = zzasp - 1;
                 zzMake0;
                 {
                 char *a;
@@ -2420,7 +2420,7 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
           numericActionLabel=0;
         }
         {
-          zzBLOCK(zztasp2);
+          int zztasp2 = zzasp - 1;
           zzMake0;
           {
           char *a;
@@ -2455,14 +2455,14 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
           CurBlockID_array[BlkLevel] = CurBlockID;
           CurAltNum_array[BlkLevel] = CurAltNum;
           {
-            zzBLOCK(zztasp2);
+            int zztasp2 = zzasp - 1;
             zzMake0;
             {
             if (zztoken==Pragma) {
               zzmatch(Pragma);
 	      zzgettok();
               {
-                zzBLOCK(zztasp3);
+                int zztasp3 = zzasp - 1;
                 zzMake0;
                 {
                 if (zztoken==126) {
@@ -2498,7 +2498,7 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
             }
           }
           {
-            zzBLOCK(zztasp2);
+            int zztasp2 = zzasp - 1;
             zzMake0;
             {
             if (zztoken==FirstSetSymbol) {
@@ -2507,7 +2507,7 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
               zzmatch(114);
 	      zzgettok();
               {
-                zzBLOCK(zztasp3);
+                int zztasp3 = zzasp - 1;
                 zzMake0;
                 {
                 if ( (zztoken==NonTerminal) ) {
@@ -2546,7 +2546,7 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
             }
           }
           {
-            zzBLOCK(zztasp2);
+            int zztasp2 = zzasp - 1;
             zzMake0;
             {
             if (zztoken==114) {
@@ -2560,7 +2560,7 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
               --BlkLevel;
 	      zzgettok();
               {
-                zzBLOCK(zztasp3);
+                int zztasp3 = zzasp - 1;
                 zzMake0;
                 {
                 if (zztoken==129) {
@@ -2579,12 +2579,12 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
                       zzmatch(131);
 		      zzgettok();
                       {
-                        zzBLOCK(zztasp4);
+                        int zztasp4 = zzasp - 1;
                         zzMake0;
                         {
                         if ( (setwd8[zztoken]&0x10) ) {
                           {
-                            zzBLOCK(zztasp5);
+                            int zztasp5 = zzasp - 1;
                             zzMake0;
                             {
                             if (zztoken==132) {
@@ -2614,7 +2614,7 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
                             numericActionLabel=0;
                           }
                           {
-                            zzBLOCK(zztasp5);
+                            int zztasp5 = zzasp - 1;
                             zzMake0;
                             {
                             char *a;
@@ -2786,7 +2786,7 @@ fail:
 static void default_exception_handler()
 {
   zzRULE;
-  zzBLOCK(zztasp1);
+  int zztasp1 = zzasp - 1;
   zzMake0;
   {
    DefaultExGroup  = exception_group();
@@ -2804,7 +2804,7 @@ static ExceptionGroup *exception_group()
 {
   ExceptionGroup *   _retv;
   zzRULE;
-  zzBLOCK(zztasp1);
+  int zztasp1 = zzasp - 1;
   PCCTS_PURIFY(_retv,sizeof(ExceptionGroup *  ))
   zzMake0;
   {
@@ -2815,7 +2815,7 @@ static ExceptionGroup *exception_group()
   zzgettok();
 
   {
-    zzBLOCK(zztasp2);
+    int zztasp2 = zzasp - 1;
     zzMake0;
     {
     char *p;
@@ -2841,7 +2841,7 @@ static ExceptionGroup *exception_group()
     }
   }
   {
-    zzBLOCK(zztasp2);
+    int zztasp2 = zzasp - 1;
     zzMake0;
     {
     while (zztoken==135) {
@@ -2854,7 +2854,7 @@ static ExceptionGroup *exception_group()
     }
   }
   {
-    zzBLOCK(zztasp2);
+    int zztasp2 = zzasp - 1;
     zzMake0;
     {
     if (zztoken==134) {
@@ -2919,7 +2919,6 @@ static ExceptionGroup *exception_group()
 
     } /* end test on exception label */
 
-/* MR7 */
   /* MR7 */   if (BlkLevel == 1 && label == NULL) {
     /* MR7 */     _retv->forRule=1;
     /* MR7 */   } else if (label == NULL) {
@@ -2928,10 +2927,10 @@ static ExceptionGroup *exception_group()
     /* MR7 */   } else {
     /* MR7 */     _retv->labelEntry=label;
     /* MR7 */   };
-  /* MR7 */
+
   /* MR7 */     /* You may want to remove this exc from the rule list  */
   /* MR7 */   /* and handle at the labeled element site.             */
-  /* MR7 */
+
   /* MR7 */   if (label != NULL) {
     /* MR7 */     _retv = NULL;
     /* MR7 */   };
@@ -2950,7 +2949,7 @@ static ExceptionHandler *exception_handler()
 {
   ExceptionHandler *   _retv;
   zzRULE;
-  zzBLOCK(zztasp1);
+  int zztasp1 = zzasp - 1;
   PCCTS_PURIFY(_retv,sizeof(ExceptionHandler *  ))
   zzMake0;
   {
@@ -2961,7 +2960,7 @@ static ExceptionHandler *exception_handler()
   zzgettok();
 
   {
-    zzBLOCK(zztasp2);
+    int zztasp2 = zzasp - 1;
     zzMake0;
     {
     if (zztoken==NonTerminal) {
@@ -2989,7 +2988,7 @@ static ExceptionHandler *exception_handler()
   zzmatch(106);
   zzgettok();
   {
-    zzBLOCK(zztasp2);
+    int zztasp2 = zzasp - 1;
     zzMake0;
     {
     _retv->action = NULL;
@@ -3024,12 +3023,12 @@ fail:
 static void enum_file(char *fname)
 {
   zzRULE;
-  zzBLOCK(zztasp1);
+  int zztasp1 = zzasp - 1;
   zzMake0;
   {
   if (setwd9[zztoken]&0x80) {
     {
-      zzBLOCK(zztasp2);
+      int zztasp2 = zzasp - 1;
       zzMake0;
       {
       if (zztoken==143) {
@@ -3038,7 +3037,7 @@ static void enum_file(char *fname)
         zzmatch(ID);
 	zzgettok();
         {
-          zzBLOCK(zztasp3);
+          int zztasp3 = zzasp - 1;
           zzMake0;
           {
           if (zztoken==149) {
@@ -3065,12 +3064,12 @@ static void enum_file(char *fname)
       }
     }
     {
-      zzBLOCK(zztasp2);
+      int zztasp2 = zzasp - 1;
       zzMake0;
       {
       if (zztoken==151) {
         {
-          zzBLOCK(zztasp3);
+          int zztasp3 = zzasp - 1;
           int zzcnt=1;
           zzMake0;
           {
@@ -3108,12 +3107,12 @@ fail:
 static void defines(char * fname)
 {
   zzRULE;
-  zzBLOCK(zztasp1);
+  int zztasp1 = zzasp - 1;
   zzMake0;
   {
   int v; int maxt=(-1); char *t;
   {
-    zzBLOCK(zztasp2);
+    int zztasp2 = zzasp - 1;
     int zzcnt=1;
     zzMake0;
     {
@@ -3163,7 +3162,7 @@ fail:
 static void enum_def(char * fname)
 {
   zzRULE;
-  zzBLOCK(zztasp1);
+  int zztasp1 = zzasp - 1;
   zzMake0;
   {
   int v= 0; int maxt=(-1); char *t;
@@ -3178,7 +3177,7 @@ static void enum_def(char * fname)
   zzgettok();
 
   {
-    zzBLOCK(zztasp2);
+    int zztasp2 = zzasp - 1;
     zzMake0;
 
     if (zztoken==153) {
@@ -3204,14 +3203,14 @@ static void enum_def(char * fname)
     warning("redefinition of token %s; ignored", fname, zzline, t);
   }
   {
-    zzBLOCK(zztasp2);
+    int zztasp2 = zzasp - 1;
     zzMake0;
     {
     while (zztoken==154) {
       zzmatch(154);
       zzgettok();
       {
-        zzBLOCK(zztasp3);
+        int zztasp3 = zzasp - 1;
         zzMake0;
         {
         if ( (zztoken==ID)&&(isDLGmaxToken(zzlextext)) ) {
@@ -3221,7 +3220,7 @@ static void enum_def(char * fname)
           zzmatch(ID);
 	      zzgettok();
           {
-            zzBLOCK(zztasp4);
+            int zztasp4 = zzasp - 1;
             zzMake0;
 
             if (zztoken==153) {
@@ -3242,7 +3241,7 @@ static void enum_def(char * fname)
           zzgettok();
 
           {
-            zzBLOCK(zztasp4);
+            int zztasp4 = zzasp - 1;
             zzMake0;
 
             if (zztoken==153) {

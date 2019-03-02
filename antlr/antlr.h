@@ -89,7 +89,7 @@ void grammar();
 #define ANTLR(st, f)  zzbufsize = ZZLEXBUFSIZE; \
             zzenterANTLR(f);      \
             {                                            \
-              zzBLOCK(zztasp1);                          \
+              int zztasp1 = zzasp - 1;                   \
               st;                                        \
               zzasp = zztasp1 + 1;                 \
             }
@@ -105,7 +105,6 @@ void grammar();
           int zzErrk=1,zzpf=0;                \
           SetWordType *zzMissSet=NULL; int zzMissTok=0; char *zzMissText=""
 
-#define zzBLOCK(i)  int i = zzasp - 1
 
 
 /* MR19 zzchar_t additions */
