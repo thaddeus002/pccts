@@ -151,7 +151,7 @@ int k, char *bad_text);
               zzBLOCK(zztasp1);                          \
               st; /* ++zzasp; Removed MR20 G. Hobbelt */     \
               /* MR20 G. Hobbelt. Kill the top' attribute (+AST stack corr.) */  \
-              zzEXIT_ANTLR(zztasp1 + 1);                 \
+              zzasp=zztasp1 + 1;                 \
             }
 
 
@@ -214,7 +214,7 @@ void grammar()
     for (;;) {
       if ( !((setwd1[zztoken]&0x1))) break;
       if ( (zztoken==94) ) {
-        zzmatch(94); zzCONSUME;
+        zzmatch(94); zzgettok();
         zzmatch(Action);
 
         if ( HdrAction==NULL ) {
@@ -223,12 +223,12 @@ void grammar()
           strcpy(HdrAction, zzlextext);
         }
         else warn("additional #header statement ignored");
- zzCONSUME;
+        zzgettok();
 
       }
       else {
         if ( (zztoken==95) ) {
-          zzmatch(95); zzCONSUME;
+          zzmatch(95); zzgettok();
           zzmatch(Action);
 
           if ( FirstAction==NULL ) {
@@ -238,12 +238,13 @@ void grammar()
           } else {
             warn("additional #first statement ignored");
           };
- zzCONSUME;
+          zzgettok();
 
         }
         else {
-          if ( (zztoken==96) ) {
-            zzmatch(96); zzCONSUME;
+          if (zztoken==96) {
+            zzmatch(96);
+	    zzgettok();
             zzmatch(QuotedTerm);
 
             if ( GenCC ) {
@@ -260,12 +261,13 @@ void grammar()
               }
               else warn("additional #parser statement ignored");
             }
- zzCONSUME;
+            zzgettok();
 
           }
           else {
-            if ( (zztoken==97) ) {
-              zzmatch(97); zzCONSUME;
+            if (zztoken==97) {
+              zzmatch(97);
+	      zzgettok();
               zzmatch(QuotedTerm);
               {
                 char *fname;
@@ -283,16 +285,16 @@ void grammar()
                 zzrestore_antlr_state(&st);
                 zzrestore_dlg_state(&dst);
               }
-              zzCONSUME;
+              zzgettok();
 
             }
             else break; /* MR6 code for exiting loop "for sure" */
           }
         }
       }
-      zzLOOP(zztasp2);
+      zzasp=zztasp2;
     }
-    zzEXIT(zztasp2);
+    zzasp=zztasp2;
     }
   }
   {
@@ -309,58 +311,56 @@ void grammar()
           if ( class_nest_level>0 ) list_add(&class_before_actions, ua);
           else list_add(&BeforeActions, ua);
         }
- zzCONSUME;
-
+        zzgettok();
       }
       else {
-        if ( (zztoken==108) ) {
+        if (zztoken==108) {
           laction();
         }
         else {
-          if ( (zztoken==109) ) {
+          if (zztoken==109) {
             lmember();
           }
           else {
-            if ( (zztoken==110) ) {
+            if (zztoken==110) {
               lprefix();
             }
             else {
-              if ( (zztoken==116) ) {
+              if (zztoken==116) {
                 aLexclass();
               }
               else {
-                if ( (zztoken==120) ) {
+                if (zztoken==120) {
                   token();
                 }
                 else {
-                  if ( (zztoken==117) ) {
+                  if (zztoken==117) {
                     error();
                   }
                   else {
-                    if ( (zztoken==118) ) {
+                    if (zztoken==118) {
                       tclass();
                     }
                     else {
-                      if ( (zztoken==111) ) {
+                      if (zztoken==111) {
                         aPred();
                       }
                       else {
-                        if ( (zztoken==133) ) {
+                        if (zztoken==133) {
                           default_exception_handler();
                         }
                         else {
-                          if ( (zztoken==99) ) {
+                          if (zztoken==99) {
                             class_def();
                           }
                           else {
-                            if ( (zztoken==98) ) {
+                            if (zztoken==98) {
                               zzmatch(98);
 
                               if ( class_nest_level==0 )
-                              warn("missing class definition for trailing '}'");
+                                warn("missing class definition for trailing '}'");
                               class_nest_level--;
- zzCONSUME;
-
+                              zzgettok();
                             }
                             else break; /* MR6 code for exiting loop "for sure" */
                           }
@@ -374,9 +374,9 @@ void grammar()
           }
         }
       }
-      zzLOOP(zztasp2);
+      zzasp=zztasp2;
     }
-    zzEXIT(zztasp2);
+    zzasp=zztasp2;
     }
   }
   rule();
@@ -401,38 +401,37 @@ void grammar()
           /* MR21a */         }
       }
       else {
-        if ( (zztoken==116) ) {
+        if (zztoken==116) {
           aLexclass();
         }
         else {
-          if ( (zztoken==120) ) {
+          if (zztoken==120) {
             token();
           }
           else {
-            if ( (zztoken==117) ) {
+            if (zztoken==117) {
               error();
             }
             else {
-              if ( (zztoken==118) ) {
+              if (zztoken==118) {
                 tclass();
               }
               else {
-                if ( (zztoken==111) ) {
+                if (zztoken==111) {
                   aPred();
                 }
                 else {
-                  if ( (zztoken==99) ) {
+                  if (zztoken==99) {
                     class_def();
                   }
                   else {
-                    if ( (zztoken==98) ) {
+                    if (zztoken==98) {
                       zzmatch(98);
 
                       if ( class_nest_level==0 )
-                      warn("missing class definition for trailing '}'");
+                        warn("missing class definition for trailing '}'");
                       class_nest_level--;
- zzCONSUME;
-
+		      zzgettok();
                     }
                     else break; /* MR6 code for exiting loop "for sure" */
                   }
@@ -442,9 +441,9 @@ void grammar()
           }
         }
       }
-      zzLOOP(zztasp2);
+      zzasp=zztasp2;
     }
-    zzEXIT(zztasp2);
+    zzasp=zztasp2;
     }
   }
   {
@@ -461,46 +460,45 @@ void grammar()
           if ( class_nest_level>0 ) list_add(&class_after_actions, ua);
           else list_add(&AfterActions, ua);
         }
- zzCONSUME;
+        zzgettok();
 
       }
       else {
-        if ( (zztoken==108) ) {
+        if (zztoken==108) {
           laction();
         }
         else {
-          if ( (zztoken==109) ) {
+          if (zztoken==109) {
             lmember();
           }
           else {
-            if ( (zztoken==110) ) {
+            if (zztoken==110) {
               lprefix();
             }
             else {
-              if ( (zztoken==117) ) {
+              if (zztoken==117) {
                 error();
               }
               else {
-                if ( (zztoken==118) ) {
+                if (zztoken==118) {
                   tclass();
                 }
                 else {
-                  if ( (zztoken==99) ) {
+                  if (zztoken==99) {
                     class_def();
                   }
                   else {
-                    if ( (zztoken==111) ) {
+                    if (zztoken==111) {
                       aPred();
                     }
                     else {
-                      if ( (zztoken==98) ) {
+                      if (zztoken==98) {
                         zzmatch(98);
 
                         if ( class_nest_level==0 )
                         warn("missing class definition for trailing '}'");
                         class_nest_level--;
- zzCONSUME;
-
+                        zzgettok();
                       }
                       else break; /* MR6 code for exiting loop "for sure" */
                     }
@@ -511,16 +509,17 @@ void grammar()
           }
         }
       }
-      zzLOOP(zztasp2);
+      zzasp=zztasp2;
     }
-    zzEXIT(zztasp2);
+    zzasp=zztasp2;
     }
   }
-  zzmatch(Eof); zzCONSUME;
-  zzEXIT(zztasp1);
+  zzmatch(Eof);
+  zzgettok();
+  zzasp=zztasp1;
   return;
 fail:
-  zzEXIT(zztasp1);
+  zzasp=zztasp1;
   CannotContinue=true;
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
   zzresynch(setwd1, 0x10);
@@ -534,7 +533,8 @@ static void class_def()
   zzMake0;
   {
   int go=1; char name[MaxRuleName+1];
-  zzmatch(99); zzCONSUME;
+  zzmatch(99);
+  zzgettok();
   {
     zzBLOCK(zztasp2);
     zzMake0;
@@ -542,19 +542,17 @@ static void class_def()
     if ( (zztoken==NonTerminal) ) {
       zzmatch(NonTerminal);
       if(go) strncpy(name,zzlextext,MaxRuleName);
- zzCONSUME;
-
+      zzgettok();
     }
     else {
       if ( (zztoken==TokenTerm) ) {
         zzmatch(TokenTerm);
         if(go) strncpy(name,zzlextext,MaxRuleName);
- zzCONSUME;
-
+        zzgettok();
       }
       else {zzFAIL(1,zzerr1,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
     }
-    zzEXIT(zztasp2);
+    zzasp=zztasp2;
     }
   }
 
@@ -589,11 +587,11 @@ static void class_def()
         /* MR22 */          strcpy(BaseClassName,zzlextext);
         /* MR22 */              } while (0);
       /* MR10 */
- zzCONSUME;
+      zzgettok();
 
-      zzLOOP(zztasp2);
+      zzasp=zztasp2;
     }
-    zzEXIT(zztasp2);
+    zzasp=zztasp2;
     }
   }
   zzmatch(102);
@@ -601,12 +599,12 @@ static void class_def()
   no_classes_found = 0;
   if ( class_nest_level>=1 ) {warn("cannot have nested classes");}
   else class_nest_level++;
- zzCONSUME;
+  zzgettok();
 
-  zzEXIT(zztasp1);
+  zzasp=zztasp1;
   return;
 fail:
-  zzEXIT(zztasp1);
+  zzasp=zztasp1;
   CannotContinue=true;
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
   zzresynch(setwd1, 0x40);
@@ -625,7 +623,7 @@ static void rule()
     char *pdecl=NULL, *ret=NULL, *a; CurRetDef = CurParmDef = NULL;
     CurExGroups = NULL;
     CurElementLabels = NULL;
-    CurAstLabelsInActions = NULL; /* MR27 */
+    CurAstLabelsInActions = NULL;
     /* We want a new element label hash table for each rule */
     if ( Elabel!=NULL ) killHashTable(Elabel);
     Elabel = newHashTable();
@@ -646,7 +644,7 @@ static void rule()
     CurRuleNode = q;
     f = CurFile; l = zzline;
     NumRules++;
-    zzCONSUME;
+    zzgettok();
     {
       zzBLOCK(zztasp2);
       zzMake0;
@@ -654,35 +652,34 @@ static void rule()
         if ( (zztoken==103) ) {
           zzmatch(103);
           if ( q!=NULL ) q->noAST = true;
-          zzCONSUME;
+          zzgettok();
         }
         else {
           if ( (setwd1[zztoken]&0x80) ) {
           }
           else {zzFAIL(1,zzerr4,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
         }
-        zzEXIT(zztasp2);
+        zzasp=zztasp2;
       }
     }
     {
       zzBLOCK(zztasp2);
       zzMake0;
       {
-        ;
         if ( (setwd2[zztoken]&0x1) ) {
         {
           zzBLOCK(zztasp3);
           zzMake0;
           {
             if ( (zztoken==104) ) {
-              zzmatch(104); zzCONSUME;
+              zzmatch(104); zzgettok();
             }
             else {
               if ( (zztoken==PassAction) ) {
               }
               else {zzFAIL(1,zzerr5,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
             }
-            zzEXIT(zztasp3);
+            zzasp=zztasp3;
           }
         }
         zzmatch(PassAction);
@@ -690,14 +687,14 @@ static void rule()
         require(pdecl!=NULL, "rule rule: cannot allocate param decl");
         strcpy(pdecl, zzlextext);
         CurParmDef = pdecl;
-        zzCONSUME;
+        zzgettok();
       }
       else {
         if ( (setwd2[zztoken]&0x2) ) {
         }
         else {zzFAIL(1,zzerr6,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
       }
-      zzEXIT(zztasp2);
+      zzasp=zztasp2;
     }
   }
   {
@@ -705,21 +702,21 @@ static void rule()
     zzMake0;
     {
     if ( (zztoken==105) ) {
-      zzmatch(105); zzCONSUME;
+      zzmatch(105);
+      zzgettok();
       zzmatch(PassAction);
       ret = (char *) calloc(strlen(zzlextext)+1, sizeof(char));
       require(ret!=NULL, "rule rule: cannot allocate ret type");
       strcpy(ret, zzlextext);
       CurRetDef = ret;
-      zzCONSUME;
-
+      zzgettok();
     }
     else {
       if ( (setwd2[zztoken]&0x4) ) {
       }
       else {zzFAIL(1,zzerr7,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
     }
-    zzEXIT(zztasp2);
+    zzasp=zztasp2;
     }
   }
   {
@@ -729,14 +726,14 @@ static void rule()
     if ( (zztoken==QuotedTerm) ) {
       zzmatch(QuotedTerm);
       if ( q!=NULL ) q->egroup=strdup(zzlextext);
-      zzCONSUME;
+      zzgettok();
     }
     else {
-      if ( (zztoken==106) ) {
+      if (zztoken==106) {
       }
       else {zzFAIL(1,zzerr8,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
     }
-    zzEXIT(zztasp2);
+    zzasp=zztasp2;
     }
   }
 
@@ -761,11 +758,11 @@ static void rule()
   }
   BlkLevel++;
   if (BlkLevel >= MAX_BLK_LEVEL) antlr_fatal("Blocks nested too deeply");
-  /* MR23 */    CurBlockID_array[BlkLevel] = CurBlockID;
-  /* MR23 */    CurAltNum_array[BlkLevel] = CurAltNum;
+  CurBlockID_array[BlkLevel] = CurBlockID;
+  CurAltNum_array[BlkLevel] = CurAltNum;
   zzmatch(106);
   inAlt=1;
-  zzCONSUME;
+  zzgettok();
 
   block( &toksrefd, &rulesrefd );
   r = makeBlk(zzaArg(zztasp1,7),0, NULL /* pFirstSetSymbol */ );
@@ -797,7 +794,7 @@ static void rule()
   altFixup();leFixup();egFixup();
   zzmatch(107);
   inAlt=0;
-  zzCONSUME;
+  zzgettok();
 
   {
     zzBLOCK(zztasp2);
@@ -809,30 +806,30 @@ static void rule()
       require(a!=NULL, "rule rule: cannot allocate error action");
       strcpy(a, zzlextext);
       CurRuleBlk->erraction = a;
-      zzCONSUME;
+      zzgettok();
     }
     else {
       if ( (setwd2[zztoken]&0x8) ) {
       }
       else {zzFAIL(1,zzerr9,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
     }
-    zzEXIT(zztasp2);
+    zzasp=zztasp2;
     }
   }
   {
     zzBLOCK(zztasp2);
     zzMake0;
     {
-    while ( (zztoken==133) ) {
+    while (zztoken==133) {
        eg  = exception_group();
 
       if ( eg!=NULL ) {
         list_add(&CurExGroups, (void *)eg);
         if (eg->label == NULL || *eg->label=='\0' ) q->has_rule_exception = 1;
       }
-      zzLOOP(zztasp2);
+      zzasp=zztasp2;
     }
-    zzEXIT(zztasp2);
+    zzasp=zztasp2;
     }
   }
   if ( q==NULL ) zzaArg(zztasp1,0 ).left = NULL; else zzaArg(zztasp1,0) = zzaArg(zztasp1,7);
@@ -840,10 +837,10 @@ static void rule()
   CurRuleBlk->el_labels = CurElementLabels;
   CurRuleNode->ast_labels_in_actions = CurAstLabelsInActions;
   CurRuleNode = NULL;
-  zzEXIT(zztasp1);
+  zzasp=zztasp1;
   return;
 fail:
-  zzEXIT(zztasp1);
+  zzasp=zztasp1;
   CannotContinue=true;
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
   zzresynch(setwd2, 0x10);
@@ -857,19 +854,20 @@ static void laction()
   zzMake0;
   {
   char *a;
-  zzmatch(108); zzCONSUME;
+  zzmatch(108);
+  zzgettok();
   zzmatch(Action);
 
   a = (char *) calloc(strlen(zzlextext)+1, sizeof(char));
   require(a!=NULL, "rule laction: cannot allocate action");
   strcpy(a, zzlextext);
   list_add(&LexActions, a);
- zzCONSUME;
+  zzgettok();
 
-  zzEXIT(zztasp1);
+  zzasp=zztasp1;
   return;
 fail:
-  zzEXIT(zztasp1);
+  zzasp=zztasp1;
   CannotContinue=true;
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
   zzresynch(setwd2, 0x20);
@@ -883,7 +881,8 @@ static void lmember()
   zzMake0;
   {
   char *a;
-  zzmatch(109); zzCONSUME;
+  zzmatch(109);
+  zzgettok();
   zzmatch(Action);
 
   if (! GenCC) {
@@ -895,12 +894,12 @@ static void lmember()
     list_add(&LexMemberActions, a);
   };
 
-  zzCONSUME;
+  zzgettok();
 
-  zzEXIT(zztasp1);
+  zzasp=zztasp1;
   return;
 fail:
-  zzEXIT(zztasp1);
+  zzasp=zztasp1;
   CannotContinue=true;
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
   zzresynch(setwd2, 0x40);
@@ -914,7 +913,8 @@ static void lprefix()
   zzMake0;
   {
   char *a;
-  zzmatch(110); zzCONSUME;
+  zzmatch(110);
+  zzgettok();
   zzmatch(Action);
 
   if (! GenCC) {
@@ -926,12 +926,12 @@ static void lprefix()
     list_add(&LexPrefixActions, a);
   };
 
-  zzCONSUME;
+  zzgettok();
 
-  zzEXIT(zztasp1);
+  zzasp=zztasp1;
   return;
 fail:
-  zzEXIT(zztasp1);
+  zzasp=zztasp1;
   CannotContinue=true;
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
   zzresynch(setwd2, 0x80);
@@ -953,13 +953,12 @@ static void aPred()
   int           predExprPresent=0;
   zzmatch(111);
 
-  MR_usingPredNames=1;      /* will need to use -mrhoist version of genPredTree */
-  zzCONSUME;
+  MR_usingPredNames=1; /* will need to use -mrhoist version of genPredTree */
+  zzgettok();
 
   zzmatch(TokenTerm);
   name=strdup(zzlextext);
-  zzCONSUME;
-
+  zzgettok();
 
   /* don't free - referenced in predicates */
 
@@ -969,10 +968,10 @@ static void aPred()
 
   predEntry=(PredEntry *) hash_get(Pname,name);
   if (predEntry != NULL) {
-  warning("#pred %s previously defined - ignored",
+    warning("#pred %s previously defined - ignored",
             FileStr[action_file], action_line, name);
-  name=NULL;
-};
+    name=NULL;
+  }
   {
     zzBLOCK(zztasp2);
     zzMake0;
@@ -982,15 +981,14 @@ static void aPred()
       predLiteral=strdup(zzlextext);
       save_line=action_line;
       save_file=action_file;
- zzCONSUME;
+      zzgettok();
 
       {
         zzBLOCK(zztasp3);
         zzMake0;
         {
         if ( (setwd3[zztoken]&0x1) ) {
-           predExpr  = predOrExpr();
-
+	  predExpr  = predOrExpr();
           predExprPresent=1;
         }
         else {
@@ -998,7 +996,7 @@ static void aPred()
           }
           else {zzFAIL(1,zzerr10,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
         }
-        zzEXIT(zztasp3);
+        zzasp=zztasp3;
         }
       }
       if (predLiteral != NULL && name != NULL) {
@@ -1048,28 +1046,29 @@ static void aPred()
       }
       else {zzFAIL(1,zzerr11,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
     }
-    zzEXIT(zztasp2);
+    zzasp=zztasp2;
     }
   }
   {
     zzBLOCK(zztasp2);
     zzMake0;
     {
-    if ( (zztoken==107) ) {
-      zzmatch(107); zzCONSUME;
+    if (zztoken==107) {
+      zzmatch(107);
+      zzgettok();
     }
     else {
-      if ( (setwd3[zztoken]&0x8) ) {
+      if (setwd3[zztoken]&0x8) {
       }
       else {zzFAIL(1,zzerr12,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
     }
-    zzEXIT(zztasp2);
+    zzasp=zztasp2;
     }
   }
-  zzEXIT(zztasp1);
+  zzasp=zztasp1;
   return;
 fail:
-  zzEXIT(zztasp1);
+  zzasp=zztasp1;
   predicate_free(predExpr);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
   zzresynch(setwd3, 0x10);
@@ -1087,7 +1086,7 @@ static Predicate *predOrExpr()
   Predicate     *ORnode;
   Predicate     *predExpr;
   Predicate     **tail=NULL;
-   predExpr  = predAndExpr();
+  predExpr  = predAndExpr();
 
 
   ORnode=new_pred();
@@ -1095,32 +1094,33 @@ static Predicate *predOrExpr()
   if (predExpr != NULL) {
     ORnode->down=predExpr;
     tail=&predExpr->right;
-  };
+  }
   {
     zzBLOCK(zztasp2);
     zzMake0;
     {
     while ( (zztoken==112) ) {
-      zzmatch(112); zzCONSUME;
-       predExpr  = predAndExpr();
+      zzmatch(112);
+      zzgettok();
+      predExpr  = predAndExpr();
 
 
       if (predExpr != NULL) {
         *tail=predExpr;
         tail=&predExpr->right;
-      };
-      zzLOOP(zztasp2);
+      }
+      zzasp=zztasp2;
     }
-    zzEXIT(zztasp2);
+    zzasp=zztasp2;
     }
   }
 
   _retv=ORnode;
   ORnode=NULL;
-  zzEXIT(zztasp1);
+  zzasp=zztasp1;
   return _retv;
 fail:
-  zzEXIT(zztasp1);
+  zzasp=zztasp1;
   predicate_free(ORnode);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
   zzresynch(setwd3, 0x20);
@@ -1139,7 +1139,7 @@ static Predicate *predAndExpr()
   Predicate     *ANDnode;
   Predicate     *predExpr;
   Predicate     **tail=NULL;
-   predExpr  = predPrimary();
+  predExpr  = predPrimary();
 
 
   ANDnode=new_pred();
@@ -1147,32 +1147,32 @@ static Predicate *predAndExpr()
   if (predExpr != NULL) {
     ANDnode->down=predExpr;
     tail=&predExpr->right;
-  };
+  }
   {
     zzBLOCK(zztasp2);
     zzMake0;
     {
-    while ( (zztoken==113) ) {
-      zzmatch(113); zzCONSUME;
-       predExpr  = predPrimary();
-
+    while (zztoken==113) {
+      zzmatch(113);
+      zzgettok();
+      predExpr  = predPrimary();
 
       if (predExpr != NULL) {
         *tail=predExpr;
         tail=&predExpr->right;
-      };
-      zzLOOP(zztasp2);
+      }
+      zzasp=zztasp2;
     }
-    zzEXIT(zztasp2);
+    zzasp=zztasp2;
     }
   }
 
   _retv=ANDnode;
   ANDnode=NULL;
-  zzEXIT(zztasp1);
+  zzasp=zztasp1;
   return _retv;
 fail:
-  zzEXIT(zztasp1);
+  zzasp=zztasp1;
   predicate_free(ANDnode);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
   zzresynch(setwd3, 0x40);
@@ -1195,7 +1195,7 @@ static Predicate *predPrimary()
   if ( (zztoken==TokenTerm) ) {
     zzmatch(TokenTerm);
     name=strdup(zzlextext);
-    zzCONSUME;
+    zzgettok();
     predEntry=(PredEntry *) hash_get(Pname,name);
     if (predEntry == NULL) {
       warning("no previously defined #pred with name \"%s\"",
@@ -1206,24 +1206,23 @@ static Predicate *predPrimary()
       predExpr=predicate_dup(predEntry->pred);
       predExpr->predEntry=predEntry;
       _retv=predExpr;
-    };
+    }
   }
   else {
-    if ( (zztoken==114) ) {
-      zzmatch(114); zzCONSUME;
-       predExpr  = predOrExpr();
+    if (zztoken==114) {
+      zzmatch(114);
+      zzgettok();
+      predExpr  = predOrExpr();
 
       zzmatch(115);
-
       _retv=predExpr;
- zzCONSUME;
-
+      zzgettok();
     }
     else {
-      if ( (zztoken==103) ) {
-        zzmatch(103); zzCONSUME;
-         predExpr  = predPrimary();
-
+      if (zztoken==103) {
+        zzmatch(103);
+	zzgettok();
+        predExpr  = predPrimary();
 
         predExpr->inverted=!predExpr->inverted;
         _retv=predExpr;
@@ -1231,10 +1230,10 @@ static Predicate *predPrimary()
       else {zzFAIL(1,zzerr13,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
     }
   }
-  zzEXIT(zztasp1);
+  zzasp=zztasp1;
   return _retv;
 fail:
-  zzEXIT(zztasp1);
+  zzasp=zztasp1;
 
   predicate_free(predExpr);
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
@@ -1249,15 +1248,16 @@ static void aLexclass()
   zzBLOCK(zztasp1);
   zzMake0;
   {
-  zzmatch(116); zzCONSUME;
+  zzmatch(116);
+  zzgettok();
   zzmatch(TokenTerm);
   lexclass(strdup(zzlextext));
-  zzCONSUME;
+  zzgettok();
 
-  zzEXIT(zztasp1);
+  zzasp=zztasp1;
   return;
 fail:
-  zzEXIT(zztasp1);
+  zzasp=zztasp1;
   CannotContinue=true;
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
   zzresynch(setwd4, 0x1);
@@ -1271,28 +1271,27 @@ static void error()
   zzMake0;
   {
   char *t=NULL; ECnode *e; int go=1; TermEntry *p;
-  zzmatch(117); zzCONSUME;
+  zzmatch(117);
+  zzgettok();
   {
     zzBLOCK(zztasp2);
     zzMake0;
     {
-    ;
-    if ( (zztoken==TokenTerm) ) {
+    if (zztoken==TokenTerm) {
       zzmatch(TokenTerm);
       t=strdup(zzlextext);
-      zzCONSUME;
-
+      zzgettok();
     }
     else {
       if ( (zztoken==QuotedTerm) ) {
         zzmatch(QuotedTerm);
         t=strdup(zzlextext);
-        zzCONSUME;
+        zzgettok();
 
       }
       else {zzFAIL(1,zzerr14,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
     }
-    zzEXIT(zztasp2);
+    zzasp=zztasp2;
     }
   }
   e = newECnode;
@@ -1315,7 +1314,8 @@ static void error()
     free( (char *)e );
     go=0;
   }
-  zzmatch(102); zzCONSUME;
+  zzmatch(102);
+  zzgettok();
   {
     zzBLOCK(zztasp2);
     zzMake0;
@@ -1323,27 +1323,24 @@ static void error()
     if ( (zztoken==NonTerminal) ) {
       zzmatch(NonTerminal);
       if ( go ) t=strdup(zzlextext);
- zzCONSUME;
-
+      zzgettok();
     }
     else {
       if ( (zztoken==TokenTerm) ) {
         zzmatch(TokenTerm);
         if ( go ) t=strdup(zzlextext);
- zzCONSUME;
-
+        zzgettok();
       }
       else {
         if ( (zztoken==QuotedTerm) ) {
           zzmatch(QuotedTerm);
           if ( go ) t=strdup(zzlextext);
- zzCONSUME;
-
+          zzgettok();
         }
         else {zzFAIL(1,zzerr15,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
       }
     }
-    zzEXIT(zztasp2);
+    zzasp=zztasp2;
     }
   }
   if ( go ) list_add(&(e->elist), t);
@@ -1359,36 +1356,37 @@ static void error()
         if ( (zztoken==NonTerminal) ) {
           zzmatch(NonTerminal);
           if ( go ) t=strdup(zzlextext);
-          zzCONSUME;
+          zzgettok();
         } else {
           if ( (zztoken==TokenTerm) ) {
             zzmatch(TokenTerm);
             if ( go ) t=strdup(zzlextext);
-            zzCONSUME;
+            zzgettok();
           } else {
             if ( (zztoken==QuotedTerm) ) {
               zzmatch(QuotedTerm);
               if ( go ) t=strdup(zzlextext);
-              zzCONSUME;
+              zzgettok();
             } else {
               zzFAIL(1,zzerr16,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk);
               goto fail;
             }
           }
         }
-        zzEXIT(zztasp3);
+        zzasp=zztasp3;
       }
       if ( go ) list_add(&(e->elist), t);
-      zzLOOP(zztasp2);
+      zzasp=zztasp2;
     }
-    zzEXIT(zztasp2);
+    zzasp=zztasp2;
     }
   }
-  zzmatch(98); zzCONSUME;
-  zzEXIT(zztasp1);
+  zzmatch(98);
+  zzgettok();
+  zzasp=zztasp1;
   return;
 fail:
-  zzEXIT(zztasp1);
+  zzasp=zztasp1;
   CannotContinue=true;
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
   zzresynch(setwd4, 0x4);
@@ -1404,10 +1402,11 @@ static void tclass()
   char *t=NULL; TCnode *e; int go=1,tok,totok; TermEntry *p, *term, *toterm;
   char *akaString=NULL; int save_file; int save_line;
   char *totext=NULL;
-  zzmatch(118); zzCONSUME;
+  zzmatch(118);
+  zzgettok();
   zzmatch(TokenTerm);
   t=strdup(zzlextext);
-  zzCONSUME;
+  zzgettok();
 
   e = newTCnode;
   require(e!=NULL, "cannot allocate token class node");
@@ -1425,29 +1424,29 @@ static void tclass()
   }
   else
   {
-  warn(eMsg("redefinition of tokclass or conflict w/token '%s'; ignored",t));
-  free( (char *)e );
-  go=0;
-}
+    warn(eMsg("redefinition of tokclass or conflict w/token '%s'; ignored",t));
+    free( (char *)e );
+    go=0;
+  }
   {
     zzBLOCK(zztasp2);
     zzMake0;
     {
     if ( (zztoken==114) ) {
-      zzmatch(114); zzCONSUME;
+      zzmatch(114); zzgettok();
       zzmatch(QuotedTerm);
       akaString=strdup(StripQuotes(zzlextext));
       save_file=CurFile;save_line=zzline;
-      zzCONSUME;
+      zzgettok();
 
-      zzmatch(115); zzCONSUME;
+      zzmatch(115); zzgettok();
     }
     else {
-      if ( (zztoken==102) ) {
+      if (zztoken==102) {
       }
       else {zzFAIL(1,zzerr17,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
     }
-    zzEXIT(zztasp2);
+    zzasp=zztasp2;
     }
   }
 
@@ -1461,13 +1460,13 @@ static void tclass()
       /* MR23 */            };
     /* MR23 */          };
   /* MR23 */
-  zzmatch(102); zzCONSUME;
+  zzmatch(102); zzgettok();
   {
     zzBLOCK(zztasp2);
     int zzcnt=1;
     zzMake0;
     {
-    do {
+     do {
       {
         zzBLOCK(zztasp3);
         zzMake0;
@@ -1482,14 +1481,15 @@ static void tclass()
             }
             else {t=strdup(zzlextext); tok=addTname(zzlextext);}
           }
-          zzCONSUME;
+          zzgettok();
 
           {
             zzBLOCK(zztasp4);
             zzMake0;
             {
-            if ( (zztoken==119) ) {
-              zzmatch(119); zzCONSUME;
+            if (zztoken==119) {
+              zzmatch(119);
+	      zzgettok();
               zzmatch(TokenTerm);
               if ( go ) {
                 toterm = (TermEntry *) hash_get(Tname, zzlextext);
@@ -1500,15 +1500,14 @@ static void tclass()
                   totext=strdup(zzlextext); totok=addTname(zzlextext);
                 }
               }
- zzCONSUME;
-
+              zzgettok();
             }
             else {
               if ( (setwd4[zztoken]&0x8) ) {
               }
               else {zzFAIL(1,zzerr18,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
             }
-            zzEXIT(zztasp4);
+            zzasp=zztasp4;
             }
           }
         }
@@ -1523,12 +1522,12 @@ static void tclass()
               }
               else {t=strdup(zzlextext); tok=addTexpr(zzlextext);}
             }
-            zzCONSUME;
+            zzgettok();
 
           }
           else {zzFAIL(1,zzerr19,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
         }
-        zzEXIT(zztasp3);
+        zzasp=zztasp3;
         }
       }
       if ( go ) {
@@ -1541,16 +1540,17 @@ static void tclass()
         }
         totext=NULL;
       }
-      zzLOOP(zztasp2);
-    } while ( (setwd4[zztoken]&0x10) );
-    zzEXIT(zztasp2);
+      zzasp=zztasp2;
+    } while (setwd4[zztoken]&0x10);
+    zzasp=zztasp2;
     }
   }
-  zzmatch(98); zzCONSUME;
-  zzEXIT(zztasp1);
+  zzmatch(98);
+  zzgettok();
+  zzasp=zztasp1;
   return;
 fail:
-  zzEXIT(zztasp1);
+  zzasp=zztasp1;
   CannotContinue=true;
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
   zzresynch(setwd4, 0x20);
@@ -1567,7 +1567,7 @@ static void token()
   char *akaString=NULL; TermEntry *te;int save_file=0,save_line=0;
   zzmatch(120);
   tokenActionActive=1;
-  zzCONSUME;
+  zzgettok();
 
   {
     zzBLOCK(zztasp2);
@@ -1576,50 +1576,53 @@ static void token()
     if ( (zztoken==TokenTerm) ) {
       zzmatch(TokenTerm);
       t=strdup(zzlextext);
-      zzCONSUME;
+      zzgettok();
 
       {
         zzBLOCK(zztasp3);
         zzMake0;
 
-        if ( (zztoken==114) ) {
-          zzmatch(114); zzCONSUME;
+        if (zztoken==114) {
+          zzmatch(114);
+	  zzgettok();
           zzmatch(QuotedTerm);
           akaString=strdup(StripQuotes(zzlextext));
           save_file=CurFile;
           save_line=zzline;
-          zzCONSUME;
+          zzgettok();
 
-          zzmatch(115); zzCONSUME;
+          zzmatch(115);
+	  zzgettok();
         }
         else if ( !(setwd4[zztoken]&0x40) ) {
             zzFAIL(1,zzerr20,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk);
             goto fail;
         }
-        zzEXIT(zztasp3);
+        zzasp=zztasp3;
       }
       {
         zzBLOCK(zztasp3);
         zzMake0;
 
-        if ( (zztoken==121) ) {
-          zzmatch(121); zzCONSUME;
+        if (zztoken==121) {
+          zzmatch(121);
+	  zzgettok();
           zzmatch(122);
           tnum = atoi(zzlextext);
-          zzCONSUME;
+          zzgettok();
         }
         else if ( !(setwd4[zztoken]&0x80) ) {
           zzFAIL(1,zzerr21,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk);
           goto fail;
         }
-        zzEXIT(zztasp3);
+        zzasp=zztasp3;
       }
     }
     else if ( !(setwd5[zztoken]&0x1) ) {
       zzFAIL(1,zzerr22,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk);
       goto fail;
     }
-    zzEXIT(zztasp2);
+    zzasp=zztasp2;
     }
   }
   {
@@ -1629,13 +1632,13 @@ static void token()
     if ( (zztoken==QuotedTerm) ) {
       zzmatch(QuotedTerm);
       e=strdup(zzlextext);
-      zzCONSUME;
+      zzgettok();
     } else if ( !(setwd5[zztoken]&0x2) ) {
       zzFAIL(1,zzerr23,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk);
       goto fail;
     }
 
-    zzEXIT(zztasp2);
+    zzasp=zztasp2;
   }
   {
     zzBLOCK(zztasp2);
@@ -1647,25 +1650,26 @@ static void token()
       a = (char *) calloc(strlen(zzlextext)+1, sizeof(char));
       require(a!=NULL, "rule token: cannot allocate action");
       strcpy(a, zzlextext);
-      zzCONSUME;
+      zzgettok();
     }
     else if ( !(setwd5[zztoken]&0x4) ) {
       zzFAIL(1,zzerr24,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk);
       goto fail;
     }
-    zzEXIT(zztasp2);
+    zzasp=zztasp2;
   }
   {
     zzBLOCK(zztasp2);
     zzMake0;
 
-    if ( (zztoken==107) ) {
-      zzmatch(107); zzCONSUME;
+    if (zztoken==107) {
+      zzmatch(107);
+      zzgettok();
     } else if ( !(setwd5[zztoken]&0x8) ) {
       zzFAIL(1,zzerr25,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk);
       goto fail;
     }
-    zzEXIT(zztasp2);
+    zzasp=zztasp2;
   }
   chkToken(t, e, a, tnum);
   if (t != NULL) {
@@ -1681,10 +1685,10 @@ static void token()
       };
     };
   };
-  zzEXIT(zztasp1);
+  zzasp=zztasp1;
   return;
 fail:
-  zzEXIT(zztasp1);
+  zzasp=zztasp1;
   CannotContinue=true;
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
   zzresynch(setwd5, 0x10);
@@ -1741,21 +1745,21 @@ static void block(set *toksrefd, set *rulesrefd)
         /* MR7 *****    CurAltStart->exception_label = eg->altID;           *****/
         list_add(&CurExGroups, (void *)eg);
       }
-      zzLOOP(zztasp2);
+      zzasp=zztasp2;
     }
-    zzEXIT(zztasp2);
+    zzasp=zztasp2;
     }
   }
   CurAltNum++;
-  /* MR23 */    CurAltNum_array[BlkLevel] = CurAltNum;
+  CurAltNum_array[BlkLevel] = CurAltNum;
   {
     zzBLOCK(zztasp2);
     zzMake0;
     {
-    while ( (zztoken==123) ) {
+    while (zztoken==123) {
       zzmatch(123);
       inAlt=1;
- zzCONSUME;
+      zzgettok();
 
       alt( toksrefd,rulesrefd );
       g = Or(g, zzaArg(zztasp2,2));
@@ -1765,7 +1769,7 @@ static void block(set *toksrefd, set *rulesrefd)
         zzBLOCK(zztasp3);
         zzMake0;
         {
-        while ( (zztoken==133) ) {
+        while (zztoken==133) {
            eg  = exception_group();
 
 
@@ -1774,24 +1778,24 @@ static void block(set *toksrefd, set *rulesrefd)
             /* MR7 *****    CurAltStart->exception_label = eg->altID;           *****/
             list_add(&CurExGroups, (void *)eg);
           }
-          zzLOOP(zztasp3);
+          zzasp=zztasp3;
         }
-        zzEXIT(zztasp3);
+        zzasp=zztasp3;
         }
       }
       CurAltNum++;
-      /* MR23 */        CurAltNum_array[BlkLevel] = CurAltNum;
-      zzLOOP(zztasp2);
+      CurAltNum_array[BlkLevel] = CurAltNum;
+      zzasp=zztasp2;
     }
-    zzEXIT(zztasp2);
+    zzasp=zztasp2;
     }
   }
   zzaArg(zztasp1,0) = b;
   attribsRefdFromAction = saveblah; inAlt = saveinalt;
-  zzEXIT(zztasp1);
+  zzasp=zztasp1;
   return;
 fail:
-  zzEXIT(zztasp1);
+  zzasp=zztasp1;
   CannotContinue=true;
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
   zzresynch(setwd5, 0x20);
@@ -1818,22 +1822,20 @@ static void alt(set * toksrefd,set * rulesrefd)
     if ( (zztoken==88) ) {
       zzmatch(88);
       use_def_MT_handler = 1;
- zzCONSUME;
-
+      zzgettok();
     }
     else {
       if ( (setwd5[zztoken]&0x40) ) {
       }
       else {zzFAIL(1,zzerr26,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
     }
-    zzEXIT(zztasp2);
+    zzasp=zztasp2;
     }
   }
   {
     zzBLOCK(zztasp2);
     zzMake0;
     {
-    ;
     while ( (setwd5[zztoken]&0x80) ) {
       {
         zzBLOCK(zztasp3);
@@ -1843,15 +1845,14 @@ static void alt(set * toksrefd,set * rulesrefd)
         if ( (zztoken==124) ) {
           zzmatch(124);
           old_not=1;
- zzCONSUME;
-
+          zzgettok();
         }
         else {
           if ( (setwd6[zztoken]&0x1) ) {
           }
           else {zzFAIL(1,zzerr27,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
         }
-        zzEXIT(zztasp3);
+        zzasp=zztasp3;
         }
       }
        node  = element( old_not, first_on_line, use_def_MT_handler );
@@ -1876,9 +1877,9 @@ static void alt(set * toksrefd,set * rulesrefd)
           }
         }
       }
-      zzLOOP(zztasp2);
+      zzasp=zztasp2;
     }
-    zzEXIT(zztasp2);
+    zzasp=zztasp2;
     }
   }
   if ( n == 0 ) g = emptyAlt();
@@ -1907,10 +1908,10 @@ if ( GenCC ) {
 set_free(elems);
 set_free(attribsRefdFromAction);
 inAlt = 0;
-  zzEXIT(zztasp1);
+  zzasp=zztasp1;
   return;
 fail:
-  zzEXIT(zztasp1);
+  zzasp=zztasp1;
   CannotContinue=true;
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
   zzresynch(setwd6, 0x2);
@@ -1928,7 +1929,7 @@ static LabelEntry *element_label()
   TermEntry *t=NULL; LabelEntry *l=NULL; RuleEntry *r=NULL; char *lab;
   zzmatch(LABEL);
   lab = strdup(zzlextext);
-  zzCONSUME;
+  zzgettok();
 
 
   UsedNewStyleLabel = 1;
@@ -1961,11 +1962,12 @@ static LabelEntry *element_label()
   _retv = NULL;
 }
 }
-  zzmatch(106); zzCONSUME;
-  zzEXIT(zztasp1);
+  zzmatch(106);
+  zzgettok();
+  zzasp=zztasp1;
   return _retv;
 fail:
-  zzEXIT(zztasp1);
+  zzasp=zztasp1;
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
   zzresynch(setwd6, 0x4);
   return _retv;
@@ -1992,13 +1994,13 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
   LabelEntry *label=NULL;
   int predMsgDone=0;
   int semDepth=0;
-  int   ampersandStyle;
-  int   height;         /* MR11 */
-  int   equal_height;   /* MR11 */
+  int ampersandStyle;
+  int height;
+  int equal_height;
 
-          char* pFirstSetSymbol = NULL; /* MR21 */
+  char* pFirstSetSymbol = NULL;
 
-      _retv = NULL;
+  _retv = NULL;
   if ( (setwd6[zztoken]&0x8) ) {
     {
       zzBLOCK(zztasp2);
@@ -2013,7 +2015,7 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
         }
         else {zzFAIL(1,zzerr28,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
       }
-      zzEXIT(zztasp2);
+      zzasp=zztasp2;
       }
     }
     {
@@ -2040,14 +2042,15 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
             label->elem = (Node *)p;
           }
         }
- zzCONSUME;
+        zzgettok();
 
         {
           zzBLOCK(zztasp3);
           zzMake0;
           {
-          if ( (zztoken==119) ) {
-            zzmatch(119); zzCONSUME;
+          if (zztoken==119) {
+            zzmatch(119);
+	    zzgettok();
             {
               zzBLOCK(zztasp4);
               zzMake0;
@@ -2055,19 +2058,17 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
               if ( (zztoken==QuotedTerm) ) {
                 zzmatch(QuotedTerm);
                 if ( p!=NULL ) setUpperRange(p, zzlextext);
- zzCONSUME;
-
+                zzgettok();
               }
               else {
                 if ( (zztoken==TokenTerm) ) {
                   zzmatch(TokenTerm);
                   if ( p!=NULL ) setUpperRange(p, zzlextext);
- zzCONSUME;
-
+                  zzgettok();
                 }
                 else {zzFAIL(1,zzerr29,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
               }
-              zzEXIT(zztasp4);
+              zzasp=zztasp4;
               }
             }
           }
@@ -2076,7 +2077,7 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
             }
             else {zzFAIL(1,zzerr30,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
           }
-          zzEXIT(zztasp3);
+          zzasp=zztasp3;
           }
         }
 
@@ -2086,51 +2087,48 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
           zzBLOCK(zztasp3);
           zzMake0;
           {
-          if ( (zztoken==125) ) {
+          if (zztoken==125) {
             zzmatch(125);
             if ( p!=NULL ) p->astnode=ASTroot;
- zzCONSUME;
-
+	    zzgettok(); 
           }
           else {
-            if ( (setwd6[zztoken]&0x40) ) {
+            if (setwd6[zztoken]&0x40) {
               if ( p!=NULL ) p->astnode=ASTchild;
             }
             else {
-              if ( (zztoken==103) ) {
+              if (zztoken==103) {
                 zzmatch(103);
                 if ( p!=NULL ) p->astnode=ASTexclude;
- zzCONSUME;
-
+                zzgettok();
               }
               else {zzFAIL(1,zzerr31,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
             }
           }
-          zzEXIT(zztasp3);
+          zzasp=zztasp3;
           }
         }
         {
           zzBLOCK(zztasp3);
           zzMake0;
           {
-          if ( (zztoken==88) ) {
+          if (zztoken==88) {
             zzmatch(88);
             local_use_def_MT_handler = 1;
- zzCONSUME;
-
+            zzgettok();
           }
           else {
-            if ( (setwd6[zztoken]&0x80) ) {
+            if (setwd6[zztoken]&0x80) {
             }
             else {zzFAIL(1,zzerr32,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
           }
-          zzEXIT(zztasp3);
+          zzasp=zztasp3;
           }
         }
 
         if ( p!=NULL &&  first_on_line ) {
           CurAltStart = (Junction *)zzaRet.left;
-          altAdd(CurAltStart);                                 /* MR7 */
+          altAdd(CurAltStart);
           p->altstart = CurAltStart;
         }
         if ( p!=NULL )
@@ -2154,88 +2152,84 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
               label->elem = (Node *)p;
             }
           }
- zzCONSUME;
-
+          zzgettok();
           {
             zzBLOCK(zztasp3);
             zzMake0;
             {
-            if ( (zztoken==119) ) {
-              zzmatch(119); zzCONSUME;
+            if (zztoken==119) {
+              zzmatch(119);
+	      zzgettok();
               {
                 zzBLOCK(zztasp4);
                 zzMake0;
                 {
-                if ( (zztoken==QuotedTerm) ) {
+                if (zztoken==QuotedTerm) {
                   zzmatch(QuotedTerm);
                   if ( p!=NULL ) setUpperRange(p, zzlextext);
- zzCONSUME;
-
+                  zzgettok();
                 }
                 else {
-                  if ( (zztoken==TokenTerm) ) {
+                  if (zztoken==TokenTerm) {
                     zzmatch(TokenTerm);
                     if ( p!=NULL ) setUpperRange(p, zzlextext);
- zzCONSUME;
-
+                    zzgettok();
                   }
                   else {zzFAIL(1,zzerr33,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
                 }
-                zzEXIT(zztasp4);
+                zzasp=zztasp4;
                 }
               }
             }
             else {
-              if ( (setwd7[zztoken]&0x1) ) {
+              if (setwd7[zztoken]&0x1) {
               }
               else {zzFAIL(1,zzerr34,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
             }
-            zzEXIT(zztasp3);
+            zzasp=zztasp3;
             }
           }
           {
             zzBLOCK(zztasp3);
             zzMake0;
             {
-            if ( (zztoken==125) ) {
+            if (zztoken==125) {
               zzmatch(125);
               if ( p!=NULL ) p->astnode=ASTroot;
- zzCONSUME;
-
+              zzgettok();
             }
             else {
-              if ( (setwd7[zztoken]&0x2) ) {
+              if (setwd7[zztoken]&0x2) {
                 if ( p!=NULL ) p->astnode=ASTchild;
               }
               else {
-                if ( (zztoken==103) ) {
+                if (zztoken==103) {
                   zzmatch(103);
                   if ( p!=NULL ) p->astnode=ASTexclude;
- zzCONSUME;
+                  zzgettok();
 
                 }
                 else {zzFAIL(1,zzerr35,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
               }
             }
-            zzEXIT(zztasp3);
+            zzasp=zztasp3;
             }
           }
           {
             zzBLOCK(zztasp3);
             zzMake0;
             {
-            if ( (zztoken==88) ) {
+            if (zztoken==88) {
               zzmatch(88);
               local_use_def_MT_handler = 1;
- zzCONSUME;
-
+              zzgettok();
             }
             else {
-              if ( (setwd7[zztoken]&0x4) ) {
+              if (setwd7[zztoken]&0x4) {
               }
               else {zzFAIL(1,zzerr36,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
             }
-            zzEXIT(zztasp3);
+            zzasp=zztasp3;
             }
           }
 
@@ -2244,7 +2238,7 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
 
           if (  first_on_line ) {
             CurAltStart = (Junction *)zzaRet.left;
-            altAdd(CurAltStart);                                 /* MR7 */
+            altAdd(CurAltStart);
             p->altstart = CurAltStart;
           }
           if ( p!=NULL )
@@ -2256,33 +2250,31 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
             if (  old_not ) warn("~ WILDCARD is an undefined operation (implies 'nothing')");
             zzmatch(WildCard);
             zzaRet = buildWildCard(zzlextext); p=((TokNode *)((Junction *)zzaRet.left)->p1);
- zzCONSUME;
+            zzgettok();
 
             {
               zzBLOCK(zztasp3);
               zzMake0;
               {
-              if ( (zztoken==125) ) {
+              if (zztoken==125) {
                 zzmatch(125);
                 p->astnode=ASTroot;
- zzCONSUME;
-
+                zzgettok();
               }
               else {
                 if ( (setwd7[zztoken]&0x8) ) {
                   p->astnode=ASTchild;
                 }
                 else {
-                  if ( (zztoken==103) ) {
+                  if (zztoken==103) {
                     zzmatch(103);
                     p->astnode=ASTexclude;
- zzCONSUME;
-
+                    zzgettok();
                   }
                   else {zzFAIL(1,zzerr37,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
                 }
               }
-              zzEXIT(zztasp3);
+              zzasp=zztasp3;
               }
             }
             list_add(&MetaTokenNodes, (void *)p);
@@ -2299,62 +2291,62 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
             _retv = (Node *)p;
           }
           else {
-            if ( (zztoken==NonTerminal) ) {
+            if (zztoken==NonTerminal) {
               if (  old_not ) warn("~ NONTERMINAL is an undefined operation");
               zzmatch(NonTerminal);
               zzaRet = buildRuleRef(zzlextext);
- zzCONSUME;
+              zzgettok();
 
               {
                 zzBLOCK(zztasp3);
                 zzMake0;
                 {
-                if ( (zztoken==103) ) {
+                if (zztoken==103) {
                   zzmatch(103);
                   q = (RuleRefNode *) ((Junction *)zzaRet.left)->p1;
                   q->astnode=ASTexclude;
- zzCONSUME;
+		  zzgettok();
 
                 }
                 else {
-                  if ( (setwd7[zztoken]&0x10) ) {
+                  if (setwd7[zztoken]&0x10) {
                   }
                   else {zzFAIL(1,zzerr38,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
                 }
-                zzEXIT(zztasp3);
+                zzasp=zztasp3;
                 }
               }
               {
                 zzBLOCK(zztasp3);
                 zzMake0;
                 {
-                if ( (setwd7[zztoken]&0x20) ) {
+                if (setwd7[zztoken]&0x20) {
                   {
                     zzBLOCK(zztasp4);
                     zzMake0;
                     {
-                    if ( (zztoken==104) ) {
-                      zzmatch(104); zzCONSUME;
+                    if (zztoken==104) {
+                      zzmatch(104);
+		      zzgettok();
                     }
                     else {
                       if ( (zztoken==PassAction) ) {
                       }
                       else {zzFAIL(1,zzerr39,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
                     }
-                    zzEXIT(zztasp4);
+                    zzasp=zztasp4;
                     }
                   }
                   zzmatch(PassAction);
                   addParm(((Junction *)zzaRet.left)->p1, zzlextext);
- zzCONSUME;
-
+                  zzgettok();
                 }
                 else {
-                  if ( (setwd7[zztoken]&0x40) ) {
+                  if (setwd7[zztoken]&0x40) {
                   }
                   else {zzFAIL(1,zzerr40,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
                 }
-                zzEXIT(zztasp3);
+                zzasp=zztasp3;
                 }
               }
               rr=(RuleRefNode *) ((Junction *)zzaRet.left)->p1;
@@ -2363,23 +2355,23 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
                 zzMake0;
                 {
                 char *a;
-                if ( (zztoken==105) ) {
-                  zzmatch(105); zzCONSUME;
+                if (zztoken==105) {
+                  zzmatch(105);
+		  zzgettok();
                   zzmatch(PassAction);
 
                   a = (char *) calloc(strlen(zzlextext)+1, sizeof(char));
                   require(a!=NULL, "rule element: cannot allocate assignment");
                   strcpy(a, zzlextext);
                   rr->assign = a;
- zzCONSUME;
-
+                  zzgettok();
                 }
                 else {
-                  if ( (setwd7[zztoken]&0x80) ) {
+                  if (setwd7[zztoken]&0x80) {
                   }
                   else {zzFAIL(1,zzerr41,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
                 }
-                zzEXIT(zztasp3);
+                zzasp=zztasp3;
                 }
               }
 
@@ -2398,56 +2390,55 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
           }
         }
       }
-      zzEXIT(zztasp2);
+      zzasp=zztasp2;
       }
     }
   }
   else {
-    if ( (zztoken==Action) ) {
+    if (zztoken==Action) {
       if (  old_not ) warn("~ ACTION is an undefined operation");
       zzmatch(Action);
       zzaArg(zztasp1,0) = buildAction(zzlextext,action_file,action_line, 0);
- zzCONSUME;
+      zzgettok();
 
-      if (  first_on_line ) {                                /* MR7 */
+      if (  first_on_line ) {
         CurAltStart = (Junction *)zzaArg(zztasp1,0 ).left;                   /* MR7 */
-        altAdd(CurAltStart);                                 /* MR7 */
-      };
+        altAdd(CurAltStart);
+      }
       _retv = (Node *) ((Junction *)zzaArg(zztasp1,0 ).left)->p1;
     }
     else {
-      if ( (zztoken==Pred) ) {
+      if (zztoken==Pred) {
         if (  old_not ) warn("~ SEMANTIC-PREDICATE is an undefined operation");
         zzmatch(Pred);
         zzaArg(zztasp1,0) = buildAction(zzlextext,action_file,action_line, 1);
- zzCONSUME;
+	zzgettok();
 
         act = (ActionNode *) ((Junction *)zzaArg(zztasp1,0 ).left)->p1;
-        if (numericActionLabel) {             /* MR10 */
-          list_add(&NumericPredLabels,act);   /* MR10 */
-          numericActionLabel=0;               /* MR10 */
-        };                                    /* MR10 */
+        if (numericActionLabel) {
+          list_add(&NumericPredLabels,act);
+          numericActionLabel=0;
+        }
         {
           zzBLOCK(zztasp2);
           zzMake0;
           {
           char *a;
-          if ( (zztoken==PassAction) ) {
+          if (zztoken==PassAction) {
             zzmatch(PassAction);
 
             a = (char *) calloc(strlen(zzlextext)+1, sizeof(char));
             require(a!=NULL, "rule element: cannot allocate predicate fail action");
             strcpy(a, zzlextext);
             act->pred_fail = a;
- zzCONSUME;
-
+            zzgettok();
           }
           else {
             if ( (setwd8[zztoken]&0x1) ) {
             }
             else {zzFAIL(1,zzerr43,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
           }
-          zzEXIT(zztasp2);
+          zzasp=zztasp2;
           }
         }
         if (  first_on_line ) {                                /* MR7 */
@@ -2461,60 +2452,60 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
           if (  old_not ) warn("~ BLOCK is an undefined operation");
           BlkLevel++;
           if (BlkLevel >= MAX_BLK_LEVEL) antlr_fatal("Blocks nested too deeply");
-          /* MR23 */    CurBlockID_array[BlkLevel] = CurBlockID;
-          /* MR23 */    CurAltNum_array[BlkLevel] = CurAltNum;
+          CurBlockID_array[BlkLevel] = CurBlockID;
+          CurAltNum_array[BlkLevel] = CurAltNum;
           {
             zzBLOCK(zztasp2);
             zzMake0;
             {
-            if ( (zztoken==Pragma) ) {
-              zzmatch(Pragma); zzCONSUME;
+            if (zztoken==Pragma) {
+              zzmatch(Pragma);
+	      zzgettok();
               {
                 zzBLOCK(zztasp3);
                 zzMake0;
                 {
-                if ( (zztoken==126) ) {
+                if (zztoken==126) {
                   zzmatch(126);
                   approx=LL_k;
- zzCONSUME;
-
+                  zzgettok();
                 }
                 else {
-                  if ( (zztoken==127) ) {
+                  if (zztoken==127) {
                     zzmatch(127);
                     approx = 1;
- zzCONSUME;
-
+                    zzgettok();
                   }
                   else {
-                    if ( (zztoken==128) ) {
+                    if (zztoken==128) {
                       zzmatch(128);
                       approx = 2;
- zzCONSUME;
-
+                      zzgettok();
                     }
                     else {zzFAIL(1,zzerr44,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
                   }
                 }
-                zzEXIT(zztasp3);
+                zzasp=zztasp3;
                 }
               }
             }
             else {
-              if ( (setwd8[zztoken]&0x4) ) {
+              if (setwd8[zztoken]&0x4) {
               }
               else {zzFAIL(1,zzerr45,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
             }
-            zzEXIT(zztasp2);
+            zzasp=zztasp2;
             }
           }
           {
             zzBLOCK(zztasp2);
             zzMake0;
             {
-            if ( (zztoken==FirstSetSymbol) ) {
-              zzmatch(FirstSetSymbol); zzCONSUME;
-              zzmatch(114); zzCONSUME;
+            if (zztoken==FirstSetSymbol) {
+              zzmatch(FirstSetSymbol);
+	      zzgettok();
+              zzmatch(114);
+	      zzgettok();
               {
                 zzBLOCK(zztasp3);
                 zzMake0;
@@ -2522,77 +2513,71 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
                 if ( (zztoken==NonTerminal) ) {
                   zzmatch(NonTerminal);
 
-                  /* MR21 */                     pFirstSetSymbol = (char *) calloc(strlen(zzlextext)+1,
-                  /* MR21 */                                                    sizeof(char));
-                  /* MR21 */                          require(pFirstSetSymbol!=NULL,
-                  /* MR21 */                                  "cannot allocate first set name");
-                  /* MR21 */                          strcpy(pFirstSetSymbol, zzlextext);
-                  /* MR21 */
- zzCONSUME;
+                  pFirstSetSymbol = (char *) calloc(strlen(zzlextext)+1, sizeof(char));
+                  require(pFirstSetSymbol!=NULL, "cannot allocate first set name");
+                  strcpy(pFirstSetSymbol, zzlextext);
 
+                  zzgettok();
                 }
                 else {
                   if ( (zztoken==TokenTerm) ) {
                     zzmatch(TokenTerm);
 
-                    /* MR21 */                      pFirstSetSymbol = (char *) calloc(strlen(zzlextext)+1,
-                    /* MR21 */                                                        sizeof(char));
-                    /* MR21 */                      require(pFirstSetSymbol!=NULL,
-                    /* MR21 */                              "cannot allocate first set name");
-                    /* MR21 */                      strcpy(pFirstSetSymbol, zzlextext);
-                    /* MR21 */
- zzCONSUME;
+                    pFirstSetSymbol = (char *) calloc(strlen(zzlextext)+1, sizeof(char));
+                    require(pFirstSetSymbol!=NULL, "cannot allocate first set name");
+                    strcpy(pFirstSetSymbol, zzlextext);
 
+                    zzgettok();
                   }
                   else {zzFAIL(1,zzerr46,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
                 }
-                zzEXIT(zztasp3);
+                zzasp=zztasp3;
                 }
               }
-              zzmatch(115); zzCONSUME;
+              zzmatch(115);
+	      zzgettok();
             }
             else {
               if ( (setwd8[zztoken]&0x8) ) {
               }
               else {zzFAIL(1,zzerr47,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
             }
-            zzEXIT(zztasp2);
+            zzasp=zztasp2;
             }
           }
           {
             zzBLOCK(zztasp2);
             zzMake0;
             {
-            if ( (zztoken==114) ) {
-              zzmatch(114); zzCONSUME;
+            if (zztoken==114) {
+              zzmatch(114);
+	      zzgettok();
               block( &toksrefd,&rulesrefd );
               zzmatch(115);
               blk = zzaRet = zzaArg(zztasp2,2);
-              /* MR23 */      CurBlockID_array[BlkLevel] = (-1);
-              /* MR23 */      CurAltNum_array[BlkLevel] = (-1);
+              CurBlockID_array[BlkLevel] = (-1);
+              CurAltNum_array[BlkLevel] = (-1);
               --BlkLevel;
-	      zzCONSUME;
-
+	      zzgettok();
               {
                 zzBLOCK(zztasp3);
                 zzMake0;
                 {
-                if ( (zztoken==129) ) {
+                if (zztoken==129) {
                   zzmatch(129);
                   zzaRet = makeLoop(zzaRet,approx,pFirstSetSymbol);
-                  zzCONSUME;
-
+                  zzgettok();
                 }
                 else {
-                  if ( (zztoken==130) ) {
+                  if (zztoken==130) {
                     zzmatch(130);
                     zzaRet = makePlus(zzaRet,approx,pFirstSetSymbol);
-                    zzCONSUME;
-
+                    zzgettok();
                   }
                   else {
-                    if ( (zztoken==131) ) {
-                      zzmatch(131); zzCONSUME;
+                    if (zztoken==131) {
+                      zzmatch(131);
+		      zzgettok();
                       {
                         zzBLOCK(zztasp4);
                         zzMake0;
@@ -2602,34 +2587,32 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
                             zzBLOCK(zztasp5);
                             zzMake0;
                             {
-                            if ( (zztoken==132) ) {
+                            if (zztoken==132) {
                               zzmatch(132);
                               ampersandStyle=0;
-                              zzCONSUME;
-
+                              zzgettok();
                             }
                             else {
-                              if ( (zztoken==113) ) {
+                              if (zztoken==113) {
                                 zzmatch(113);
                                 ampersandStyle=1;
-                                zzCONSUME;
-
+                                zzgettok();
                               }
                               else {zzFAIL(1,zzerr48,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
                             }
-                            zzEXIT(zztasp5);
+                            zzasp=zztasp5;
                             }
                           }
                           zzmatch(Pred);
                           zzaRet = buildAction(zzlextext,action_file,action_line,1);
-                          zzCONSUME;
+                          zzgettok();
 
                           act = (ActionNode *) ((Junction *)zzaRet.left)->p1;
                           semDepth=predicateLookaheadDepth(act);
-                          if (numericActionLabel) {             /* MR10 */
-                            list_add(&NumericPredLabels,act);   /* MR10 */
-                            numericActionLabel=0;               /* MR10 */
-                          };                                    /* MR10 */
+                          if (numericActionLabel) {
+                            list_add(&NumericPredLabels,act);
+                            numericActionLabel=0;
+                          }
                           {
                             zzBLOCK(zztasp5);
                             zzMake0;
@@ -2642,21 +2625,20 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
                               require(a!=NULL, "rule element: cannot allocate predicate fail action");
                               strcpy(a, zzlextext);
                               act->pred_fail = a;
-                              zzCONSUME;
-
+                              zzgettok();
                             }
                             else {
                               if ( (setwd8[zztoken]&0x20) ) {
                               }
                               else {zzFAIL(1,zzerr49,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
                             }
-                            zzEXIT(zztasp5);
+                            zzasp=zztasp5;
                             }
                           }
-                          if ( first_on_line) {                      /* MR7 */
-                            CurAltStart=(Junction *)zzaRet.left;         /* MR7 */
-                            altAdd(CurAltStart);                     /* MR7 */
-                          };
+                          if ( first_on_line) {
+                            CurAltStart=(Junction *)zzaRet.left;
+                            altAdd(CurAltStart);
+                          }
                           _retv = (Node *)act;
 
                           pred = computePredFromContextGuard(blk,&predMsgDone);           /* MR10 */
@@ -2702,7 +2684,7 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
                           }
                           else {zzFAIL(1,zzerr50,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
                         }
-                        zzEXIT(zztasp4);
+                        zzasp=zztasp4;
                         }
                       }
                     }
@@ -2714,7 +2696,7 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
                     }
                   }
                 }
-                zzEXIT(zztasp3);
+                zzasp=zztasp3;
                 }
               }
 
@@ -2731,18 +2713,19 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
             }
             else {
               if ( (zztoken==102) ) {
-                zzmatch(102); zzCONSUME;
+                zzmatch(102);
+		zzgettok();
                 block( &toksrefd,&rulesrefd );
                 zzaRet = makeOpt(zzaArg(zztasp2,2),approx,pFirstSetSymbol);
-                /* MR23 */      CurBlockID_array[BlkLevel] = (-1);
-                /* MR23 */      CurAltNum_array[BlkLevel] = (-1);
+                CurBlockID_array[BlkLevel] = (-1);
+                CurAltNum_array[BlkLevel] = (-1);
                 --BlkLevel;
                 zzmatch(98);
 
                 ((Junction *)((Junction *)zzaRet.left)->p1)->blockid = CurBlockID;
                 ((Junction *)((Junction *)zzaRet.left)->p1)->tokrefs = toksrefd;
                 ((Junction *)((Junction *)zzaRet.left)->p1)->rulerefs = rulesrefd;
-		zzCONSUME;
+		zzgettok();
 
                 if (  first_on_line ) {                            /* MR7 */
                   CurAltStart = (Junction *) ((Junction *)((Junction *)zzaRet.left)->p1);  /* MR7 */
@@ -2752,38 +2735,34 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
               }
               else {zzFAIL(1,zzerr52,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
             }
-            zzEXIT(zztasp2);
+            zzasp=zztasp2;
             }
           }
         }
         else {
-          if ( (zztoken==129) ) {
+          if (zztoken==129) {
             zzmatch(129);
             warn("don't you want a ')' with that '*'?"); CannotContinue=true;
-            zzCONSUME;
-
+            zzgettok();
           }
           else {
-            if ( (zztoken==130) ) {
+            if (zztoken==130) {
               zzmatch(130);
               warn("don't you want a ')' with that '+'?"); CannotContinue=true;
-              zzCONSUME;
-
+              zzgettok();
             }
             else {
-              if ( (zztoken==105) ) {
+              if (zztoken==105) {
                 zzmatch(105);
                 warn("'>' can only appear after a nonterminal"); CannotContinue=true;
-                zzCONSUME;
-
+                zzgettok();
               }
               else {
-                if ( (zztoken==PassAction) ) {
+                if (zztoken==PassAction) {
                   zzmatch(PassAction);
                   warn("[...] out of context 'rule > [...]'");
                   CannotContinue=true;
-		  zzCONSUME;
-
+		  zzgettok();
                 }
                 else {zzFAIL(1,zzerr53,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
               }
@@ -2793,10 +2772,10 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
       }
     }
   }
-  zzEXIT(zztasp1);
+  zzasp=zztasp1;
   return _retv;
 fail:
-  zzEXIT(zztasp1);
+  zzasp=zztasp1;
   CannotContinue=true;
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
   zzresynch(setwd9, 0x1);
@@ -2812,10 +2791,10 @@ static void default_exception_handler()
   {
    DefaultExGroup  = exception_group();
 
-  zzEXIT(zztasp1);
+  zzasp=zztasp1;
   return;
 fail:
-  zzEXIT(zztasp1);
+  zzasp=zztasp1;
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
   zzresynch(setwd9, 0x2);
   }
@@ -2829,11 +2808,11 @@ static ExceptionGroup *exception_group()
   PCCTS_PURIFY(_retv,sizeof(ExceptionGroup *  ))
   zzMake0;
   {
-  ExceptionHandler *h; LabelEntry *label=NULL;    /* MR6 */
+  ExceptionHandler *h; LabelEntry *label=NULL;
   FoundException = 1; FoundExceptionGroup = 1;
   zzmatch(133);
   _retv = (ExceptionGroup *)calloc(1, sizeof(ExceptionGroup));
-  zzCONSUME;
+  zzgettok();
 
   {
     zzBLOCK(zztasp2);
@@ -2850,7 +2829,7 @@ static ExceptionGroup *exception_group()
       {
         err(eMsg("unknown label in exception handler: '%s'", zzlextext+1));
       }
-      zzCONSUME;
+      zzgettok();
 
     }
     else {
@@ -2858,7 +2837,7 @@ static ExceptionGroup *exception_group()
       }
       else {zzFAIL(1,zzerr54,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
     }
-    zzEXIT(zztasp2);
+    zzasp=zztasp2;
     }
   }
   {
@@ -2869,9 +2848,9 @@ static ExceptionGroup *exception_group()
        h  = exception_handler();
 
       list_add(&(_retv->handlers), (void *)h);
-      zzLOOP(zztasp2);
+      zzasp=zztasp2;
     }
-    zzEXIT(zztasp2);
+    zzasp=zztasp2;
     }
   }
   {
@@ -2879,8 +2858,10 @@ static ExceptionGroup *exception_group()
     zzMake0;
     {
     if (zztoken==134) {
-      zzmatch(134); zzCONSUME;
-      zzmatch(106); zzCONSUME;
+      zzmatch(134);
+      zzgettok();
+      zzmatch(106);
+      zzgettok();
       zzmatch(Action);
       {
         ExceptionHandler *eh = (ExceptionHandler *)
@@ -2895,7 +2876,7 @@ static ExceptionGroup *exception_group()
         strcpy(eh->signalname, "default");
         list_add(&(_retv->handlers), (void *)eh);
       }
-      zzCONSUME;
+      zzgettok();
 
     }
     else {
@@ -2903,7 +2884,7 @@ static ExceptionGroup *exception_group()
       }
       else {zzFAIL(1,zzerr55,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
     }
-    zzEXIT(zztasp2);
+    zzasp=zztasp2;
     }
   }
 
@@ -2954,10 +2935,10 @@ static ExceptionGroup *exception_group()
   /* MR7 */   if (label != NULL) {
     /* MR7 */     _retv = NULL;
     /* MR7 */   };
-  zzEXIT(zztasp1);
+  zzasp=zztasp1;
   return _retv;
 fail:
-  zzEXIT(zztasp1);
+  zzasp=zztasp1;
   CannotContinue=true;
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
   zzresynch(setwd9, 0x10);
@@ -2973,12 +2954,11 @@ static ExceptionHandler *exception_handler()
   PCCTS_PURIFY(_retv,sizeof(ExceptionHandler *  ))
   zzMake0;
   {
-  ;
   zzmatch(135);
 
   _retv = (ExceptionHandler *)calloc(1, sizeof(ExceptionHandler));
   require(_retv!=NULL, "exception: cannot allocate handler");
- zzCONSUME;
+  zzgettok();
 
   {
     zzBLOCK(zztasp2);
@@ -2990,8 +2970,7 @@ static ExceptionHandler *exception_handler()
       _retv->signalname = (char *) calloc(strlen(zzlextext)+1, sizeof(char));
       require(_retv->signalname!=NULL, "exception: cannot allocate sig name");
       strcpy(_retv->signalname, zzlextext);
- zzCONSUME;
-
+      zzgettok();
     }
     else {
       if (zztoken==TokenTerm) {
@@ -3000,15 +2979,15 @@ static ExceptionHandler *exception_handler()
         _retv->signalname = (char *) calloc(strlen(zzlextext)+1, sizeof(char));
         require(_retv->signalname!=NULL, "exception: cannot allocate sig name");
         strcpy(_retv->signalname, zzlextext);
- zzCONSUME;
-
+        zzgettok();
       }
       else {zzFAIL(1,zzerr56,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
     }
-    zzEXIT(zztasp2);
+    zzasp=zztasp2;
     }
   }
-  zzmatch(106); zzCONSUME;
+  zzmatch(106);
+  zzgettok();
   {
     zzBLOCK(zztasp2);
     zzMake0;
@@ -3020,7 +2999,7 @@ static ExceptionHandler *exception_handler()
       _retv->action = (char *) calloc(strlen(zzlextext)+1, sizeof(char));
       require(_retv->action!=NULL, "exception: cannot allocate action");
       strcpy(_retv->action, zzlextext);
- zzCONSUME;
+      zzgettok();
 
     }
     else {
@@ -3028,13 +3007,13 @@ static ExceptionHandler *exception_handler()
       }
       else {zzFAIL(1,zzerr57,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
     }
-    zzEXIT(zztasp2);
+    zzasp=zztasp2;
     }
   }
-  zzEXIT(zztasp1);
+  zzasp=zztasp1;
   return _retv;
 fail:
-  zzEXIT(zztasp1);
+  zzasp=zztasp1;
   CannotContinue=true;
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
   zzresynch(setwd9, 0x40);
@@ -3054,22 +3033,26 @@ static void enum_file(char *fname)
       zzMake0;
       {
       if (zztoken==143) {
-        zzmatch(143); zzCONSUME;
-        zzmatch(ID); zzCONSUME;
+        zzmatch(143);
+	zzgettok();
+        zzmatch(ID);
+	zzgettok();
         {
           zzBLOCK(zztasp3);
           zzMake0;
           {
           if (zztoken==149) {
-            zzmatch(149); zzCONSUME;
-            zzmatch(ID); zzCONSUME;
+            zzmatch(149);
+	    zzgettok();
+            zzmatch(ID);
+	    zzgettok();
           }
           else {
             if (setwd10[zztoken]&0x1) {
             }
             else {zzFAIL(1,zzerr58,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
           }
-          zzEXIT(zztasp3);
+          zzasp=zztasp3;
           }
         }
       }
@@ -3078,7 +3061,7 @@ static void enum_file(char *fname)
         }
         else {zzFAIL(1,zzerr59,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
       }
-      zzEXIT(zztasp2);
+      zzasp=zztasp2;
       }
     }
     {
@@ -3093,9 +3076,9 @@ static void enum_file(char *fname)
           {
           do {
             enum_def(  fname );
-            zzLOOP(zztasp3);
+            zzasp=zztasp3;
           } while (zztoken==151);
-          zzEXIT(zztasp3);
+          zzasp=zztasp3;
           }
         }
       }
@@ -3105,7 +3088,7 @@ static void enum_file(char *fname)
         }
         else {zzFAIL(1,zzerr60,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
       }
-      zzEXIT(zztasp2);
+      zzasp=zztasp2;
       }
     }
   }
@@ -3113,10 +3096,10 @@ static void enum_file(char *fname)
     zzFAIL(1,zzerr61,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk);
     goto fail; 
   }
-  zzEXIT(zztasp1);
+  zzasp=zztasp1;
   return;
 fail:
-  zzEXIT(zztasp1);
+  zzasp=zztasp1;
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
   zzresynch(setwd10, 0x4);
   }
@@ -3135,10 +3118,11 @@ static void defines(char * fname)
     zzMake0;
     {
     do {
-      zzmatch(149); zzCONSUME;
+      zzmatch(149);
+      zzgettok();
       zzmatch(ID);
       t = strdup(zzlextext);
-      zzCONSUME;
+      zzgettok();
 
       zzmatch(INT);
 
@@ -3150,27 +3134,27 @@ static void defines(char * fname)
       /* MR2 Don't let #tokdefs be confused by      */
       /* MR2   DLGminToken and DLGmaxToken          */
 
-      if ( ! isDLGmaxToken(t)) {    /* MR2 */
+      if ( ! isDLGmaxToken(t)) {
       TokenNum = v;
       if ( v>maxt ) maxt=v;
       if ( Tnum( t ) == 0 ) {
       addForcedTname( t, v );
-    } else {
-    warning("redefinition of token %s; ignored", fname, zzline, t);
-  };
-};
- zzCONSUME;
+      } else {
+      warning("redefinition of token %s; ignored", fname, zzline, t);
+      }
+    }
+    zzgettok();
 
-      zzLOOP(zztasp2);
+      zzasp=zztasp2;
     } while (zztoken==149);
-    zzEXIT(zztasp2);
+    zzasp=zztasp2;
     }
   }
   TokenNum = maxt + 1;
-  zzEXIT(zztasp1);
+  zzasp=zztasp1;
   return;
 fail:
-  zzEXIT(zztasp1);
+  zzasp=zztasp1;
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
   zzresynch(setwd10, 0x8);
   }
@@ -3183,22 +3167,26 @@ static void enum_def(char * fname)
   zzMake0;
   {
   int v= 0; int maxt=(-1); char *t;
-  zzmatch(151); zzCONSUME;
-  zzmatch(ID); zzCONSUME;
-  zzmatch(152); zzCONSUME;
+  zzmatch(151);
+  zzgettok();
+  zzmatch(ID);
+  zzgettok();
+  zzmatch(152);
+  zzgettok();
   zzmatch(ID);
   t = strdup(zzlextext);
-  zzCONSUME;
+  zzgettok();
 
   {
     zzBLOCK(zztasp2);
     zzMake0;
 
     if (zztoken==153) {
-      zzmatch(153); zzCONSUME;
+      zzmatch(153);
+      zzgettok();
       zzmatch(INT);
       v=atoi(zzlextext);
-      zzCONSUME;
+      zzgettok();
     } else if (setwd10[zztoken]&0x10) {
       v++;
     } else {
@@ -3206,10 +3194,9 @@ static void enum_def(char * fname)
       goto fail;
     }
 
-    zzEXIT(zztasp2);
+    zzasp=zztasp2;
   }
 
-  /*      fprintf(stderr, "#token %s=%d\n", t, v);*/
   TokenNum = v;
   if ( v>maxt ) maxt=v;
   if ( Tnum( t ) == 0 ) addForcedTname( t, v );
@@ -3221,89 +3208,88 @@ static void enum_def(char * fname)
     zzMake0;
     {
     while (zztoken==154) {
-      zzmatch(154); zzCONSUME;
+      zzmatch(154);
+      zzgettok();
       {
         zzBLOCK(zztasp3);
         zzMake0;
         {
         if ( (zztoken==ID)&&(isDLGmaxToken(zzlextext)) ) {
-          if (!(isDLGmaxToken(zzlextext))            ) {zzfailed_pred("  isDLGmaxToken(zzlextext)",0 /* report */, { 0; /* no user action */ } );}
-          zzmatch(ID); zzCONSUME;
+          if (!(isDLGmaxToken(zzlextext))) {
+            zzfailed_pred("  isDLGmaxToken(zzlextext)",0 /* report */, { 0; /* no user action */ } );
+          }
+          zzmatch(ID);
+	      zzgettok();
           {
             zzBLOCK(zztasp4);
             zzMake0;
-            {
+
             if (zztoken==153) {
-              zzmatch(153); zzCONSUME;
-              zzmatch(INT); zzCONSUME;
+              zzmatch(153);
+	      zzgettok();
+              zzmatch(INT);
+	      zzgettok();
+            } else if (!setwd10[zztoken]&0x20) {
+              zzFAIL(1,zzerr63,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk);
+              goto fail;
             }
-            else {
-              if (setwd10[zztoken]&0x20) {
-              }
-              else {zzFAIL(1,zzerr63,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
-            }
-            zzEXIT(zztasp4);
-            }
+            
+            zzasp=zztasp4;
           }
-        }
-        else {
-          if (zztoken==ID) {
-            zzmatch(ID);
-            t = strdup(zzlextext);
-            zzCONSUME;
+        } else if (zztoken==ID) {
+          zzmatch(ID);
+          t = strdup(zzlextext);
+          zzgettok();
 
-            {
-              zzBLOCK(zztasp4);
-              zzMake0;
-              {
-              if (zztoken==153) {
-                zzmatch(153); zzCONSUME;
-                zzmatch(INT);
-                v=atoi(zzlextext);
- zzCONSUME;
+          {
+            zzBLOCK(zztasp4);
+            zzMake0;
 
-              }
-              else {
-                if (setwd10[zztoken]&0x40) {
-                  v++;
-                }
-                else {zzFAIL(1,zzerr64,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
-              }
-              zzEXIT(zztasp4);
-              }
+            if (zztoken==153) {
+              zzmatch(153);
+              zzgettok();
+              zzmatch(INT);
+              v=atoi(zzlextext);
+              zzgettok();
+            } else if (setwd10[zztoken]&0x40) {
+              v++;
+            } else {
+              zzFAIL(1,zzerr64,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk);
+              goto fail;
             }
 
-            /*          fprintf(stderr, "#token %s=%d\n", t, v);*/
-            TokenNum = v;
-            if ( v>maxt ) maxt=v;       /* MR3 */
-            if ( Tnum( t ) == 0 ) addForcedTname( t, v );
-            else {
-              warning("redefinition of token %s; ignored", fname, zzline, t);
-            }
+            zzasp=zztasp4;
           }
+
+          TokenNum = v;
+          if ( v>maxt ) maxt=v;
+          if ( Tnum( t ) == 0 ) addForcedTname( t, v );
           else {
-            if (setwd10[zztoken]&0x80) {
-            }
-            else {zzFAIL(1,zzerr65,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+            warning("redefinition of token %s; ignored", fname, zzline, t);
           }
+        } else if (!setwd10[zztoken]&0x80) {
+          zzFAIL(1,zzerr65,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk);
+          goto fail;
         }
-        zzEXIT(zztasp3);
+        
+        zzasp=zztasp3;
         }
       }
-      zzLOOP(zztasp2);
+      zzasp=zztasp2;
     }
-    zzEXIT(zztasp2);
+    zzasp=zztasp2;
     }
   }
-  zzmatch(155); zzCONSUME;
+  zzmatch(155);
+  zzgettok();
   zzmatch(156);
   TokenNum = maxt + 1;
-  zzCONSUME;
+  zzgettok();
 
-  zzEXIT(zztasp1);
+  zzasp=zztasp1;
   return;
 fail:
-  zzEXIT(zztasp1);
+  zzasp=zztasp1;
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
   zzresynch(setwd11, 0x1);
   }
@@ -3433,8 +3419,8 @@ static int match_rexpr(char *s, char **nxt)
   s++;
   while ( *s!='"' )
   {
-    if ( *s=='\n' || *s=='\r' )                   /* MR13 */
-    warn("eoln found in regular expression");
+    if ( *s=='\n' || *s=='\r' )
+      warn("eoln found in regular expression");
     if ( *s=='\\' ) s++;
     s++;
   }

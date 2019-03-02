@@ -294,8 +294,8 @@ static void act10()
 static void act11()
 {
     zztoken = 85;
-
-    zzline++; zzmore();
+    zzline++;
+    zzmore();
 }
 
 

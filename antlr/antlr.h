@@ -78,7 +78,7 @@ void grammar();
 #define zzGuessData
 
 
-                 /* I n f i n i t e  L o o k a h e a d */
+            /* I n f i n i t e  L o o k a h e a d */
 
 
 #define zzenterANTLR(f)             \
@@ -91,9 +91,8 @@ void grammar();
             {                                            \
               zzBLOCK(zztasp1);                          \
               st;                                        \
-              zzEXIT_ANTLR(zztasp1 + 1);                 \
+              zzasp = zztasp1 + 1;                 \
             }
-
 
 
           /* A r g u m e n t  A c c e s s */
@@ -101,7 +100,7 @@ void grammar();
 #define zzaCur      (zzaStack[zzasp])
 #define zzaRet      (*zzaRetPtr)
 #define zzaArg(v,n)   zzaStack[v-n]
-#define zzREL(t)    zzasp=(t);    /* Restore state of stack */
+//#define zzREL(t)    zzasp=(t);    /* Restore state of stack */
 
 #define zzRULE    Attrib *zzaRetPtr = &(zzaStack[zzasp-1]); \
           int zzBadTok=0; char *zzBadText="";   \
@@ -109,14 +108,8 @@ void grammar();
           SetWordType *zzMissSet=NULL; int zzMissTok=0; char *zzMissText=""
 
 #define zzBLOCK(i)  int i = zzasp - 1
-#define zzEXIT(i) zzREL(i)
-#define zzEXIT_ANTLR(i) zzREL(i)           /* [i_a] added as we want this for the ANTLRx() macros */
-#define zzLOOP(i) zzREL(i)
 
-#define zzCONSUME zzgettok();
-
-           /* S t a n d a r d  S i g n a l s */
-           /* S t a n d a r d  S i g n a l s */
+            /* S t a n d a r d  S i g n a l s */
 
 #define NoSignal      0
 #define MismatchedToken   1
