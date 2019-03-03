@@ -74,7 +74,6 @@ void grammar();
 #define zzGUESS
 #define zzGUESS_FAIL
 #define zzGUESS_DONE
-#define zzNON_GUESS_MODE
 #define zzGuessData
 
 
@@ -102,7 +101,7 @@ void grammar();
 
 #define zzRULE    Attrib *zzaRetPtr = &(zzaStack[zzasp-1]); \
           int zzBadTok=0; char *zzBadText="";   \
-          int zzErrk=1,zzpf=0;                \
+          int zzErrk=1,zzpf=0;                    \
           SetWordType *zzMissSet=NULL; int zzMissTok=0; char *zzMissText=""
 
 
