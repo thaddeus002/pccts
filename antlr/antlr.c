@@ -147,7 +147,7 @@ int k, char *bad_text);
             zzenterANTLR(f);      \
             {                                            \
               int zztasp1 = zzasp - 1;                          \
-              st; /* ++zzasp; Removed MR20 G. Hobbelt */     \
+              st;      \
               /* MR20 G. Hobbelt. Kill the top' attribute (+AST stack corr.) */  \
               zzasp=zztasp1 + 1;                 \
             }
@@ -263,10 +263,11 @@ void grammar()
           zzsave_antlr_state(&st);
           zzsave_dlg_state(&dst);
           fname = strdup(zzlextext);
-          f = fopen(StripQuotes(fname), "r");
-          if ( f==NULL ) {warn(eMsg("cannot open token defs file '%s'", fname+1));}
-          else {
-            ANTLRm(enum_file(fname+1), f, PARSE_ENUM_FILE);
+          f = fopen(strip_quotes(fname), "r");
+          if ( f==NULL ) {
+            warn(eMsg("cannot open token defs file '%s'", fname));
+          } else {
+            ANTLRm(enum_file(fname), f, PARSE_ENUM_FILE);
             UserDefdTokens = 1;
           }
           zzrestore_antlr_state(&st);
@@ -1244,7 +1245,7 @@ static void error()
   e = newECnode;
   require(e!=NULL, "cannot allocate error class node");
   e->lexclass = CurrentLexClass;
-  if ( Tnum( (t=StripQuotes(t)) ) == 0 )
+  if ( Tnum( (t=strip_quotes(t)) ) == 0 )
   {
     if ( hash_get(Texpr, t) != NULL )
       warn(eMsg("errclass name conflicts with regular expression  '%s'",t));
@@ -1382,7 +1383,7 @@ static void tclass()
     if ( (zztoken==114) ) {
       zzmatch(114); zzgettok();
       zzmatch(QuotedTerm);
-      akaString=strdup(StripQuotes(zzlextext));
+      akaString=strdup(strip_quotes(zzlextext));
       save_file=CurFile;save_line=zzline;
       zzgettok();
 
@@ -1531,15 +1532,15 @@ static void token()
 
         if (zztoken==114) {
           zzmatch(114);
-	  zzgettok();
+          zzgettok();
           zzmatch(QuotedTerm);
-          akaString=strdup(StripQuotes(zzlextext));
+          akaString=strdup(strip_quotes(zzlextext));
           save_file=CurFile;
           save_line=zzline;
           zzgettok();
 
           zzmatch(115);
-	  zzgettok();
+          zzgettok();
         }
         else if ( !(setwd4[zztoken]&0x40) ) {
             zzFAIL(1,zzerr20,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk);
@@ -1553,7 +1554,7 @@ static void token()
 
         if (zztoken==121) {
           zzmatch(121);
-	  zzgettok();
+          zzgettok();
           zzmatch(122);
           tnum = atoi(zzlextext);
           zzgettok();
@@ -2971,8 +2972,9 @@ static void enum_file(char *fname)
 {
   zzRULE;
   int zztasp1 = zzasp - 1;
-  check_overflow(); --zzasp;
-  {
+  check_overflow();
+  --zzasp;
+
   if (setwd9[zztoken]&0x80) {
     {
       int zztasp2 = zzasp - 1;
@@ -2980,32 +2982,26 @@ static void enum_file(char *fname)
       {
       if (zztoken==143) {
         zzmatch(143);
-	zzgettok();
+        zzgettok();
         zzmatch(ID);
-	zzgettok();
-        {
-          int zztasp3 = zzasp - 1;
-          check_overflow(); --zzasp;
-          {
-          if (zztoken==149) {
-            zzmatch(149);
-	    zzgettok();
-            zzmatch(ID);
-	    zzgettok();
-          }
-          else {
-            if (setwd10[zztoken]&0x1) {
-            }
-            else {zzFAIL(1,zzerr58,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
-          }
-          zzasp=zztasp3;
-          }
+        zzgettok();
+
+        int zztasp3 = zzasp - 1;
+        check_overflow(); --zzasp;
+        if (zztoken==149) {
+          zzmatch(149);
+          zzgettok();
+          zzmatch(ID);
+          zzgettok();
+        } else if (!(setwd10[zztoken]&0x1)) {
+          zzFAIL(1,zzerr58,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk);
+          goto fail;
         }
-      }
-      else {
-        if (setwd10[zztoken]&0x2) {
-        }
-        else {zzFAIL(1,zzerr59,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+        zzasp=zztasp3;
+
+      } else if (!(setwd10[zztoken]&0x2)) {
+          zzFAIL(1,zzerr59,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk);
+          goto fail;
       }
       zzasp=zztasp2;
       }
@@ -3013,32 +3009,26 @@ static void enum_file(char *fname)
     {
       int zztasp2 = zzasp - 1;
       check_overflow(); --zzasp;
-      {
+
       if (zztoken==151) {
-        {
-          int zztasp3 = zzasp - 1;
-          int zzcnt=1;
-          check_overflow(); --zzasp;
-          {
-          do {
-            enum_def(  fname );
-            zzasp=zztasp3;
-          } while (zztoken==151);
+        int zztasp3 = zzasp - 1;
+        int zzcnt=1;
+        check_overflow(); --zzasp;
+        do {
+          enum_def(  fname );
           zzasp=zztasp3;
-          }
-        }
-      }
-      else {
-        if (zztoken==149) {
+        } while (zztoken==151);
+        zzasp=zztasp3;
+      } else if (zztoken==149) {
           defines(  fname );
-        }
-        else {zzFAIL(1,zzerr60,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
+      } else {
+          zzFAIL(1,zzerr60,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk);
+          goto fail;
       }
+
       zzasp=zztasp2;
-      }
     }
-  }
-  else if (zztoken!=Eof) {
+  } else if (zztoken!=Eof) {
     zzFAIL(1,zzerr61,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk);
     goto fail; 
   }
@@ -3048,16 +3038,16 @@ fail:
   zzasp=zztasp1;
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
   zzresynch(setwd10, 0x4);
-  }
 }
+
 
 static void defines(char * fname)
 {
   zzRULE;
   int zztasp1 = zzasp - 1;
   check_overflow(); --zzasp;
-  {
   int v; int maxt=(-1); char *t;
+
   {
     int zztasp2 = zzasp - 1;
     int zzcnt=1;
@@ -3073,27 +3063,21 @@ static void defines(char * fname)
       zzmatch(INT);
 
       v = atoi(zzlextext);
-      /*      fprintf(stderr, "#token %s=%d\n", t, v);*/
-
-      /* MR2 Andreas Magnusson (Andreas.Magnusson@mailbox.swipnet.se) */
-      /* MR2 Fix to bug introduced by 1.33MR1 for #tokdefs            */
-      /* MR2 Don't let #tokdefs be confused by      */
-      /* MR2   DLGminToken and DLGmaxToken          */
 
       if ( ! isDLGmaxToken(t)) {
-      TokenNum = v;
-      if ( v>maxt ) maxt=v;
-      if ( Tnum( t ) == 0 ) {
-      addForcedTname( t, v );
-      } else {
-      warning("redefinition of token %s; ignored", fname, zzline, t);
+        TokenNum = v;
+        if ( v>maxt ) maxt=v;
+        if ( Tnum( t ) == 0 ) {
+          addForcedTname( t, v );
+        } else {
+          warning("redefinition of token %s; ignored", fname, zzline, t);
+        }
       }
-    }
-    zzgettok();
+      zzgettok();
 
       zzasp=zztasp2;
     } while (zztoken==149);
-    zzasp=zztasp2;
+      zzasp=zztasp2;
     }
   }
   TokenNum = maxt + 1;
@@ -3103,7 +3087,6 @@ fail:
   zzasp=zztasp1;
   zzsyn(zzMissText, zzBadTok, (ANTLRChar *)"", zzMissSet, zzMissTok, zzErrk, zzBadText);
   zzresynch(setwd10, 0x8);
-  }
 }
 
 static void enum_def(char * fname)
@@ -3172,9 +3155,9 @@ static void enum_def(char * fname)
 
             if (zztoken==153) {
               zzmatch(153);
-	      zzgettok();
+              zzgettok();
               zzmatch(INT);
-	      zzgettok();
+              zzgettok();
             } else if (!setwd10[zztoken]&0x20) {
               zzFAIL(1,zzerr63,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk);
               goto fail;
