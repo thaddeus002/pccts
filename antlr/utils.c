@@ -13,7 +13,7 @@
 #include <ctype.h> // toupper(), isalnum()
 #include <string.h> // strlen(), strcpy()
 #include <stdlib.h> // malloc()
-#include "antlr_log.h" // requires()
+#include <stdio.h>
 #include "utils.h"
 
 
@@ -36,7 +36,10 @@ int ci_strequ(char *a, char *b)
  */
 int strmember(char *s, char *e)
 {
-    require(s != NULL && e != NULL, "strmember: NULL string");
+    if(s==NULL || e==NULL) {
+        fprintf(stderr, "strmember: NULL string\n");
+        exit(1);
+    }
 
     if (*e == '\0') return 1; /* empty string is always member */
 
@@ -57,33 +60,18 @@ int strmember(char *s, char *e)
 
 /**
  * remove the quotes from a string if there are some.
- * Given "s" yield s (same string without quotes).
- * CAUTION : This function is DESTRUCTIVE (modify s if starts with " else return s)
- * @return the modified string
- */
-char *StripQuotes(char *s)
-{
-    if (*s == '"') {
-        s[strlen(s) - 1] = '\0'; /* remove last quote */
-        return s + 1; /* return address past initial quote */
-    }
-    return s;
-}
-
-
-/**
- * remove the quotes from a string if there are some.
  * @param string the string to modify
  * @return the param "string" 
  */
 char *strip_quotes(char *string)
 {
-    if (*string == '"') {
+    if (*string == '"' && string[strlen(string)-1]=='"') {
         int i = 0;
         while(string[i]!='\0') {
             string[i] = string[i+1];
             i++;
         }
+        string[strlen(string)-1]='\0';
     }
     return string;
 }

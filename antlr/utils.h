@@ -25,12 +25,6 @@ int ci_strequ(char *a, char *b);
  */
 int strmember(char *s, char *e);
 
-/**
- * Given "s" yield s (same string without quotes).
- * CAUTION : This function is DESTRUCTIVE (modify s if starts with " else return s)
- * @return the modified string
- */
-char *StripQuotes(char *s);
 
 /**
  * remove the quotes from a string if there are some.

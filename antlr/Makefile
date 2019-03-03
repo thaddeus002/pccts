@@ -80,3 +80,6 @@ scrub: clean
 install: antlr
 	install antlr $(PREFIX)/bin
 	install antlr.1 $(PREFIX)/man/man1
+
+tests:
+	make -C test

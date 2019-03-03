@@ -1,5 +1,5 @@
 /**
- * \file anlr_log.c
+ * \file antlr_log.c
  */
 
 #include <stdio.h>
@@ -86,20 +86,20 @@ void cleanUp(void) {
  * We use 'struct _tree' not 'tree' due to a g++ 2.4.3 bug.
  */
 Tree *(*fpTraverse[NumNodeTypes+1])() = {
-  NULL,
-  tJunc,
-  tRuleRef,
-  tToken,
-  tAction
+    NULL,
+    tJunc,
+    tRuleRef,
+    tToken,
+    tAction
 };
 
 /* fpPrint[node type] == pointer to function that knows how to print that node. */
 void (*fpPrint[NumNodeTypes+1])() = {
-  NULL,
-  pJunc,
-  pRuleRef,
-  pToken,
-  pAction
+    NULL,
+    pJunc,
+    pRuleRef,
+    pToken,
+    pAction
 };
 
 /* fpReach[node type] == pointer to function that calculates FIRST set for
@@ -107,9 +107,9 @@ void (*fpPrint[NumNodeTypes+1])() = {
  * due to a g++ 2.4.3 bug.
  */
 set (*fpReach[NumNodeTypes+1])() = {
-  NULL,
-  rJunc,
-  rRuleRef,
-  rToken,
-  rAction
+    NULL,
+    rJunc,
+    rRuleRef,
+    rToken,
+    rAction
 };
