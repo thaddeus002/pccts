@@ -45,9 +45,9 @@ static int istack[MAX_INT_STACK];   /* Int stack */
 static int isp = MAX_INT_STACK;
 
 
-zzchar_t  *zzlextext; /* text of most recently matched token */
-static zzchar_t *zzbegexpr; /* beginning of last reg expr recogn. */
-static zzchar_t  *zzendexpr; /* beginning of last reg expr recogn. */
+char  *zzlextext; /* text of most recently matched token */
+static char *zzbegexpr; /* beginning of last reg expr recogn. */
+static char  *zzendexpr; /* beginning of last reg expr recogn. */
 
 int zzbufsize = 0;  /* number of characters in zzlextext */
 int zzbegcol = 0; /* column that first character of token is in*/
@@ -57,7 +57,7 @@ int zzreal_line=1;  /* line of 1st portion of token that is not skipped */
 int zzchar;   /* character to determine next state */
 int zzbufovf; /* indicates that buffer too small for text */
 int zzcharfull = 0;
-static zzchar_t *zznextpos;/* points to next available position in zzlextext*/
+static char *zznextpos;/* points to next available position in zzlextext*/
 static int  zzclass;
 
 
@@ -100,7 +100,7 @@ static int topint()
 
 int zztoken;
 static void zzadvance();
-static void zzreplstr(zzchar_t *s);
+static void zzreplstr(char *s);
 static void zzmore();
 static void zzskip();
 
@@ -5776,7 +5776,7 @@ static int zzerr_in(void);
 static int  (*zzfunc_in)(void) = zzerr_in;
 
 static FILE *zzstream_in=0;
-static zzchar_t *zzstr_in=0;
+static char *zzstr_in=0;
 static int     zzauto = 0;
 static int  zzadd_erase;
 static char   zzebuf[70];
@@ -5841,7 +5841,7 @@ void zzrdfunc( int (*f)(void) )
 }
 
 
-void zzrdstr( zzchar_t *s )
+void zzrdstr( char *s )
 {
   /* make sure that it is really set to something, otherwise just
      leave it be.
@@ -5926,9 +5926,9 @@ static void zzmore()
 
 
 /** replace the string s for the reg. expr last matched and in the buffer */
-static void zzreplstr(zzchar_t *s)
+static void zzreplstr(char *s)
 {
-  zzchar_t *l= &zzlextext[zzbufsize -1];
+  char *l= &zzlextext[zzbufsize -1];
 
   zznextpos = zzbegexpr;
   if (s){
@@ -5951,7 +5951,7 @@ void zzgettok()
 {
   register int state, newstate;
   /* last space reserved for the null char */
-  zzchar_t *lastpos;  /* MR27 Remove register since address operator used. */
+  char *lastpos;  /* MR27 Remove register since address operator used. */
 
 skip:
   zzreal_line = zzline;

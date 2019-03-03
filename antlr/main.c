@@ -43,7 +43,7 @@
 #include "generic.h"
 #include "proto.h"
 #include "constants.h"
-#include "antlr.h" // for ANTLR() and grammar()
+#include "antlr.h" // for grammar()
 #include "logger.h"
 #include "antlr_log.h"
 #include "gen.h"
@@ -56,6 +56,20 @@
 #include "fset2.h"
 #include "tokens.h"
 #include "scan.h" // for zzerr
+
+
+#define ANTLR(st, f)  zzbufsize = ZZLEXBUFSIZE; \
+            { \
+                static char zztoktext[ZZLEXBUFSIZE]; \
+                zzlextext = zztoktext; zzrdstream( f ); zzgettok();\
+            } \
+            {                                            \
+              int zztasp1 = zzasp - 1;                   \
+              st;                                        \
+              zzasp = zztasp1 + 1;                 \
+            }
+
+
 
 char  Parser_h_Name[MaxFileName+1] = "";
 char  Parser_c_Name[MaxFileName+1] = "";

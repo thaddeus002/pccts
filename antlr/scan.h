@@ -12,7 +12,6 @@
 #define __SCAN_H__
 
 #include <stdio.h>
-#include "antlr.h" // for zzchar_t
 
 // TODO mask this mode in scan.c
 #define PARSE_ENUM_FILE 11
@@ -20,17 +19,17 @@
 struct zzdlg_state {
   FILE *stream;
   int (*func_ptr)();
-  zzchar_t *str;
+  char *str;
   int auto_num;
   int add_erase;
   int lookc;
   int char_full;
   int begcol, endcol;
   int line;
-  zzchar_t *lextext, *begexpr, *endexpr;
+  char *lextext, *begexpr, *endexpr;
   int bufsize;
   int bufovf;
-  zzchar_t *nextpos;
+  char *nextpos;
   int class_num;
 };
 
@@ -41,7 +40,7 @@ extern int UsedOldStyleAttrib;
 extern int UsedNewStyleLabel;
 extern int tokenActionActive;
 
-extern zzchar_t *zzlextext; /* text of most recently matched token */
+extern char *zzlextext; /* text of most recently matched token */
 extern int zzbufsize;  /* number of characters in zzlextext */
 extern int zzline; /* line current token is on */
 
@@ -53,7 +52,7 @@ void zzrdstream( FILE *f );
 /* what function to get char from */
 void zzrdfunc( int (*f)(void) );
 
-void zzrdstr( zzchar_t *s );
+void zzrdstr( char *s );
 
 /* saves dlg state, but not what feeds dlg (such as file position) */
 void zzsave_dlg_state(struct zzdlg_state *state);

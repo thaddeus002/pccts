@@ -36,14 +36,10 @@
 #ifndef ANTLR_H
 #define ANTLR_H
 
-#include <string.h>
-#include "syn.h" // for Graph
-
 
 typedef int ANTLRTokenType;
 typedef unsigned char SetWordType;
 typedef char ANTLRChar;
-typedef Graph Attrib;
 
 void grammar();
 
@@ -56,71 +52,11 @@ void grammar();
 #define ZZLEXBUFSIZE 32000
 #endif
 
-
-
-/*  MR23            Provide more control over failed predicate action
-                    without any need for user to worry about guessing internals.
-                    _hasuseraction == 0 => no user specified error action
-                    _hasuseraction == 1 => user specified error action
-*/
-
-#define zzfailed_pred(_p,_hasuseraction,_useraction) \
-    if (_hasuseraction) { _useraction } \
-    else { fprintf(stderr, "semantic error; failed predicate: '%s'\n",_p); }
-
-            /* S t a t e  S t u f f */
-
-#define zzGUESS_BLOCK
-#define zzGUESS
-#define zzGUESS_FAIL
-#define zzGUESS_DONE
-#define zzGuessData
-
-
-            /* I n f i n i t e  L o o k a h e a d */
-
-
-#define zzenterANTLR(f)             \
-    {static char zztoktext[ZZLEXBUFSIZE]; \
-    zzlextext = zztoktext; zzrdstream( f ); zzgettok();}
-
-
-#define ANTLR(st, f)  zzbufsize = ZZLEXBUFSIZE; \
-            zzenterANTLR(f);      \
-            {                                            \
-              int zztasp1 = zzasp - 1;                   \
-              st;                                        \
-              zzasp = zztasp1 + 1;                 \
-            }
-
-
-          /* A r g u m e n t  A c c e s s */
-
-#define zzaRet      (*zzaRetPtr)
-#define zzaArg(v,n)   zzaStack[v-n]
-
-#define zzRULE    Attrib *zzaRetPtr = &(zzaStack[zzasp-1]); \
-          int zzBadTok=0; char *zzBadText="";   \
-          int zzErrk=1,zzpf=0;                    \
-          SetWordType *zzMissSet=NULL; int zzMissTok=0; char *zzMissText=""
-
-
-
-/* MR19 zzchar_t additions */
-#define zzchar_t char
-
-
-        /* E x t e r n  D e f s */
-
-extern void zzresynch(SetWordType *, SetWordType);
-extern void zzfill_inf_look(void);
-
         /* G l o b a l  V a r i a b l e s */
 
 /* Define a parser; user should do a "#parser myname" in their grammar file */
 
 extern int zztoken;
 extern int zzasp;
-extern Attrib zzaStack[];
 
 #endif
