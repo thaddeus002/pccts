@@ -127,7 +127,6 @@ int inAlt = 0;
 set attribsRefdFromAction = set_init;
 int UsedOldStyleAttrib = 0;
 int UsedNewStyleLabel = 0;
-extern char *inline_set(char *s); // antlr.c
 int tokenActionActive=0;
 
 

@@ -42,6 +42,7 @@ typedef unsigned char SetWordType;
 typedef char ANTLRChar;
 
 void grammar();
+char *inline_set(char *s);
 
             /* G u e s s  S t u f f */
 

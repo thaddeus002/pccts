@@ -94,15 +94,15 @@ int CurBlockID_array[MAX_BLK_LEVEL];
 int CurAltNum_array[MAX_BLK_LEVEL];
 
 
-static void check_overflow() {
+static void check_overflow(int line) {
     if (zzasp <= 0) {
-        fprintf(stderr, zzStackOvfMsg, __FILE__, __LINE__);
+        fprintf(stderr, zzStackOvfMsg, __FILE__, line);
         exit(1);
     }
 }
 
 
-int _zzmatch(int _t, char **zzBadText, char **zzMissText,
+static int _zzmatch(int _t, char **zzBadText, char **zzMissText,
     int *zzMissTok, int *zzBadTok,
     SetWordType **zzMissSet)
 {
@@ -112,12 +112,12 @@ int _zzmatch(int _t, char **zzBadText, char **zzMissText,
     *zzMissSet=NULL;
     return 0;
   }
-  check_overflow(); --zzasp;
+  check_overflow(__LINE__); --zzasp;
   return 1;
 }
 
 
-int _zzsetmatch(SetWordType *e, char **zzBadText, char **zzMissText,
+static int _zzsetmatch(SetWordType *e, char **zzBadText, char **zzMissText,
       int *zzMissTok, int *zzBadTok,
       SetWordType **zzMissSet,
       SetWordType *zzTokclassErrset)
@@ -128,7 +128,7 @@ int _zzsetmatch(SetWordType *e, char **zzBadText, char **zzMissText,
     *zzMissSet=zzTokclassErrset;
     return 0;
   }
-  check_overflow(); --zzasp;
+  check_overflow(__LINE__); --zzasp;
   return 1;
 }
 
@@ -156,9 +156,7 @@ static void zzrestore_antlr_state(zzantlr_state *buf)
 }
 
 static void chkToken(char *, char *, char *, int);
-
 static int isDLGmaxToken(char *Token);
-
 static int class_nest_level = 0;
 
 static void zzsyn(char *text, int tok, char *egroup, SetWordType *eset, int etok,
@@ -214,12 +212,12 @@ void grammar()
 {
   zzRULE;
   int zztasp1 = zzasp - 1;
-  check_overflow(); --zzasp;
+  check_overflow(__LINE__); --zzasp;
   {
   Graph g;
   {
     int zztasp2 = zzasp - 1;
-    check_overflow(); --zzasp;
+    check_overflow(__LINE__); --zzasp;
 
     for (;;) {
       if (!(setwd1[zztoken]&0x1)) break;
@@ -308,7 +306,7 @@ void grammar()
   }
   {
     int zztasp2 = zzasp - 1;
-    check_overflow(); --zzasp;
+    check_overflow(__LINE__); --zzasp;
     {
     for (;;) {
       if ( !((setwd1[zztoken]&0x2))) break;
@@ -357,7 +355,7 @@ void grammar()
   g=zzaArg(zztasp1,3); SynDiag = (Junction *) zzaArg(zztasp1,3 ).left;
   {
     int zztasp2 = zzasp - 1;
-    check_overflow(); --zzasp;
+    check_overflow(__LINE__); --zzasp;
     {
     for (;;) {
       if ( !((setwd1[zztoken]&0x4))) break;
@@ -366,13 +364,13 @@ void grammar()
         if ( zzaArg(zztasp2,1 ).left!=NULL ) {
           g.right = NULL;
 
-/* MR21a */             /*  Avoid use of a malformed graph when CannotContinue */
-          /* MR21a */             /*  is already set                                     */
-          /* MR21a */
-          /* MR21a */             if (! (CannotContinue && g.left == NULL)) {
-            /* MR21a */               g = Or(g, zzaArg(zztasp2,1));
-            /* MR21a */             }
-          /* MR21a */         }
+          /*  Avoid use of a malformed graph when CannotContinue */
+          /*  is already set                                     */
+
+          if (! (CannotContinue && g.left == NULL)) {
+            g = Or(g, zzaArg(zztasp2,1));
+          }
+        }
       }
       else {
         if (zztoken==116) {
@@ -405,7 +403,7 @@ void grammar()
                       if ( class_nest_level==0 )
                         warn("missing class definition for trailing '}'");
                       class_nest_level--;
-		      zzgettok();
+                      zzgettok();
                     }
                     else break; /* MR6 code for exiting loop "for sure" */
                   }
@@ -422,7 +420,7 @@ void grammar()
   }
   {
     int zztasp2 = zzasp - 1;
-    check_overflow(); --zzasp;
+    check_overflow(__LINE__); --zzasp;
     {
     for (;;) {
       if ( !((setwd1[zztoken]&0x8))) break;
@@ -504,14 +502,14 @@ static void class_def()
 {
   zzRULE;
   int zztasp1 = zzasp - 1;
-  check_overflow(); --zzasp;
+  check_overflow(__LINE__); --zzasp;
   {
   int go=1; char name[MaxRuleName+1];
   zzmatch(99);
   zzgettok();
   {
     int zztasp2 = zzasp - 1;
-    check_overflow(); --zzasp;
+    check_overflow(__LINE__); --zzasp;
     {
     if ( (zztoken==NonTerminal) ) {
       zzmatch(NonTerminal);
@@ -539,28 +537,28 @@ static void class_def()
   if ( !GenCC ) { err("class meta-op used without C++ option"); }
   {
     int zztasp2 = zzasp - 1;
-    check_overflow(); --zzasp;
+    check_overflow(__LINE__); --zzasp;
     {
     while ( (setwd1[zztoken]&0x20) ) {
       zzsetmatch(zzerr2, zzerr3);
       if (ClassDeclStuff == NULL) {
-        /* MR10 */                   ClassDeclStuff=(char *)calloc(MaxClassDeclStuff+1,sizeof(char));
-        /* MR10 */              };
-      /* MR10 */              strncat(ClassDeclStuff," ",MaxClassDeclStuff);
-      /* MR10 */              strncat(ClassDeclStuff,zzlextext,MaxClassDeclStuff);
-      /* MR22 */              do {
-        /* MR22 */                if (0 == strcmp(zzlextext,"public")) break;
-        /* MR22 */                if (0 == strcmp(zzlextext,"private")) break;
-        /* MR22 */                if (0 == strcmp(zzlextext,"protected")) break;
-        /* MR22 */                if (0 == strcmp(zzlextext,"virtual")) break;
-        /* MR22 */                if (0 == strcmp(zzlextext,",")) break;
-        /* MR22 */                if (0 == strcmp(zzlextext,":")) break;
-        /* MR22 */                if (BaseClassName != NULL) break;
-        /* MR22 */                BaseClassName=(char *)calloc(strlen(zzlextext)+1,sizeof(char));
-        /* MR22 */                require(BaseClassName!=NULL, "rule grammar: cannot allocate base class name");
-        /* MR22 */          strcpy(BaseClassName,zzlextext);
-        /* MR22 */              } while (0);
-      /* MR10 */
+        ClassDeclStuff=(char *)calloc(MaxClassDeclStuff+1,sizeof(char));
+      }
+      strncat(ClassDeclStuff," ",MaxClassDeclStuff);
+      strncat(ClassDeclStuff,zzlextext,MaxClassDeclStuff);
+      do {
+        if (0 == strcmp(zzlextext,"public")) break;
+        if (0 == strcmp(zzlextext,"private")) break;
+        if (0 == strcmp(zzlextext,"protected")) break;
+        if (0 == strcmp(zzlextext,"virtual")) break;
+        if (0 == strcmp(zzlextext,",")) break;
+        if (0 == strcmp(zzlextext,":")) break;
+        if (BaseClassName != NULL) break;
+        BaseClassName=(char *)calloc(strlen(zzlextext)+1,sizeof(char));
+        require(BaseClassName!=NULL, "rule grammar: cannot allocate base class name");
+        strcpy(BaseClassName,zzlextext);
+      } while (0);
+
       zzgettok();
 
       zzasp=zztasp2;
@@ -589,7 +587,7 @@ static void rule()
 {
   zzRULE;
   int zztasp1 = zzasp - 1;
-  check_overflow(); --zzasp;
+  check_overflow(__LINE__); --zzasp;
   {
     ExceptionGroup *eg;
     RuleEntry *q; Junction *p; Graph r; int f, l; ECnode *e;
@@ -621,7 +619,7 @@ static void rule()
     zzgettok();
     {
       int zztasp2 = zzasp - 1;
-      check_overflow(); --zzasp;
+      check_overflow(__LINE__); --zzasp;
       {
         if ( (zztoken==103) ) {
           zzmatch(103);
@@ -638,12 +636,12 @@ static void rule()
     }
     {
       int zztasp2 = zzasp - 1;
-      check_overflow(); --zzasp;
+      check_overflow(__LINE__); --zzasp;
       {
         if ( (setwd2[zztoken]&0x1) ) {
         {
           int zztasp3 = zzasp - 1;
-          check_overflow(); --zzasp;
+          check_overflow(__LINE__); --zzasp;
           {
             if ( (zztoken==104) ) {
               zzmatch(104); zzgettok();
@@ -673,7 +671,7 @@ static void rule()
   }
   {
     int zztasp2 = zzasp - 1;
-    check_overflow(); --zzasp;
+    check_overflow(__LINE__); --zzasp;
     {
     if ( (zztoken==105) ) {
       zzmatch(105);
@@ -695,7 +693,7 @@ static void rule()
   }
   {
     int zztasp2 = zzasp - 1;
-    check_overflow(); --zzasp;
+    check_overflow(__LINE__); --zzasp;
     {
     if ( (zztoken==QuotedTerm) ) {
       zzmatch(QuotedTerm);
@@ -772,7 +770,7 @@ static void rule()
 
   {
     int zztasp2 = zzasp - 1;
-    check_overflow(); --zzasp;
+    check_overflow(__LINE__); --zzasp;
     {
     if ( (zztoken==Action) ) {
       zzmatch(Action);
@@ -792,7 +790,7 @@ static void rule()
   }
   {
     int zztasp2 = zzasp - 1;
-    check_overflow(); --zzasp;
+    check_overflow(__LINE__); --zzasp;
     {
     while (zztoken==133) {
        eg  = exception_group();
@@ -825,7 +823,7 @@ static void laction()
 {
   zzRULE;
   int zztasp1 = zzasp - 1;
-  check_overflow(); --zzasp;
+  check_overflow(__LINE__); --zzasp;
   {
   char *a;
   zzmatch(108);
@@ -852,7 +850,7 @@ static void lmember()
 {
   zzRULE;
   int zztasp1 = zzasp - 1;
-  check_overflow(); --zzasp;
+  check_overflow(__LINE__); --zzasp;
   {
   char *a;
   zzmatch(109);
@@ -884,7 +882,7 @@ static void lprefix()
 {
   zzRULE;
   int zztasp1 = zzasp - 1;
-  check_overflow(); --zzasp;
+  check_overflow(__LINE__); --zzasp;
   {
   char *a;
   zzmatch(110);
@@ -916,7 +914,7 @@ static void aPred()
 {
   zzRULE;
   int zztasp1 = zzasp - 1;
-  check_overflow(); --zzasp;
+  check_overflow(__LINE__); --zzasp;
   {
   PredEntry     *predEntry=NULL;
   char          *name=NULL;
@@ -948,7 +946,7 @@ static void aPred()
   }
   {
     int zztasp2 = zzasp - 1;
-    check_overflow(); --zzasp;
+    check_overflow(__LINE__); --zzasp;
     {
     if ( (zztoken==Pred) ) {
       zzmatch(Pred);
@@ -959,10 +957,10 @@ static void aPred()
 
       {
         int zztasp3 = zzasp - 1;
-        check_overflow(); --zzasp;
+        check_overflow(__LINE__); --zzasp;
         {
         if ( (setwd3[zztoken]&0x1) ) {
-	  predExpr  = predOrExpr();
+          predExpr  = predOrExpr();
           predExprPresent=1;
         }
         else {
@@ -1025,7 +1023,7 @@ static void aPred()
   }
   {
     int zztasp2 = zzasp - 1;
-    check_overflow(); --zzasp;
+    check_overflow(__LINE__); --zzasp;
     {
     if (zztoken==107) {
       zzmatch(107);
@@ -1055,7 +1053,7 @@ static Predicate *predOrExpr()
   zzRULE;
   int zztasp1 = zzasp - 1;
   PCCTS_PURIFY(_retv,sizeof(Predicate *  ))
-  check_overflow(); --zzasp;
+  check_overflow(__LINE__); --zzasp;
   {
   Predicate     *ORnode;
   Predicate     *predExpr;
@@ -1071,7 +1069,7 @@ static Predicate *predOrExpr()
   }
   {
     int zztasp2 = zzasp - 1;
-    check_overflow(); --zzasp;
+    check_overflow(__LINE__); --zzasp;
     {
     while ( (zztoken==112) ) {
       zzmatch(112);
@@ -1108,7 +1106,7 @@ static Predicate *predAndExpr()
   zzRULE;
   int zztasp1 = zzasp - 1;
   PCCTS_PURIFY(_retv,sizeof(Predicate *  ))
-  check_overflow(); --zzasp;
+  check_overflow(__LINE__); --zzasp;
   {
   Predicate     *ANDnode;
   Predicate     *predExpr;
@@ -1124,7 +1122,7 @@ static Predicate *predAndExpr()
   }
   {
     int zztasp2 = zzasp - 1;
-    check_overflow(); --zzasp;
+    check_overflow(__LINE__); --zzasp;
     {
     while (zztoken==113) {
       zzmatch(113);
@@ -1160,7 +1158,7 @@ static Predicate *predPrimary()
   zzRULE;
   int zztasp1 = zzasp - 1;
   PCCTS_PURIFY(_retv,sizeof(Predicate *  ))
-  check_overflow(); --zzasp;
+  check_overflow(__LINE__); --zzasp;
   {
 
   char          *name=NULL;
@@ -1220,7 +1218,7 @@ static void aLexclass()
 {
   zzRULE;
   int zztasp1 = zzasp - 1;
-  check_overflow(); --zzasp;
+  check_overflow(__LINE__); --zzasp;
   {
   zzmatch(116);
   zzgettok();
@@ -1242,14 +1240,14 @@ static void error()
 {
   zzRULE;
   int zztasp1 = zzasp - 1;
-  check_overflow(); --zzasp;
+  check_overflow(__LINE__); --zzasp;
   {
   char *t=NULL; ECnode *e; int go=1; TermEntry *p;
   zzmatch(117);
   zzgettok();
   {
     int zztasp2 = zzasp - 1;
-    check_overflow(); --zzasp;
+    check_overflow(__LINE__); --zzasp;
     {
     if (zztoken==TokenTerm) {
       zzmatch(TokenTerm);
@@ -1292,7 +1290,7 @@ static void error()
   zzgettok();
   {
     int zztasp2 = zzasp - 1;
-    check_overflow(); --zzasp;
+    check_overflow(__LINE__); --zzasp;
     {
     if ( (zztoken==NonTerminal) ) {
       zzmatch(NonTerminal);
@@ -1320,12 +1318,12 @@ static void error()
   if ( go ) list_add(&(e->elist), t);
   {
     int zztasp2 = zzasp - 1;
-    check_overflow(); --zzasp;
+    check_overflow(__LINE__); --zzasp;
     {
     while ( (setwd4[zztoken]&0x2) ) {
       {
         int zztasp3 = zzasp - 1;
-        check_overflow(); --zzasp;
+        check_overflow(__LINE__); --zzasp;
 
         if ( (zztoken==NonTerminal) ) {
           zzmatch(NonTerminal);
@@ -1371,7 +1369,7 @@ static void tclass()
 {
   zzRULE;
   int zztasp1 = zzasp - 1;
-  check_overflow(); --zzasp;
+  check_overflow(__LINE__); --zzasp;
   {
   char *t=NULL; TCnode *e; int go=1,tok,totok; TermEntry *p, *term, *toterm;
   char *akaString=NULL; int save_file; int save_line;
@@ -1404,7 +1402,7 @@ static void tclass()
   }
   {
     int zztasp2 = zzasp - 1;
-    check_overflow(); --zzasp;
+    check_overflow(__LINE__); --zzasp;
     {
     if ( (zztoken==114) ) {
       zzmatch(114); zzgettok();
@@ -1438,12 +1436,12 @@ static void tclass()
   {
     int zztasp2 = zzasp - 1;
     int zzcnt=1;
-    check_overflow(); --zzasp;
+    check_overflow(__LINE__); --zzasp;
     {
      do {
       {
         int zztasp3 = zzasp - 1;
-        check_overflow(); --zzasp;
+        check_overflow(__LINE__); --zzasp;
         {
         if ( (zztoken==TokenTerm) ) {
           zzmatch(TokenTerm);
@@ -1459,7 +1457,7 @@ static void tclass()
 
           {
             int zztasp4 = zzasp - 1;
-            check_overflow(); --zzasp;
+            check_overflow(__LINE__); --zzasp;
             {
             if (zztoken==119) {
               zzmatch(119);
@@ -1535,7 +1533,7 @@ static void token()
 {
   zzRULE;
   int zztasp1 = zzasp - 1;
-  check_overflow(); --zzasp;
+  check_overflow(__LINE__); --zzasp;
   {
   char *t=NULL, *e=NULL, *a=NULL; int tnum=0;
   char *akaString=NULL; TermEntry *te;int save_file=0,save_line=0;
@@ -1545,7 +1543,7 @@ static void token()
 
   {
     int zztasp2 = zzasp - 1;
-    check_overflow(); --zzasp;
+    check_overflow(__LINE__); --zzasp;
     {
     if ( (zztoken==TokenTerm) ) {
       zzmatch(TokenTerm);
@@ -1554,7 +1552,7 @@ static void token()
 
       {
         int zztasp3 = zzasp - 1;
-        check_overflow(); --zzasp;
+        check_overflow(__LINE__); --zzasp;
 
         if (zztoken==114) {
           zzmatch(114);
@@ -1576,7 +1574,7 @@ static void token()
       }
       {
         int zztasp3 = zzasp - 1;
-        check_overflow(); --zzasp;
+        check_overflow(__LINE__); --zzasp;
 
         if (zztoken==121) {
           zzmatch(121);
@@ -1601,7 +1599,7 @@ static void token()
   }
   {
     int zztasp2 = zzasp - 1;
-    check_overflow(); --zzasp;
+    check_overflow(__LINE__); --zzasp;
 
     if ( (zztoken==QuotedTerm) ) {
       zzmatch(QuotedTerm);
@@ -1616,7 +1614,7 @@ static void token()
   }
   {
     int zztasp2 = zzasp - 1;
-    check_overflow(); --zzasp;
+    check_overflow(__LINE__); --zzasp;
 
     if ( (zztoken==Action) ) {
       zzmatch(Action);
@@ -1634,7 +1632,7 @@ static void token()
   }
   {
     int zztasp2 = zzasp - 1;
-    check_overflow(); --zzasp;
+    check_overflow(__LINE__); --zzasp;
 
     if (zztoken==107) {
       zzmatch(107);
@@ -1673,7 +1671,7 @@ static void block(set *toksrefd, set *rulesrefd)
 {
   zzRULE;
   int zztasp1 = zzasp - 1;
-  check_overflow(); --zzasp;
+  check_overflow(__LINE__); --zzasp;
   {
 
   Graph g, b;
@@ -1708,7 +1706,7 @@ static void block(set *toksrefd, set *rulesrefd)
   ((Junction *)g.left)->blockid = CurBlockID;
   {
     int zztasp2 = zzasp - 1;
-    check_overflow(); --zzasp;
+    check_overflow(__LINE__); --zzasp;
     {
     while ( (zztoken==133) ) {
        eg  = exception_group();
@@ -1728,7 +1726,7 @@ static void block(set *toksrefd, set *rulesrefd)
   CurAltNum_array[BlkLevel] = CurAltNum;
   {
     int zztasp2 = zzasp - 1;
-    check_overflow(); --zzasp;
+    check_overflow(__LINE__); --zzasp;
     {
     while (zztoken==123) {
       zzmatch(123);
@@ -1741,7 +1739,7 @@ static void block(set *toksrefd, set *rulesrefd)
       ((Junction *)g.left)->blockid = CurBlockID;
       {
         int zztasp3 = zzasp - 1;
-        check_overflow(); --zzasp;
+        check_overflow(__LINE__); --zzasp;
         {
         while (zztoken==133) {
            eg  = exception_group();
@@ -1780,7 +1778,7 @@ static void alt(set * toksrefd,set * rulesrefd)
 {
   zzRULE;
   int zztasp1 = zzasp - 1;
-  check_overflow(); --zzasp;
+  check_overflow(__LINE__); --zzasp;
   {
   int n=0; Graph g; int e_num=0, old_not=0; Node *node; set elems, dif;
   int first_on_line = 1, use_def_MT_handler = 0;
@@ -1791,7 +1789,7 @@ static void alt(set * toksrefd,set * rulesrefd)
   inAlt = 1;
   {
     int zztasp2 = zzasp - 1;
-    check_overflow(); --zzasp;
+    check_overflow(__LINE__); --zzasp;
     {
     if ( (zztoken==88) ) {
       zzmatch(88);
@@ -1808,12 +1806,12 @@ static void alt(set * toksrefd,set * rulesrefd)
   }
   {
     int zztasp2 = zzasp - 1;
-    check_overflow(); --zzasp;
+    check_overflow(__LINE__); --zzasp;
     {
     while ( (setwd5[zztoken]&0x80) ) {
       {
         int zztasp3 = zzasp - 1;
-        check_overflow(); --zzasp;
+        check_overflow(__LINE__); --zzasp;
         {
         old_not=0;
         if ( (zztoken==124) ) {
@@ -1898,7 +1896,7 @@ static LabelEntry *element_label()
   zzRULE;
   int zztasp1 = zzasp - 1;
   PCCTS_PURIFY(_retv,sizeof(LabelEntry *  ))
-  check_overflow(); --zzasp;
+  check_overflow(__LINE__); --zzasp;
   {
   TermEntry *t=NULL; LabelEntry *l=NULL; RuleEntry *r=NULL; char *lab;
   zzmatch(LABEL);
@@ -1954,7 +1952,7 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
   zzRULE;
   int zztasp1 = zzasp - 1;
   PCCTS_PURIFY(_retv,sizeof(Node *  ))
-  check_overflow(); --zzasp;
+  check_overflow(__LINE__); --zzasp;
   {
   Graph blk;
   Predicate *pred = NULL;
@@ -1977,7 +1975,7 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
   if ( (setwd6[zztoken]&0x8) ) {
     {
       int zztasp2 = zzasp - 1;
-      check_overflow();
+      check_overflow(__LINE__);
       --zzasp;
       if (zztoken==LABEL) {
         label  = element_label();
@@ -1989,7 +1987,7 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
     }
     {
       int zztasp2 = zzasp - 1;
-      check_overflow();
+      check_overflow(__LINE__);
       --zzasp;
       {
       if ( (zztoken==TokenTerm) ) {
@@ -2015,14 +2013,14 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
 
         {
           int zztasp3 = zzasp - 1;
-          check_overflow(); --zzasp;
+          check_overflow(__LINE__); --zzasp;
           {
           if (zztoken==119) {
             zzmatch(119);
             zzgettok();
             {
               int zztasp4 = zzasp - 1;
-              check_overflow(); --zzasp;
+              check_overflow(__LINE__); --zzasp;
               {
               if ( (zztoken==QuotedTerm) ) {
                 zzmatch(QuotedTerm);
@@ -2053,7 +2051,7 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
           list_add(&MetaTokenNodes, (void *)p);
         {
           int zztasp3 = zzasp - 1;
-          check_overflow();
+          check_overflow(__LINE__);
           --zzasp;
           if (zztoken==125) {
             zzmatch(125);
@@ -2073,7 +2071,7 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
         }
         {
           int zztasp3 = zzasp - 1;
-          check_overflow(); --zzasp;
+          check_overflow(__LINE__); --zzasp;
 
           if (zztoken==88) {
             zzmatch(88);
@@ -2115,14 +2113,14 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
           zzgettok();
           {
             int zztasp3 = zzasp - 1;
-            check_overflow(); --zzasp;
+            check_overflow(__LINE__); --zzasp;
             {
             if (zztoken==119) {
               zzmatch(119);
               zzgettok();
               {
                 int zztasp4 = zzasp - 1;
-                check_overflow(); --zzasp;
+                check_overflow(__LINE__); --zzasp;
                 {
                 if (zztoken==QuotedTerm) {
                   zzmatch(QuotedTerm);
@@ -2151,7 +2149,7 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
           }
           {
             int zztasp3 = zzasp - 1;
-            check_overflow(); --zzasp;
+            check_overflow(__LINE__); --zzasp;
             {
             if (zztoken==125) {
               zzmatch(125);
@@ -2177,7 +2175,7 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
           }
           {
             int zztasp3 = zzasp - 1;
-            check_overflow(); --zzasp;
+            check_overflow(__LINE__); --zzasp;
             {
             if (zztoken==88) {
               zzmatch(88);
@@ -2214,7 +2212,7 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
 
             {
               int zztasp3 = zzasp - 1;
-              check_overflow(); --zzasp;
+              check_overflow(__LINE__); --zzasp;
               {
               if (zztoken==125) {
                 zzmatch(125);
@@ -2241,7 +2239,7 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
 
             if (  first_on_line ) {
               CurAltStart = (Junction *)zzaRet.left;
-              altAdd(CurAltStart);                                 /* MR7 */
+              altAdd(CurAltStart);
               p->altstart = CurAltStart;
               if ( label!=NULL ) {
                 p->el_label = label->str;
@@ -2259,35 +2257,31 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
 
               {
                 int zztasp3 = zzasp - 1;
-                check_overflow(); --zzasp;
+                check_overflow(__LINE__); --zzasp;
                 {
                 if (zztoken==103) {
                   zzmatch(103);
                   q = (RuleRefNode *) ((Junction *)zzaRet.left)->p1;
                   q->astnode=ASTexclude;
-		  zzgettok();
-
+                  zzgettok();
                 }
-                else {
-                  if (setwd7[zztoken]&0x10) {
-                  }
-                  else {zzFAIL(1,zzerr38,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
-                }
+                else if (setwd7[zztoken]&0x10) {
+                } else {zzFAIL(1,zzerr38,&zzMissSet,&zzMissText,&zzBadTok,&zzBadText,&zzErrk); goto fail;}
                 zzasp=zztasp3;
                 }
               }
               {
                 int zztasp3 = zzasp - 1;
-                check_overflow(); --zzasp;
+                check_overflow(__LINE__); --zzasp;
                 {
                 if (setwd7[zztoken]&0x20) {
                   {
                     int zztasp4 = zzasp - 1;
-                    check_overflow(); --zzasp;
+                    check_overflow(__LINE__); --zzasp;
                     {
                     if (zztoken==104) {
                       zzmatch(104);
-		      zzgettok();
+                      zzgettok();
                     }
                     else {
                       if ( (zztoken==PassAction) ) {
@@ -2312,12 +2306,12 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
               rr=(RuleRefNode *) ((Junction *)zzaRet.left)->p1;
               {
                 int zztasp3 = zzasp - 1;
-                check_overflow(); --zzasp;
+                check_overflow(__LINE__); --zzasp;
                 {
                 char *a;
                 if (zztoken==105) {
                   zzmatch(105);
-		  zzgettok();
+                  zzgettok();
                   zzmatch(PassAction);
 
                   a = (char *) calloc(strlen(zzlextext)+1, sizeof(char));
@@ -2362,7 +2356,7 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
       zzgettok();
 
       if (  first_on_line ) {
-        CurAltStart = (Junction *)zzaArg(zztasp1,0 ).left;                   /* MR7 */
+        CurAltStart = (Junction *)zzaArg(zztasp1,0 ).left;
         altAdd(CurAltStart);
       }
       _retv = (Node *) ((Junction *)zzaArg(zztasp1,0 ).left)->p1;
@@ -2372,7 +2366,7 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
         if (  old_not ) warn("~ SEMANTIC-PREDICATE is an undefined operation");
         zzmatch(Pred);
         zzaArg(zztasp1,0) = buildAction(zzlextext,action_file,action_line, 1);
-	zzgettok();
+        zzgettok();
 
         act = (ActionNode *) ((Junction *)zzaArg(zztasp1,0 ).left)->p1;
         if (numericActionLabel) {
@@ -2381,7 +2375,7 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
         }
         {
           int zztasp2 = zzasp - 1;
-          check_overflow(); --zzasp;
+          check_overflow(__LINE__); --zzasp;
           {
           char *a;
           if (zztoken==PassAction) {
@@ -2401,10 +2395,10 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
           zzasp=zztasp2;
           }
         }
-        if (  first_on_line ) {                                /* MR7 */
-          CurAltStart = (Junction *)zzaArg(zztasp1,0 ).left;                   /* MR7 */
+        if (  first_on_line ) {
+          CurAltStart = (Junction *)zzaArg(zztasp1,0 ).left;
           altAdd(CurAltStart);                                 /* MR7 */
-        };
+        }
         _retv = (Node *)act;
       }
       else {
@@ -2416,14 +2410,14 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
           CurAltNum_array[BlkLevel] = CurAltNum;
           {
             int zztasp2 = zzasp - 1;
-            check_overflow(); --zzasp;
+            check_overflow(__LINE__); --zzasp;
             {
             if (zztoken==Pragma) {
               zzmatch(Pragma);
-	      zzgettok();
+              zzgettok();
               {
                 int zztasp3 = zzasp - 1;
-                check_overflow(); --zzasp;
+                check_overflow(__LINE__); --zzasp;
                 {
                 if (zztoken==126) {
                   zzmatch(126);
@@ -2459,16 +2453,16 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
           }
           {
             int zztasp2 = zzasp - 1;
-            check_overflow(); --zzasp;
+            check_overflow(__LINE__); --zzasp;
             {
             if (zztoken==FirstSetSymbol) {
               zzmatch(FirstSetSymbol);
-	      zzgettok();
+              zzgettok();
               zzmatch(114);
-	      zzgettok();
+              zzgettok();
               {
                 int zztasp3 = zzasp - 1;
-                check_overflow(); --zzasp;
+                check_overflow(__LINE__); --zzasp;
                 {
                 if ( (zztoken==NonTerminal) ) {
                   zzmatch(NonTerminal);
@@ -2495,7 +2489,7 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
                 }
               }
               zzmatch(115);
-	      zzgettok();
+              zzgettok();
             }
             else {
               if ( (setwd8[zztoken]&0x8) ) {
@@ -2507,21 +2501,21 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
           }
           {
             int zztasp2 = zzasp - 1;
-            check_overflow(); --zzasp;
+            check_overflow(__LINE__); --zzasp;
             {
             if (zztoken==114) {
               zzmatch(114);
-	      zzgettok();
+              zzgettok();
               block( &toksrefd,&rulesrefd );
               zzmatch(115);
               blk = zzaRet = zzaArg(zztasp2,2);
               CurBlockID_array[BlkLevel] = (-1);
               CurAltNum_array[BlkLevel] = (-1);
               --BlkLevel;
-	      zzgettok();
+              zzgettok();
               {
                 int zztasp3 = zzasp - 1;
-                check_overflow(); --zzasp;
+                check_overflow(__LINE__); --zzasp;
                 {
                 if (zztoken==129) {
                   zzmatch(129);
@@ -2537,15 +2531,15 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
                   else {
                     if (zztoken==131) {
                       zzmatch(131);
-		      zzgettok();
+                      zzgettok();
                       {
                         int zztasp4 = zzasp - 1;
-                        check_overflow(); --zzasp;
+                        check_overflow(__LINE__); --zzasp;
                         {
                         if ( (setwd8[zztoken]&0x10) ) {
                           {
                             int zztasp5 = zzasp - 1;
-                            check_overflow(); --zzasp;
+                            check_overflow(__LINE__); --zzasp;
                             {
                             if (zztoken==132) {
                               zzmatch(132);
@@ -2575,7 +2569,7 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
                           }
                           {
                             int zztasp5 = zzasp - 1;
-                            check_overflow(); --zzasp;
+                            check_overflow(__LINE__); --zzasp;
                             {
                             char *a;
                             if ( (zztoken==PassAction) ) {
@@ -2601,12 +2595,12 @@ static Node *element(int old_not,int first_on_line,int use_def_MT_handler)
                           }
                           _retv = (Node *)act;
 
-                          pred = computePredFromContextGuard(blk,&predMsgDone);           /* MR10 */
-                          if ( pred==NULL) {                                              /* MR10 */
-                            if ( !predMsgDone) err("invalid or missing context guard");   /* MR10 */
-                            predMsgDone=1;                                                /* MR10 */
-                          } else {                                                        /* MR10 */
-                            act->guardNodes=(Junction *)blk.left;                       /* MR11 */
+                          pred = computePredFromContextGuard(blk,&predMsgDone);
+                          if ( pred==NULL) {
+                            if ( !predMsgDone) err("invalid or missing context guard");
+                            predMsgDone=1;
+                          } else {
+                            act->guardNodes=(Junction *)blk.left;
                             pred->expr = act->action;
                             pred->source = act;
                             /* MR10 */                  pred->ampersandStyle = ampersandStyle;  /* 0 means (g)? => ... 1 means (g)? && ... */
@@ -2747,7 +2741,7 @@ static void default_exception_handler()
 {
   zzRULE;
   int zztasp1 = zzasp - 1;
-  check_overflow(); --zzasp;
+  check_overflow(__LINE__); --zzasp;
   {
    DefaultExGroup  = exception_group();
 
@@ -2766,7 +2760,7 @@ static ExceptionGroup *exception_group()
   zzRULE;
   int zztasp1 = zzasp - 1;
   PCCTS_PURIFY(_retv,sizeof(ExceptionGroup *  ))
-  check_overflow(); --zzasp;
+  check_overflow(__LINE__); --zzasp;
   {
   ExceptionHandler *h; LabelEntry *label=NULL;
   FoundException = 1; FoundExceptionGroup = 1;
@@ -2776,7 +2770,7 @@ static ExceptionGroup *exception_group()
 
   {
     int zztasp2 = zzasp - 1;
-    check_overflow(); --zzasp;
+    check_overflow(__LINE__); --zzasp;
     {
     char *p;
     if (zztoken==PassAction) {
@@ -2802,7 +2796,7 @@ static ExceptionGroup *exception_group()
   }
   {
     int zztasp2 = zzasp - 1;
-    check_overflow(); --zzasp;
+    check_overflow(__LINE__); --zzasp;
     {
     while (zztoken==135) {
        h  = exception_handler();
@@ -2815,7 +2809,7 @@ static ExceptionGroup *exception_group()
   }
   {
     int zztasp2 = zzasp - 1;
-    check_overflow(); --zzasp;
+    check_overflow(__LINE__); --zzasp;
     {
     if (zztoken==134) {
       zzmatch(134);
@@ -2857,9 +2851,9 @@ static ExceptionGroup *exception_group()
       /* Label the exception group itself */
       _retv->label = label->str;
       /* Make the labelled element pt to the exception also */
-      /* MR6 */   if (label->elem == NULL) {
-        /* MR6 */      err(eMsg("reference in exception handler to undefined label '%s'",label->str));
-        /* MR6 */   } else {
+      if (label->elem == NULL) {
+        err(eMsg("reference in exception handler to undefined label '%s'",label->str));
+      } else {
         switch ( label->elem->ntype ) {
           case nRuleRef :
           {
@@ -2874,26 +2868,26 @@ static ExceptionGroup *exception_group()
             break;
           }
         } /* end switch */
-        /* MR6 */   }; /* end test on label->elem */
+      } /* end test on label->elem */
     } /* end test on label->ex_group */
 
     } /* end test on exception label */
 
-  /* MR7 */   if (BlkLevel == 1 && label == NULL) {
-    /* MR7 */     _retv->forRule=1;
-    /* MR7 */   } else if (label == NULL) {
-    /* MR7 */     _retv->altID = makeAltID(CurBlockID_array[BlkLevel], CurAltNum_array[BlkLevel]);
-    /* MR7 */     egAdd(_retv);
-    /* MR7 */   } else {
-    /* MR7 */     _retv->labelEntry=label;
-    /* MR7 */   };
+    if (BlkLevel == 1 && label == NULL) {
+      _retv->forRule=1;
+    } else if (label == NULL) {
+      _retv->altID = makeAltID(CurBlockID_array[BlkLevel], CurAltNum_array[BlkLevel]);
+      egAdd(_retv);
+    } else {
+      _retv->labelEntry=label;
+    };
 
-  /* MR7 */     /* You may want to remove this exc from the rule list  */
-  /* MR7 */   /* and handle at the labeled element site.             */
+    /* You may want to remove this exc from the rule list  */
+    /* and handle at the labeled element site.             */
 
-  /* MR7 */   if (label != NULL) {
-    /* MR7 */     _retv = NULL;
-    /* MR7 */   };
+  if (label != NULL) {
+    _retv = NULL;
+  }
   zzasp=zztasp1;
   return _retv;
 fail:
@@ -2911,7 +2905,7 @@ static ExceptionHandler *exception_handler()
   zzRULE;
   int zztasp1 = zzasp - 1;
   PCCTS_PURIFY(_retv,sizeof(ExceptionHandler *  ))
-  check_overflow(); --zzasp;
+  check_overflow(__LINE__); --zzasp;
   {
   zzmatch(135);
 
@@ -2921,7 +2915,7 @@ static ExceptionHandler *exception_handler()
 
   {
     int zztasp2 = zzasp - 1;
-    check_overflow(); --zzasp;
+    check_overflow(__LINE__); --zzasp;
     {
     if (zztoken==NonTerminal) {
       zzmatch(NonTerminal);
@@ -2949,7 +2943,7 @@ static ExceptionHandler *exception_handler()
   zzgettok();
   {
     int zztasp2 = zzasp - 1;
-    check_overflow(); --zzasp;
+    check_overflow(__LINE__); --zzasp;
     {
     _retv->action = NULL;
     if (zztoken==Action) {
@@ -2984,13 +2978,13 @@ static void enum_file(char *fname)
 {
   zzRULE;
   int zztasp1 = zzasp - 1;
-  check_overflow();
+  check_overflow(__LINE__);
   --zzasp;
 
   if (setwd9[zztoken]&0x80) {
     {
       int zztasp2 = zzasp - 1;
-      check_overflow(); --zzasp;
+      check_overflow(__LINE__); --zzasp;
       {
       if (zztoken==143) {
         zzmatch(143);
@@ -2999,7 +2993,7 @@ static void enum_file(char *fname)
         zzgettok();
 
         int zztasp3 = zzasp - 1;
-        check_overflow(); --zzasp;
+        check_overflow(__LINE__); --zzasp;
         if (zztoken==149) {
           zzmatch(149);
           zzgettok();
@@ -3020,12 +3014,12 @@ static void enum_file(char *fname)
     }
     {
       int zztasp2 = zzasp - 1;
-      check_overflow(); --zzasp;
+      check_overflow(__LINE__); --zzasp;
 
       if (zztoken==151) {
         int zztasp3 = zzasp - 1;
         int zzcnt=1;
-        check_overflow(); --zzasp;
+        check_overflow(__LINE__); --zzasp;
         do {
           enum_def(  fname );
           zzasp=zztasp3;
@@ -3057,13 +3051,13 @@ static void defines(char * fname)
 {
   zzRULE;
   int zztasp1 = zzasp - 1;
-  check_overflow(); --zzasp;
+  check_overflow(__LINE__); --zzasp;
   int v; int maxt=(-1); char *t;
 
   {
     int zztasp2 = zzasp - 1;
     int zzcnt=1;
-    check_overflow(); --zzasp;
+    check_overflow(__LINE__); --zzasp;
     {
     do {
       zzmatch(149);
@@ -3105,7 +3099,7 @@ static void enum_def(char * fname)
 {
   zzRULE;
   int zztasp1 = zzasp - 1;
-  check_overflow(); --zzasp;
+  check_overflow(__LINE__); --zzasp;
   {
   int v= 0; int maxt=(-1); char *t;
   zzmatch(151);
@@ -3120,7 +3114,7 @@ static void enum_def(char * fname)
 
   {
     int zztasp2 = zzasp - 1;
-    check_overflow(); --zzasp;
+    check_overflow(__LINE__); --zzasp;
 
     if (zztoken==153) {
       zzmatch(153);
@@ -3146,14 +3140,14 @@ static void enum_def(char * fname)
   }
   {
     int zztasp2 = zzasp - 1;
-    check_overflow(); --zzasp;
+    check_overflow(__LINE__); --zzasp;
     {
     while (zztoken==154) {
       zzmatch(154);
       zzgettok();
       {
         int zztasp3 = zzasp - 1;
-        check_overflow(); --zzasp;
+        check_overflow(__LINE__); --zzasp;
         {
         if ( (zztoken==ID)&&(isDLGmaxToken(zzlextext)) ) {
           if (!(isDLGmaxToken(zzlextext))) {
@@ -3163,7 +3157,7 @@ static void enum_def(char * fname)
 	      zzgettok();
           {
             int zztasp4 = zzasp - 1;
-            check_overflow(); --zzasp;
+            check_overflow(__LINE__); --zzasp;
 
             if (zztoken==153) {
               zzmatch(153);
@@ -3184,7 +3178,7 @@ static void enum_def(char * fname)
 
           {
             int zztasp4 = zzasp - 1;
-            check_overflow(); --zzasp;
+            check_overflow(__LINE__); --zzasp;
 
             if (zztoken==153) {
               zzmatch(153);
@@ -3274,68 +3268,57 @@ static void chkToken(char *t, char *e, char *a, int tnum)
 
     if ( t==NULL && e==NULL ) {     /* none found */
         err("#token requires at least token name or rexpr");
-    }
-    else if ( t!=NULL && e!=NULL ) {  /* both found */
+    } else if ( t!=NULL && e!=NULL ) {  /* both found */
         if ( UserDefdTokens ) {     /* if #tokdefs, must not define new */
             p = (TermEntry *) hash_get(Tname, t);
             if ( p == NULL) {
                 err(eMsg("new token definition '%s' not allowed - only #token with name already defined by #tokdefs file allowed",t));
                 return;
-            };
+            }
         }
         Tklink(t, e);
         if ( a!=NULL ) {
             if ( hasAction(e) ) {
                 err(eMsg("redefinition of action for %s; ignored",e));
-            }
-            else setHasAction(e, a);
+            } else setHasAction(e, a);
         }
-    }
-    else if ( t!=NULL ) {       /* only one found */
+    } else if ( t!=NULL ) {       /* only one found */
         if ( UserDefdTokens ) {
             p = (TermEntry *) hash_get(Tname, t);
             if (p == NULL) {
                 err(eMsg("new token definition '%s' not allowed - only #token with name already defined by #tokdefs file allowed",t));
-            };
+            }
             return;
         }
         if ( Tnum( t ) == 0 ) addTname( t );
-else {
-  err(eMsg("redefinition of token %s; ignored",t));
-}
-if ( a!=NULL ) {
-  err(eMsg("action cannot be attached to a token name (%s); ignored",t));
-  free((char *)a);
-}
-}
-else if ( e!=NULL ) {
-if ( Tnum( e ) == 0 ) addTexpr( e );
-else {
-  if ( hasAction(e) ) {
-    err(eMsg("redefinition of action for expr %s; ignored",e));
-  }
-  else if ( a==NULL ) {
-    err(eMsg("redefinition of expr %s; ignored",e));
-  }
-}
-if ( a!=NULL ) setHasAction(e, a);
-}
+        else {
+            err(eMsg("redefinition of token %s; ignored",t));
+        }
+        if ( a!=NULL ) {
+            err(eMsg("action cannot be attached to a token name (%s); ignored",t));
+            free((char *)a);
+        }
+    } else if ( e!=NULL ) {
+        if ( Tnum( e ) == 0 ) addTexpr( e );
+        else if ( hasAction(e) ) {
+            err(eMsg("redefinition of action for expr %s; ignored",e));
+        } else if ( a==NULL ) {
+            err(eMsg("redefinition of expr %s; ignored",e));
+        }
+        if ( a!=NULL ) setHasAction(e, a);
+    }
 
-  /* if a token type number was specified, then add the token ID and 'tnum'
-* pair to the ForcedTokens list.  (only applies if an id was given)
-*/
-if ( t!=NULL && tnum>0 )
-{
-if ( set_el(tnum, reserved_positions) )
-{
-  err(eMsg("a token has already been forced to token number %d; ignored", tnum));
-}
-else
-{
-  list_add(&ForcedTokens, newForcedToken(t,tnum));
-  set_orel(tnum, &reserved_positions);
-}
-}
+    /* if a token type number was specified, then add the token ID and 'tnum'
+     * pair to the ForcedTokens list.  (only applies if an id was given)
+     */
+    if ( t!=NULL && tnum>0 ) {
+        if ( set_el(tnum, reserved_positions) ) {
+            err(eMsg("a token has already been forced to token number %d; ignored", tnum));
+        } else {
+            list_add(&ForcedTokens, newForcedToken(t,tnum));
+            set_orel(tnum, &reserved_positions);
+        }
+    }
 }
 
 static int match_token(char *s, char **nxt)
@@ -3361,7 +3344,7 @@ static int match_rexpr(char *s, char **nxt)
   while ( *s!='"' )
   {
     if ( *s=='\n' || *s=='\r' )
-      warn("eoln found in regular expression");
+      warn("end of line found in regular expression");
     if ( *s=='\\' ) s++;
     s++;
   }
@@ -3371,8 +3354,8 @@ static int match_rexpr(char *s, char **nxt)
 
 /**
  * Walk a string "{ A .. Z }" where A..Z is a space separated list
- * of token references (either labels or reg exprs).  Return a
- * string "inlineX_set" for some unique integer X.  Basically,
+ * of token references (either labels or reg exprs). Return a
+ * string "inlineX_set" for some unique integer X. Basically,
  * we pretend as if we had seen "#tokclass inlineX { A .. Z }"
  * on the input stream outside of an action.
  */
@@ -3403,47 +3386,49 @@ char *inline_set(char *s)
 }
 
 
+/**
+ * Fast compute degree of a set... the number
+ * of elements present in the set. Assumes
+ * that all word bits are used in the set
+ */
 static int zzset_deg(SetWordType *a)
 {
-  /* Fast compute degree of a set... the number
-     of elements present in the set.  Assumes
-     that all word bits are used in the set
-  */
-  register SetWordType *p = a;
-  register SetWordType *endp = &(a[zzSET_SIZE]);
-  register int degree = 0;
+    SetWordType *p = a;
+    SetWordType *endp = p + zzSET_SIZE;
+    int degree = 0;
 
-  if ( a == NULL ) return 0;
-  while ( p < endp )
-  {
-    register SetWordType t = *p;
-    register SetWordType *b = &(bitmask[0]);
-    do {
-      if (t & *b) ++degree;
-    } while (++b < &(bitmask[sizeof(SetWordType)*8]));
-    p++;
-  }
+    if ( a == NULL ) return 0;
+    while ( p < endp )
+    {
+        SetWordType t = *p;
+        SetWordType *b = bitmask;
+        do {
+            if (t & *b) ++degree;
+        } while (++b < &(bitmask[sizeof(SetWordType)*8]));
+        p++;
+    }
 
-  return(degree);
+    return degree;
 }
 
 
 static void zzedecode(SetWordType *a)
 {
-  register SetWordType *p = a;
-  register SetWordType *endp = &(p[zzSET_SIZE]);
-  register unsigned e = 0;
+    SetWordType *p = a;
+    SetWordType *endp = p + zzSET_SIZE;
+    unsigned e = 0;
+    int multi = zzset_deg(a);
 
-  if ( zzset_deg(a)>1 ) fprintf(stderr, " {");
-  do {
-    register SetWordType t = *p;
-    register SetWordType *b = &(bitmask[0]);
+    if (multi) fprintf(stderr, " {");
     do {
-      if ( t & *b ) fprintf(stderr, " %s", zztokens[e]);
-      e++;
-    } while (++b < &(bitmask[sizeof(SetWordType)*8]));
-  } while (++p < endp);
-  if ( zzset_deg(a)>1 ) fprintf(stderr, " }");
+        SetWordType t = *p;
+        SetWordType *b = bitmask;
+        do {
+            if ( t & *b ) fprintf(stderr, " %s", zztokens[e]);
+            e++;
+        } while (++b < &(bitmask[sizeof(SetWordType)*8]));
+    } while (++p < endp);
+    if (multi) fprintf(stderr, " }");
 }
 
 
@@ -3456,15 +3441,24 @@ int k, char *bad_text)
     hdrLog(FileStr[CurFile]!=NULL?FileStr[CurFile]:"stdin", zzline);
 
     fprintf(stderr, " syntax error at \"%s\"", (tok==zzEOF_TOKEN)?"EOF":text);
-    if ( !etok && !eset ) {fprintf(stderr, "\n"); return;}
-    if ( k==1 ) fprintf(stderr, " missing");
-    else
-    {
+    if ( !etok && !eset ) {
+        fprintf(stderr, "\n");
+        return;
+    }
+    
+    if ( k==1 ) {
+        fprintf(stderr, " missing");
+    } else {
         fprintf(stderr, "; \"%s\" not", bad_text);
         if ( zzset_deg(eset)>1 ) fprintf(stderr, " in");
     }
-    if ( zzset_deg(eset)>0 ) zzedecode(eset);
-    else fprintf(stderr, " %s", zztokens[etok]);
+    
+    if ( zzset_deg(eset)>0 ) {
+        zzedecode(eset);
+    } else {
+        fprintf(stderr, " %s", zztokens[etok]);
+    }
+    
     if ( strlen(egroup) > (size_t)0 ) fprintf(stderr, " in %s", egroup);
     fprintf(stderr, "\n");
 }
